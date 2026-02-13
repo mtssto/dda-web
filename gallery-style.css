@@ -6,8 +6,9 @@ html {
     padding: 0;
     width: 100%;
     height: 100%;
-    background-color: #ffffff;
-    /* Clean white canvas */
+    background: radial-gradient(circle at center, #e0f7fa 0%, #ffffff 70%);
+    /* Light blue-ish glow */
+    /* Clean white canvas fallback */
     overflow: hidden;
     /* No scrolling, infinite canvas feel used via JS if needed, or just fixed viewport */
     font-family: 'Courier New', Courier, monospace;
@@ -24,19 +25,23 @@ html {
 .gallery-image {
     position: absolute;
     opacity: 0;
-    transition: opacity 2s ease-in-out;
-    max-width: 40vw;
-    /* Don't be huge */
-    max-height: 60vh;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: opacity 1.5s ease-in-out, transform 0.2s ease-out;
+    max-width: 35vw;
+    max-height: 55vh;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
     pointer-events: none;
-    /* Let clicks pass through if we want interactions below */
+    /* No interaction needed */
+    user-select: none;
+    touch-action: none;
+    /* Prevent scrolling while dragging */
 }
 
-.gallery-image.virtual-frame {
-    /* Optional: Add a frame if desired, but "raw" is often better for this look */
-    /* border: 10px solid white; */
+.gallery-image:active {
+    transform: scale(1.05);
+    z-index: 1000 !important;
 }
+
+
 
 /* Header overlay */
 /* Header styles moved to navbar.css */

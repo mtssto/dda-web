@@ -43,57 +43,97 @@ const artImages = [
 ];
 
 const canvas = document.getElementById('art-canvas');
-const maxActiveImages = 6;
-let activeImages = 0;
+const isMobile = window.innerWidth <= 768;
 
+// --- UTILS ---
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function spawnImage() {
-    if (activeImages >= maxActiveImages) return;
-    if (!canvas) return; // Guard clause in case script runs on page without canvas
-    if (artImages.length === 0) return;
+// Check if a new rect intersects with any in the existing list
+function checkCollision(newRect, existingRects) {
+    for (let rect of existingRects) {
+        if (newRect.left < rect.right &&
+            newRect.right > rect.left &&
+            newRect.top < rect.bottom &&
+            newRect.bottom > rect.top) {
+            return true;
+        }
+    }
+    return false;
+}
 
+function getSafePosition(width, height, existingRects, maxAttempts = 50) {
+    for (let i = 0; i < maxAttempts; i++) {
+        const left = getRandomInt(5, 95 - width); // vw
+        const top = getRandomInt(5, 95 - height); // vh
+
+        // Convert 'vw/vh' to rough relative collision units (0-100)
+        const newRect = {
+            left: left,
+            right: left + width,
+            top: top,
+            bottom: top + height
+        };
+
+        if (!checkCollision(newRect, existingRects)) {
+            return { left, top, rect: newRect };
+        }
+    }
+    return null; // Failed to find spot
+}
+
+
+// --- LOGIC ---
+
+// Maintain strict list of active elements
+const activeElements = [];
+const maxActive = isMobile ? 6 : 12;
+
+function cycle() {
+    // 1. Despawn random if too many
+    if (activeElements.length >= maxActive) {
+        const el = activeElements.shift(); // Remove oldest
+        el.img.style.opacity = 0;
+
+        setTimeout(() => {
+            if (el.img.parentNode) el.img.parentNode.removeChild(el.img);
+        }, 1000);
+    }
+
+    // 2. Spawn New
+    if (artImages.length === 0) return;
     const src = artImages[getRandomInt(0, artImages.length - 1)];
     const img = document.createElement('img');
     img.src = src;
     img.classList.add('gallery-image');
 
-    // Random Position 
-    img.style.left = getRandomInt(10, 70) + 'vw';
-    img.style.top = getRandomInt(10, 60) + 'vh';
+    const sizeVW = getRandomInt(20, 30);
+    const sizeVH = sizeVW * 1.4;
 
-    // Random Size
-    const scale = getRandomInt(7, 13) / 10;
-    img.style.transform = `scale(${scale})`;
+    // Get Rects of currently Active
+    const currentRects = activeElements.map(e => e.rect);
 
-    // Random Z-Index
-    img.style.zIndex = getRandomInt(1, 20);
+    const pos = getSafePosition(sizeVW, sizeVH, currentRects, 10);
 
-    canvas.appendChild(img);
+    if (pos) {
+        img.style.left = pos.left + 'vw';
+        img.style.top = pos.top + 'vh';
+        img.style.width = sizeVW + 'vw';
+        img.style.zIndex = getRandomInt(1, 20);
 
-    // Fade In
-    setTimeout(() => {
-        img.style.opacity = 1;
-        activeImages++;
-    }, 100);
+        canvas.appendChild(img);
 
-    // Fade Out & Cleanup
-    const lifeTime = getRandomInt(3000, 7000);
-    setTimeout(() => {
-        img.style.opacity = 0;
-        setTimeout(() => {
-            if (img.parentNode) img.parentNode.removeChild(img);
-            activeImages--;
-        }, 2000);
-    }, lifeTime);
+        // Track
+        activeElements.push({ img: img, rect: pos.rect });
+
+        setTimeout(() => img.style.opacity = 1, 50);
+    }
 }
 
-// Start Cycle
-setInterval(spawnImage, 1200);
+// Start Output
+setInterval(cycle, 1500);
 
 // Initial Burst
-spawnImage();
-spawnImage();
-spawnImage();
+cycle();
+setTimeout(cycle, 500); // Stagger second image
