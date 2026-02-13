@@ -6,6 +6,7 @@ html {
     padding: 0;
     width: 100%;
     height: 100%;
+    /* Keep the gradient */
     background: radial-gradient(circle at center, #e0f7fa 0%, #ffffff 70%);
     /* Light blue-ish glow */
     /* Clean white canvas fallback */
@@ -16,16 +17,22 @@ html {
 }
 
 #art-canvas {
-    position: relative;
+    display: grid;
+    /* Columns and Rows will be set by JS for perfect fit, or we can defaults here */
     width: 100vw;
     height: 100vh;
     z-index: 1;
 }
 
 .gallery-image {
-    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
     opacity: 0;
-    transition: opacity 1.5s ease-in-out, transform 0.2s ease-out;
+    /* Starts hidden, fades in */
+    transition: opacity 1s ease-in-out;
+    /* No absolute position anymore, they live in grid cells */
     max-width: 35vw;
     max-height: 55vh;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
