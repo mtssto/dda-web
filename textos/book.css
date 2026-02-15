@@ -1,0 +1,207 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    /* Clean white background */
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #333;
+}
+
+.book-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding-top: 60px;
+    box-sizing: border-box;
+    overflow: hidden;
+    background: #f9f9f9;
+    /* Subtle difference for reader mode */
+}
+
+/* The actual flipbook container */
+#flipbook {
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+
+.page {
+    background-color: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    /* Softer shadow */
+}
+
+.page-content {
+    width: 100%;
+    height: 100%;
+}
+
+/* Controls */
+.controls {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    background: #fff;
+    padding: 10px 30px;
+    border-radius: 50px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    border: 1px solid #eee;
+}
+
+.btn-control {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #000;
+    transition: opacity 0.2s;
+    padding: 5px;
+}
+
+.btn-control:hover {
+    opacity: 0.6;
+}
+
+/* Loading Spinner */
+#loading {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1rem;
+    color: #999;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+/* --- Catalog View Styles --- */
+.catalog-view {
+    padding: 120px 20px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.catalog-title {
+    font-family: 'Courier New', Courier, monospace;
+    /* Consistent with other pages */
+    font-size: 2.5rem;
+    margin-bottom: 60px;
+    color: #000;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    /* Wider cards */
+    gap: 60px 40px;
+    justify-content: center;
+}
+
+.book-card {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: opacity 0.3s;
+}
+
+.book-card:hover {
+    opacity: 0.7;
+    transform: none;
+    box-shadow: none;
+}
+
+.book-cover-placeholder,
+.book-cover-img {
+    width: 100%;
+    aspect-ratio: 3/4;
+    /* Standard book ratio */
+    max-width: 250px;
+    background-color: #f0f0f0;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    /* Elegant shadow for cover */
+    transition: box-shadow 0.3s;
+    object-fit: cover;
+}
+
+.book-card:hover .book-cover-placeholder,
+.book-card:hover .book-cover-img {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+.book-cover-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+}
+
+.book-title {
+    font-size: 1.1rem;
+    color: #000;
+    margin: 10px 0 5px 0;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.book-btn {
+    background: transparent;
+    color: #666;
+    border: none;
+    padding: 5px 0;
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.book-card:hover .book-btn {
+    color: #000;
+    border-bottom-color: #000;
+}
+
+/* --- Reader View Styles --- */
+.back-btn {
+    position: fixed;
+    top: 100px;
+    left: 40px;
+    z-index: 100;
+    background: transparent;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    transition: opacity 0.2s;
+}
+
+.back-btn:hover {
+    opacity: 0.6;
+    background: transparent;
+}

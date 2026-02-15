@@ -23,10 +23,10 @@ body {
 .shop-container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 120px 40px 60px;
+    padding: 100px 40px 40px;
 }
 
-/* Hero Section */
+/* Hero Section (Legacy/Fallback) */
 .shop-hero {
     text-align: center;
     padding: 80px 20px 60px;
@@ -83,7 +83,6 @@ body {
     background: var(--color-light-bg);
     padding: 8px;
     border-radius: 40px;
-    /* Pill shape container */
 }
 
 .filter-btn {
@@ -120,146 +119,101 @@ body {
     justify-content: center;
 }
 
-/* Product Card */
+/* Minimalist Product Card */
 .product-card {
     background: transparent;
     border: none;
-    transition: var(--transition);
-    margin-bottom: 20px;
-    height: 100%;
-    /* Ensure standard height */
+    margin-bottom: 40px;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
     display: flex;
     flex-direction: column;
 }
 
 .product-card:hover {
-    transform: translateY(-8px);
+    opacity: 0.8;
+    transform: none;
+    box-shadow: none;
 }
 
 .product-image {
-    position: relative;
-    overflow: hidden;
     width: 100%;
     aspect-ratio: 4/5;
-    /* Modern aspect ratio handling */
-    padding-bottom: 0;
-    /* Remove old padding hack */
     background: #f0f0f0;
-    margin-bottom: 20px;
-    border-radius: 2px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    position: relative;
 }
 
 .product-image img {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.8s cubic-bezier(0.2, 1, 0.4, 1);
+    display: block;
 }
 
-.product-card:hover .product-image img {
-    transform: scale(1.08);
-}
-
-.product-overlay {
+/* Sold Overlay */
+.product-card.sold .product-image::after {
+    content: "VENDIDO";
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(2px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: var(--transition);
-}
-
-.product-card:hover .product-overlay {
-    opacity: 1;
-}
-
-.btn-view {
-    padding: 14px 32px;
-    background: #fff;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.8);
     color: #000;
-    border: 1px solid #fff;
-    font-family: var(--font-body);
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    cursor: pointer;
+    padding: 5px 10px;
     font-size: 0.8rem;
-    transition: var(--transition);
-    transform: translateY(20px);
-    opacity: 0;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    border: 1px solid #000;
 }
 
-.product-card:hover .btn-view {
-    transform: translateY(0);
-    opacity: 1;
+.product-card.sold .product-price {
+    text-decoration: line-through;
+    opacity: 0.5;
+    display: none;
 }
 
-.btn-view:hover {
-    background: #000;
-    color: #fff;
-    border-color: #000;
-}
-
-/* Product Info */
+/* Info */
 .product-info {
-    padding: 0 10px;
+    padding: 0;
     text-align: left;
-    margin-top: auto;
-    /* Push to bottom if needed, though flux column does this */
 }
 
 .product-title {
     font-family: var(--font-heading);
-    font-size: 1.5rem;
+    font-style: italic;
+    font-size: 1rem;
     font-weight: 400;
-    margin: 0 0 5px 0;
-    color: var(--color-text);
-    letter-spacing: -0.01em;
-}
-
-.product-year {
-    font-size: 0.9rem;
-    color: var(--color-subtext);
-    margin: 0 0 12px 0;
-    font-family: var(--font-body);
-}
-
-.product-details {
-    font-size: 0.9rem;
-    color: #555;
-    line-height: 1.5;
-    margin: 0 0 20px 0;
-    display: block;
-    min-height: 3em;
-}
-
-.btn-purchase {
-    display: inline-block;
-    padding: 12px 0;
-    border-bottom: 1px solid #000;
-    background: transparent;
+    margin: 0 0 4px 0;
     color: #000;
-    text-transform: uppercase;
-    text-decoration: none;
-    font-size: 0.85rem;
-    letter-spacing: 0.1em;
-    font-weight: 600;
-    transition: var(--transition);
-    font-family: var(--font-body);
 }
 
-.btn-purchase:hover {
-    border-bottom-color: transparent;
-    color: #555;
+.product-artist {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.product-price {
+    background: #fff;
+    color: #333;
+    padding: 18px 0;
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 /* Shop Info Section */
@@ -305,57 +259,121 @@ body {
     margin: 0 auto;
 }
 
-/* Image Modal */
+/* Image Modal Styling */
 .image-modal {
     display: none;
     position: fixed;
-    z-index: 9999;
+    z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(255, 255, 255, 0.98);
-    animation: fadeIn 0.4s ease;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .image-modal.active {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    opacity: 1;
 }
 
-.modal-content-wrapper {
-    position: relative;
-    max-width: 90%;
-    max-height: 90%;
-    margin: auto;
+.modal-container {
+    display: flex;
+    background: #fff;
+    width: 90%;
+    max-width: 1000px;
+    height: 80vh;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+}
+
+.modal-image-wrapper {
+    flex: 1.5;
+    background: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
 }
 
 .modal-image {
     max-width: 100%;
-    max-height: 85vh;
-    display: block;
-    margin: auto;
+    max-height: 100%;
     object-fit: contain;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.modal-info-wrapper {
+    flex: 1;
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+}
+
+.modal-title {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    font-weight: 400;
+}
+
+.modal-dimensions,
+.modal-technique {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.modal-price {
+    font-family: var(--font-body);
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    color: #000;
+}
+
+.btn-modal-buy {
+    background: #000;
+    color: #fff;
+    padding: 15px 40px;
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: inline-block;
+    transition: background 0.3s ease;
+    text-align: center;
+}
+
+.btn-modal-buy:hover {
+    background: #333;
 }
 
 .modal-close {
     position: absolute;
-    top: 30px;
-    right: 40px;
+    top: 20px;
+    right: 30px;
     color: #000;
-    font-size: 50px;
-    font-weight: 100;
+    font-size: 40px;
+    font-weight: 300;
     cursor: pointer;
-    z-index: 10000;
-    transition: transform 0.3s ease;
-    line-height: 0.5;
+    z-index: 1001;
+    line-height: 1;
 }
 
 .modal-close:hover {
-    transform: rotate(90deg);
+    color: #666;
 }
 
 /* Footer */
@@ -384,10 +402,215 @@ footer p {
     }
 }
 
-/* Responsive Design */
-@media (max-width: 1024px) {
-    .shop-title {
-        font-size: 4rem;
+/* Minimalist Grid Actions */
+.product-actions-grid {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-grid-action {
+    flex: 1;
+    background: transparent;
+    border: 1px solid #000;
+    color: #000;
+    padding: 8px 0;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-grid-action:hover {
+    background: #000;
+    color: #fff;
+}
+
+.btn-grid-buy {
+    background: #000;
+    color: #fff;
+}
+
+.btn-grid-buy:hover {
+    background: #333;
+    border-color: #333;
+}
+
+.product-card.hidden {
+    display: none;
+}
+
+/* --- Split Shop Hero --- */
+.shop-hero-split {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    /* Reduced gap */
+    margin-bottom: 40px;
+    /* Reduced margin */
+    min-height: 300px;
+    /* Reduced height */
+    padding: 0 40px;
+    flex-wrap: nowrap;
+}
+
+.hero-left {
+    flex: 1;
+    text-align: left;
+    padding-right: 20px;
+}
+
+.hero-right {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    max-width: 50%;
+}
+
+.shop-title {
+    font-size: 3.5rem;
+    /* Reduced from 5rem */
+    margin: 0 0 5px 0;
+    line-height: 1;
+}
+
+.shop-subtitle {
+    font-size: 1rem;
+    /* Slightly smaller */
+    margin-left: 2px;
+}
+
+/* Mini Carousel inside Hero */
+.featured-carousel-wrapper {
+    width: 100%;
+    background: #fcfcfc;
+    padding: 10px;
+    border-radius: 8px;
+    /* subtle frame */
+}
+
+.featured-label {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #999;
+    margin-bottom: 8px;
+    /* Reduced */
+    text-align: center;
+}
+
+.carousel-container-mini {
+    position: relative;
+    width: 100%;
+    padding: 0 40px;
+}
+
+.carousel-container-mini .carousel-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 10px;
+    /* Reduced specific gap for carousel */
+    padding-bottom: 0px;
+    scrollbar-width: none;
+}
+
+.carousel-container-mini .carousel-track::-webkit-scrollbar {
+    display: none;
+}
+
+.carousel-container-mini .carousel-card {
+    flex: 0 0 160px;
+    /* Reduced card width to show more items */
+    scroll-snap-align: center;
+    margin: 0;
+}
+
+.carousel-container-mini .product-image {
+    height: 180px;
+    /* Reduced image height dramatically */
+    margin-bottom: 5px;
+    /* Tighten up */
+}
+
+.carousel-container-mini .product-title {
+    font-size: 0.75rem;
+    /* Smaller font */
+    text-align: center;
+    margin-bottom: 2px;
+}
+
+.carousel-container-mini .product-price {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    color: #444;
+    background: transparent;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #fff;
+    border: 1px solid #ddd;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.carousel-btn:hover {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+}
+
+.prev-btn {
+    left: 0;
+}
+
+.next-btn {
+    right: 0;
+}
+
+/* Adjustments for Mobile */
+@media (max-width: 900px) {
+    .shop-hero-split {
+        flex-direction: column;
+        text-align: center;
+        gap: 60px;
+    }
+
+    .hero-left {
+        text-align: center;
+        padding-right: 0;
+    }
+
+    .hero-right {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .carousel-container-mini .carousel-card {
+        flex: 0 0 200px;
     }
 }
 
@@ -417,6 +640,25 @@ footer p {
         padding: 50px 20px;
         margin-top: 60px;
     }
+
+    .modal-container {
+        flex-direction: column;
+        height: auto;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-image-wrapper {
+        padding: 20px;
+    }
+
+    .modal-info-wrapper {
+        padding: 30px;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -428,13 +670,7 @@ footer p {
         font-size: 0.9rem;
     }
 
-    .shop-hero {
-        padding: 40px 10px;
-        margin-bottom: 30px;
-    }
-
     .products-grid {
-        /* Force single column for very small screens if auto-fit doesn't catch it */
         grid-template-columns: 1fr;
         gap: 40px;
     }
@@ -463,9 +699,4 @@ footer p {
         top: 20px;
         right: 20px;
     }
-}
-
-/* Utility */
-.product-card.hidden {
-    display: none;
 }

@@ -1,0 +1,112 @@
+/* --- Split Shop Hero --- */
+.shop-hero-split {
+    display: flex;
+    align-items: center;
+    /* Center vertically */
+    justify-content: space-between;
+    gap: 40px;
+    margin-bottom: 80px;
+    min-height: 400px;
+    /* Give it some stature */
+    padding: 0 40px;
+    flex-wrap: nowrap;
+    /* Force side by side on large screens */
+}
+
+.hero-left {
+    flex: 1;
+    text-align: left;
+    /* Align header to left as requested by "Blue box" placement */
+    padding-right: 20px;
+}
+
+.hero-right {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    max-width: 50%;
+}
+
+.shop-title {
+    font-size: 5rem;
+    /* Maintain large size */
+    margin: 0 0 10px 0;
+    line-height: 1;
+}
+
+.shop-subtitle {
+    font-size: 1.2rem;
+    margin-left: 5px;
+    /* Slight alignment adjustment */
+}
+
+/* Mini Carousel inside Hero */
+.featured-carousel-wrapper {
+    width: 100%;
+    background: #fcfcfc;
+    padding: 20px;
+    border-radius: 8px;
+    /* subtle frame */
+}
+
+.featured-label {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #999;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.carousel-container-mini {
+    position: relative;
+    width: 100%;
+    padding: 0 40px;
+    /* Space for arrows */
+}
+
+.carousel-container-mini .carousel-track {
+    padding-bottom: 0;
+}
+
+.carousel-container-mini .carousel-card {
+    flex: 0 0 220px;
+    /* Smaller cards for hero context */
+}
+
+.carousel-container-mini .product-image {
+    height: 250px;
+    /* Smaller image height */
+    margin-bottom: 10px;
+}
+
+.carousel-container-mini .product-title {
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* Adjustments for Mobile */
+@media (max-width: 900px) {
+    .shop-hero-split {
+        flex-direction: column;
+        text-align: center;
+        gap: 60px;
+    }
+
+    .hero-left {
+        text-align: center;
+        padding-right: 0;
+    }
+
+    .hero-right {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .carousel-container-mini .carousel-card {
+        flex: 0 0 200px;
+    }
+}

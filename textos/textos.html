@@ -4,14 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Diego de Aduriz | Proyectos</title>
-    <link rel="stylesheet" href="proyectos.css">
+    <title>Diego de Aduriz | Textos</title>
+
+    <!-- Styles -->
     <link rel="stylesheet" href="../navbar.css">
+    <link rel="stylesheet" href="book.css">
+
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    </script>
+
+    <!-- PageFlip -->
+    <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.js"></script>
 </head>
 
 <body class="has-navbar">
 
+    <!-- Navbar (Relative paths adjusted for subdirectory) -->
     <header class="navbar">
         <a class="navbar__brand" href="../index.html">Diego de Aduriz</a>
 
@@ -44,8 +55,8 @@
                 </div>
             </div>
 
-            <a href="proyectos.html">Proyectos</a>
-            <a href="../textos/textos.html">Textos</a>
+            <a href="../proyectos/proyectos.html">Proyectos</a>
+            <a href="textos.html" class="active">Textos</a>
             <a href="../shop/shop.html">Shop</a>
             <a href="mailto:contact@diegodeaduriz.com">Contact</a>
         </nav>
@@ -68,7 +79,6 @@
             <a href="../about/about.html">About</a>
             <a href="../prensa/prensa.html">Prensa</a>
 
-            <!-- Muestras Dropdown in Mobile -->
             <div class="navbar__item">
                 <a href="../muestras/muestras.html">Muestras</a>
                 <div class="dropdown-content">
@@ -83,7 +93,6 @@
                 </div>
             </div>
 
-            <!-- Obras Dropdown in Mobile -->
             <div class="navbar__item">
                 <a href="../portfolio/sections/obras.html">Obras</a>
                 <div class="dropdown-content">
@@ -94,87 +103,45 @@
                 </div>
             </div>
 
-            <a href="proyectos.html">Proyectos</a>
-            <a href="../textos/textos.html">Textos</a>
+            <a href="../proyectos/proyectos.html">Proyectos</a>
+            <a href="textos.html">Textos</a>
             <a href="../shop/shop.html">Shop</a>
             <a href="mailto:contact@diegodeaduriz.com">Contact</a>
         </nav>
     </aside>
 
-    <main class="proyectos-container">
-        <!-- Hero Section -->
-        <section class="proyectos-hero">
-            <h1 class="proyectos-title">Proyectos</h1>
-            <p class="proyectos-subtitle">Dirección y desarrollo de proyectos artísticos y culturales</p>
-        </section>
+    <!-- Book Container -->
+    <!-- Catalog View -->
+    <div id="catalog-view" class="catalog-view">
+        <h1 class="catalog-title">Textos y Libros</h1>
+        <div id="catalog-grid" class="catalog-grid">
+            <!-- Book items will be injected here JS -->
+        </div>
+    </div>
 
-        <!-- Projects Grid -->
-        <section class="projects-grid">
+    <!-- Reader View (Hidden by default) -->
+    <div id="reader-view" style="display: none;">
+        <button id="backToCatalogBtn" class="back-btn">← Volver al Catálogo</button>
 
-            <!-- El Castillo Project -->
-            <article class="project-card">
-                <div class="project-header">
-                    <h2 class="project-name">El Castillo</h2>
-                    <span class="project-year">2024</span>
-                </div>
+        <div id="loading">Loading Book...</div>
 
-                <div class="project-preview">
-                    <iframe src="https://elcastillo.art/" title="El Castillo - Espacio de arte contemporáneo"
-                        class="website-iframe" loading="lazy"></iframe>
-                    <div class="preview-overlay">
-                        <a href="https://elcastillo.art/" target="_blank" rel="noopener noreferrer" class="btn-visit">
-                            Visit Website
-                        </a>
-                    </div>
-                </div>
+        <div class="book-container">
+            <!-- The Flipbook Element -->
+            <div id="flipbook">
+                <!-- Pages will be injected here by JS -->
+            </div>
+        </div>
 
-                <div class="project-info">
-                    <h3 class="project-title">Espacio de Arte Contemporáneo</h3>
-                    <p class="project-description">
-                        El Castillo is a contemporary art space in Argentina, featuring exhibitions,
-                        artists, and a curated shop. The website showcases the venue's cultural programming
-                        and artistic vision.
-                    </p>
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn-control" id="prevBtn" title="Previous Page">←</button>
+            <span id="pageInfo" style="font-size: 0.9rem; margin-top: 3px;"></span>
+            <button class="btn-control" id="nextBtn" title="Next Page">→</button>
+        </div>
+    </div>
 
-                    <div class="project-credits">
-                        <h4>Role & Contributions</h4>
-                        <ul>
-                            <li><strong>Art Direction</strong> - Diego de Aduriz es el creador y director del espacio.
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="project-tags">
-                        <span class="tag">Art Direction</span>
-                        <span class="tag">Digital Curation</span>
-                    </div>
-
-                    <a href="https://elcastillo.art/" target="_blank" rel="noopener noreferrer"
-                        class="btn-project-link">
-                        Explore El Castillo →
-                    </a>
-                </div>
-            </article>
-
-            <!-- Placeholder for future projects -->
-            <article class="project-card project-card--coming-soon">
-                <div class="coming-soon-content">
-                    <div class="coming-soon-icon">+</div>
-                    <h3 class="coming-soon-text">More Projects Coming Soon</h3>
-                    <p class="coming-soon-subtitle">Stay tuned for upcoming collaborations and digital works</p>
-                </div>
-            </article>
-
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2024 Diego de Aduriz. All rights reserved.</p>
-    </footer>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="../navbar.js"></script>
-    <script src="proyectos.js"></script>
+    <script src="book.js"></script>
 </body>
 
 </html>

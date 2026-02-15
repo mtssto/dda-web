@@ -1,0 +1,110 @@
+/* --- Featured Carousel Section --- */
+.featured-carousel-section {
+    max-width: 1400px;
+    margin: 0 auto 60px;
+    padding: 0 40px;
+    text-align: center;
+}
+
+.featured-title {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    font-weight: 400;
+}
+
+.carousel-container {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 50px;
+    /* Space for arrows */
+}
+
+.carousel-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 20px;
+    padding-bottom: 20px;
+    /* Hide scrollbar potentially or give space */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.carousel-track::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari */
+}
+
+.carousel-card {
+    flex: 0 0 300px;
+    /* Fixed width for cards */
+    scroll-snap-align: center;
+    /* Reuse existing product card styles but reset margins if needed */
+    margin: 0;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #fff;
+    border: 1px solid #ddd;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.carousel-btn:hover {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+}
+
+.prev-btn {
+    left: 0;
+}
+
+.next-btn {
+    right: 0;
+}
+
+/* Make existing cards work well in carousel context */
+.carousel-card .product-image {
+    height: 350px;
+    /* Ensure uniform height */
+}
+
+@media (max-width: 768px) {
+    .carousel-container {
+        padding: 0;
+    }
+
+    .carousel-btn {
+        display: none;
+        /* Hide buttons on mobile, allow swipe */
+    }
+
+    .carousel-track {
+        padding-left: 20px;
+        /* Hint at more content */
+        padding-right: 20px;
+        justify-content: flex-start;
+    }
+
+    .carousel-card {
+        flex: 0 0 85%;
+        /* Shows part of next card */
+        scroll-snap-align: center;
+    }
+}

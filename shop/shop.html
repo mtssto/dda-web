@@ -53,7 +53,7 @@
             </div>
 
             <a href="../proyectos/proyectos.html">Proyectos</a>
-            <a href="../under-construction.html">Textos</a>
+            <a href="../textos/textos.html">Textos</a>
             <a href="shop.html">Shop</a>
             <a href="mailto:contact@diegodeaduriz.com">Contact</a>
         </nav>
@@ -103,7 +103,7 @@
             </div>
 
             <a href="../proyectos/proyectos.html">Proyectos</a>
-            <a href="../under-construction.html">Textos</a>
+            <a href="../textos/textos.html">Textos</a>
             <a href="shop.html">Shop</a>
             <a href="mailto:contact@diegodeaduriz.com">Contact</a>
         </nav>
@@ -111,9 +111,72 @@
 
     <main class="shop-container">
         <!-- Hero Section -->
-        <section class="shop-hero">
-            <h1 class="shop-title">Diego de Aduriz <span class="shop-title-accent">Store</span></h1>
-            <p class="shop-subtitle">Original Artworks & Limited Editions</p>
+        <!-- Restructured Shop Hero Split -->
+        <section class="shop-hero-split">
+            <div class="hero-left">
+                <h1 class="shop-title">Diego de Aduriz</h1>
+                <p class="shop-subtitle">Original Artworks & Limited Editions</p>
+            </div>
+
+            <div class="hero-right">
+                <div class="featured-carousel-wrapper">
+                    <h2 class="featured-label">Destacados</h2>
+                    <div class="carousel-container-mini">
+                        <button class="carousel-btn prev-btn" aria-label="Previous">❮</button>
+                        <div class="carousel-track">
+                            <!-- Carousel Item 1 -->
+                            <div class="product-card carousel-card" data-category="pasteles"
+                                data-dimensions="140 x 125 cm" data-technique="Aerosol y pastel sobre madera"
+                                onclick="openModal(this)">
+                                <div class="product-image">
+                                    <img src="../portfolio/sections/obras/MG_0307.jpg" alt="Paisaje con oso, 2015">
+                                </div>
+                                <div class="product-info">
+                                    <h3 class="product-title">Paisaje con oso</h3>
+                                    <p class="product-price">$2500 USD</p>
+                                </div>
+                            </div>
+                            <!-- Carousel Item 2 -->
+                            <div class="product-card carousel-card" data-category="pasteles"
+                                data-dimensions="140 x 82 cm" data-technique="Aerosol y pastel sobre madera"
+                                onclick="openModal(this)">
+                                <div class="product-image">
+                                    <img src="../portfolio/sections/obras/MG_0312_1.jpg" alt="Rayo dorado, 2015">
+                                </div>
+                                <div class="product-info">
+                                    <h3 class="product-title">Rayo dorado</h3>
+                                    <p class="product-price">$3000 USD</p>
+                                </div>
+                            </div>
+                            <!-- Carousel Item 3 -->
+                            <div class="product-card carousel-card" data-category="pasteles"
+                                data-dimensions="33 x 25 cm" data-technique="Pastel tiza sobre papel"
+                                onclick="openModal(this)">
+                                <div class="product-image">
+                                    <img src="../portfolio/sections/obras/MG_0327.jpg" alt="Yukito, 2020">
+                                </div>
+                                <div class="product-info">
+                                    <h3 class="product-title">Yukito</h3>
+                                    <p class="product-price">$2000 USD</p>
+                                </div>
+                            </div>
+                            <!-- Carousel Item 4 -->
+                            <div class="product-card carousel-card" data-category="pasteles"
+                                data-dimensions="205 x 210 cm" data-technique="Pastel sobre tela"
+                                onclick="openModal(this)">
+                                <div class="product-image">
+                                    <img src="../portfolio/sections/obras/MG_1192.jpg" alt="Gato Merlín - 2021">
+                                </div>
+                                <div class="product-info">
+                                    <h3 class="product-title">Gato Merlín</h3>
+                                    <p class="product-price">$5000 USD</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="carousel-btn next-btn" aria-label="Next">❯</button>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Filter Section -->
@@ -129,603 +192,566 @@
         <!-- Products Grid -->
         <section class="products-grid" id="productsGrid">
             <!-- PASTELES -->
-            <div class="product-card" data-category="pasteles">
+            <div class="product-card" data-category="pasteles" data-dimensions="140 x 125 cm"
+                data-technique="Aerosol y pastel sobre madera" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../portfolio/sections/obras/MG_0307.jpg" alt="Paisaje con oso, 2015">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Paisaje con oso</h3>
-                    <p class="product-year">2015</p>
-                    <p class="product-details">Aerosol y pastel sobre madera<br>140 x 125 cm</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20la%20obra:%20Paisaje%20con%20oso,%202015"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$2500 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="pasteles">
+            <div class="product-card" data-category="pasteles" data-dimensions="140 x 82 cm"
+                data-technique="Aerosol y pastel sobre madera" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../portfolio/sections/obras/MG_0312_1.jpg" alt="Rayo dorado, 2015">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Rayo dorado</h3>
-                    <p class="product-year">2015</p>
-                    <p class="product-details">Aerosol y pastel sobre madera<br>140 x 82 cm</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20la%20obra:%20Rayo%20dorado,%202015"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$3000 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="pasteles">
+            <div class="product-card" data-category="pasteles" data-dimensions="33 x 25 cm"
+                data-technique="Pastel tiza sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../portfolio/sections/obras/MG_0327.jpg" alt="Yukito, 2020">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Yukito</h3>
-                    <p class="product-year">2020</p>
-                    <p class="product-details">Pastel tiza sobre papel<br>33 x 25 cm</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20la%20obra:%20Yukito,%202020"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$2000 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="pasteles">
+            <div class="product-card" data-category="pasteles" data-dimensions="35 x 25 cm"
+                data-technique="Pastel tiza sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../portfolio/sections/obras/MG_0328.jpg" alt="Gato celeste, 2020">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Gato celeste</h3>
-                    <p class="product-year">2020</p>
-                    <p class="product-details">Pastel tiza sobre papel<br>35 x 25 cm</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20la%20obra:%20Gato%20celeste,%202020"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$1500 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="pasteles">
+            <div class="product-card" data-category="pasteles" data-dimensions="205 x 210 cm"
+                data-technique="Pastel sobre tela" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../portfolio/sections/obras/MG_1192.jpg" alt="Gato Merlín - 2021">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Gato Merlín</h3>
-                    <p class="product-year">2021</p>
-                    <p class="product-details">Pastel sobre tela<br>205 x 210 cm</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20la%20obra:%20Gato%20Merlín%20-%202021"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$5000 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="pasteles">
+            <div class="product-card" data-category="pasteles" data-dimensions="50 x 35 cm"
+                data-technique="Tecnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../portfolio/sections/obras/Diego+de+Aduriz+-+The+future+is+stupid+-+tecnica+mixta+sobre+papel+-+50+x+35+cm+-+2015.jpeg"
                         alt="The future is stupid - 2015">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">The future is stupid</h3>
-                    <p class="product-year">2015</p>
-                    <p class="product-details">Tecnica mixta sobre papel<br>50 x 35 cm</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20la%20obra:%20The%20future%20is%20stupid%20-%202015"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$2000 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="pasteles">
+            <div class="product-card" data-category="pasteles" data-dimensions="182 x 102 cm"
+                data-technique="Pintura y collage sobre tela" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../portfolio/sections/obras/mascara2.jpg" alt="Paisaje con máscara I - 2021">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Paisaje con máscara I</h3>
-                    <p class="product-year">2021</p>
-                    <p class="product-details">Pintura y collage sobre tela<br>182 x 102 cm</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20la%20obra:%20Paisaje%20con%20máscara%20I%20-%202021"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$3000 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="pasteles">
+            <div class="product-card" data-category="pasteles" data-dimensions="150 x 100 cm"
+                data-technique="Pastel y acrílico sobre tela" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../portfolio/sections/obras/Diego+de+Aduriz+-+Abecedario+-+150+x+100+cm+-+Pastel+y+acrilico+sobre+tela+-+2021.jpg"
                         alt="Abecedario - 2021">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Abecedario</h3>
-                    <p class="product-year">2021</p>
-                    <p class="product-details">Pastel y acrílico sobre tela<br>150 x 100 cm</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20la%20obra:%20Abecedario%20-%202021"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$2500 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
             <!-- DIGITAL ART -->
-            <div class="product-card" data-category="digital">
+            <div class="product-card" data-category="digital" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="https://64.media.tumblr.com/c29b535685cd870a467bdc6eb0d60ef2/tumblr_n27f1t2IvP1r74tb2o1_1280.jpg"
                         alt="Digital Art">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Digital Artwork #1</h3>
-                    <p class="product-year">Digital Print</p>
-                    <p class="product-details">Limited Edition Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20obra%20digital"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="digital">
+            <div class="product-card" data-category="digital" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="https://64.media.tumblr.com/c3123779be189a5a8737b190f595574a/tumblr_n275dsU7Xr1r74tb2o1_250.jpg"
                         alt="Digital Art">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Digital Artwork #2</h3>
-                    <p class="product-year">Digital Print</p>
-                    <p class="product-details">Limited Edition Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20obra%20digital"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="digital">
+            <div class="product-card" data-category="digital" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="https://64.media.tumblr.com/9e5c31eb51ce7e28c7982f271746f302/tumblr_n275eaKQwf1r74tb2o1_640.jpg"
                         alt="Digital Art">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Digital Artwork #3</h3>
-                    <p class="product-year">Digital Print</p>
-                    <p class="product-details">Limited Edition Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20obra%20digital"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="digital">
+            <div class="product-card" data-category="digital" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="https://64.media.tumblr.com/15528b2c6461bb6795b432f0b5a67bd3/tumblr_n2757yIlWR1r74tb2o1_540.jpg"
                         alt="Digital Art">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Digital Artwork #4</h3>
-                    <p class="product-year">Digital Print</p>
-                    <p class="product-details">Limited Edition Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20obra%20digital"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
             <!-- ILUSTRACIONES -->
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/aaaa.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #1</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/aaaaa.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #2</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/aaaaaa.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #3</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/b.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #4</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/bb.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #5</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/bbb.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #6</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu1.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #7</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu2.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #8</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu3.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #9</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu4.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #10</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu5.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #11</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu6.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #12</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu7.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #13</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu8.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #14</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu9.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #15</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu10.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #16</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu11.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #17</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu12.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #18</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu13.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #19</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu14.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #20</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu15.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #21</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu16.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #22</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu17.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #23</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu18.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #24</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="product-card" data-category="ilustraciones">
+            <div class="product-card" data-category="ilustraciones" data-dimensions="30 x 40 cm"
+                data-technique="Técnica mixta sobre papel" onclick="openModal(this)">
                 <div class="product-image">
                     <img src="../Ilustrates/dibu19.jpg" alt="Illustration">
-                    <div class="product-overlay">
-                        <button class="btn-view" onclick="openModal(this)">View Details</button>
-                    </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">Illustration #25</h3>
-                    <p class="product-year">Print</p>
-                    <p class="product-details">Fine Art Print<br>Available in multiple sizes</p>
-                    <a href="https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20esta%20ilustracion"
-                        class="btn-purchase" target="_blank">Consultar</a>
+                    <p class="product-price">$20.00 USD</p>
+                    <div class="product-actions-grid">
+                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -759,8 +785,17 @@
     <!-- Modal for Image View -->
     <div id="imageModal" class="image-modal">
         <span class="modal-close">&times;</span>
-        <div class="modal-content-wrapper">
-            <img class="modal-image" id="modalImage" alt="Artwork">
+        <div class="modal-container">
+            <div class="modal-image-wrapper">
+                <img class="modal-image" id="modalImage" alt="Artwork">
+            </div>
+            <div class="modal-info-wrapper">
+                <h2 id="modalTitle" class="modal-title"></h2>
+                <p id="modalTechnique" class="modal-technique"></p>
+                <p id="modalDimensions" class="modal-dimensions"></p>
+                <p id="modalPrice" class="modal-price"></p>
+
+            </div>
         </div>
     </div>
 
