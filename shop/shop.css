@@ -168,6 +168,10 @@ body {
     border: 1px solid #000;
 }
 
+body.lang-en .product-card.sold .product-image::after {
+    content: "SOLD";
+}
+
 .product-card.sold .product-price {
     text-decoration: line-through;
     opacity: 0.5;

@@ -1,5 +1,55 @@
 // Filter functionality
+// Language Configuration (Shop Specific)
+window.pageTranslations = {
+    es: {
+        'hero.subtitle': 'Obras Originales y Ediciones Limitadas',
+        'hero.featured': 'Destacados',
+        'filter.all': 'Todos',
+        'filter.pasteles': 'Pasteles',
+        'filter.digital': 'Arte Digital',
+        'filter.ilustraciones': 'Ilustraciones',
+        'card.details': 'DETALLES',
+        'card.buy': 'COMPRAR',
+        'card.sold': 'VENDIDO',
+        'modal.dimensions': 'Dimensiones',
+        'modal.technique': 'Técnica',
+        'modal.consult': 'CONSULTAR / COMPRAR',
+        'shop.guarantee': 'Autenticidad Garantizada',
+        'shop.guarantee_desc': 'Todas las obras incluyen certificado.',
+        'shop.shipping': 'Envíos Globales',
+        'shop.shipping_desc': 'Enviamos a todo el mundo con embalaje seguro.',
+        'shop.service': 'Atención Personalizada',
+        'shop.service_desc': 'Contacto directo por WhatsApp para consultas.'
+    },
+    en: {
+        'hero.subtitle': 'Original Artworks & Limited Editions',
+        'hero.featured': 'Featured',
+        'filter.all': 'All',
+        'filter.pasteles': 'Pastels',
+        'filter.digital': 'Digital Art',
+        'filter.ilustraciones': 'Illustrations',
+        'card.details': 'DETAILS',
+        'card.buy': 'BUY',
+        'card.sold': 'SOLD',
+        'modal.dimensions': 'Dimensions',
+        'modal.technique': 'Technique',
+        'modal.consult': 'INQUIRE / BUY',
+        'shop.guarantee': 'Authenticity Guaranteed',
+        'shop.guarantee_desc': 'All artworks arrive with a signed certificate.',
+        'shop.shipping': 'Global Shipping',
+        'shop.shipping_desc': 'We ship worldwide with secure packaging.',
+        'shop.service': 'Personal Service',
+        'shop.service_desc': 'Direct contact via WhatsApp for inquiries.'
+    }
+};
+
 document.addEventListener('DOMContentLoaded', function () {
+    // Re-apply translations on load to catch page-specific ones
+    const savedLang = localStorage.getItem('preferredLanguage') || 'es';
+    if (window.changeLanguage) {
+        window.changeLanguage(savedLang);
+    }
+
     const filterButtons = document.querySelectorAll('.filter-btn');
     const productCards = document.querySelectorAll('.product-card');
     const modal = document.getElementById('imageModal');
@@ -158,14 +208,18 @@ function openModal(element) {
         modalImg.src = img.src;
         modalImg.alt = img.alt;
 
+        // Get current language for labels
+        const lang = localStorage.getItem('preferredLanguage') || 'es';
+        const t = (window.pageTranslations && window.pageTranslations[lang]) || window.pageTranslations['es'];
+
         if (modalTitle) modalTitle.textContent = title;
         if (modalPrice) modalPrice.textContent = price;
-        if (modalDimensions) modalDimensions.textContent = `Dimensiones: ${dimensions}`;
+        if (modalDimensions) modalDimensions.textContent = `${t['modal.dimensions']}: ${dimensions}`;
         if (modalTechnique) modalTechnique.textContent = technique;
 
         // Buy Button Logic
         if (modalBuyBtn) {
-            updateBuyButton(modalBuyBtn, card, title);
+            updateBuyButton(modalBuyBtn, card, title, t);
         }
 
         modal.classList.add('active');
@@ -173,16 +227,16 @@ function openModal(element) {
     }
 }
 
-function updateBuyButton(btn, card, title) {
+function updateBuyButton(btn, card, title, t) {
     if (card.classList.contains('sold')) {
-        btn.textContent = 'VENDIDO';
+        btn.textContent = t['card.sold'];
         btn.href = '#';
         btn.style.pointerEvents = 'none';
         btn.style.opacity = '0.5';
         btn.style.background = '#ccc';
         btn.style.borderColor = '#ccc';
     } else {
-        btn.textContent = 'CONSULTAR / COMPRAR';
+        btn.textContent = t['modal.consult'];
         btn.style.pointerEvents = 'auto';
         btn.style.opacity = '1';
         btn.style.background = '#000';

@@ -16,6 +16,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- Book Data ---
     // --- Book Data ---
+    window.pageTranslations = {
+        es: {
+            'catalog.title': 'Textos y Libros',
+            'book.read': 'Leer',
+            'book.back': '← Volver al Catálogo'
+        },
+        en: {
+            'catalog.title': 'Texts and Books',
+            'book.read': 'Read',
+            'book.back': '← Back to Catalog'
+        }
+    };
+
     const books = [
         {
             id: 'libro_diego',
@@ -56,6 +69,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- Catalog Logic ---
 
     function renderCatalog() {
+        // Translate title
+        const catalogTitle = document.querySelector('.catalog-title');
+        if (catalogTitle && !catalogTitle.hasAttribute('data-i18n')) {
+            catalogTitle.setAttribute('data-i18n', 'catalog.title');
+        }
+
+        // Translate back button
+        if (backBtn && !backBtn.hasAttribute('data-i18n')) {
+            backBtn.setAttribute('data-i18n', 'book.back');
+        }
+
         catalogGrid.innerHTML = '';
         books.forEach(book => {
             const card = document.createElement('div');
@@ -80,6 +104,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const btn = document.createElement('button');
             btn.className = 'book-btn';
+            btn.setAttribute('data-i18n', 'book.read');
             btn.textContent = 'Leer';
 
             card.appendChild(cover);
@@ -87,6 +112,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             card.appendChild(btn);
             catalogGrid.appendChild(card);
         });
+
+        // Trigger translation update if available
+        if (window.changeLanguage) {
+            window.changeLanguage(localStorage.getItem('preferredLanguage') || 'es');
+        }
     }
 
     // --- Reader Logic ---

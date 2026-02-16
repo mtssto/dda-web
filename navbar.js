@@ -60,4 +60,149 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+
+    // --- Language Switching Logic ---
+
+    // Global Translations (Navigation & Common)
+    // Pages can extend this by adding to window.translations or handling their own data-i18n
+    window.translations = window.translations || {};
+
+    const commonTranslations = {
+        es: {
+            'nav.bio': 'Bio',
+            'nav.prensa': 'Prensa',
+            'nav.muestras': 'Muestras',
+            'nav.obras': 'Obras',
+            'nav.proyectos': 'Proyectos',
+            'nav.textos': 'Textos',
+            'nav.shop': 'Shop',
+            'nav.contact': 'Contact',
+            'footer.rights': 'Todos los derechos reservados.'
+        },
+        en: {
+            'nav.bio': 'Bio',
+            'nav.prensa': 'Press',
+            'nav.muestras': 'Exhibitions',
+            'nav.obras': 'Artworks',
+            'nav.proyectos': 'Projects',
+            'nav.textos': 'Texts',
+            'nav.shop': 'Shop',
+            'nav.contact': 'Contact',
+            'footer.rights': 'All rights reserved.'
+        }
+    };
+
+    // Deep merge or simple assign? Simple assign for now
+    // We want to ensure we don't overwrite page-specific translations if they loaded first (unlikely) 
+    // or we want to provide a base.
+
+    // Let's define a global function
+    window.changeLanguage = function (lang) {
+        localStorage.setItem('preferredLanguage', lang);
+
+        // 1. Common Translations
+        updateElements(commonTranslations[lang]);
+
+        // 2. Page Specific Translations (if any)
+        if (window.pageTranslations && window.pageTranslations[lang]) {
+            updateElements(window.pageTranslations[lang]);
+        }
+
+        // 3. Update active state of buttons
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+            // Optional: Bold weight or color change
+            btn.style.fontWeight = btn.getAttribute('data-lang') === lang ? 'bold' : 'normal';
+        });
+
+        // 4. Update body class
+        document.body.classList.remove('lang-es', 'lang-en');
+        document.body.classList.add('lang-' + lang);
+
+        // 5. Dispatch event for other scripts
+        window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
+    };
+
+    function updateElements(t) {
+        if (!t) return;
+
+        // 1. Standard data-i18n approach
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (t[key]) {
+                el.textContent = t[key];
+            }
+        });
+
+        // 2. Fallback for Navbar Links without data-i18n (Dynamic matching)
+        // This ensures other pages get translated nav even if I didn't edit their HTML
+        const navMap = {
+            'About': 'nav.bio',
+            'Bio': 'nav.bio',
+            'Prensa': 'nav.prensa',
+            'Muestras': 'nav.muestras',
+            'Obras': 'nav.obras',
+            'Proyectos': 'nav.proyectos',
+            'Textos': 'nav.textos',
+            'Shop': 'nav.shop',
+            'Contact': 'nav.contact'
+        };
+
+        document.querySelectorAll('.navbar__links a, .navbar-drawer__links a').forEach(link => {
+            if (!link.hasAttribute('data-i18n')) {
+                const text = link.textContent.trim();
+                if (navMap[text] && t[navMap[text]]) {
+                    link.textContent = t[navMap[text]];
+                    // Optionally add the attribute for future updates
+                    link.setAttribute('data-i18n', navMap[text]);
+                }
+            }
+        });
+    }
+
+    // --- Inject Language Switcher if not present ---
+    function injectLanguageSwitcher() {
+        const navLinks = document.querySelector('.navbar__links');
+        const navDrawerLinks = document.querySelector('.navbar-drawer__links');
+
+        // Desktop
+        if (navLinks && !navLinks.querySelector('.lang-switcher')) {
+            const div = document.createElement('div');
+            div.className = 'lang-switcher';
+            div.style.cssText = 'margin-left: 15px; display: inline-block; font-size: 0.9rem;';
+            div.innerHTML = `
+                <a href="#" class="lang-btn" data-lang="es" style="text-decoration: none; color: inherit;">ES</a> | 
+                <a href="#" class="lang-btn" data-lang="en" style="text-decoration: none; color: inherit;">EN</a>
+            `;
+            navLinks.appendChild(div);
+        }
+
+        // Mobile
+        if (navDrawerLinks && !navDrawerLinks.querySelector('.lang-switcher-mobile')) {
+            const div = document.createElement('div');
+            div.className = 'lang-switcher-mobile';
+            div.style.cssText = 'margin-top: 15px; font-size: 1rem;';
+            div.innerHTML = `
+                <a href="#" class="lang-btn" data-lang="es" style="margin-right: 10px;">ES</a>
+                <a href="#" class="lang-btn" data-lang="en">EN</a>
+            `;
+            navDrawerLinks.appendChild(div);
+        }
+    }
+
+    injectLanguageSwitcher();
+
+    // Initialize
+    const savedLang = localStorage.getItem('preferredLanguage') || 'es';
+    window.changeLanguage(savedLang);
+
+    // Listeners for buttons (using delegation to catch dynamically added ones or ones in different parts)
+    document.body.addEventListener('click', (e) => {
+        if (e.target.classList.contains('lang-btn')) {
+            e.preventDefault();
+            const lang = e.target.getAttribute('data-lang');
+            if (lang) window.changeLanguage(lang);
+        }
+    });
+
 });

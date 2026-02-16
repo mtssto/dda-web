@@ -24,11 +24,11 @@
         <a class="navbar__brand" href="../index.html">Diego de Aduriz</a>
 
         <nav class="navbar__links" aria-label="Main navigation">
-            <a href="../about/about.html">About</a>
-            <a href="../prensa/prensa.html">Prensa</a>
+            <a href="../bio/bio.html" data-i18n="nav.about">Bio</a>
+            <a href="../prensa/prensa.html" data-i18n="nav.prensa">Prensa</a>
             <!-- Muestras Dropdown -->
             <div class="navbar__item">
-                <a href="../muestras/muestras.html">Muestras</a>
+                <a href="../muestras/muestras.html" data-i18n="nav.muestras">Muestras</a>
                 <div class="dropdown-content">
                     <a href="../muestras/microcentroCuenta.html">Microcentro Cuenta</a>
                     <a href="../muestras/elefantesEnElBazar.html">Elefantes en el Bazar</a>
@@ -43,7 +43,7 @@
 
             <!-- Obras Dropdown -->
             <div class="navbar__item">
-                <a href="../portfolio/sections/obras.html">Obras</a>
+                <a href="../portfolio/sections/obras.html" data-i18n="nav.obras">Obras</a>
                 <div class="dropdown-content">
                     <a href="../portfolio/sections/obras.html#pasteles">Pasteles</a>
                     <a href="../portfolio/sections/digitalArt.html">Digital</a>
@@ -52,10 +52,10 @@
                 </div>
             </div>
 
-            <a href="../proyectos/proyectos.html">Proyectos</a>
-            <a href="../textos/textos.html">Textos</a>
-            <a href="shop.html">Shop</a>
-            <a href="mailto:contact@diegodeaduriz.com">Contact</a>
+            <a href="../proyectos/proyectos.html" data-i18n="nav.proyectos">Proyectos</a>
+            <a href="../textos/textos.html" data-i18n="nav.textos">Textos</a>
+            <a href="shop.html" data-i18n="nav.shop">Shop</a>
+            <a href="mailto:contact@diegodeaduriz.com" data-i18n="nav.contact">Contact</a>
         </nav>
 
         <button class="navbar__burger" id="navBurger" type="button" aria-label="Open menu" aria-controls="navDrawer"
@@ -73,12 +73,12 @@
         </div>
 
         <nav class="navbar-drawer__links">
-            <a href="../about/about.html">About</a>
-            <a href="../prensa/prensa.html">Prensa</a>
+            <a href="../bio/bio.html" data-i18n="nav.about">Bio</a>
+            <a href="../prensa/prensa.html" data-i18n="nav.prensa">Prensa</a>
 
             <!-- Muestras Dropdown in Mobile -->
             <div class="navbar__item">
-                <a href="../muestras/muestras.html">Muestras</a>
+                <a href="../muestras/muestras.html" data-i18n="nav.muestras">Muestras</a>
                 <div class="dropdown-content">
                     <a href="../portfolio/sections/microcentroCuenta.html">Microcentro Cuenta</a>
                     <a href="../portfolio/sections/elefantesEnElBazar.html">Elefantes en el Bazar</a>
@@ -93,7 +93,7 @@
 
             <!-- Obras Dropdown in Mobile -->
             <div class="navbar__item">
-                <a href="../portfolio/sections/obras.html">Obras</a>
+                <a href="../portfolio/sections/obras.html" data-i18n="nav.obras">Obras</a>
                 <div class="dropdown-content">
                     <a href="../portfolio/sections/obras.html#pasteles">Pasteles</a>
                     <a href="../portfolio/sections/digitalArt.html">Digital</a>
@@ -102,10 +102,10 @@
                 </div>
             </div>
 
-            <a href="../proyectos/proyectos.html">Proyectos</a>
-            <a href="../textos/textos.html">Textos</a>
-            <a href="shop.html">Shop</a>
-            <a href="mailto:contact@diegodeaduriz.com">Contact</a>
+            <a href="../proyectos/proyectos.html" data-i18n="nav.proyectos">Proyectos</a>
+            <a href="../textos/textos.html" data-i18n="nav.textos">Textos</a>
+            <a href="shop.html" data-i18n="nav.shop">Shop</a>
+            <a href="mailto:contact@diegodeaduriz.com" data-i18n="nav.contact">Contact</a>
         </nav>
     </aside>
 
@@ -115,12 +115,12 @@
         <section class="shop-hero-split">
             <div class="hero-left">
                 <h1 class="shop-title">Diego de Aduriz</h1>
-                <p class="shop-subtitle">Original Artworks & Limited Editions</p>
+                <p class="shop-subtitle" data-i18n="hero.subtitle">Obras Originales y Ediciones Limitadas</p>
             </div>
 
             <div class="hero-right">
                 <div class="featured-carousel-wrapper">
-                    <h2 class="featured-label">Destacados</h2>
+                    <h2 class="featured-label" data-i18n="hero.featured">Destacados</h2>
                     <div class="carousel-container-mini">
                         <button class="carousel-btn prev-btn" aria-label="Previous">❮</button>
                         <div class="carousel-track">
@@ -182,10 +182,11 @@
         <!-- Filter Section -->
         <section class="filter-section">
             <div class="filter-container">
-                <button class="filter-btn active" data-filter="all">Todos</button>
-                <button class="filter-btn" data-filter="pasteles">Pasteles</button>
-                <button class="filter-btn" data-filter="digital">Arte digital</button>
-                <button class="filter-btn" data-filter="ilustraciones">Ilustraciones</button>
+                <button class="filter-btn active" data-filter="all" data-i18n="filter.all">Todos</button>
+                <button class="filter-btn" data-filter="pasteles" data-i18n="filter.pasteles">Pasteles</button>
+                <button class="filter-btn" data-filter="digital" data-i18n="filter.digital">Arte digital</button>
+                <button class="filter-btn" data-filter="ilustraciones"
+                    data-i18n="filter.ilustraciones">Ilustraciones</button>
             </div>
         </section>
 
@@ -201,8 +202,8 @@
                     <h3 class="product-title">Paisaje con oso</h3>
                     <p class="product-price">$2500 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -216,8 +217,8 @@
                     <h3 class="product-title">Rayo dorado</h3>
                     <p class="product-price">$3000 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -231,8 +232,8 @@
                     <h3 class="product-title">Yukito</h3>
                     <p class="product-price">$2000 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -246,8 +247,8 @@
                     <h3 class="product-title">Gato celeste</h3>
                     <p class="product-price">$1500 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -261,8 +262,8 @@
                     <h3 class="product-title">Gato Merlín</h3>
                     <p class="product-price">$5000 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -277,8 +278,8 @@
                     <h3 class="product-title">The future is stupid</h3>
                     <p class="product-price">$2000 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -292,8 +293,8 @@
                     <h3 class="product-title">Paisaje con máscara I</h3>
                     <p class="product-price">$3000 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -308,8 +309,8 @@
                     <h3 class="product-title">Abecedario</h3>
                     <p class="product-price">$2500 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -325,8 +326,8 @@
                     <h3 class="product-title">Digital Artwork #1</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -341,8 +342,8 @@
                     <h3 class="product-title">Digital Artwork #2</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -357,8 +358,8 @@
                     <h3 class="product-title">Digital Artwork #3</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -373,8 +374,8 @@
                     <h3 class="product-title">Digital Artwork #4</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -389,8 +390,8 @@
                     <h3 class="product-title">Illustration #1</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -404,8 +405,8 @@
                     <h3 class="product-title">Illustration #2</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -419,8 +420,8 @@
                     <h3 class="product-title">Illustration #3</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -434,8 +435,8 @@
                     <h3 class="product-title">Illustration #4</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -449,8 +450,8 @@
                     <h3 class="product-title">Illustration #5</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -464,8 +465,8 @@
                     <h3 class="product-title">Illustration #6</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -479,8 +480,8 @@
                     <h3 class="product-title">Illustration #7</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -494,8 +495,8 @@
                     <h3 class="product-title">Illustration #8</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -509,8 +510,8 @@
                     <h3 class="product-title">Illustration #9</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -524,8 +525,8 @@
                     <h3 class="product-title">Illustration #10</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -539,8 +540,8 @@
                     <h3 class="product-title">Illustration #11</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -554,8 +555,8 @@
                     <h3 class="product-title">Illustration #12</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -569,8 +570,8 @@
                     <h3 class="product-title">Illustration #13</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -584,8 +585,8 @@
                     <h3 class="product-title">Illustration #14</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -599,8 +600,8 @@
                     <h3 class="product-title">Illustration #15</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -614,8 +615,8 @@
                     <h3 class="product-title">Illustration #16</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -629,8 +630,8 @@
                     <h3 class="product-title">Illustration #17</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -644,8 +645,8 @@
                     <h3 class="product-title">Illustration #18</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -659,8 +660,8 @@
                     <h3 class="product-title">Illustration #19</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -674,8 +675,8 @@
                     <h3 class="product-title">Illustration #20</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -689,8 +690,8 @@
                     <h3 class="product-title">Illustration #21</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -704,8 +705,8 @@
                     <h3 class="product-title">Illustration #22</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -719,8 +720,8 @@
                     <h3 class="product-title">Illustration #23</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -734,8 +735,8 @@
                     <h3 class="product-title">Illustration #24</h3>
                     <p class="product-price">$20.00 USD</p>
                     <div class="product-actions-grid">
-                        <button class="btn-grid-action btn-grid-details">DETALLES</button>
-                        <button class="btn-grid-action btn-grid-buy">COMPRAR</button>
+                        <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                        <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -762,24 +763,24 @@
         <div class="shop-info-container">
             <div class="shop-info-item">
                 <div class="info-icon">✷</div>
-                <h3>Authenticity Guaranteed</h3>
-                <p>All artworks arrive with a signed certificate.</p>
+                <h3 data-i18n="shop.guarantee">Authenticity Guaranteed</h3>
+                <p data-i18n="shop.guarantee_desc">Todas las obras incluyen certificado.</p>
             </div>
             <div class="shop-info-item">
                 <div class="info-icon">✈</div>
-                <h3>Global Shipping</h3>
-                <p>We ship worldwide with secure packaging.</p>
+                <h3 data-i18n="shop.shipping">Global Shipping</h3>
+                <p data-i18n="shop.shipping_desc">Enviamos a todo el mundo con embalaje seguro.</p>
             </div>
             <div class="shop-info-item">
                 <div class="info-icon">✉</div>
-                <h3>Personal Service</h3>
-                <p>Direct contact via WhatsApp for inquiries.</p>
+                <h3 data-i18n="shop.service">Personal Service</h3>
+                <p data-i18n="shop.service_desc">Contacto directo por WhatsApp para consultas.</p>
             </div>
         </div>
     </section>
 
     <footer>
-        <p>&copy; 2024 Diego de Aduriz. All rights reserved.</p>
+        <p>&copy; 2024 Diego de Aduriz. <span data-i18n="footer.rights">All rights reserved.</span></p>
     </footer>
 
     <!-- Modal for Image View -->
