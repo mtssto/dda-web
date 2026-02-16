@@ -205,3 +205,87 @@ html {
     opacity: 0.6;
     background: transparent;
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .catalog-view {
+        padding: 100px 20px 40px;
+    }
+
+    .catalog-title {
+        font-size: 2rem;
+        margin-bottom: 40px;
+    }
+
+    .catalog-grid {
+        gap: 40px;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+
+    /* Reader View specific overrides */
+    .book-container {
+        padding-top: 0;
+        /* More space for the book */
+        height: calc(100vh - 80px);
+        /* Account for controls */
+    }
+
+    .back-btn {
+        top: 80px;
+        /* Below navbar */
+        left: 20px;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 8px 12px;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        font-size: 0.8rem;
+    }
+
+    .controls {
+        bottom: 20px;
+        padding: 8px 20px;
+        gap: 15px;
+        width: 80%;
+        justify-content: space-between;
+        left: 50%;
+        bottom: 80px;
+        /* moved up a bit from very bottom edge or navbar */
+    }
+}
+
+@media (max-width: 480px) {
+    .catalog-title {
+        font-size: 1.5rem;
+    }
+
+    .catalog-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .book-container {
+        padding: 0;
+        height: 100vh;
+        align-items: flex-start;
+        /* Align top so it doesn't get cut off */
+        padding-top: 120px;
+        /* Space for navbar + back btn */
+    }
+
+    .back-btn {
+        top: 85px;
+        left: 15px;
+        padding: 5px 10px;
+    }
+
+    .controls {
+        bottom: 30px;
+        width: 90%;
+        padding: 5px 15px;
+    }
+
+    #flipbook {
+        /* Ensure it fits nicely */
+        max-width: 100%;
+        max-height: 70%;
+    }
+}

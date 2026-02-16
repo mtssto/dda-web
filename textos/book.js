@@ -24,6 +24,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             image: 'caratula-1.png', // Image cover
             price: '$25.00'
         },
+        {
+            id: 'libro_diego_2',
+            title: 'esto es lo que pasa',
+            file: 'libro_diego_2.pdf',
+            image: 'caratula-2.png', // Image cover
+            price: '$25.00'
+        },
 
     ];
 
@@ -146,12 +153,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             loading.textContent = `Found ${totalPages} pages. Preparing...`;
 
+            // Adjust scale for mobile
+            const isMobile = window.innerWidth < 768;
+            const pdfScale = isMobile ? 1.0 : 1.5;
+
             for (let i = 1; i <= totalPages; i++) {
                 // loading.textContent = `Rendering page ${i} of ${totalPages}...`; 
-                // Commenting out detailed progress to avoid flickering too much text
 
                 const page = await pdfDoc.getPage(i);
-                const viewport = page.getViewport({ scale: 1.5 });
+                const viewport = page.getViewport({ scale: pdfScale });
 
                 const div = document.createElement('div');
                 div.classList.add('page');
@@ -177,9 +187,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             loading.style.display = 'none';
             bookEl.style.display = 'block';
 
+            // Dynamic dimensions for better mobile fit
+            const width = isMobile ? 350 : 550;
+            const height = isMobile ? 500 : 700;
+
             pageFlip = new St.PageFlip(bookEl, {
-                width: 400,
-                height: 600,
+                width: width,
+                height: height,
                 size: 'stretch',
                 minWidth: 300,
                 maxWidth: 1000,
@@ -187,7 +201,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 maxHeight: 1200,
                 maxShadowOpacity: 0.5,
                 showCover: true,
-                mobileScrollSupport: false
+                usePortrait: true, // Forces single page mode on smaller screens
+                startPage: 0,
+                mobileScrollSupport: false // Keep flip effect enabled on mobile
             });
 
             pageFlip.loadFromHTML(document.querySelectorAll('.page'));
