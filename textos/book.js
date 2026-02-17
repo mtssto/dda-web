@@ -44,6 +44,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             image: 'caratula-2.png', // Image cover
             price: '$25.00'
         },
+        {
+            id: 'libro_diego_3',
+            title: 'TOMAMOS DE TODOS LOS COLORES',
+            file: 'libro_diego_3.pdf',
+            image: 'caratula-3.png', // Image cover
+            price: '$25.00'
+        },
 
     ];
 
