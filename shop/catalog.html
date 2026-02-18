@@ -110,6 +110,9 @@
     </aside>
 
     <main class="catalog-container">
+        <div class="catalog-header-actions">
+            <a href="shop.html" class="back-link">← Volver al Shop</a>
+        </div>
         <h1 class="catalog-title" data-i18n="nav.shop">Productos</h1>
         <hr class="catalog-divider">
 
@@ -117,25 +120,22 @@
             <aside class="catalog-sidebar">
                 <div class="sidebar-section">
                     <h3 class="sidebar-heading" data-i18n="filter.categories">CATEGORÍAS</h3>
-                    <ul class="sidebar-list">
-                        <li><button class="sidebar-filter-btn" data-filter="pasteles"
-                                data-i18n="filter.pasteles">Pasteles</button></li>
-                        <li><button class="sidebar-filter-btn" data-filter="digital" data-i18n="filter.digital">Arte
-                                digital</button></li>
-                        <li><button class="sidebar-filter-btn" data-filter="ilustraciones"
-                                data-i18n="filter.ilustraciones">Ilustraciones</button></li>
-                        <li><button class="sidebar-filter-btn active" data-filter="all" data-i18n="filter.all">Ver
-                                todo</button></li>
-                    </ul>
+                    <select id="categoryFilter" class="filter-dropdown">
+                        <option value="all" data-i18n="filter.all">Ver todo</option>
+                        <option value="pasteles" data-i18n="filter.pasteles">Pasteles</option>
+                        <option value="digital" data-i18n="filter.digital">Arte digital</option>
+                        <option value="ilustraciones" data-i18n="filter.ilustraciones">Ilustraciones</option>
+                    </select>
                 </div>
 
                 <div class="sidebar-section">
                     <h3 class="sidebar-heading" data-i18n="filter.price">PRECIO</h3>
-                    <div class="price-inputs">
-                        <input type="text" placeholder="DESDE" class="price-input">
-                        <input type="text" placeholder="HASTA" class="price-input">
-                        <button class="price-filter-arrow">></button>
-                    </div>
+                    <select id="priceFilter" class="filter-dropdown">
+                        <option value="all" data-i18n="filter.price_all">Todos los precios</option>
+                        <option value="under_1000">Menos de $1000</option>
+                        <option value="1000_3000">$1000 - $3000</option>
+                        <option value="over_3000">Más de $3000</option>
+                    </select>
                 </div>
             </aside>
 

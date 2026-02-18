@@ -598,6 +598,7 @@ footer p {
 }
 
 /* Mobile Adjustments */
+/* Mobile Adjustments */
 @media (max-width: 900px) {
     .shop-hero-vertical {
         padding: 40px 20px;
@@ -610,69 +611,10 @@ footer p {
 
     .carousel-container-mini .carousel-card {
         flex: 0 0 200px;
-        /* Slightly smaller on mobile but still substantial */
     }
 
     .carousel-container-mini .product-image {
         height: 240px;
-    }
-}
-
-/* Aggressive compaction for mobile to avoid scrolling */
-@media (max-width: 600px) {
-    .shop-container {
-        padding-top: 80px;
-        /* Reduced from 100px */
-        padding-bottom: 20px;
-    }
-
-    .shop-hero-vertical {
-        padding: 10px 10px 20px;
-        /* Minimal padding */
-        gap: 15px;
-        /* Tighter gap */
-        min-height: calc(100vh - 100px);
-        /* Fill remaining height */
-        justify-content: flex-start;
-        /* Align top */
-    }
-
-    .shop-hero-vertical .shop-title {
-        font-size: 2rem;
-        margin-bottom: 5px;
-    }
-
-    .shop-hero-vertical .shop-subtitle {
-        font-size: 0.85rem;
-    }
-
-    .shop-hero-vertical .featured-label {
-        margin-bottom: 15px;
-        font-size: 0.8rem;
-    }
-
-    .shop-hero-vertical .featured-carousel-wrapper {
-        margin-top: 10px;
-        width: 100%;
-    }
-
-    .carousel-container-mini .product-image {
-        height: 200px;
-        /* Smaller image */
-        margin-bottom: 10px;
-    }
-
-    .carousel-container-mini .carousel-card {
-        flex: 0 0 100%;
-        /* Show one full card centered */
-        scroll-snap-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .carousel-track {
-        justify-content: flex-start;
     }
 }
 
@@ -689,6 +631,237 @@ footer p {
 
     .shop-info-container {
         flex-direction: column;
+        align-items: center;
+    }
+
+    .shop-info-section {
+        padding: 50px 20px;
+        margin-top: 60px;
+    }
+
+    .modal-container {
+        flex-direction: column;
+        height: auto;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-image-wrapper {
+        padding: 20px;
+    }
+
+    .modal-info-wrapper {
+        padding: 30px;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* Aggressive compaction for mobile to avoid scrolling */
+@media (max-width: 600px) {
+
+    /* Main container takes full viewport height minus navbar */
+    .shop-container {
+        padding-top: 60px;
+        padding-bottom: 80px;
+        /* Space for fixed bottom bar */
+        height: 100dvh;
+        /* Force full viewport height */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+        /* Prevent scrolling */
+        box-sizing: border-box;
+    }
+
+    /* Hero takes available space */
+    .shop-hero-vertical {
+        padding: 0 15px;
+        gap: 5px;
+        flex: 1;
+        /* Grow to fill space */
+        min-height: 0;
+        /* CRITICAL requirement for flex children to shrink */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .hero-header {
+        flex: 0 0 auto;
+        margin-bottom: 5px;
+    }
+
+    .shop-hero-vertical .shop-title {
+        font-size: 1.8rem;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .shop-hero-vertical .shop-subtitle {
+        font-size: 0.8rem;
+        margin: 0;
+    }
+
+    .shop-hero-vertical .featured-label {
+        display: none;
+    }
+
+    .shop-hero-vertical .featured-carousel-wrapper {
+        margin-top: 5px;
+        width: 100%;
+        flex: 1;
+        /* Carousel takes remaining space */
+        min-height: 0;
+        /* Allow shrinking */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .carousel-container-mini {
+        padding: 0 20px;
+    }
+
+    .carousel-container-mini .product-image {
+        height: auto;
+        max-height: 40vh;
+        /* Dynamic constraint */
+        aspect-ratio: 4/5;
+        margin: 0 auto 10px;
+        width: auto;
+        object-fit: contain;
+    }
+
+    .carousel-container-mini .carousel-card {
+        flex: 0 0 100%;
+        width: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .carousel-container-mini .product-title {
+        font-size: 0.9rem;
+        margin-bottom: 2px;
+    }
+
+    .carousel-container-mini .product-price {
+        font-size: 0.85rem;
+        padding: 5px 0;
+    }
+
+    /* CTA Text/Button */
+    .shop-cta-section {
+        padding: 10px 0;
+        flex: 0 0 auto;
+        z-index: 10;
+        width: 100%;
+        text-align: center;
+    }
+
+    .btn-see-all {
+        padding: 12px 20px;
+        font-size: 0.85rem;
+        background: #000;
+        color: #fff;
+        width: 90%;
+        max-width: 320px;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    /* Info Section - FIXED Horizontal Bar at Bottom */
+    .shop-info-section {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 75px;
+        padding: 0;
+        margin: 0;
+        background-color: #fcfcfc;
+        border-top: 1px solid #ddd;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        /* Prevent spill if any */
+    }
+
+    .shop-info-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        flex-wrap: nowrap;
+        /* CRITICAL: Prevent wrapping/collapsing */
+        gap: 5px;
+        padding: 0 10px;
+        width: 100%;
+        max-width: none;
+    }
+
+    .shop-info-item {
+        flex: 1;
+        min-width: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .info-icon {
+        font-size: 1.4rem;
+        margin-bottom: 4px;
+        line-height: 1;
+        color: #333;
+    }
+
+    .shop-info-item h3 {
+        font-size: 0.65rem;
+        margin: 0;
+        line-height: 1.1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        color: #333;
+    }
+
+    .shop-info-item p {
+        display: none;
+    }
+
+    /* Hide Footer */
+    footer {
+        display: none;
+    }
+
+    .filter-container {
+        display: none;
+        /* Hide filters on this view if present */
+    }
+}
+
+@media (max-width: 768px) {
+    .shop-title {
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+    }
+
+    .products-grid {
+        gap: 30px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    .shop-info-container {
         align-items: center;
     }
 
@@ -762,6 +935,25 @@ footer p {
     max-width: 1400px;
     margin: 0 auto;
     padding: 100px 40px 40px;
+}
+
+.catalog-header-actions {
+    margin-bottom: 20px;
+}
+
+.back-link {
+    text-decoration: none;
+    color: #666;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    transition: color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.back-link:hover {
+    color: #000;
 }
 
 .catalog-title {
@@ -873,7 +1065,7 @@ footer p {
 /* See All Button */
 .shop-cta-section {
     text-align: center;
-    padding: 60px 0;
+    padding: 122px 0;
 }
 
 .btn-see-all {
@@ -897,20 +1089,80 @@ footer p {
 @media (max-width: 900px) {
     .catalog-layout {
         grid-template-columns: 1fr;
-        gap: 40px;
+        gap: 30px;
     }
 
+    /* Inline filters for mobile/tablet */
     .catalog-sidebar {
         position: static;
         display: flex;
-        flex-wrap: wrap;
-        gap: 40px;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        /* Force horizontal */
+        gap: 15px;
         border-bottom: 1px solid #eee;
         padding-bottom: 20px;
         margin-bottom: 20px;
+        align-items: flex-end;
+        /* Align labels/inputs */
     }
 
     .sidebar-section {
-        min-width: 200px;
+        flex: 1;
+        /* Equal width */
+        min-width: 0;
+        margin-bottom: 0;
+    }
+
+    .filter-dropdown {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 480px) {
+
+    /* ... existing mobile styles ... */
+    .shop-title {
+        font-size: 2rem;
+    }
+
+    .shop-subtitle {
+        font-size: 0.9rem;
+    }
+
+    /* Force 2 columns on mobile ONLY */
+    .catalog-content .products-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 15px;
+    }
+
+    .product-card {
+        margin-bottom: 20px;
+    }
+
+    /* Hide sidebar filter logic if needed, but we start with horizontal */
+    .filter-container {
+        flex-direction: column;
+        width: 100%;
+        background: transparent;
+        padding: 0;
+        border-radius: 0;
+    }
+
+    .filter-btn {
+        width: 100%;
+        border: 1px solid #eee;
+        margin-bottom: 5px;
+        padding: 10px;
+    }
+
+    .filter-btn.active {
+        box-shadow: none;
+        border-color: #000;
+    }
+
+    .modal-close {
+        top: 20px;
+        right: 20px;
     }
 }

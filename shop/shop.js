@@ -58,32 +58,55 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Filter Logic
-    const filterButtons = document.querySelectorAll('.filter-btn, .sidebar-filter-btn');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const priceFilter = document.getElementById('priceFilter');
 
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const filter = this.getAttribute('data-filter');
+    function applyFilters() {
+        const selectedCategory = categoryFilter ? categoryFilter.value : 'all';
+        const selectedPriceRange = priceFilter ? priceFilter.value : 'all';
 
-            // Update active button
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
+        const productCards = document.querySelectorAll('.product-card');
 
-            // Filter products
-            const productCards = document.querySelectorAll('.product-card');
-            productCards.forEach(card => {
-                const category = card.getAttribute('data-category');
-                if (filter === 'all' || category === filter) {
-                    card.style.display = '';
-                    card.style.animation = 'none';
-                    setTimeout(() => {
-                        card.style.animation = 'fadeIn 0.5s ease-in-out';
-                    }, 10);
-                } else {
-                    card.style.display = 'none';
+        productCards.forEach(card => {
+            const category = card.getAttribute('data-category');
+            const priceText = card.querySelector('.product-price').innerText;
+
+            // Parse price: remove non-numeric chars except period if present, handle USD
+            // Assuming format like "$2500 USD" or "$250"
+            const priceValue = parseFloat(priceText.replace(/[^0-9.]/g, ''));
+
+            let categoryMatch = (selectedCategory === 'all' || category === selectedCategory);
+            let priceMatch = true;
+
+            if (selectedPriceRange !== 'all' && !isNaN(priceValue)) {
+                if (selectedPriceRange === 'under_1000') {
+                    priceMatch = priceValue < 1000;
+                } else if (selectedPriceRange === '1000_3000') {
+                    priceMatch = priceValue >= 1000 && priceValue <= 3000;
+                } else if (selectedPriceRange === 'over_3000') {
+                    priceMatch = priceValue > 3000;
                 }
-            });
+            }
+
+            if (categoryMatch && priceMatch) {
+                card.style.display = '';
+                card.style.animation = 'none';
+                setTimeout(() => {
+                    card.style.animation = 'fadeIn 0.5s ease-in-out';
+                }, 10);
+            } else {
+                card.style.display = 'none';
+            }
         });
-    });
+    }
+
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', applyFilters);
+    }
+
+    if (priceFilter) {
+        priceFilter.addEventListener('change', applyFilters);
+    }
 
     // Modal close functionality
     const modal = document.getElementById('imageModal');
@@ -185,16 +208,36 @@ function renderGrid(items) {
     if (window.updatePageTranslations) window.updatePageTranslations();
 }
 
-function openModal(product) {
+function openModal(productOrElement) {
     const modal = document.getElementById('imageModal');
     if (!modal) return;
+
+    let product = productOrElement;
+
+    // Check if input is a DOM element (from static carousel)
+    if (productOrElement instanceof Element) {
+        const el = productOrElement;
+        const img = el.querySelector('img');
+        const title = el.querySelector('.product-title');
+        const price = el.querySelector('.product-price');
+
+        product = {
+            image: img ? img.src : '',
+            title: title ? title.innerText : '',
+            price: price ? price.innerText : '',
+            dimensions: el.dataset.dimensions || '',
+            technique: el.dataset.technique || '',
+            // If needed, we can parse category too
+            category: el.dataset.category || ''
+        };
+    }
 
     const modalImg = document.getElementById('modalImage');
     const modalTitle = document.getElementById('modalTitle');
     const modalPrice = document.getElementById('modalPrice');
     const modalDimensions = document.getElementById('modalDimensions');
     const modalTechnique = document.getElementById('modalTechnique');
-    const modalBuyBtn = document.getElementById('modalBuyBtn'); // Should exist in HTML if we want it
+    const modalBuyBtn = document.getElementById('modalBuyBtn');
 
     if (modalImg) {
         modalImg.src = product.image;
@@ -204,9 +247,20 @@ function openModal(product) {
     if (modalPrice) modalPrice.textContent = product.price;
 
     const lang = localStorage.getItem('preferredLanguage') || 'es';
-    const t = (window.pageTranslations && window.pageTranslations[lang]) || window.pageTranslations['es'];
+    // Access translations safely
+    const translations = (window.pageTranslations && window.pageTranslations[lang]) ? window.pageTranslations[lang] : (window.pageTranslations ? window.pageTranslations['es'] : {});
+    const dimLabel = translations['modal.dimensions'] || 'Dimensiones';
 
-    if (modalDimensions) modalDimensions.textContent = `${t['modal.dimensions']}: ${product.dimensions}`;
+    // Check if dimensions are valid before showing "undefined"
+    if (modalDimensions) {
+        if (product.dimensions && product.dimensions !== 'undefined') {
+            modalDimensions.textContent = `${dimLabel}: ${product.dimensions}`;
+            modalDimensions.style.display = 'block';
+        } else {
+            modalDimensions.style.display = 'none';
+        }
+    }
+
     if (modalTechnique) modalTechnique.textContent = product.technique;
 
     modal.classList.add('active');
