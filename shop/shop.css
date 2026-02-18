@@ -659,67 +659,58 @@ footer p {
     }
 }
 
-/* Aggressive compaction for mobile to avoid scrolling */
+/* Standard scrolling layout for mobile */
 @media (max-width: 600px) {
 
-    /* Main container takes full viewport height minus navbar */
+    /* Allow natural scrolling */
     .shop-container {
         padding-top: 60px;
-        padding-bottom: 80px;
-        /* Space for fixed bottom bar */
-        height: 100dvh;
-        /* Force full viewport height */
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        overflow: hidden;
-        /* Prevent scrolling */
-        box-sizing: border-box;
+        padding-bottom: 20px;
+        min-height: 100vh;
+        display: block;
+        /* Remove flex constraints */
+        overflow: visible;
     }
 
-    /* Hero takes available space */
+    /* Hero adjusts to content */
     .shop-hero-vertical {
         padding: 0 15px;
-        gap: 5px;
-        flex: 1;
-        /* Grow to fill space */
-        min-height: 0;
-        /* CRITICAL requirement for flex children to shrink */
+        gap: 20px;
         display: flex;
         flex-direction: column;
         justify-content: center;
+        margin-bottom: 20px;
+        /* Reduced from 40px */
     }
 
     .hero-header {
-        flex: 0 0 auto;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
     }
 
     .shop-hero-vertical .shop-title {
-        font-size: 1.8rem;
-        margin: 0;
-        line-height: 1.1;
+        font-size: 2rem;
+        margin: 0 0 5px 0;
+        line-height: 1.2;
     }
 
     .shop-hero-vertical .shop-subtitle {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         margin: 0;
     }
 
     .shop-hero-vertical .featured-label {
-        display: none;
+        display: block;
+        /* Show label again */
+        font-size: 1rem;
+        margin-bottom: 15px;
+        color: #999;
     }
 
     .shop-hero-vertical .featured-carousel-wrapper {
-        margin-top: 5px;
+        margin-top: 10px;
+        /* Reduced from 20px */
         width: 100%;
-        flex: 1;
-        /* Carousel takes remaining space */
-        min-height: 0;
-        /* Allow shrinking */
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+        display: block;
     }
 
     .carousel-container-mini {
@@ -728,125 +719,104 @@ footer p {
 
     .carousel-container-mini .product-image {
         height: auto;
-        max-height: 40vh;
-        /* Dynamic constraint */
+        max-height: 300px;
         aspect-ratio: 4/5;
         margin: 0 auto 10px;
+        /* Reduced from 15px */
         width: auto;
         object-fit: contain;
     }
 
     .carousel-container-mini .carousel-card {
-        flex: 0 0 100%;
         width: 100%;
         margin: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
     }
 
     .carousel-container-mini .product-title {
-        font-size: 0.9rem;
-        margin-bottom: 2px;
+        font-size: 1rem;
+        margin-bottom: 5px;
     }
 
     .carousel-container-mini .product-price {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         padding: 5px 0;
     }
 
     /* CTA Text/Button */
     .shop-cta-section {
-        padding: 10px 0;
-        flex: 0 0 auto;
-        z-index: 10;
-        width: 100%;
+        padding: 0 0 40px;
+        /* Removed top padding, kept bottom */
         text-align: center;
     }
 
     .btn-see-all {
-        padding: 12px 20px;
-        font-size: 0.85rem;
+        padding: 15px 30px;
+        font-size: 0.9rem;
         background: #000;
         color: #fff;
-        width: 90%;
-        max-width: 320px;
-        border-radius: 4px;
+        width: auto;
+        min-width: 200px;
+        border-radius: 0;
+        /* Match desktop style */
         display: inline-block;
     }
 
-    /* Info Section - FIXED Horizontal Bar at Bottom */
+    /* Use regular flow for Info Section */
     .shop-info-section {
-        position: fixed;
-        bottom: 0;
-        left: 0;
+        position: relative;
+        /* Not fixed */
         width: 100%;
-        height: 75px;
-        padding: 0;
-        margin: 0;
+        height: auto;
+        padding: 40px 20px;
         background-color: #fcfcfc;
         border-top: 1px solid #ddd;
-        z-index: 100;
-        display: flex;
-        align-items: center;
-        overflow: hidden;
-        /* Prevent spill if any */
+        z-index: 1;
+        display: block;
     }
 
     .shop-info-container {
         display: flex;
-        flex-direction: row;
-        justify-content: space-around;
+        flex-direction: column;
+        gap: 30px;
         align-items: center;
-        flex-wrap: nowrap;
-        /* CRITICAL: Prevent wrapping/collapsing */
-        gap: 5px;
-        padding: 0 10px;
-        width: 100%;
-        max-width: none;
+        text-align: center;
     }
 
     .shop-info-item {
-        flex: 1;
-        min-width: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        flex: 0 0 auto;
         padding: 0;
+        border: none;
+        width: 100%;
     }
 
     .info-icon {
-        font-size: 1.4rem;
-        margin-bottom: 4px;
-        line-height: 1;
-        color: #333;
+        font-size: 1.5rem;
+        margin-bottom: 10px;
     }
 
     .shop-info-item h3 {
-        font-size: 0.65rem;
-        margin: 0;
-        line-height: 1.1;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100%;
-        color: #333;
+        font-size: 1rem;
+        margin-bottom: 5px;
+        display: block;
+        /* Title on own line */
     }
 
     .shop-info-item p {
-        display: none;
+        font-size: 0.85rem;
+        display: block;
+        /* Desc on own line */
+        color: #666;
     }
 
-    /* Hide Footer */
+    /* Restore Footer */
     footer {
-        display: none;
+        display: block;
+        padding: 40px 0 80px;
+        /* Extra padding at bottom */
     }
 
     .filter-container {
         display: none;
-        /* Hide filters on this view if present */
     }
 }
 
@@ -1065,7 +1035,6 @@ footer p {
 /* See All Button */
 .shop-cta-section {
     text-align: center;
-    padding: 122px 0;
 }
 
 .btn-see-all {
