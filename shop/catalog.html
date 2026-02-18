@@ -109,80 +109,51 @@
         </nav>
     </aside>
 
-    <main class="shop-container">
-        <!-- Hero Section -->
-        <section class="shop-hero-vertical">
-            <div class="hero-header">
-                <h1 class="shop-title">Diego de Aduriz</h1>
-                <p class="shop-subtitle" data-i18n="hero.subtitle">Obras Originales y Ediciones Limitadas</p>
-            </div>
+    <main class="catalog-container">
+        <h1 class="catalog-title" data-i18n="nav.shop">Productos</h1>
+        <hr class="catalog-divider">
 
-            <div class="hero-featured">
-                <div class="featured-carousel-wrapper">
-                    <h2 class="featured-label" data-i18n="hero.featured">Destacados</h2>
-                    <div class="carousel-container-mini">
-                        <button class="carousel-btn prev-btn" aria-label="Previous">❮</button>
-                        <div class="carousel-track">
-                            <!-- Carousel Item 1 -->
-                            <div class="product-card carousel-card" data-category="pasteles"
-                                data-dimensions="140 x 125 cm" data-technique="Aerosol y pastel sobre madera"
-                                onclick="openModal(this)">
-                                <div class="product-image">
-                                    <img src="../portfolio/sections/obras/MG_0307.jpg" alt="Paisaje con oso, 2015">
-                                </div>
-                                <div class="product-info">
-                                    <h3 class="product-title">Paisaje con oso</h3>
-                                    <p class="product-price">$2500 USD</p>
-                                </div>
-                            </div>
-                            <!-- Carousel Item 2 -->
-                            <div class="product-card carousel-card" data-category="pasteles"
-                                data-dimensions="140 x 82 cm" data-technique="Aerosol y pastel sobre madera"
-                                onclick="openModal(this)">
-                                <div class="product-image">
-                                    <img src="../portfolio/sections/obras/MG_0312_1.jpg" alt="Rayo dorado, 2015">
-                                </div>
-                                <div class="product-info">
-                                    <h3 class="product-title">Rayo dorado</h3>
-                                    <p class="product-price">$3000 USD</p>
-                                </div>
-                            </div>
-                            <!-- Carousel Item 3 -->
-                            <div class="product-card carousel-card" data-category="pasteles"
-                                data-dimensions="33 x 25 cm" data-technique="Pastel tiza sobre papel"
-                                onclick="openModal(this)">
-                                <div class="product-image">
-                                    <img src="../portfolio/sections/obras/MG_0327.jpg" alt="Yukito, 2020">
-                                </div>
-                                <div class="product-info">
-                                    <h3 class="product-title">Yukito</h3>
-                                    <p class="product-price">$2000 USD</p>
-                                </div>
-                            </div>
-                            <!-- Carousel Item 4 -->
-                            <div class="product-card carousel-card" data-category="pasteles"
-                                data-dimensions="205 x 210 cm" data-technique="Pastel sobre tela"
-                                onclick="openModal(this)">
-                                <div class="product-image">
-                                    <img src="../portfolio/sections/obras/MG_1192.jpg" alt="Gato Merlín - 2021">
-                                </div>
-                                <div class="product-info">
-                                    <h3 class="product-title">Gato Merlín</h3>
-                                    <p class="product-price">$5000 USD</p>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="carousel-btn next-btn" aria-label="Next">❯</button>
+        <div class="catalog-layout">
+            <aside class="catalog-sidebar">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-heading" data-i18n="filter.categories">CATEGORÍAS</h3>
+                    <ul class="sidebar-list">
+                        <li><button class="sidebar-filter-btn" data-filter="pasteles"
+                                data-i18n="filter.pasteles">Pasteles</button></li>
+                        <li><button class="sidebar-filter-btn" data-filter="digital" data-i18n="filter.digital">Arte
+                                digital</button></li>
+                        <li><button class="sidebar-filter-btn" data-filter="ilustraciones"
+                                data-i18n="filter.ilustraciones">Ilustraciones</button></li>
+                        <li><button class="sidebar-filter-btn active" data-filter="all" data-i18n="filter.all">Ver
+                                todo</button></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3 class="sidebar-heading" data-i18n="filter.price">PRECIO</h3>
+                    <div class="price-inputs">
+                        <input type="text" placeholder="DESDE" class="price-input">
+                        <input type="text" placeholder="HASTA" class="price-input">
+                        <button class="price-filter-arrow">></button>
                     </div>
                 </div>
-            </div>
-        </section>
+            </aside>
 
-        <!-- See All Products Section -->
-        <section class="shop-cta-section">
-            <a href="catalog.html" class="btn-see-all" data-i18n="shop.see_all">VER TODOS LOS PRODUCTOS</a>
-        </section>
-    </main>
+            <div class="catalog-content">
+
+
+
+
+                <!-- Products Grid -->
+                <section class="products-grid" id="productsGrid">
+                    <!-- PASTELES -->
+                </section>
+
+                <div id="productsGrid" class="products-grid">
+                    <!-- Products will be loaded dynamically from products.js -->
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Shop Info / Trust Signals -->
@@ -222,7 +193,7 @@
                 <p id="modalTechnique" class="modal-technique"></p>
                 <p id="modalDimensions" class="modal-dimensions"></p>
                 <p id="modalPrice" class="modal-price"></p>
-
+                <a id="modalBuyBtn" href="#" class="modal-buy-btn" target="_blank"></a>
             </div>
         </div>
     </div>

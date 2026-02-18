@@ -1,4 +1,6 @@
 // Filter functionality
+// Products are loaded from products.js into window.products
+
 // Language Configuration (Shop Specific)
 window.pageTranslations = {
     es: {
@@ -50,13 +52,14 @@ document.addEventListener('DOMContentLoaded', function () {
         window.changeLanguage(savedLang);
     }
 
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const productCards = document.querySelectorAll('.product-card');
-    const modal = document.getElementById('imageModal');
-    const modalImg = document.getElementById('modalImage');
-    const modalClose = document.querySelector('.modal-close');
+    const gridParams = document.getElementById('productsGrid');
+    if (gridParams) {
+        renderGrid(window.products || []);
+    }
 
-    // Filter products
+    // Filter Logic
+    const filterButtons = document.querySelectorAll('.filter-btn, .sidebar-filter-btn');
+
     filterButtons.forEach(button => {
         button.addEventListener('click', function () {
             const filter = this.getAttribute('data-filter');
@@ -65,13 +68,12 @@ document.addEventListener('DOMContentLoaded', function () {
             filterButtons.forEach(btn => btn.classList.remove('active'));
             this.classList.add('active');
 
-            // Filter products with animation
+            // Filter products
+            const productCards = document.querySelectorAll('.product-card');
             productCards.forEach(card => {
                 const category = card.getAttribute('data-category');
-
                 if (filter === 'all' || category === filter) {
                     card.style.display = '';
-                    // Add fade-in animation
                     card.style.animation = 'none';
                     setTimeout(() => {
                         card.style.animation = 'fadeIn 0.5s ease-in-out';
@@ -84,13 +86,13 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Modal close functionality
+    const modal = document.getElementById('imageModal');
+    const modalClose = document.querySelector('.modal-close');
+
     if (modalClose) {
-        modalClose.addEventListener('click', function () {
-            closeModal();
-        });
+        modalClose.addEventListener('click', closeModal);
     }
 
-    // Close modal when clicking outside the image
     if (modal) {
         modal.addEventListener('click', function (e) {
             if (e.target === modal) {
@@ -99,176 +101,128 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Close modal with escape key
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
+        if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
             closeModal();
         }
     });
 
-    function closeModal() {
-        if (modal) {
-            modal.classList.remove('active');
-            document.body.style.overflow = ''; // Restore scrolling
-        }
-    }
-
-    // Smooth scroll for any internal links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
     // Carousel Logic
     const carouselTrack = document.querySelector('.carousel-track');
     const prevBtn = document.querySelector('.prev-btn');
     const nextBtn = document.querySelector('.next-btn');
 
     if (carouselTrack) {
-        // Button Listeners
-        if (prevBtn) {
-            prevBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                carouselTrack.scrollBy({ left: -170, behavior: 'smooth' }); // Adjusted for mini card width
-                resetAutoPlay();
-            });
-        }
-
-        if (nextBtn) {
-            nextBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                carouselTrack.scrollBy({ left: 170, behavior: 'smooth' });
-                resetAutoPlay();
-            });
-        }
-
-        // Auto-play Logic
-        let autoPlayInterval;
-
-        function startAutoPlay() {
-            clearInterval(autoPlayInterval); // Clear existing interval if any
-            autoPlayInterval = setInterval(() => {
-                const maxScrollLeft = carouselTrack.scrollWidth - carouselTrack.clientWidth;
-                if (carouselTrack.scrollLeft >= maxScrollLeft - 5) { // Threshold
-                    carouselTrack.scrollTo({ left: 0, behavior: 'smooth' });
-                } else {
-                    carouselTrack.scrollBy({ left: 170, behavior: 'smooth' });
-                }
-            }, 3000);
-        }
-
-        function resetAutoPlay() {
-            clearInterval(autoPlayInterval);
-            startAutoPlay();
-        }
-
-        // Start initially
-        startAutoPlay();
-
-        // Pause on hover
-        carouselTrack.addEventListener('mouseenter', () => clearInterval(autoPlayInterval));
-        carouselTrack.addEventListener('mouseleave', startAutoPlay);
+        if (prevBtn) prevBtn.addEventListener('click', () => { carouselTrack.scrollBy({ left: -170, behavior: 'smooth' }); });
+        if (nextBtn) nextBtn.addEventListener('click', () => { carouselTrack.scrollBy({ left: 170, behavior: 'smooth' }); });
     }
 
+    // Check for "item" query param to auto-open modal
+    const urlParams = new URLSearchParams(window.location.search);
+    const itemParam = urlParams.get('item');
+
+    if (itemParam) {
+        const decodedItem = decodeURIComponent(itemParam);
+        // Find product in data source logic
+        const foundProduct = (window.products || []).find(p => p.image.includes(decodedItem));
+        if (foundProduct) {
+            openModal(foundProduct);
+        }
+    }
 });
 
-// Open modal function (called from HTML onclick)
-// Open modal function
-function openModal(element) {
-    // If element is a button, use its closest card (but prevent double trigger if we handle click on button separately)
-    // Actually, onclick is on the card. Buttons inside will bubble up.
-    // Let's check event target if needed, but for now standard bubbling is fine.
+function renderGrid(items) {
+    const grid = document.getElementById('productsGrid');
+    if (!grid) return;
 
-    // Determine card
-    const card = element.closest('.product-card') || element;
+    grid.innerHTML = ''; // Clear existing
 
-    const img = card.querySelector('.product-image img');
-    const title = card.querySelector('.product-title').textContent;
-    const price = card.querySelector('.product-price').textContent;
-    const dimensions = card.getAttribute('data-dimensions') || 'Consultar medidas';
-    const technique = card.getAttribute('data-technique') || 'Técnica mixta';
+    items.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.setAttribute('data-category', product.category);
+        if (product.sold) card.classList.add('sold');
 
-    // Modal Elements
+        card.innerHTML = `
+            <div class="product-image">
+                <img src="${product.image}" alt="${product.title}">
+            </div>
+            <div class="product-info">
+                <h3 class="product-title">${product.title}</h3>
+                <p class="product-price">${product.price}</p>
+                <div class="product-actions-grid">
+                    <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
+                    <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
+                </div>
+            </div>
+        `;
+
+        // Attach click to card
+        card.onclick = (e) => {
+            // Check if button clicked
+            if (e.target.tagName === 'BUTTON') return;
+            openModal(product);
+        };
+
+        // Button actions
+        const btnDetails = card.querySelector('.btn-grid-details');
+        const btnBuy = card.querySelector('.btn-grid-buy');
+
+        btnDetails.onclick = (e) => {
+            e.stopPropagation();
+            openModal(product);
+        };
+
+        btnBuy.onclick = (e) => {
+            e.stopPropagation();
+            buyProduct(product);
+        };
+
+        grid.appendChild(card);
+    });
+
+    // Refresh translations for new elements
+    if (window.updatePageTranslations) window.updatePageTranslations();
+}
+
+function openModal(product) {
     const modal = document.getElementById('imageModal');
+    if (!modal) return;
+
     const modalImg = document.getElementById('modalImage');
     const modalTitle = document.getElementById('modalTitle');
     const modalPrice = document.getElementById('modalPrice');
     const modalDimensions = document.getElementById('modalDimensions');
     const modalTechnique = document.getElementById('modalTechnique');
-    const modalBuyBtn = document.getElementById('modalBuyBtn');
+    const modalBuyBtn = document.getElementById('modalBuyBtn'); // Should exist in HTML if we want it
 
-    if (modal && modalImg) {
-        modalImg.src = img.src;
-        modalImg.alt = img.alt;
-
-        // Get current language for labels
-        const lang = localStorage.getItem('preferredLanguage') || 'es';
-        const t = (window.pageTranslations && window.pageTranslations[lang]) || window.pageTranslations['es'];
-
-        if (modalTitle) modalTitle.textContent = title;
-        if (modalPrice) modalPrice.textContent = price;
-        if (modalDimensions) modalDimensions.textContent = `${t['modal.dimensions']}: ${dimensions}`;
-        if (modalTechnique) modalTechnique.textContent = technique;
-
-        // Buy Button Logic
-        if (modalBuyBtn) {
-            updateBuyButton(modalBuyBtn, card, title, t);
-        }
-
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
+    if (modalImg) {
+        modalImg.src = product.image;
+        modalImg.alt = product.title;
     }
+    if (modalTitle) modalTitle.textContent = product.title;
+    if (modalPrice) modalPrice.textContent = product.price;
+
+    const lang = localStorage.getItem('preferredLanguage') || 'es';
+    const t = (window.pageTranslations && window.pageTranslations[lang]) || window.pageTranslations['es'];
+
+    if (modalDimensions) modalDimensions.textContent = `${t['modal.dimensions']}: ${product.dimensions}`;
+    if (modalTechnique) modalTechnique.textContent = product.technique;
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
-function updateBuyButton(btn, card, title, t) {
-    if (card.classList.contains('sold')) {
-        btn.textContent = t['card.sold'];
-        btn.href = '#';
-        btn.style.pointerEvents = 'none';
-        btn.style.opacity = '0.5';
-        btn.style.background = '#ccc';
-        btn.style.borderColor = '#ccc';
-    } else {
-        btn.textContent = t['modal.consult'];
-        btn.style.pointerEvents = 'auto';
-        btn.style.opacity = '1';
-        btn.style.background = '#000';
-        btn.style.borderColor = '#000';
-
-        const waNumber = '5491168750007';
-        const message = `Hola, me interesa la obra: ${title}`;
-        btn.href = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
-    }
+function buyProduct(product) {
+    const waNumber = '5491168750007';
+    const message = `Hola, me interesa comprar: ${product.title}`;
+    window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`, '_blank');
 }
 
-
-// Event listeners for grid buttons to prevent bubbling if we want distinct actions?
-// But user said "add a button... in details you see height".
-// If I click "Detalles", it just opens the modal (same as clicking card).
-// If I click "Comprar", it could go straight to WhatsApp?
-// Let's implement that specific logic.
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Delegation for grid buttons
-    document.body.addEventListener('click', (e) => {
-        if (e.target.classList.contains('btn-grid-details')) {
-            e.stopPropagation(); // Prevent card click
-            openModal(e.target.closest('.product-card'));
-        }
-        if (e.target.classList.contains('btn-grid-buy')) {
-            e.stopPropagation();
-            const card = e.target.closest('.product-card');
-            const title = card.querySelector('.product-title').textContent;
-            const waNumber = '5491168750007';
-            const message = `Hola, me interesa comprar: ${title}`;
-            window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`, '_blank');
-        }
-    });
-});
+function closeModal() {
+    const modal = document.getElementById('imageModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}

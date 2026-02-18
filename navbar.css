@@ -83,39 +83,39 @@ nav.navbar-drawer__links,
     background: rgba(0, 0, 0, 0.05);
 }
 
-/* Burger Button */
+/* Burger Button - Replaced with "MENU" text */
 .navbar__burger {
     display: none;
     /* Hidden by default */
     background: none;
     border: none;
     cursor: pointer;
-    flex-direction: column;
-    gap: 6px;
-    padding: 5px;
+    padding: 10px;
     z-index: 1002;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--nav-text);
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
+/* Hide the old spans (lines) */
 .navbar__burger span {
+    display: none !important;
+}
+
+/* Use pseudo-element for text */
+.navbar__burger::after {
+    content: "MENU";
     display: block;
-    width: 25px;
-    height: 2px;
-    background-color: var(--nav-text);
-    transition: all 0.3s ease;
-    transform-origin: center;
 }
 
-/* Burger animation when drawer is open */
-.navbar__burger.is-open span:nth-child(1) {
-    transform: translateY(8px) rotate(45deg);
-}
-
-.navbar__burger.is-open span:nth-child(2) {
-    opacity: 0;
-}
-
-.navbar__burger.is-open span:nth-child(3) {
-    transform: translateY(-8px) rotate(-45deg);
+/* Optional: Change text when open */
+.navbar__burger.is-open::after {
+    content: "MENU";
+    /* Or "CLOSE" if desired, but user asked for "Menu" */
+    /* content: "CLOSE"; */
 }
 
 /* Body padding for fixed navbar */

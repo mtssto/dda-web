@@ -106,7 +106,33 @@
     <div id="art-canvas"></div>
   </div>
 
+  <!-- Modal for Image View -->
+  <div id="imageModal" class="image-modal">
+    <span class="modal-close">&times;</span>
+    <div class="modal-container">
+      <div class="modal-image-wrapper">
+        <img class="modal-image" id="modalImage" alt="Artwork">
+      </div>
+      <div class="modal-info-wrapper">
+        <h2 id="modalTitle" class="modal-title"></h2>
+        <p id="modalTechnique" class="modal-technique"></p>
+        <p id="modalDimensions" class="modal-dimensions"></p>
+        <p id="modalPrice" class="modal-price"></p>
+        <a id="modalBuyBtn" href="#" class="modal-buy-btn" target="_blank">CONSULTAR / COMPRAR</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+    rel="stylesheet">
+
+
   <script src="navbar.js"></script>
+  <script src="shop/products.js"></script>
   <script src="immersive-gallery.js"></script>
 </body>
 

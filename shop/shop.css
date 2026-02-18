@@ -139,16 +139,19 @@ body {
 .product-image {
     width: 100%;
     aspect-ratio: 4/5;
-    background: #f0f0f0;
+    background: transparent;
     margin-bottom: 12px;
     overflow: hidden;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .product-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     display: block;
 }
 
@@ -447,69 +450,77 @@ footer p {
     display: none;
 }
 
-/* --- Split Shop Hero --- */
-.shop-hero-split {
+/* --- Vertical Shop Hero (Landing) --- */
+.shop-hero-vertical {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    /* Reduced gap */
-    margin-bottom: 40px;
-    /* Reduced margin */
-    min-height: 300px;
-    /* Reduced height */
-    padding: 0 40px;
-    flex-wrap: nowrap;
-}
-
-.hero-left {
-    flex: 1;
-    text-align: left;
-    padding-right: 20px;
-}
-
-.hero-right {
-    flex: 1;
-    display: flex;
     justify-content: center;
-    align-items: center;
-    position: relative;
-    max-width: 50%;
-}
-
-.shop-title {
-    font-size: 3.5rem;
-    /* Reduced from 5rem */
-    margin: 0 0 5px 0;
-    line-height: 1;
-}
-
-.shop-subtitle {
-    font-size: 1rem;
-    /* Slightly smaller */
-    margin-left: 2px;
-}
-
-/* Mini Carousel inside Hero */
-.featured-carousel-wrapper {
-    width: 100%;
-    background: #fcfcfc;
-    padding: 10px;
-    border-radius: 8px;
-    /* subtle frame */
-}
-
-.featured-label {
-    font-family: var(--font-body);
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #999;
-    margin-bottom: 8px;
-    /* Reduced */
     text-align: center;
+    padding: 60px 20px 40px;
+    gap: 40px;
 }
 
+.hero-header {
+    max-width: 800px;
+}
+
+.hero-featured {
+    width: 100%;
+    max-width: 1000px;
+    /* Constrain width of carousel section */
+}
+
+/* Adjustments for title/subtitle in vertical layout */
+.shop-hero-vertical .shop-title {
+    font-size: 3.5rem;
+    margin: 0 0 10px 0;
+}
+
+.shop-hero-vertical .shop-subtitle {
+    font-size: 1.1rem;
+    color: var(--color-subtext);
+}
+
+/* --- Carousel Styling Refinement --- */
+.shop-hero-vertical .featured-carousel-wrapper {
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+    margin-top: 20px;
+}
+
+.shop-hero-vertical .featured-label {
+    margin-bottom: 30px;
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
+    color: #666;
+    position: relative;
+    display: inline-block;
+}
+
+/* Add decorative lines to label */
+.shop-hero-vertical .featured-label::before,
+.shop-hero-vertical .featured-label::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 40px;
+    height: 1px;
+    background: #ddd;
+}
+
+.shop-hero-vertical .featured-label::before {
+    right: 100%;
+    margin-right: 15px;
+}
+
+.shop-hero-vertical .featured-label::after {
+    left: 100%;
+    margin-left: 15px;
+}
+
+/* Restore Carousel Logic Styles */
 .carousel-container-mini {
     position: relative;
     width: 100%;
@@ -521,45 +532,13 @@ footer p {
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
-    gap: 10px;
-    /* Reduced specific gap for carousel */
-    padding-bottom: 0px;
+    gap: 20px;
+    padding-bottom: 10px;
     scrollbar-width: none;
 }
 
 .carousel-container-mini .carousel-track::-webkit-scrollbar {
     display: none;
-}
-
-.carousel-container-mini .carousel-card {
-    flex: 0 0 160px;
-    /* Reduced card width to show more items */
-    scroll-snap-align: center;
-    margin: 0;
-}
-
-.carousel-container-mini .product-image {
-    height: 180px;
-    /* Reduced image height dramatically */
-    margin-bottom: 5px;
-    /* Tighten up */
-}
-
-.carousel-container-mini .product-title {
-    font-size: 0.75rem;
-    /* Smaller font */
-    text-align: center;
-    margin-bottom: 2px;
-}
-
-.carousel-container-mini .product-price {
-    font-size: 0.65rem;
-    font-weight: 600;
-    text-align: center;
-    padding: 0;
-    margin: 0;
-    color: #444;
-    background: transparent;
 }
 
 .carousel-btn {
@@ -595,36 +574,109 @@ footer p {
     right: 0;
 }
 
-/* Adjustments for Mobile */
+.carousel-container-mini .carousel-card {
+    flex: 0 0 240px;
+    /* Increased from 160px for better visibility */
+    margin: 0;
+    scroll-snap-align: center;
+}
+
+.carousel-container-mini .product-image {
+    height: 300px;
+    /* Increased height for impact */
+    margin-bottom: 15px;
+}
+
+.carousel-container-mini .product-title {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.carousel-container-mini .product-price {
+    font-size: 0.8rem;
+    color: #000;
+}
+
+/* Mobile Adjustments */
 @media (max-width: 900px) {
-    .shop-hero-split {
-        flex-direction: column;
-        text-align: center;
-        gap: 60px;
+    .shop-hero-vertical {
+        padding: 40px 20px;
+        gap: 30px;
     }
 
-    .hero-left {
-        text-align: center;
-        padding-right: 0;
-    }
-
-    .hero-right {
-        max-width: 100%;
-        width: 100%;
+    .shop-hero-vertical .shop-title {
+        font-size: 2.5rem;
     }
 
     .carousel-container-mini .carousel-card {
         flex: 0 0 200px;
+        /* Slightly smaller on mobile but still substantial */
+    }
+
+    .carousel-container-mini .product-image {
+        height: 240px;
+    }
+}
+
+/* Aggressive compaction for mobile to avoid scrolling */
+@media (max-width: 600px) {
+    .shop-container {
+        padding-top: 80px;
+        /* Reduced from 100px */
+        padding-bottom: 20px;
+    }
+
+    .shop-hero-vertical {
+        padding: 10px 10px 20px;
+        /* Minimal padding */
+        gap: 15px;
+        /* Tighter gap */
+        min-height: calc(100vh - 100px);
+        /* Fill remaining height */
+        justify-content: flex-start;
+        /* Align top */
+    }
+
+    .shop-hero-vertical .shop-title {
+        font-size: 2rem;
+        margin-bottom: 5px;
+    }
+
+    .shop-hero-vertical .shop-subtitle {
+        font-size: 0.85rem;
+    }
+
+    .shop-hero-vertical .featured-label {
+        margin-bottom: 15px;
+        font-size: 0.8rem;
+    }
+
+    .shop-hero-vertical .featured-carousel-wrapper {
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    .carousel-container-mini .product-image {
+        height: 200px;
+        /* Smaller image */
+        margin-bottom: 10px;
+    }
+
+    .carousel-container-mini .carousel-card {
+        flex: 0 0 100%;
+        /* Show one full card centered */
+        scroll-snap-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .carousel-track {
+        justify-content: flex-start;
     }
 }
 
 @media (max-width: 768px) {
-    .shop-container {
-        padding-top: 100px;
-        padding-left: 15px;
-        padding-right: 15px;
-    }
-
     .shop-title {
         font-size: 2.5rem;
         margin-bottom: 30px;
@@ -702,5 +754,163 @@ footer p {
     .modal-close {
         top: 20px;
         right: 20px;
+    }
+}
+
+/* --- Catalog / Sidebar Layout --- */
+.catalog-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 100px 40px 40px;
+}
+
+.catalog-title {
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.catalog-divider {
+    border: 0;
+    border-top: 1px solid #ddd;
+    margin-bottom: 40px;
+}
+
+.catalog-layout {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 60px;
+    align-items: start;
+}
+
+.catalog-sidebar {
+    position: sticky;
+    top: 120px;
+}
+
+.sidebar-section {
+    margin-bottom: 40px;
+}
+
+.sidebar-heading {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 15px;
+}
+
+.sidebar-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-list li {
+    margin-bottom: 10px;
+}
+
+.sidebar-filter-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: color 0.2s;
+    text-align: left;
+}
+
+.sidebar-filter-btn:hover,
+.sidebar-filter-btn.active {
+    color: #000;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+/* Price Inputs in Sidebar */
+.price-inputs {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.price-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: #333;
+}
+
+.price-filter-arrow {
+    background: #ccc;
+    border: none;
+    color: #fff;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.price-filter-arrow:hover {
+    background: #000;
+}
+
+/* Catalog Content Grid Override */
+.catalog-content .products-grid {
+    padding-top: 0;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+/* See All Button */
+.shop-cta-section {
+    text-align: center;
+    padding: 60px 0;
+}
+
+.btn-see-all {
+    display: inline-block;
+    background: #000;
+    color: #fff;
+    padding: 15px 40px;
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    transition: background 0.3s ease;
+}
+
+.btn-see-all:hover {
+    background: #333;
+}
+
+/* Mobile Responsiveness for Catalog */
+@media (max-width: 900px) {
+    .catalog-layout {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .catalog-sidebar {
+        position: static;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 40px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+
+    .sidebar-section {
+        min-width: 200px;
     }
 }
