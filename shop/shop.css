@@ -815,8 +815,31 @@ footer p {
         /* Extra padding at bottom */
     }
 
-    .filter-container {
-        display: none;
+
+    /* Mobile-specific button adjustments (smaller) */
+    .product-actions-grid {
+        gap: 5px;
+        margin-top: 10px;
+    }
+
+    .btn-grid-action {
+        padding: 8px 0;
+        font-size: 0.65rem;
+        /* Reduced size as requested */
+        letter-spacing: 0.05em;
+        font-weight: 500;
+        border-width: 1px;
+    }
+
+    .btn-grid-details {
+        background: #fff;
+        border: 1px solid #000;
+    }
+
+    .btn-grid-buy {
+        background: #000;
+        color: #fff;
+        border: 1px solid #000;
     }
 }
 
