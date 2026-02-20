@@ -21,7 +21,8 @@ window.pageTranslations = {
         'shop.shipping': 'Envíos Globales',
         'shop.shipping_desc': 'Enviamos a todo el mundo con embalaje seguro.',
         'shop.service': 'Atención Personalizada',
-        'shop.service_desc': 'Contacto directo por WhatsApp para consultas.'
+        'shop.service_desc': 'Contacto directo por WhatsApp para consultas.',
+        'catalog.title': 'Catálogo'
     },
     en: {
         'hero.subtitle': 'Original Artworks & Limited Editions',
@@ -41,7 +42,8 @@ window.pageTranslations = {
         'shop.shipping': 'Global Shipping',
         'shop.shipping_desc': 'We ship worldwide with secure packaging.',
         'shop.service': 'Personal Service',
-        'shop.service_desc': 'Direct contact via WhatsApp for inquiries.'
+        'shop.service_desc': 'Direct contact via WhatsApp for inquiries.',
+        'catalog.title': 'Catalog'
     }
 };
 
@@ -130,15 +132,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Carousel Logic
-    const carouselTrack = document.querySelector('.carousel-track');
-    const prevBtn = document.querySelector('.prev-btn');
-    const nextBtn = document.querySelector('.next-btn');
+    // Carousel Logic for multiple carousels
+    const carouselContainers = document.querySelectorAll('.carousel-container-mini');
+    carouselContainers.forEach(container => {
+        const track = container.querySelector('.carousel-track');
+        const prevBtn = container.querySelector('.prev-btn');
+        const nextBtn = container.querySelector('.next-btn');
 
-    if (carouselTrack) {
-        if (prevBtn) prevBtn.addEventListener('click', () => { carouselTrack.scrollBy({ left: -170, behavior: 'smooth' }); });
-        if (nextBtn) nextBtn.addEventListener('click', () => { carouselTrack.scrollBy({ left: 170, behavior: 'smooth' }); });
-    }
+        if (track) {
+            if (prevBtn) prevBtn.addEventListener('click', () => { track.scrollBy({ left: -170, behavior: 'smooth' }); });
+            if (nextBtn) nextBtn.addEventListener('click', () => { track.scrollBy({ left: 170, behavior: 'smooth' }); });
+        }
+    });
 
     // Check for "item" query param to auto-open modal
     const urlParams = new URLSearchParams(window.location.search);

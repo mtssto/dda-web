@@ -270,7 +270,8 @@ body.lang-en .product-card.sold .product-image::after {
 .image-modal {
     display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 3000;
+    /* Increased to ensure it covers navbar/footer */
     left: 0;
     top: 0;
     width: 100%;
@@ -641,21 +642,46 @@ footer p {
 
     .modal-container {
         flex-direction: column;
-        height: auto;
+        height: 90vh;
+        /* Fixed height instead of auto */
         max-height: 90vh;
         overflow-y: auto;
+        border-radius: 12px;
+        margin-top: 20px;
     }
 
     .modal-image-wrapper {
-        padding: 20px;
+        padding: 15px;
+        flex: 1 1 auto;
+        /* Allow image wrapper to taking remaining space */
+        min-height: 40vh;
+        /* Ensure image is visible */
+    }
+
+    .modal-image {
+        max-height: 40vh;
     }
 
     .modal-info-wrapper {
-        padding: 30px;
+        padding: 20px;
+        flex: none;
+        /* Prevent this from growing */
     }
 
     .modal-title {
         font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+
+    .modal-price {
+        font-size: 1.1rem;
+        margin-top: 10px;
+        margin-bottom: 15px;
+    }
+
+    .btn-modal-buy {
+        width: 100%;
+        padding: 12px 20px;
     }
 }
 
@@ -750,15 +776,14 @@ footer p {
     }
 
     .btn-see-all {
-        padding: 15px 30px;
-        font-size: 0.9rem;
+        padding: 15px 0 !important;
+        font-size: 0.85rem;
         background: #000;
         color: #fff;
-        width: auto;
-        min-width: 200px;
+        width: 100%;
+        min-width: unset;
         border-radius: 0;
-        /* Match desktop style */
-        display: inline-block;
+        display: block;
     }
 
     /* Use regular flow for Info Section */
@@ -776,36 +801,36 @@ footer p {
 
     .shop-info-container {
         display: flex;
-        flex-direction: column;
-        gap: 30px;
-        align-items: center;
+        flex-direction: row;
+        /* Horizontal alignment */
+        justify-content: space-between;
+        gap: 10px;
+        align-items: flex-start;
         text-align: center;
     }
 
     .shop-info-item {
-        flex: 0 0 auto;
+        flex: 1;
         padding: 0;
         border: none;
-        width: 100%;
+        width: auto;
     }
 
     .info-icon {
-        font-size: 1.5rem;
-        margin-bottom: 10px;
+        font-size: 1.2rem;
+        margin-bottom: 8px;
     }
 
     .shop-info-item h3 {
-        font-size: 1rem;
-        margin-bottom: 5px;
+        font-size: 0.75rem;
+        margin-bottom: 0;
         display: block;
-        /* Title on own line */
+        line-height: 1.2;
     }
 
     .shop-info-item p {
-        font-size: 0.85rem;
-        display: block;
-        /* Desc on own line */
-        color: #666;
+        display: none;
+        /* Hide desc to fit side-by-side */
     }
 
     /* Restore Footer */
@@ -866,16 +891,41 @@ footer p {
     .modal-container {
         flex-direction: column;
         height: auto;
-        max-height: 90vh;
-        overflow-y: auto;
+        max-height: 85vh;
+        /* Prevent covering screen edges completely */
+        width: 90%;
+        margin: auto;
+        border-radius: 12px;
+        /* iOS card feel */
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     }
 
     .modal-image-wrapper {
+        padding: 0;
+        /* Remove padding */
+        height: 40vh;
+        /* Fixed height for image area */
+        background: #f8f8f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .modal-image {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
         padding: 20px;
     }
 
     .modal-info-wrapper {
-        padding: 30px;
+        padding: 20px;
+        /* Reduced padding */
+        overflow-y: auto;
+        /* Scroll info if needed */
+        max-height: 40vh;
     }
 
     .modal-title {
@@ -1156,5 +1206,33 @@ footer p {
     .modal-close {
         top: 20px;
         right: 20px;
+    }
+}
+
+/* --- Novedades Section --- */
+.shop-novedades-section {
+    padding: 60px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.novedades-title {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    margin-bottom: 40px;
+    color: #333;
+}
+
+@media (max-width: 768px) {
+    .shop-novedades-section {
+        padding: 40px 20px;
+    }
+
+    .novedades-title {
+        font-size: 2rem;
     }
 }
