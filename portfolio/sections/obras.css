@@ -45,107 +45,6 @@ section:last-child {
   letter-spacing: -0.02em;
 }
 
-/* Artwork Grid (Standard) */
-.artwork-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: var(--spacing-grid);
-  align-items: start;
-}
-
-.artwork-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  /* transition: transform 0.3s ease; Removed to prevent stacking context issues with fixed elements */
-}
-
-/* .artwork-item:hover {
-  transform: translateY(-5px);
-} Removed */
-
-.artwork-image-wrapper {
-  width: 100%;
-  margin-bottom: 25px;
-  /* overflow: hidden; Removed to fix materialbox clipping */
-  /* Clean shadow for depth */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-}
-
-.artwork-image-wrapper img {
-  width: 100%;
-  height: auto;
-  display: block;
-  transition: transform 0.7s ease;
-  cursor: zoom-in;
-}
-
-/* Only scale if not active */
-.artwork-item:hover .artwork-image-wrapper img:not(.active) {
-  transform: scale(1.03);
-}
-
-.artwork-info h1 {
-  font-family: var(--font-heading);
-  font-style: italic;
-  font-size: 1.4rem;
-  font-weight: 400;
-  margin: 0 0 10px 0;
-  color: #000;
-}
-
-.artwork-info span {
-  font-size: 0.9rem;
-  color: var(--color-subtext);
-  display: block;
-  margin-bottom: 20px;
-  line-height: 1.5;
-}
-
-/* Buttons */
-.btn-consultar {
-  display: inline-block;
-  padding: 12px 30px;
-  border: 1px solid #000;
-  background: transparent;
-  color: #000;
-  font-family: var(--font-body);
-  font-size: 0.8rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.btn-consultar:hover {
-  background: #000;
-  color: #fff;
-  cursor: pointer;
-}
-
-/* Masonry Layout - Switched to Grid to avoid lightbox clipping */
-.masonry-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 40px;
-  align-items: start;
-}
-
-.masonry-item {
-  margin-bottom: 0;
-}
-
-.masonry-item img {
-  width: 100%;
-  height: auto;
-  display: block;
-  margin-bottom: 15px;
-  /* Ensure materialbox base styles */
-  cursor: zoom-in;
-  transition: opacity .4s;
-}
 
 /* Video Grid */
 .video-grid {
@@ -177,11 +76,6 @@ footer p {
   .section-title {
     font-size: 3rem;
   }
-
-  /* Grid fallback */
-  .masonry-grid {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  }
 }
 
 @media (max-width: 600px) {
@@ -194,36 +88,191 @@ footer p {
     margin-bottom: 40px;
   }
 
-  /* Force 2 columns on mobile */
-  .artwork-grid,
-  .masonry-grid,
   .video-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
   }
 }
 
-/* Materialbox Overlay Styles */
-#materialbox-overlay {
+/* CSS Hacks for Dense Masonry Grid */
+.masonry-grid {
+  column-count: 3;
+  column-gap: 15px;
+  padding-bottom: 20px;
+}
+
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 15px;
+  width: 100%;
+  display: inline-block;
+}
+
+.masonry-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  cursor: pointer;
+  transition: opacity .4s, transform .4s;
+}
+
+.masonry-item:hover img {
+  transform: scale(1.02);
+}
+
+/* Modal for Image View */
+.image-modal {
+  display: none;
+  position: fixed;
+  z-index: 3000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
   background-color: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  z-index: 2000 !important;
-  /* Above Navbar (1000) */
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.materialboxed {
-  position: relative;
-  cursor: zoom-in;
+.image-modal.active {
+  display: flex;
+  opacity: 1;
 }
 
-.materialboxed.active {
-  z-index: 2001 !important;
-  /* Above Overlay */
-  cursor: zoom-out;
+.modal-container {
+  display: flex;
+  background: #fff;
+  width: 90%;
+  max-width: 1000px;
+  height: 80vh;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: #000;
+  font-size: 40px;
+  font-weight: 300;
+  cursor: pointer;
+  z-index: 3001;
+  transition: color 0.3s;
+}
+
+.modal-close:hover {
+  color: #666;
+}
+
+.modal-image-wrapper {
+  flex: 1.5;
+  background: #f4f4f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.modal-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.modal-info-wrapper {
+  flex: 1;
+  padding: 60px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+}
+
+.modal-title {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  font-weight: 400;
+}
+
+.modal-technique,
+.modal-dimensions {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  margin-top: 30px;
+}
+
+.btn-modal-buy {
+  display: inline-block;
+  padding: 15px 30px;
+  background: #000;
+  color: #fff;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  transition: background 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-modal-buy:hover {
+  background: #333;
+}
+
+@media (max-width: 768px) {
+  .image-modal {
+    background-color: #fff;
+  }
+
+  .modal-container {
+    flex-direction: column;
+    height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto;
+    border-radius: 0;
+    margin-top: 0;
+    width: 100%;
+    box-shadow: none;
+  }
+
+  .modal-image-wrapper {
+    padding: 15px;
+    flex: 1 1 auto;
+    min-height: 40vh;
+  }
+
+  .modal-image {
+    max-height: 40vh;
+  }
+
+  .modal-info-wrapper {
+    padding: 20px;
+    flex: none;
+  }
+
+  .modal-title {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+
+  .btn-modal-buy {
+    width: 100%;
+    padding: 12px 20px;
+    text-align: center;
+  }
 }
