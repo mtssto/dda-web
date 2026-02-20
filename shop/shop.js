@@ -268,6 +268,14 @@ function openModal(productOrElement) {
 
     if (modalTechnique) modalTechnique.textContent = product.technique;
 
+    if (modalBuyBtn) {
+        modalBuyBtn.textContent = translations['modal.consult'] || 'CONSULTAR / COMPRAR';
+        modalBuyBtn.onclick = (e) => {
+            e.preventDefault();
+            buyProduct(product);
+        };
+    }
+
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 }

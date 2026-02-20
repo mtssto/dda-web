@@ -640,14 +640,19 @@ footer p {
         margin-top: 60px;
     }
 
+    .image-modal {
+        background-color: #fff;
+    }
+
     .modal-container {
         flex-direction: column;
-        height: 90vh;
-        /* Fixed height instead of auto */
-        max-height: 90vh;
+        height: 100vh;
+        max-height: 100vh;
         overflow-y: auto;
-        border-radius: 12px;
-        margin-top: 20px;
+        border-radius: 0;
+        margin-top: 0;
+        width: 100%;
+        box-shadow: none;
     }
 
     .modal-image-wrapper {
