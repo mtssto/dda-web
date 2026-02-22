@@ -21,9 +21,10 @@ body {
 }
 
 .shop-container {
-    max-width: 1400px;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 100px 40px 40px;
+    padding: 100px 0 40px;
+    overflow-x: hidden;
 }
 
 /* Hero Section (Legacy/Fallback) */
@@ -117,30 +118,30 @@ body {
     gap: 40px;
     padding: 20px 0;
     justify-content: center;
+    align-items: start;
 }
 
 /* Minimalist Product Card */
 .product-card {
-    background: transparent;
-    border: none;
+    background: #fff;
+    border: 1px solid #eee;
     margin-bottom: 40px;
     cursor: pointer;
-    transition: opacity 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
 }
 
 .product-card:hover {
-    opacity: 0.8;
-    transform: none;
-    box-shadow: none;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .product-image {
     width: 100%;
-    aspect-ratio: 4/5;
-    background: transparent;
-    margin-bottom: 12px;
+    background: #f4f4f4;
+    padding: 20px;
+    margin-bottom: 0px;
     overflow: hidden;
     position: relative;
     display: flex;
@@ -150,7 +151,7 @@ body {
 
 .product-image img {
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: contain;
     display: block;
 }
@@ -183,8 +184,9 @@ body.lang-en .product-card.sold .product-image::after {
 
 /* Info */
 .product-info {
-    padding: 0;
+    padding: 4px 6px;
     text-align: left;
+    flex-grow: 1;
 }
 
 .product-title {
@@ -206,21 +208,12 @@ body.lang-en .product-card.sold .product-image::after {
 }
 
 .product-price {
-    background: #fff;
-    color: #333;
-    padding: 18px 0;
+    color: #000;
     font-family: var(--font-body);
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-top: 15px;
+    margin-bottom: 0;
 }
 
 /* Shop Info Section */
@@ -413,38 +406,35 @@ footer p {
 /* Minimalist Grid Actions */
 .product-actions-grid {
     display: flex;
-    gap: 10px;
-    margin-top: 10px;
+    margin-top: auto;
+    border-top: 1px solid #eee;
 }
 
 .btn-grid-action {
     flex: 1;
     background: transparent;
-    border: 1px solid #000;
+    border: none;
     color: #000;
-    padding: 8px 0;
+    padding: 15px 0;
     font-family: var(--font-body);
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     cursor: pointer;
     transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-grid-details {
+    border-right: 1px solid #eee;
 }
 
 .btn-grid-action:hover {
-    background: #000;
-    color: #fff;
-}
-
-.btn-grid-buy {
-    background: #000;
-    color: #fff;
-}
-
-.btn-grid-buy:hover {
-    background: #333;
-    border-color: #333;
+    background: #fafafa;
 }
 
 .product-card.hidden {
@@ -468,8 +458,8 @@ footer p {
 
 .hero-featured {
     width: 100%;
-    max-width: 1000px;
-    /* Constrain width of carousel section */
+    max-width: 100%;
+    /* Allow carousel to span the whole page width */
 }
 
 /* Adjustments for title/subtitle in vertical layout */
@@ -530,6 +520,8 @@ footer p {
 
 .carousel-container-mini .carousel-track {
     display: flex;
+    align-items: flex-start;
+    /* Align cards to the top natively */
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
@@ -576,16 +568,22 @@ footer p {
 }
 
 .carousel-container-mini .carousel-card {
-    flex: 0 0 240px;
-    /* Increased from 160px for better visibility */
+    flex: 0 0 280px;
+    /* Use a slightly wider card for organic aspect ratios to breathe */
     margin: 0;
     scroll-snap-align: center;
 }
 
 .carousel-container-mini .product-image {
-    height: 300px;
-    /* Increased height for impact */
-    margin-bottom: 15px;
+    aspect-ratio: auto;
+    height: auto;
+    /* Let height adapt organically */
+    min-height: 200px;
+    /* Provide a minimum baseline so empty images don't collapse */
+}
+
+.carousel-container-mini .product-image img {
+    height: auto;
 }
 
 .carousel-container-mini .product-title {
@@ -602,7 +600,7 @@ footer p {
 /* Mobile Adjustments */
 @media (max-width: 900px) {
     .shop-hero-vertical {
-        padding: 40px 20px;
+        padding: 40px 0;
         gap: 30px;
     }
 
@@ -611,11 +609,11 @@ footer p {
     }
 
     .carousel-container-mini .carousel-card {
-        flex: 0 0 200px;
+        flex: 0 0 240px;
     }
 
     .carousel-container-mini .product-image {
-        height: 240px;
+        height: auto;
     }
 }
 
@@ -750,16 +748,13 @@ footer p {
 
     .carousel-container-mini .product-image {
         height: auto;
-        max-height: 300px;
-        aspect-ratio: 4/5;
+        aspect-ratio: auto;
         margin: 0 auto 10px;
-        /* Reduced from 15px */
-        width: auto;
-        object-fit: contain;
+        width: 100%;
     }
 
     .carousel-container-mini .carousel-card {
-        width: 100%;
+        flex: 0 0 85%;
         margin: 0;
     }
 
@@ -848,28 +843,27 @@ footer p {
 
     /* Mobile-specific button adjustments (smaller) */
     .product-actions-grid {
-        gap: 5px;
-        margin-top: 10px;
+        margin-top: auto;
+        /* Ensure it stays at bottom */
     }
 
     .btn-grid-action {
-        padding: 8px 0;
-        font-size: 0.65rem;
-        /* Reduced size as requested */
-        letter-spacing: 0.05em;
-        font-weight: 500;
-        border-width: 1px;
+        padding: 10px 0;
+        font-size: 0.70rem;
     }
 
     .btn-grid-details {
-        background: #fff;
-        border: 1px solid #000;
+        border-right: 1px solid #eee;
+        background: transparent;
+        border-top: none;
+        border-left: none;
+        border-bottom: none;
     }
 
     .btn-grid-buy {
-        background: #000;
-        color: #fff;
-        border: 1px solid #000;
+        background: transparent;
+        color: #000;
+        border: none;
     }
 }
 

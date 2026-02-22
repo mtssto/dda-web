@@ -1,5 +1,25 @@
 window.products = [
     {
+        id: "retrato-1",
+        title: "Retrato 1",
+        price: "Consultar",
+        dimensions: "Consultar medidas",
+        technique: "Consultar técnica",
+        category: "retratos",
+        image: "../portfolio/sections/obras/retrato-1.jpeg",
+        sold: false
+    },
+    {
+        id: "retrato-2",
+        title: "Retrato 2",
+        price: "Consultar",
+        dimensions: "Consultar medidas",
+        technique: "Consultar técnica",
+        category: "retratos",
+        image: "../portfolio/sections/obras/retrato-2.jpeg",
+        sold: false
+    },
+    {
         id: "paisaje-con-oso",
         title: "Paisaje con oso",
         price: "$2500 USD",

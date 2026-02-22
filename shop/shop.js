@@ -10,8 +10,8 @@ window.pageTranslations = {
         'filter.pasteles': 'Pasteles',
         'filter.digital': 'Arte Digital',
         'filter.ilustraciones': 'Ilustraciones',
-        'card.details': 'DETALLES',
-        'card.buy': 'COMPRAR',
+        'card.details': '👁 DETALLES',
+        'card.buy': '🛒 COMPRAR',
         'card.sold': 'VENDIDO',
         'modal.dimensions': 'Dimensiones',
         'modal.technique': 'Técnica',
@@ -31,8 +31,8 @@ window.pageTranslations = {
         'filter.pasteles': 'Pastels',
         'filter.digital': 'Digital Art',
         'filter.ilustraciones': 'Illustrations',
-        'card.details': 'DETAILS',
-        'card.buy': 'BUY',
+        'card.details': '👁 DETAILS',
+        'card.buy': '🛒 BUY',
         'card.sold': 'SOLD',
         'modal.dimensions': 'Dimensions',
         'modal.technique': 'Technique',
@@ -179,8 +179,8 @@ function renderGrid(items) {
                 <h3 class="product-title">${product.title}</h3>
                 <p class="product-price">${product.price}</p>
                 <div class="product-actions-grid">
-                    <button class="btn-grid-action btn-grid-details" data-i18n="card.details">DETALLES</button>
-                    <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">COMPRAR</button>
+                    <button class="btn-grid-action btn-grid-details" data-i18n="card.details">👁 DETALLES</button>
+                    <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">🛒 COMPRAR</button>
                 </div>
             </div>
         `;
