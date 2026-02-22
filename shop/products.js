@@ -25,7 +25,7 @@ window.products = [
         price: "$2000 USD",
         dimensions: "33 x 25 cm",
         technique: "Pastel tiza sobre papel",
-        category: "pasteles",
+        category: "gatos",
         image: "../portfolio/sections/obras/MG_0327.jpg",
         sold: false
     },
@@ -35,7 +35,7 @@ window.products = [
         price: "$1500 USD",
         dimensions: "35 x 25 cm",
         technique: "Pastel tiza sobre papel",
-        category: "pasteles",
+        category: "gatos",
         image: "../portfolio/sections/obras/MG_0328.jpg",
         sold: false
     },
@@ -45,7 +45,7 @@ window.products = [
         price: "$5000 USD",
         dimensions: "205 x 210 cm",
         technique: "Pastel sobre tela",
-        category: "pasteles",
+        category: "gatos",
         image: "../portfolio/sections/obras/MG_1192.jpg",
         sold: false
     },
@@ -105,7 +105,7 @@ window.products = [
         price: "Consultar",
         dimensions: "100 x 65 cm",
         technique: "pastel sobre papel",
-        category: "pasteles",
+        category: "gatos",
         image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Gato+arcoiris+-+100+x+65+cm+-++pastel+sobre+papel+-+2020.jpg",
         sold: false
     },
@@ -115,7 +115,7 @@ window.products = [
         price: "Consultar",
         dimensions: "25 x 18 cm",
         technique: "Pastel tiza sobre papel",
-        category: "pasteles",
+        category: "gatos",
         image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Gato+con+flor+de+loto+-+Pastel+tiza+sobre+papel+-+25+x+18+cm+-+2018.jpeg",
         sold: false
     },
@@ -125,7 +125,7 @@ window.products = [
         price: "Consultar",
         dimensions: "80 x 110 cm",
         technique: "Pastel tiza",
-        category: "pasteles",
+        category: "gatos",
         image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Gato+cosmico+-+Pastel+tiza+-+80+x+110+cm+2013.jpeg",
         sold: false
     },
