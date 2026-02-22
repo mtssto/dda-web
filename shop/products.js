@@ -5,7 +5,7 @@ window.products = [
         price: "$2500 USD",
         dimensions: "140 x 125 cm",
         technique: "Aerosol y pastel sobre madera",
-        category: "pasteles",
+        category: "paisajes",
         image: "../portfolio/sections/obras/MG_0307.jpg",
         sold: false
     },
@@ -15,7 +15,7 @@ window.products = [
         price: "$3000 USD",
         dimensions: "140 x 82 cm",
         technique: "Aerosol y pastel sobre madera",
-        category: "pasteles",
+        category: "paisajes",
         image: "../portfolio/sections/obras/MG_0312_1.jpg",
         sold: false
     },
@@ -65,7 +65,7 @@ window.products = [
         price: "$3000 USD",
         dimensions: "182 x 102 cm",
         technique: "Pintura y collage sobre tela",
-        category: "pasteles",
+        category: "paisajes",
         image: "../portfolio/sections/obras/mascara2.jpg",
         sold: false
     },
@@ -135,7 +135,7 @@ window.products = [
         price: "Consultar",
         dimensions: "160 x 200 cm",
         technique: "Pastel y acrilico sobre tela",
-        category: "pasteles",
+        category: "paisajes",
         image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Mi+cuerpo+electrico+29+160+x+200+-+Pastel+y+acrilico+sobre+tela+-+2021.jpg",
         sold: false
     },
@@ -145,7 +145,7 @@ window.products = [
         price: "Consultar",
         dimensions: "24 x 34 cm",
         technique: "Tecnica mixta sobre papel",
-        category: "pasteles",
+        category: "paisajes",
         image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Paisaje+teorico+-+Tecnica+mixta+sobre+papel+-+24+x+34+cm+-+2009.jpeg",
         sold: false
     },
@@ -155,7 +155,7 @@ window.products = [
         price: "Consultar",
         dimensions: "24 x 34 cm",
         technique: "Lapiz sobre papel",
-        category: "pasteles",
+        category: "paisajes",
         image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Piasaje+con+monstruo+amistoso+-+Lapiz+sobre+papel+-+24+x+34+cm+-+2011.jpeg",
         sold: false
     },
