@@ -157,7 +157,7 @@ window.products = [
         technique: "Marcadores sobre papel",
         category: "pasteles",
         image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Autoretrato+-+110+x+150+cm+-+Marcadores+sobre+papel+-+2007.jpg",
-        sold: false
+        sold: true
     },
     {
         id: "gato-arcoiris",
@@ -187,7 +187,7 @@ window.products = [
         technique: "Pastel tiza",
         category: "gatos",
         image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Gato+cosmico+-+Pastel+tiza+-+80+x+110+cm+2013.jpeg",
-        sold: false
+        sold: true
     },
     {
         id: "mi-cuerpo-electrico-29",
@@ -227,7 +227,7 @@ window.products = [
         technique: "Pintura y pastel tiza sobre madera",
         category: "pasteles",
         image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Puerta+Azul+-+210+x+92+cm+-+Pintura+y+pastel+tiza+sobre+madera+-+2015_2017.jpeg",
-        sold: false
+        sold: true
     },
     {
         id: "sin-titulo",
@@ -349,13 +349,13 @@ window.products = [
         id: "dibu-9", title: "Ilustración #9", price: "20 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu9.jpg", sold: false
     },
     {
-        id: "dibu-10", title: "Ilustración #10", price: "14 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu10.jpg", sold: false
+        id: "dibu-10", title: "Paisaje con Flor y Hombre Plateado", price: "14 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "paisajes", image: "../Ilustrates/dibu10.jpg", sold: false
     },
     {
         id: "dibu-11", title: "Ilustración #11", price: "9 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu11.jpg", sold: false
     },
     {
-        id: "dibu-12", title: "Ilustración #12", price: "25 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu12.jpg", sold: false
+        id: "dibu-12", title: "Paisaje fenomenal", price: "25 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu12.jpg", sold: false
     },
     {
         id: "dibu-14", title: "Ilustración #14", price: "7 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu14.jpg", sold: false
