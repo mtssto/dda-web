@@ -6,7 +6,7 @@ window.products = [
         dimensions: "Consultar medidas",
         technique: "Consultar técnica",
         category: "retratos",
-        image: "../portfolio/sections/obras/retrato-1.jpeg",
+        image: "../portfolio/sections/obras/retrato-1.png",
         sold: false
     },
     {
@@ -16,7 +16,7 @@ window.products = [
         dimensions: "Consultar medidas",
         technique: "Consultar técnica",
         category: "retratos",
-        image: "../portfolio/sections/obras/retrato-2.jpeg",
+        image: "../portfolio/sections/obras/retrato-2.png",
         sold: false
     },
     {

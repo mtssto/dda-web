@@ -1,0 +1,107 @@
+/* =========================
+   CATALOG.CSS (OVERRIDES)
+   ========================= */
+
+/* Asegura que el main use buen ancho y padding */
+.catalog-page .catalog-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-inline: clamp(16px, 4vw, 40px);
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+/* Layout general del catálogo (si shop.css mete algo raro) */
+.catalog-page .catalog-layout {
+    width: 100%;
+}
+
+/* Mobile: sidebar arriba y grid abajo + padding correcto */
+@media (max-width: 768px) {
+    .catalog-page .catalog-container {
+        max-width: none;
+        margin: 0;
+        padding-inline: 16px;
+    }
+
+    .catalog-page .catalog-layout {
+        display: block !important;
+    }
+
+    .catalog-page .catalog-sidebar {
+        width: 100% !important;
+        margin-bottom: 24px;
+    }
+
+    .catalog-page .catalog-sidebar .sidebar-section {
+        width: 100%;
+    }
+
+    .catalog-page .filter-dropdown {
+        width: 100%;
+    }
+}
+
+/* =========================
+   FIX DETALLES / COMPRAR
+   ========================= */
+
+/* contenedor de acciones: 2 columnas */
+.catalog-page .product-actions,
+.catalog-page .product-card__actions,
+.catalog-page .card-actions {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+}
+
+/* cada acción: icono + texto en una sola línea */
+.catalog-page .product-actions a,
+.catalog-page .product-actions button,
+.catalog-page .product-card__actions a,
+.catalog-page .product-card__actions button,
+.catalog-page .card-actions a,
+.catalog-page .card-actions button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+}
+
+/* iconos: forzar inline-flex para que no salten arriba */
+.catalog-page .product-actions i,
+.catalog-page .product-actions svg,
+.catalog-page .product-actions img,
+.catalog-page .product-actions .icon,
+.catalog-page .product-actions .fa,
+.catalog-page .product-actions .material-icons,
+.catalog-page .product-actions .material-symbols-outlined,
+.catalog-page .product-card__actions i,
+.catalog-page .product-card__actions svg,
+.catalog-page .product-card__actions img,
+.catalog-page .product-card__actions .icon,
+.catalog-page .product-card__actions .fa,
+.catalog-page .product-card__actions .material-icons,
+.catalog-page .product-card__actions .material-symbols-outlined,
+.catalog-page .card-actions i,
+.catalog-page .card-actions svg,
+.catalog-page .card-actions img,
+.catalog-page .card-actions .icon,
+.catalog-page .card-actions .fa,
+.catalog-page .card-actions .material-icons,
+.catalog-page .card-actions .material-symbols-outlined {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
+}
+
+/* Si el icono viene por pseudo-elemento (muy común) */
+.catalog-page .product-actions a::before,
+.catalog-page .product-card__actions a::before,
+.catalog-page .card-actions a::before {
+    vertical-align: middle !important;
+}
