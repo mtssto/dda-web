@@ -194,6 +194,7 @@ body.lang-en .product-card.sold .product-image::after {
     font-size: 1rem;
     font-weight: 400;
     margin: 0 0 4px 0;
+    margin-left: 0.3rem;
     color: #000;
 }
 
@@ -209,9 +210,10 @@ body.lang-en .product-card.sold .product-image::after {
 .product-price {
     color: #000;
     font-family: var(--font-body);
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     font-weight: 500;
     margin-top: 15px;
+    margin-left: 0.3rem;
     margin-bottom: 0;
 }
 
