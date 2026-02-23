@@ -9,6 +9,9 @@ window.pageTranslations = {
         'filter.all': 'Todos',
         'filter.pasteles': 'Pasteles',
         'filter.digital': 'Arte Digital',
+        'filter.gatos': 'Gatos',
+        'filter.paisajes': 'Paisajes',
+        'filter.autoretratos': 'Autoretratos',
         'filter.ilustraciones': 'Ilustraciones',
         'card.details': '👁 DETALLES',
         'card.buy': '🛒 COMPRAR',
@@ -30,6 +33,9 @@ window.pageTranslations = {
         'filter.all': 'All',
         'filter.pasteles': 'Pastels',
         'filter.digital': 'Digital Art',
+        'filter.gatos': 'Cats',
+        'filter.paisajes': 'Landscapes',
+        'filter.autoretratos': 'Self-portraits',
         'filter.ilustraciones': 'Illustrations',
         'card.details': '👁 DETAILS',
         'card.buy': '🛒 BUY',
@@ -110,7 +116,34 @@ document.addEventListener('DOMContentLoaded', function () {
         priceFilter.addEventListener('change', applyFilters);
     }
 
-    // Modal close functionality
+    // Modal Injection Logic (as raw string to avoid CORS on file:/// protocol)
+    const modalHTML = `
+        <!-- Modal for Image View -->
+        <div id="imageModal" class="image-modal">
+            <span class="modal-close">&times;</span>
+            <div class="modal-container">
+                <div class="modal-image-wrapper">
+                    <img class="modal-image" id="modalImage" alt="Artwork">
+                </div>
+                <div class="modal-info-wrapper">
+                    <h2 id="modalTitle" class="modal-title"></h2>
+                    <p id="modalTechnique" class="modal-technique"></p>
+                    <p id="modalDimensions" class="modal-dimensions"></p>
+                    <p id="modalPrice" class="modal-price"></p>
+                    <button id="modalBuyBtn" class="btn-modal-buy" data-i18n="modal.consult">CONSULTAR / COMPRAR</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    // Re-apply translations for the newly injected modal
+    if (window.changeLanguage) {
+        window.changeLanguage(savedLang);
+    }
+
+    // Bind modal event listeners now that it's in the DOM
     const modal = document.getElementById('imageModal');
     const modalClose = document.querySelector('.modal-close');
 
@@ -132,6 +165,19 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // Check for "item" query param to auto-open modal (now that modal exists)
+    const urlParams = new URLSearchParams(window.location.search);
+    const itemParam = urlParams.get('item');
+
+    if (itemParam) {
+        const decodedItem = decodeURIComponent(itemParam);
+        // Find product in data source logic
+        const foundProduct = (window.products || []).find(p => p.image.includes(decodedItem));
+        if (foundProduct) {
+            openModal(foundProduct);
+        }
+    }
+
     // Carousel Logic for multiple carousels
     const carouselContainers = document.querySelectorAll('.carousel-container-mini');
     carouselContainers.forEach(container => {
@@ -145,18 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Check for "item" query param to auto-open modal
-    const urlParams = new URLSearchParams(window.location.search);
-    const itemParam = urlParams.get('item');
-
-    if (itemParam) {
-        const decodedItem = decodeURIComponent(itemParam);
-        // Find product in data source logic
-        const foundProduct = (window.products || []).find(p => p.image.includes(decodedItem));
-        if (foundProduct) {
-            openModal(foundProduct);
-        }
-    }
+    // (Removed duplicate itemParam check here, it runs immediately after modal injection above)
 });
 
 function renderGrid(items) {
@@ -179,7 +214,15 @@ function renderGrid(items) {
                 <h3 class="product-title">${product.title}</h3>
                 <p class="product-price">${product.price}</p>
                 <div class="product-actions-grid">
-                    <button class="btn-grid-action btn-grid-details" data-i18n="card.details">👁 DETALLES</button>
+                    <button class="btn-grid-action btn-grid-details" data-i18n="card.details">
+                        <span class="btn-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" class="icon-eye" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </span>
+                        <span>DETALLES</span>
+                    </button>
                     <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">🛒 COMPRAR</button>
                 </div>
             </div>

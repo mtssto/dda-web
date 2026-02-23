@@ -105,3 +105,23 @@
 .catalog-page .card-actions a::before {
     vertical-align: middle !important;
 }
+
+/* Button Icon Styles */
+.btn-grid-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-grid-action .btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-eye {
+    width: 16px;
+    height: 16px;
+    opacity: 0.85;
+}

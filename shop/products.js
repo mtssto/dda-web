@@ -35,7 +35,7 @@ window.products = [
         price: "Consultar",
         dimensions: "Consultar medidas",
         technique: "Consultar técnica",
-        category: "retratos",
+        category: "autoretratos",
         image: "../portfolio/sections/obras/autoretrato.png",
         sold: false
     },
@@ -45,7 +45,7 @@ window.products = [
         price: "Consultar",
         dimensions: "Consultar medidas",
         technique: "Consultar técnica",
-        category: "retratos",
+        category: "autoretratos",
         image: "../portfolio/sections/obras/retrato-1.png",
         sold: false
     },
@@ -55,7 +55,7 @@ window.products = [
         price: "Consultar",
         dimensions: "Consultar medidas",
         technique: "Consultar técnica",
-        category: "retratos",
+        category: "autoretratos",
         image: "../portfolio/sections/obras/retrato-2.png",
         sold: false
     },
