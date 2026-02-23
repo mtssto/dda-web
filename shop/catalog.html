@@ -117,8 +117,18 @@
     </aside>
 
     <main class="catalog-container">
-        <div class="catalog-header-actions">
+        <div class="catalog-header-actions" style="display: flex; justify-content: space-between; align-items: center;">
             <a href="shop.html" class="back-link">← Volver al Shop</a>
+            <button id="btnDownloadPDF" class="btn-download-catalog" data-i18n="catalog.download">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="margin-right: 6px; vertical-align: text-bottom;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Descargar Catálogo (PDF)
+            </button>
         </div>
         <h1 class="catalog-title" data-i18n="catalog.title">Catálogo</h1>
         <hr class="catalog-divider">
@@ -192,6 +202,9 @@
 
 
     <script src="../navbar.js"></script>
+    <!-- jsPDF libraries for PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <script src="products.js"></script>
     <script src="shop.js"></script>
 </body>

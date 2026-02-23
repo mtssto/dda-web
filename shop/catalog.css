@@ -125,3 +125,25 @@
     height: 16px;
     opacity: 0.85;
 }
+
+/* Download Catalog Button */
+.btn-download-catalog {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--primary-color, #1a1a1a);
+    color: var(--bg-color, #ffffff);
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    border: 1px solid var(--primary-color, #1a1a1a);
+}
+
+.btn-download-catalog:hover {
+    background-color: transparent;
+    color: var(--primary-color, #1a1a1a);
+    transform: translateY(-2px);
+}

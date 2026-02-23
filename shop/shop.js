@@ -25,7 +25,8 @@ window.pageTranslations = {
         'shop.shipping_desc': 'Enviamos a todo el mundo con embalaje seguro.',
         'shop.service': 'Atención Personalizada',
         'shop.service_desc': 'Contacto directo por WhatsApp para consultas.',
-        'catalog.title': 'Catálogo'
+        'catalog.title': 'Catálogo',
+        'catalog.download': 'Descargar Catálogo (PDF)'
     },
     en: {
         'hero.subtitle': 'Original Artworks & Limited Editions',
@@ -49,7 +50,8 @@ window.pageTranslations = {
         'shop.shipping_desc': 'We ship worldwide with secure packaging.',
         'shop.service': 'Personal Service',
         'shop.service_desc': 'Direct contact via WhatsApp for inquiries.',
-        'catalog.title': 'Catalog'
+        'catalog.title': 'Catalog',
+        'catalog.download': 'Download Catalog (PDF)'
     }
 };
 
@@ -336,3 +338,176 @@ function closeModal() {
         document.body.style.overflow = '';
     }
 }
+
+// PDF Generation Logic
+document.addEventListener('DOMContentLoaded', () => {
+    const btnDownloadPDF = document.getElementById('btnDownloadPDF');
+    if (btnDownloadPDF) {
+        btnDownloadPDF.addEventListener('click', async (e) => {
+            e.preventDefault();
+
+            // Show loading state
+            const originalText = btnDownloadPDF.innerHTML;
+            btnDownloadPDF.innerHTML = 'Generando PDF...';
+            btnDownloadPDF.style.opacity = '0.7';
+            btnDownloadPDF.disabled = true;
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Title
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(22);
+                doc.text("Catálogo - Diego de Aduriz", 14, 20);
+
+                // Subtitle
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(12);
+                doc.setTextColor(100);
+                const date = new Date().toLocaleDateString('es-AR');
+                doc.text(`Generado el ${date}`, 14, 28);
+
+                doc.setTextColor(0);
+
+                // Get visible products
+                const visibleCards = Array.from(document.querySelectorAll('.product-card')).filter(card => card.style.display !== 'none');
+
+                if (visibleCards.length === 0) {
+                    alert("No hay productos visibles para incluir en el catálogo.");
+                    return;
+                }
+
+                let yPos = 40;
+                const pageHeight = doc.internal.pageSize.getHeight();
+
+                for (let i = 0; i < visibleCards.length; i++) {
+                    const card = visibleCards[i];
+
+                    // Check if we need a new page
+                    if (yPos > pageHeight - 60) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+
+                    const title = card.querySelector('.product-title').innerText;
+                    const price = card.querySelector('.product-price').innerText;
+                    const imgSrc = card.querySelector('img').src;
+
+                    // Find product data from global array to get dimensions/technique
+                    const productData = (window.products || []).find(p => imgSrc.includes(p.image.split('/').pop()));
+
+                    // Add Image using Promise to ensure base64 generation doesn't block or taint
+                    try {
+                        let base64Data;
+                        const domImg = card.querySelector('img');
+                        if (!domImg || !domImg.src) throw new Error('No image source');
+
+                        // Attempt 1: Fetch as Blob and convert to Base64 (best quality, works locally if server is running without CORS headers)
+                        try {
+                            const response = await fetch(domImg.src);
+                            const blob = await response.blob();
+                            base64Data = await new Promise((resolve, reject) => {
+                                const reader = new FileReader();
+                                reader.onloadend = () => resolve(reader.result);
+                                reader.onerror = reject;
+                                reader.readAsDataURL(blob);
+                            });
+                        } catch (fetchErr) {
+                            // Attempt 2: Fallback to Canvas (works on some file:/// setups without CrossOrigin requirements)
+                            base64Data = await new Promise((resolve, reject) => {
+                                const img = new Image();
+                                img.onload = () => {
+                                    const canvas = document.createElement('canvas');
+                                    canvas.width = img.width || 800;
+                                    canvas.height = img.height || 800;
+                                    const ctx = canvas.getContext('2d');
+                                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                                    try {
+                                        resolve(canvas.toDataURL('image/jpeg', 0.8));
+                                    } catch (e) {
+                                        reject(e); // Catch canvas tainting DOMException
+                                    }
+                                };
+                                img.onerror = () => reject('Image load error');
+                                img.src = domImg.src;
+                            });
+                        }
+
+                        // Calculate aspect ratio to fit within massive A4 bounds (margins 20mm)
+                        const margin = 20;
+                        const maxImgWidth = 170; // 210 - 40
+                        const maxImgHeight = 160; // Leave room below for title and description
+
+                        let imgWidth = domImg.naturalWidth || domImg.width || 800;
+                        let imgHeight = domImg.naturalHeight || domImg.height || 800;
+
+                        let renderWidth = maxImgWidth;
+                        let renderHeight = maxImgHeight;
+
+                        if (imgWidth / imgHeight > maxImgWidth / maxImgHeight) {
+                            renderHeight = (imgHeight / imgWidth) * maxImgWidth;
+                        } else {
+                            renderWidth = (imgWidth / imgHeight) * maxImgHeight;
+                        }
+
+                        // Center the image horizontally
+                        const xOffset = margin + (maxImgWidth - renderWidth) / 2;
+                        const imgY = yPos;
+
+                        doc.addImage(base64Data, 'JPEG', xOffset, imgY, renderWidth, renderHeight);
+
+                        // Move cursor down below image
+                        yPos += renderHeight + 15;
+
+                    } catch (imgErr) {
+                        console.warn('Could not add image to PDF', imgErr);
+                        const margin = 20;
+                        doc.setDrawColor(200);
+                        doc.rect(margin, yPos, 170, 100);
+                        doc.setFontSize(12);
+                        doc.text("Sin imagen", 105, yPos + 50, { align: "center" });
+                        yPos += 115;
+                    }
+
+                    // Add Text Info Below Image
+                    const margin = 20;
+                    doc.setFontSize(16);
+                    doc.setFont("helvetica", "bold");
+                    doc.text(title, margin, yPos);
+                    yPos += 8;
+
+                    doc.setFontSize(12);
+                    doc.setFont("helvetica", "normal");
+                    doc.setTextColor(80);
+                    if (productData) {
+                        doc.text(`Técnica: ${productData.technique}`, margin, yPos);
+                        yPos += 7;
+                        doc.text(`Dimensiones: ${productData.dimensions}`, margin, yPos);
+                        yPos += 7;
+                    }
+
+                    doc.setFontSize(14);
+                    doc.setFont("helvetica", "bold");
+                    doc.setTextColor(0);
+                    doc.text(`Precio: ${price}`, margin, yPos + 2);
+
+                    // Ensure next item gets a new page if this was a large image
+                    yPos += 200; // Force page break on next loop
+                }
+
+                // Save the PDF
+                doc.save("Catalogo_DiegoDeAduriz.pdf");
+
+            } catch (error) {
+                console.error("PDF Generation Error:", error);
+                alert("Hubo un error al generar el PDF. Por favor, intenta de nuevo.");
+            } finally {
+                // Restore button
+                btnDownloadPDF.innerHTML = originalText;
+                btnDownloadPDF.style.opacity = '1';
+                btnDownloadPDF.disabled = false;
+            }
+        });
+    }
+});
