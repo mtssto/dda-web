@@ -184,7 +184,6 @@ body.lang-en .product-card.sold .product-image::after {
 
 /* Info */
 .product-info {
-    padding: 4px 6px;
     text-align: left;
     flex-grow: 1;
 }
@@ -515,7 +514,8 @@ footer p {
 .carousel-container-mini {
     position: relative;
     width: 100%;
-    padding: 0 40px;
+    padding: 0 72px;
+    box-sizing: border-box;
 }
 
 .carousel-container-mini .carousel-track {
@@ -526,8 +526,10 @@ footer p {
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     gap: 20px;
-    padding-bottom: 10px;
+    padding-bottom: 15px;
     scrollbar-width: none;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .carousel-container-mini .carousel-track::-webkit-scrollbar {
@@ -572,6 +574,7 @@ footer p {
     /* Use a slightly wider card for organic aspect ratios to breathe */
     margin: 0;
     scroll-snap-align: center;
+    box-sizing: border-box;
 }
 
 .carousel-container-mini .product-image {
@@ -606,6 +609,10 @@ footer p {
 
     .shop-hero-vertical .shop-title {
         font-size: 2.5rem;
+    }
+
+    .carousel-container-mini {
+        padding: 0 20px;
     }
 
     .carousel-container-mini .carousel-card {
@@ -698,12 +705,19 @@ footer p {
         min-height: 100vh;
         display: block;
         /* Remove flex constraints */
-        overflow: visible;
+        overflow-x: hidden;
+        /* clave */
+        overflow-y: visible;
+    }
+
+    html,
+    body {
+        overflow-x: hidden;
     }
 
     /* Hero adjusts to content */
     .shop-hero-vertical {
-        padding: 0 15px;
+        padding: 0 15px !important;
         gap: 20px;
         display: flex;
         flex-direction: column;
@@ -743,7 +757,7 @@ footer p {
     }
 
     .carousel-container-mini {
-        padding: 0 20px;
+        padding: 0 15px;
     }
 
     .carousel-container-mini .product-image {
