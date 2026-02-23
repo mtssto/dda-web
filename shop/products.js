@@ -1,5 +1,45 @@
 window.products = [
     {
+        id: "cartas-a-dios",
+        title: "Cartas a Dios",
+        price: "Consultar",
+        dimensions: "Consultar medidas",
+        technique: "Consultar técnica",
+        category: "pasteles",
+        image: "../portfolio/sections/obras/cartas-a-dios.png",
+        sold: false
+    },
+    {
+        id: "payaso",
+        title: "Payaso",
+        price: "Consultar",
+        dimensions: "Consultar medidas",
+        technique: "Consultar técnica",
+        category: "pasteles",
+        image: "../portfolio/sections/obras/payaso.png",
+        sold: false
+    },
+    {
+        id: "ascension",
+        title: "Ascensión",
+        price: "Consultar",
+        dimensions: "Consultar medidas",
+        technique: "Consultar técnica",
+        category: "pasteles",
+        image: "../portfolio/sections/obras/ascension.png",
+        sold: false
+    },
+    {
+        id: "autoretrato",
+        title: "Autoretrato",
+        price: "Consultar",
+        dimensions: "Consultar medidas",
+        technique: "Consultar técnica",
+        category: "retratos",
+        image: "../portfolio/sections/obras/autoretrato.png",
+        sold: false
+    },
+    {
         id: "retrato-1",
         title: "Retrato 1",
         price: "Consultar",
