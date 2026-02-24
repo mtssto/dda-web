@@ -323,42 +323,69 @@ footer p {
 @media (max-width: 768px) {
   .image-modal {
     background-color: #fff;
+    align-items: flex-start;
+    /* Fixes top cutoff on scroll */
+    padding: 0;
   }
 
   .modal-container {
     flex-direction: column;
-    height: 100vh;
-    max-height: 100vh;
-    overflow-y: auto;
+    height: auto;
+    min-height: 100%;
+    max-height: none;
+    overflow: visible;
     border-radius: 0;
-    margin-top: 0;
+    margin: 0;
     width: 100%;
     box-shadow: none;
   }
 
+  .modal-close {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    line-height: 1;
+    z-index: 3002;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
   .modal-image-wrapper {
-    padding: 15px;
-    flex: 1 1 auto;
-    min-height: 40vh;
+    padding: 80px 20px 20px;
+    /* Space top for back button */
+    flex: none;
+    min-height: auto;
+    height: 55vh;
   }
 
   .modal-image {
-    max-height: 40vh;
+    max-height: 100%;
+    width: 100%;
+    object-fit: contain;
   }
 
   .modal-info-wrapper {
-    padding: 20px;
+    padding: 30px 20px 60px;
     flex: none;
+    text-align: center;
   }
 
   .modal-title {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
+    font-size: 1.8rem;
+    margin-bottom: 12px;
   }
 
   .btn-modal-buy {
     width: 100%;
-    padding: 12px 20px;
-    text-align: center;
+    padding: 16px 20px;
+    font-size: 1rem;
+    margin-top: 20px;
   }
 }
