@@ -24,7 +24,7 @@ const artImages = [
     // --- OBRAS (Local) ---
     './portfolio/sections/obras/micuerpo.jpg',
     './portfolio/sections/obras/Diego+de+Aduriz+-+Abecedario+-+150+x+100+cm+-+Pastel+y+acrilico+sobre+tela+-+2021.jpg',
-    './portfolio/sections/obras/Diego+de+Aduriz+-+Autoretrato+-+110+x+150+cm+-+Marcadores+sobre+papel+-+2007.jpg',
+    './portfolio/sections/obras/Diego+de+Aduriz+-+Autorretrato+-+110+x+150+cm+-+Marcadores+sobre+papel+-+2007.jpg',
     './portfolio/sections/obras/Diego+de+Aduriz+-+Gato+arcoiris+-+100+x+65+cm+-++pastel+sobre+papel+-+2020.jpg',
     './portfolio/sections/obras/Diego+de+Aduriz+-+Gato+con+flor+de+loto+-+Pastel+tiza+sobre+papel+-+25+x+18+cm+-+2018.jpeg',
     './portfolio/sections/obras/Diego+de+Aduriz+-+Gato+cosmico+-+Pastel+tiza+-+80+x+110+cm+2013.jpeg',

@@ -30,32 +30,32 @@ window.products = [
         sold: false
     },
     {
-        id: "autoretrato",
-        title: "Autoretrato",
+        id: "Autorretrato",
+        title: "Autorretrato",
         price: "Consultar",
         dimensions: "Consultar medidas",
         technique: "Consultar técnica",
-        category: "autoretratos",
-        image: "../portfolio/sections/obras/autoretrato.png",
+        category: "Autorretratos",
+        image: "../portfolio/sections/obras/Autorretrato.png",
         sold: false
     },
     {
         id: "retrato-1",
-        title: "Autoretrato con collar",
+        title: "Autorretrato con collar",
         price: "Consultar",
         dimensions: "Consultar medidas",
         technique: "Consultar técnica",
-        category: "autoretratos",
+        category: "Autorretratos",
         image: "../portfolio/sections/obras/retrato-1.png",
         sold: false
     },
     {
         id: "retrato-2",
-        title: "Autoretrato con máscara de gato",
+        title: "Autorretrato con máscara de gato",
         price: "Consultar",
         dimensions: "Consultar medidas",
         technique: "Consultar técnica",
-        category: "autoretratos",
+        category: "Autorretratos",
         image: "../portfolio/sections/obras/retrato-2.png",
         sold: false
     },
@@ -150,13 +150,13 @@ window.products = [
         sold: false
     },
     {
-        id: "autoretrato",
-        title: "Autoretrato",
+        id: "Autorretrato",
+        title: "Autorretrato",
         price: "Consultar",
         dimensions: "110 x 150 cm",
         technique: "Marcadores sobre papel",
         category: "pasteles",
-        image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Autoretrato+-+110+x+150+cm+-+Marcadores+sobre+papel+-+2007.jpg",
+        image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Autorretrato+-+110+x+150+cm+-+Marcadores+sobre+papel+-+2007.jpg",
         sold: true
     },
     {
