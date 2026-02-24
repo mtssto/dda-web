@@ -181,7 +181,7 @@ window.products = [
     },
     {
         id: "gato-cosmico",
-        title: "Gato cosmico",
+        title: "Gato cósmico",
         price: "Consultar",
         dimensions: "80 x 110 cm",
         technique: "Pastel tiza",
