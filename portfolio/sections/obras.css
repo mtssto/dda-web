@@ -77,6 +77,19 @@ footer p {
   .masonry-grid {
     column-count: 2;
   }
+
+  .overlay-title {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+  }
+
+  .overlay-details {
+    font-size: 0.7rem;
+  }
+
+  .masonry-overlay {
+    padding: 15px;
+  }
 }
 
 @media (max-width: 600px) {
@@ -97,6 +110,19 @@ footer p {
   .masonry-grid {
     column-count: 1;
     column-gap: 15px;
+  }
+
+  /* Since column goes to 1, images are huge again, so font can scale back up slightly */
+  .overlay-title {
+    font-size: 1.5rem;
+  }
+
+  .overlay-details {
+    font-size: 0.85rem;
+  }
+
+  .masonry-overlay {
+    padding: 25px;
   }
 }
 

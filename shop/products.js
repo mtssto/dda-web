@@ -210,6 +210,16 @@ window.products = [
         sold: false
     },
     {
+        id: "paisaje-azul-collage",
+        title: "Paisaje azul",
+        price: "Consultar",
+        dimensions: "Consultar medidas",
+        technique: "Collage",
+        category: "paisajes",
+        image: "../portfolio/sections/obras/paisaje-azul-collage.png",
+        sold: false
+    },
+    {
         id: "paisaje-con-monstruo-amistoso",
         title: "Paisaje con monstruo amistoso",
         price: "Consultar",
@@ -247,6 +257,26 @@ window.products = [
         technique: "Acrílico y pastel sobre tela",
         category: "pasteles",
         image: "../portfolio/sections/obras/luz_azul.jpg",
+        sold: false
+    },
+    {
+        id: "cuarto-creciente",
+        title: "Cuarto creciente",
+        price: "Consultar",
+        dimensions: "Consultar medidas",
+        technique: "Pastel sobre tela",
+        category: "pasteles",
+        image: "../portfolio/sections/obras/cuarto-creciente-pastel-sobre-tela.png",
+        sold: false
+    },
+    {
+        id: "sin-titulo-3",
+        title: "Sin título",
+        price: "Consultar",
+        dimensions: "Consultar medidas",
+        technique: "Consultar técnica",
+        category: "pasteles",
+        image: "../portfolio/sections/obras/sin-título.png",
         sold: false
     },
     {
