@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Modal Injection Logic (as raw string to avoid CORS on file:/// protocol)
     const modalHTML = `
-        <!-- Modal for Image View -->
+        <!-- Modal for Info View -->
         <div id="imageModal" class="image-modal">
             <span class="modal-close">&times;</span>
             <div class="modal-container">
@@ -136,6 +136,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             </div>
         </div>
+
+        <!-- Modal for pure Image Zoom -->
+        <div id="lightBoxModal" class="lightbox-modal">
+            <span class="lightbox-close">&times;</span>
+            <img class="lightbox-image" id="lightBoxImage" alt="Artwork Zoom">
+        </div>
     `;
 
     document.body.insertAdjacentHTML('beforeend', modalHTML);
@@ -149,8 +155,48 @@ document.addEventListener('DOMContentLoaded', function () {
     const modal = document.getElementById('imageModal');
     const modalClose = document.querySelector('.modal-close');
 
+    const lightBoxModal = document.getElementById('lightBoxModal');
+    const lightBoxClose = document.querySelector('.lightbox-close');
+
     if (modalClose) {
         modalClose.addEventListener('click', closeModal);
+    }
+
+    if (lightBoxClose) {
+        lightBoxClose.addEventListener('click', closeLightBox);
+    }
+
+    // LightBox Image Zoom Logic
+    const lightBoxImg = document.getElementById('lightBoxImage');
+    if (lightBoxImg) {
+        lightBoxImg.addEventListener('click', function (e) {
+            e.stopPropagation(); // prevent modal from closing when clicking image
+            this.classList.toggle('zoomed');
+
+            if (this.classList.contains('zoomed')) {
+                // Calculate click position relative to the image
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                // Convert to percentages
+                const xPercent = (x / rect.width) * 100;
+                const yPercent = (y / rect.height) * 100;
+
+                this.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+            } else {
+                this.style.transformOrigin = 'center center';
+            }
+        });
+
+        // Optional: dynamic cursor hinting
+        lightBoxImg.addEventListener('mousemove', function (e) {
+            if (!this.classList.contains('zoomed')) {
+                this.style.cursor = 'zoom-in';
+            } else {
+                this.style.cursor = 'zoom-out';
+            }
+        });
     }
 
     if (modal) {
@@ -161,9 +207,18 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    if (lightBoxModal) {
+        lightBoxModal.addEventListener('click', function (e) {
+            if (e.target === lightBoxModal) {
+                closeLightBox();
+            }
+        });
+    }
+
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
-            closeModal();
+        if (e.key === 'Escape') {
+            if (modal && modal.classList.contains('active')) closeModal();
+            if (lightBoxModal && lightBoxModal.classList.contains('active')) closeLightBox();
         }
     });
 
@@ -233,7 +288,14 @@ function renderGrid(items) {
         // Attach click to card
         card.onclick = (e) => {
             // Check if button clicked
-            if (e.target.tagName === 'BUTTON') return;
+            if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+
+            // Fast check: if they actually clicked the image directly, open lightbox instead of info modal
+            if (e.target.tagName === 'IMG' && e.target.closest('.product-image')) {
+                openLightBox(product.image);
+                return;
+            }
+
             openModal(product);
         };
 
@@ -336,6 +398,37 @@ function closeModal() {
     if (modal) {
         modal.classList.remove('active');
         document.body.style.overflow = '';
+    }
+}
+
+function openLightBox(imageSrc) {
+    const lightBox = document.getElementById('lightBoxModal');
+    const lightBoxImg = document.getElementById('lightBoxImage');
+
+    if (lightBox && lightBoxImg) {
+        // Extract src regardless of parameter type
+        let src = typeof imageSrc === 'string' ? imageSrc : (imageSrc.src || '');
+
+        lightBoxImg.src = src;
+        lightBoxImg.classList.remove('zoomed');
+        lightBoxImg.style.transformOrigin = 'center center';
+
+        lightBox.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeLightBox() {
+    const lightBox = document.getElementById('lightBoxModal');
+    const lightBoxImg = document.getElementById('lightBoxImage');
+
+    if (lightBox) {
+        lightBox.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    if (lightBoxImg) {
+        lightBoxImg.classList.remove('zoomed');
+        lightBoxImg.style.transformOrigin = 'center center';
     }
 }
 
