@@ -248,7 +248,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // (Removed duplicate itemParam check here, it runs immediately after modal injection above)
+    // Global Event Delegation for LightBox (catches all .product-image img clicks including static carousels)
+    document.addEventListener('click', function (e) {
+        if (e.target.tagName === 'IMG' && e.target.closest('.product-image')) {
+            e.preventDefault();
+            e.stopPropagation();
+            openLightBox(e.target.src);
+        }
+    }, true); // Use capture phase to intercept before card's onclick
+
 });
 
 function renderGrid(items) {
@@ -289,12 +297,6 @@ function renderGrid(items) {
         card.onclick = (e) => {
             // Check if button clicked
             if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
-
-            // Fast check: if they actually clicked the image directly, open lightbox instead of info modal
-            if (e.target.tagName === 'IMG' && e.target.closest('.product-image')) {
-                openLightBox(product.image);
-                return;
-            }
 
             openModal(product);
         };
