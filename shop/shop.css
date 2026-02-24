@@ -114,7 +114,7 @@ body {
 /* Products Grid */
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
     gap: 40px;
     padding: 20px 0;
     justify-content: center;
@@ -140,7 +140,7 @@ body {
 .product-image {
     width: 100%;
     background: #f4f4f4;
-    padding: 20px;
+    padding: 10px;
     margin-bottom: 0px;
     overflow: hidden;
     position: relative;

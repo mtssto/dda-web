@@ -39,7 +39,7 @@
 }
 
 .carousel-card {
-    flex: 0 0 300px;
+    flex: 0 0 350px;
     /* Fixed width for cards */
     scroll-snap-align: center;
     /* Reuse existing product card styles but reset margins if needed */

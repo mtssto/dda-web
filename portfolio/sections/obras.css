@@ -39,9 +39,9 @@ section:last-child {
 .section-title {
   text-align: center;
   font-family: var(--font-heading);
-  font-size: 3.5rem;
+  font-size: 2.5rem;
   font-weight: 400;
-  margin-bottom: 80px;
+  margin-bottom: 40px;
   letter-spacing: -0.02em;
 }
 
@@ -74,7 +74,7 @@ footer p {
 /* Mobile Responsiveness */
 @media (max-width: 900px) {
   .section-title {
-    font-size: 3rem;
+    font-size: 2.2rem;
   }
 }
 
@@ -84,8 +84,8 @@ footer p {
   }
 
   .section-title {
-    font-size: 2.2rem;
-    margin-bottom: 40px;
+    font-size: 1.8rem;
+    margin-bottom: 30px;
   }
 
   .video-grid {
@@ -97,15 +97,17 @@ footer p {
 /* CSS Hacks for Dense Masonry Grid */
 .masonry-grid {
   column-count: 3;
-  column-gap: 15px;
+  column-gap: 8px;
   padding-bottom: 20px;
 }
 
 .masonry-item {
   break-inside: avoid;
-  margin-bottom: 15px;
+  margin-bottom: 8px;
   width: 100%;
   display: inline-block;
+  position: relative;
+  overflow: hidden;
 }
 
 .masonry-item img {
@@ -116,8 +118,60 @@ footer p {
   transition: opacity .4s, transform .4s;
 }
 
+/* Hover details overlay */
+.masonry-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 30px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+.masonry-item:hover .masonry-overlay {
+  opacity: 1;
+}
+
+.overlay-content {
+  transform: translateY(15px);
+  transition: transform 0.4s ease;
+}
+
+.masonry-item:hover .overlay-content {
+  transform: translateY(0);
+}
+
+.overlay-title {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 1.6rem;
+  margin: 0 0 12px 0;
+  font-weight: 400;
+  color: #111;
+  line-height: 1.2;
+}
+
+.overlay-details {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: #555;
+  line-height: 1.6;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+
 .masonry-item:hover img {
-  transform: scale(1.02);
+  transform: scale(1.05);
 }
 
 /* Modal for Image View */

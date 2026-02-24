@@ -10,6 +10,27 @@ document.addEventListener('DOMContentLoaded', () => {
   // Setup modal triggers
   const triggers = document.querySelectorAll('.grid-modal-trigger');
   triggers.forEach(trigger => {
+    // Dynamically inject professional hover overlay
+    if (!trigger.querySelector('.masonry-overlay')) {
+      const overlay = document.createElement('div');
+      overlay.className = 'masonry-overlay';
+
+      const title = trigger.dataset.title || '';
+      const dims = trigger.dataset.dimensions || '';
+      const tech = trigger.dataset.technique || '';
+
+      overlay.innerHTML = `
+        <div class="overlay-content">
+          <h3 class="overlay-title">${title}</h3>
+          <p class="overlay-details">
+            ${dims}<br>
+            ${tech}
+          </p>
+        </div>
+      `;
+      trigger.appendChild(overlay);
+    }
+
     trigger.addEventListener('click', (e) => {
       // Find current image inside trigger
       const img = trigger.querySelector('img');

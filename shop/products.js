@@ -41,7 +41,7 @@ window.products = [
     },
     {
         id: "retrato-1",
-        title: "Retrato 1",
+        title: "Autoretrato con collar",
         price: "Consultar",
         dimensions: "Consultar medidas",
         technique: "Consultar técnica",
@@ -51,7 +51,7 @@ window.products = [
     },
     {
         id: "retrato-2",
-        title: "Retrato 2",
+        title: "Autoretrato con máscara de gato",
         price: "Consultar",
         dimensions: "Consultar medidas",
         technique: "Consultar técnica",
@@ -201,7 +201,7 @@ window.products = [
     },
     {
         id: "paisaje-teorico",
-        title: "Paisaje teorico",
+        title: "Paisaje teórico",
         price: "Consultar",
         dimensions: "24 x 34 cm",
         technique: "Tecnica mixta sobre papel",
@@ -279,6 +279,46 @@ window.products = [
         image: "../portfolio/sections/obras/mascara1.jpg",
         sold: false
     },
+    {
+        id: "don-diego-explosion",
+        title: "Don Diego y los soles en explosión",
+        price: "Consultar",
+        dimensions: "Consultar medidas",
+        technique: "Pastel sobre tela",
+        category: "pasteles",
+        image: "../portfolio/sections/obras/don-diego-y-pastel-sobre-explosion-pastel-sobre-tela.png",
+        sold: false
+    },
+    {
+        id: "do-re-mi-fa",
+        title: "Do re mi fa sol la si",
+        price: "Consultar",
+        dimensions: "Consultar medidas",
+        technique: "Pastel sobre papel",
+        category: "pasteles",
+        image: "../portfolio/sections/obras/do-re-mi-fa-sol-la-si-pastel-sobre-papel.png",
+        sold: false
+    },
+    {
+        id: "paisaje-sol-sonriente",
+        title: "Paisaje con sol sonriente",
+        price: "Consultar",
+        dimensions: "Consultar medidas",
+        technique: "Pastel sobre papel",
+        category: "paisajes",
+        image: "../portfolio/sections/obras/paisaje-con-sol-sonriente-pastel-sonre-papel.png",
+        sold: false
+    },
+    {
+        id: "4-cabezas",
+        title: "Cuatro cabezas",
+        price: "Consultar",
+        dimensions: "Consultar medidas",
+        technique: "Pastel sobre papel",
+        category: "pasteles",
+        image: "../portfolio/sections/obras/4-cabezas-pastel-sobre-papel.png",
+        sold: false
+    },
     // Digital
     {
         id: "digital-artwork-1",
@@ -322,7 +362,7 @@ window.products = [
     },
     // Ilustraciones
     {
-        id: "dibu-1", title: "Ilustración #1", price: "12 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu1.jpg", sold: false
+        id: "dibu-1", title: "diábolo", price: "12 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu1.jpg", sold: false
     },
     {
         id: "dibu-2", title: "Ilustración #2", price: "22 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu2.jpg", sold: false
@@ -352,22 +392,22 @@ window.products = [
         id: "dibu-10", title: "Paisaje con Flor y Hombre Plateado", price: "14 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "paisajes", image: "../Ilustrates/dibu10.jpg", sold: false
     },
     {
-        id: "dibu-11", title: "Ilustración #11", price: "9 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu11.jpg", sold: false
+        id: "dibu-11", title: "diábolo1", price: "9 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu11.jpg", sold: false
     },
     {
         id: "dibu-12", title: "Paisaje fenomenal", price: "25 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu12.jpg", sold: false
     },
     {
-        id: "dibu-14", title: "Ilustración #14", price: "7 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu14.jpg", sold: false
+        id: "dibu-14", title: "diábolo4", price: "7 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu14.jpg", sold: false
     },
     {
-        id: "dibu-15", title: "Ilustración #15", price: "18 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu15.jpg", sold: false
+        id: "dibu-15", title: "diábolo5", price: "18 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu15.jpg", sold: false
     },
     {
-        id: "dibu-16", title: "Ilustración #16", price: "23 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu16.jpg", sold: false
+        id: "dibu-16", title: "diábolo6", price: "23 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu16.jpg", sold: false
     },
     {
-        id: "dibu-19", title: "Ilustración #19", price: "16 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu19.jpg", sold: false
+        id: "dibu-19", title: "diábolo9", price: "16 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu19.jpg", sold: false
     },
     {
         id: "dibu-20", title: "Ilustración #20", price: "13 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu20.jpg", sold: false
