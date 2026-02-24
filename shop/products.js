@@ -36,7 +36,7 @@ window.products = [
         dimensions: "Consultar medidas",
         technique: "Consultar técnica",
         category: "Autorretratos",
-        image: "../portfolio/sections/obras/Autorretrato.png",
+        image: "../portfolio/sections/obras/autorretrato.png",
         sold: false
     },
     {
