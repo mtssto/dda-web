@@ -141,7 +141,7 @@ window.products = [
     },
     {
         id: "mi-cuerpo-electrico-24",
-        title: "Mi cuerpo eléctrico 24",
+        title: "Ultraizquierda Ultraderecha Ultratravesti",
         price: "Consultar",
         dimensions: "Consultar medidas",
         technique: "Técnica mixta",
@@ -191,7 +191,7 @@ window.products = [
     },
     {
         id: "mi-cuerpo-electrico-29",
-        title: "Mi cuerpo electrico 29",
+        title: "Séptimo rayo",
         price: "Consultar",
         dimensions: "160 x 200 cm",
         technique: "Pastel y acrilico sobre tela",
@@ -251,7 +251,7 @@ window.products = [
     },
     {
         id: "obra-sin-titulo",
-        title: "Obra sin título",
+        title: "ESTE ES UN LUGAR SAGRADO",
         price: "Consultar",
         dimensions: "Consultar medidas",
         technique: "Técnica mixta",

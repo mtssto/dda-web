@@ -17,6 +17,7 @@ body {
   margin: 0;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 /* Container */
@@ -27,10 +28,6 @@ body {
 }
 
 /* Sections */
-section {
-  padding: var(--spacing-section) 0;
-  border-bottom: 1px solid #f0f0f0;
-}
 
 section:last-child {
   border-bottom: none;
@@ -76,11 +73,15 @@ footer p {
   .section-title {
     font-size: 2.2rem;
   }
+
+  .masonry-grid {
+    column-count: 2;
+  }
 }
 
 @media (max-width: 600px) {
   .container {
-    padding: 0 20px;
+    padding: 0 15px;
   }
 
   .section-title {
@@ -89,8 +90,13 @@ footer p {
   }
 
   .video-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: 15px;
+  }
+
+  .masonry-grid {
+    column-count: 1;
+    column-gap: 15px;
   }
 }
 
