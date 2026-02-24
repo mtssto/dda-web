@@ -212,11 +212,6 @@ body.lang-en .product-card.sold .product-image::after {
     transition: transform 0.3s ease;
 }
 
-.lightbox-image.zoomed {
-    transform: scale(2);
-    cursor: zoom-out;
-}
-
 .lightbox-close {
     position: absolute;
     top: 20px;

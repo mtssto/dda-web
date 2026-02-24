@@ -171,31 +171,44 @@ document.addEventListener('DOMContentLoaded', function () {
     if (lightBoxImg) {
         lightBoxImg.addEventListener('click', function (e) {
             e.stopPropagation(); // prevent modal from closing when clicking image
-            this.classList.toggle('zoomed');
 
-            if (this.classList.contains('zoomed')) {
-                // Calculate click position relative to the image
-                const rect = this.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+            let currentZoom = parseInt(this.dataset.zoomLevel || '0');
+            currentZoom = (currentZoom + 1) % 3;
+            this.dataset.zoomLevel = currentZoom;
 
-                // Convert to percentages
-                const xPercent = (x / rect.width) * 100;
-                const yPercent = (y / rect.height) * 100;
-
-                this.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+            if (currentZoom === 0) {
+                this.style.transform = 'scale(1)';
+                setTimeout(() => {
+                    if (this.dataset.zoomLevel === '0') {
+                        this.style.transformOrigin = 'center center';
+                    }
+                }, 300); // reset origin after animation completes
             } else {
-                this.style.transformOrigin = 'center center';
+                if (currentZoom === 1) {
+                    // Calculate click position relative to the image
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    // Convert to percentages
+                    const xPercent = (x / rect.width) * 100;
+                    const yPercent = (y / rect.height) * 100;
+
+                    this.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+                    this.style.transform = 'scale(2)';
+                } else if (currentZoom === 2) {
+                    // Zoom deeper into the already established origin
+                    this.style.transform = 'scale(4)';
+                }
             }
+
+            this.style.cursor = currentZoom === 2 ? 'zoom-out' : 'zoom-in';
         });
 
-        // Optional: dynamic cursor hinting
+        // dynamic cursor hinting
         lightBoxImg.addEventListener('mousemove', function (e) {
-            if (!this.classList.contains('zoomed')) {
-                this.style.cursor = 'zoom-in';
-            } else {
-                this.style.cursor = 'zoom-out';
-            }
+            let currentZoom = parseInt(this.dataset.zoomLevel || '0');
+            this.style.cursor = currentZoom === 2 ? 'zoom-out' : 'zoom-in';
         });
     }
 
@@ -412,7 +425,8 @@ function openLightBox(imageSrc) {
         let src = typeof imageSrc === 'string' ? imageSrc : (imageSrc.src || '');
 
         lightBoxImg.src = src;
-        lightBoxImg.classList.remove('zoomed');
+        lightBoxImg.dataset.zoomLevel = '0';
+        lightBoxImg.style.transform = 'scale(1)';
         lightBoxImg.style.transformOrigin = 'center center';
 
         lightBox.classList.add('active');
@@ -429,7 +443,8 @@ function closeLightBox() {
         document.body.style.overflow = '';
     }
     if (lightBoxImg) {
-        lightBoxImg.classList.remove('zoomed');
+        lightBoxImg.dataset.zoomLevel = '0';
+        lightBoxImg.style.transform = 'scale(1)';
         lightBoxImg.style.transformOrigin = 'center center';
     }
 }
