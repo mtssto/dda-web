@@ -125,6 +125,8 @@ document.addEventListener('DOMContentLoaded', function () {
             <span class="modal-close">&times;</span>
             <div class="modal-container">
                 <div class="modal-image-wrapper">
+                    <span class="modal-prev" id="modalPrev">&#10094;</span>
+                    <span class="modal-next" id="modalNext">&#10095;</span>
                     <img class="modal-image" id="modalImage" alt="Artwork">
                 </div>
                 <div class="modal-info-wrapper">
@@ -140,6 +142,8 @@ document.addEventListener('DOMContentLoaded', function () {
         <!-- Modal for pure Image Zoom -->
         <div id="lightBoxModal" class="lightbox-modal">
             <span class="lightbox-close">&times;</span>
+            <span class="lightbox-prev" id="lightBoxPrev">&#10094;</span>
+            <span class="lightbox-next" id="lightBoxNext">&#10095;</span>
             <img class="lightbox-image" id="lightBoxImage" alt="Artwork Zoom">
         </div>
     `;
@@ -220,6 +224,55 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // LightBox Carousel Logic
+    const lightBoxPrev = document.getElementById('lightBoxPrev');
+    const lightBoxNext = document.getElementById('lightBoxNext');
+    // Info Modal Carousel Logic
+    const modalPrev = document.getElementById('modalPrev');
+    const modalNext = document.getElementById('modalNext');
+
+    if (modalPrev) {
+        modalPrev.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (window.modalImages && window.modalImages.length > 1) {
+                window.modalCurrentIndex = (window.modalCurrentIndex - 1 + window.modalImages.length) % window.modalImages.length;
+                const modalImg = document.getElementById('modalImage');
+                if (modalImg) modalImg.src = window.modalImages[window.modalCurrentIndex];
+            }
+        });
+    }
+
+    if (modalNext) {
+        modalNext.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (window.modalImages && window.modalImages.length > 1) {
+                window.modalCurrentIndex = (window.modalCurrentIndex + 1) % window.modalImages.length;
+                const modalImg = document.getElementById('modalImage');
+                if (modalImg) modalImg.src = window.modalImages[window.modalCurrentIndex];
+            }
+        });
+    }
+
+    if (lightBoxPrev) {
+        lightBoxPrev.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (window.lightBoxImages && window.lightBoxImages.length > 1) {
+                window.lightBoxCurrentIndex = (window.lightBoxCurrentIndex - 1 + window.lightBoxImages.length) % window.lightBoxImages.length;
+                updateLightBoxImage();
+            }
+        });
+    }
+
+    if (lightBoxNext) {
+        lightBoxNext.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (window.lightBoxImages && window.lightBoxImages.length > 1) {
+                window.lightBoxCurrentIndex = (window.lightBoxCurrentIndex + 1) % window.lightBoxImages.length;
+                updateLightBoxImage();
+            }
+        });
+    }
+
     if (lightBoxModal) {
         lightBoxModal.addEventListener('click', function (e) {
             if (e.target === lightBoxModal) {
@@ -266,7 +319,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.target.tagName === 'IMG' && e.target.closest('.product-image')) {
             e.preventDefault();
             e.stopPropagation();
-            openLightBox(e.target.src);
+            const relSrc = e.target.getAttribute('src');
+            openLightBox(relSrc || e.target.src);
         }
     }, true); // Use capture phase to intercept before card's onclick
 
@@ -348,8 +402,27 @@ function openModal(productOrElement) {
         const title = el.querySelector('.product-title');
         const price = el.querySelector('.product-price');
 
+        // Look up original product to fetch its full `images` array if available
+        let fullImages = [];
+        let srcToMatch = '';
+        if (img) {
+            srcToMatch = img.getAttribute('src') || img.src;
+        }
+
+        if (srcToMatch && window.products) {
+            const foundP = window.products.find(p => p.image === srcToMatch || (p.images && p.images.includes(srcToMatch)));
+            if (foundP && foundP.images) {
+                fullImages = foundP.images;
+            } else {
+                fullImages = [srcToMatch];
+            }
+        } else if (srcToMatch) {
+            fullImages = [srcToMatch];
+        }
+
         product = {
             image: img ? img.src : '',
+            images: fullImages,
             title: title ? title.innerText : '',
             price: price ? price.innerText : '',
             dimensions: el.dataset.dimensions || '',
@@ -357,6 +430,10 @@ function openModal(productOrElement) {
             // If needed, we can parse category too
             category: el.dataset.category || ''
         };
+    } else {
+        if (!product.images) {
+            product.images = [product.image];
+        }
     }
 
     const modalImg = document.getElementById('modalImage');
@@ -366,8 +443,24 @@ function openModal(productOrElement) {
     const modalTechnique = document.getElementById('modalTechnique');
     const modalBuyBtn = document.getElementById('modalBuyBtn');
 
+    // Image Carousel Logic for Info Modal
+    window.modalImages = product.images;
+    window.modalCurrentIndex = 0;
+
+    const prevBtn = document.getElementById('modalPrev');
+    const nextBtn = document.getElementById('modalNext');
+    if (prevBtn && nextBtn) {
+        if (window.modalImages && window.modalImages.length > 1) {
+            prevBtn.style.display = 'flex';
+            nextBtn.style.display = 'flex';
+        } else {
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+        }
+    }
+
     if (modalImg) {
-        modalImg.src = product.image;
+        modalImg.src = window.modalImages ? window.modalImages[window.modalCurrentIndex] : product.image;
         modalImg.alt = product.title;
     }
     if (modalTitle) modalTitle.textContent = product.title;
@@ -418,19 +511,50 @@ function closeModal() {
 
 function openLightBox(imageSrc) {
     const lightBox = document.getElementById('lightBoxModal');
-    const lightBoxImg = document.getElementById('lightBoxImage');
 
-    if (lightBox && lightBoxImg) {
+    if (lightBox) {
         // Extract src regardless of parameter type
         let src = typeof imageSrc === 'string' ? imageSrc : (imageSrc.src || '');
 
-        lightBoxImg.src = src;
+        // Check if there are multiple images for this product
+        window.lightBoxImages = [src];
+        window.lightBoxCurrentIndex = 0;
+
+        if (window.products) {
+            const product = window.products.find(p => p.image === src || (p.images && p.images.includes(src)));
+            if (product && product.images && product.images.length > 1) {
+                window.lightBoxImages = product.images;
+                window.lightBoxCurrentIndex = product.images.indexOf(src);
+                if (window.lightBoxCurrentIndex === -1) window.lightBoxCurrentIndex = 0;
+            }
+        }
+
+        const prevBtn = document.getElementById('lightBoxPrev');
+        const nextBtn = document.getElementById('lightBoxNext');
+        if (prevBtn && nextBtn) {
+            if (window.lightBoxImages.length > 1) {
+                prevBtn.style.display = 'block';
+                nextBtn.style.display = 'block';
+            } else {
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+            }
+        }
+
+        updateLightBoxImage();
+        lightBox.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function updateLightBoxImage() {
+    const lightBoxImg = document.getElementById('lightBoxImage');
+    if (lightBoxImg && window.lightBoxImages && window.lightBoxImages.length > 0) {
+        lightBoxImg.src = window.lightBoxImages[window.lightBoxCurrentIndex];
         lightBoxImg.dataset.zoomLevel = '0';
         lightBoxImg.style.transform = 'scale(1)';
         lightBoxImg.style.transformOrigin = 'center center';
-
-        lightBox.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        lightBoxImg.style.cursor = 'zoom-in';
     }
 }
 

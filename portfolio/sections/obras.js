@@ -38,7 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // If clicking the image directly, open the Zoom Lightbox
       if (e.target.tagName === 'IMG' || !e.target.closest('.btn-grid-details')) {
-        if (img) openLightBox(img.src);
+        let imagesToPass = img ? [img.src] : [];
+        if (trigger.dataset.images) {
+          try {
+            imagesToPass = JSON.parse(trigger.dataset.images);
+          } catch (error) { }
+        }
+        if (imagesToPass.length > 0) openLightBox(imagesToPass);
         return;
       }
 
@@ -70,13 +76,38 @@ document.addEventListener('DOMContentLoaded', () => {
   const lightBoxModal = document.getElementById('lightBoxModal');
   const lightBoxImage = document.getElementById('lightBoxImage');
   const lightBoxClose = document.querySelector('.lightbox-close');
+  const lightBoxPrev = document.getElementById('lightBoxPrev');
+  const lightBoxNext = document.getElementById('lightBoxNext');
 
-  const openLightBox = (src) => {
-    if (lightBoxModal && lightBoxImage) {
-      lightBoxImage.src = src;
+  window.obrasLightBoxImages = [];
+  window.obrasLightBoxCurrentIndex = 0;
+
+  const updateLightBoxImage = () => {
+    if (lightBoxImage && window.obrasLightBoxImages.length > 0) {
+      lightBoxImage.src = window.obrasLightBoxImages[window.obrasLightBoxCurrentIndex];
       lightBoxImage.dataset.zoomLevel = '0';
       lightBoxImage.style.transform = 'scale(1)';
       lightBoxImage.style.transformOrigin = 'center center';
+      lightBoxImage.style.cursor = 'zoom-in';
+    }
+  };
+
+  const openLightBox = (imagesArray) => {
+    if (lightBoxModal && lightBoxImage) {
+      window.obrasLightBoxImages = imagesArray;
+      window.obrasLightBoxCurrentIndex = 0;
+
+      if (lightBoxPrev && lightBoxNext) {
+        if (window.obrasLightBoxImages.length > 1) {
+          lightBoxPrev.style.display = 'block';
+          lightBoxNext.style.display = 'block';
+        } else {
+          lightBoxPrev.style.display = 'none';
+          lightBoxNext.style.display = 'none';
+        }
+      }
+
+      updateLightBoxImage();
       lightBoxModal.classList.add('active');
       document.body.style.overflow = 'hidden';
     }
@@ -96,6 +127,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (lightBoxClose) {
     lightBoxClose.addEventListener('click', closeLightBox);
+  }
+
+  if (lightBoxPrev) {
+    lightBoxPrev.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (window.obrasLightBoxImages.length > 1) {
+        window.obrasLightBoxCurrentIndex = (window.obrasLightBoxCurrentIndex - 1 + window.obrasLightBoxImages.length) % window.obrasLightBoxImages.length;
+        updateLightBoxImage();
+      }
+    });
+  }
+
+  if (lightBoxNext) {
+    lightBoxNext.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (window.obrasLightBoxImages.length > 1) {
+        window.obrasLightBoxCurrentIndex = (window.obrasLightBoxCurrentIndex + 1) % window.obrasLightBoxImages.length;
+        updateLightBoxImage();
+      }
+    });
   }
 
   if (lightBoxModal) {

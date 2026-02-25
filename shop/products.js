@@ -17,6 +17,7 @@ window.products = [
         technique: "Consultar técnica",
         category: "pasteles",
         image: "../portfolio/sections/obras/payaso.png",
+        images: ["../portfolio/sections/obras/payaso.png", "../portfolio/sections/obras/payaso-1-back.png"],
         sold: false
     },
     {

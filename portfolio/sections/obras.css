@@ -253,6 +253,41 @@ footer p {
   color: #ccc;
 }
 
+.lightbox-prev,
+.lightbox-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  font-size: 30px;
+  font-weight: 300;
+  cursor: pointer;
+  z-index: 4001;
+  transition: color 0.3s, background-color 0.3s;
+  background-color: rgba(0, 0, 0, 0.4);
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  user-select: none;
+}
+
+.lightbox-prev {
+  left: 40px;
+}
+
+.lightbox-next {
+  right: 40px;
+}
+
+.lightbox-prev:hover,
+.lightbox-next:hover {
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
 /* Modal for Image View */
 .image-modal {
   display: none;
@@ -308,6 +343,43 @@ footer p {
   align-items: center;
   justify-content: center;
   padding: 40px;
+  position: relative;
+}
+
+.modal-prev,
+.modal-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #111;
+  font-size: 24px;
+  font-weight: 300;
+  cursor: pointer;
+  z-index: 3001;
+  transition: color 0.3s, background-color 0.3s;
+  background-color: rgba(255, 255, 255, 0.7);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  user-select: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-prev {
+  left: 20px;
+}
+
+.modal-next {
+  right: 20px;
+}
+
+.modal-prev:hover,
+.modal-next:hover {
+  color: #fff;
+  background-color: #111;
 }
 
 .modal-image {
