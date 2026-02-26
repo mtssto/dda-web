@@ -6,7 +6,7 @@
 }
 
 body {
-    background-image: url('./portfolio/sections/BUOH/13.jpg');
+    background-image: url(./portfolio/sections/BUOH/13.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

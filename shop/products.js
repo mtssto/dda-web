@@ -6,7 +6,17 @@ window.products = [
         dimensions: "Consultar medidas",
         technique: "Consultar técnica",
         category: "pasteles",
-        image: "../portfolio/sections/obras/cartas-a-dios.png",
+        image: "/portfolio/sections/obras/cartas-a-dios.png",
+        sold: false
+    },
+    {
+        id: "carta-7",
+        title: "Carta 7",
+        price: "Consultar",
+        dimensions: "Consultar medidas",
+        technique: "Aerosol, acrílico, pastel sobre tela",
+        category: "pasteles",
+        image: "/portfolio/sections/obras/carta-7-aeresol, acrilico, pastel sobre tela.png",
         sold: false
     },
     {
@@ -16,8 +26,8 @@ window.products = [
         dimensions: "Consultar medidas",
         technique: "Consultar técnica",
         category: "pasteles",
-        image: "../portfolio/sections/obras/payaso.png",
-        images: ["../portfolio/sections/obras/payaso.png", "../portfolio/sections/obras/payaso-1-back.png"],
+        image: "/portfolio/sections/obras/payaso.png",
+        images: ["/portfolio/sections/obras/payaso.png", "/portfolio/sections/obras/payaso-1-back.png"],
         sold: false
     },
     {
@@ -25,9 +35,9 @@ window.products = [
         title: "Ascensión",
         price: "Consultar",
         dimensions: "Consultar medidas",
-        technique: "Consultar técnica",
+        technique: "Pastel tiza sobre madera",
         category: "pasteles",
-        image: "../portfolio/sections/obras/ascension.png",
+        image: "/portfolio/sections/obras/ascension.png",
         sold: false
     },
     {
@@ -35,9 +45,9 @@ window.products = [
         title: "Autorretrato",
         price: "Consultar",
         dimensions: "Consultar medidas",
-        technique: "Consultar técnica",
+        technique: "Pastel tiza sobre madera",
         category: "Autorretratos",
-        image: "../portfolio/sections/obras/autorretrato.png",
+        image: "/portfolio/sections/obras/autorretrato.png",
         sold: false
     },
     {
@@ -45,9 +55,9 @@ window.products = [
         title: "Autorretrato con collar",
         price: "Consultar",
         dimensions: "Consultar medidas",
-        technique: "Consultar técnica",
+        technique: "Pastel tiza sobre madera",
         category: "Autorretratos",
-        image: "../portfolio/sections/obras/retrato-1.png",
+        image: "/portfolio/sections/obras/retrato-1.png",
         sold: false
     },
     {
@@ -55,9 +65,9 @@ window.products = [
         title: "Autorretrato con máscara de gato",
         price: "Consultar",
         dimensions: "Consultar medidas",
-        technique: "Consultar técnica",
+        technique: "Pastel tiza sobre madera",
         category: "Autorretratos",
-        image: "../portfolio/sections/obras/retrato-2.png",
+        image: "/portfolio/sections/obras/retrato-2.png",
         sold: false
     },
     {
@@ -67,7 +77,7 @@ window.products = [
         dimensions: "140 x 125 cm",
         technique: "Aerosol y pastel sobre madera",
         category: "paisajes",
-        image: "../portfolio/sections/obras/MG_0307.jpg",
+        image: "/portfolio/sections/obras/MG_0307.jpg",
         sold: false
     },
     {
@@ -77,7 +87,7 @@ window.products = [
         dimensions: "140 x 82 cm",
         technique: "Aerosol y pastel sobre madera",
         category: "paisajes",
-        image: "../portfolio/sections/obras/MG_0312_1.jpg",
+        image: "/portfolio/sections/obras/MG_0312_1.jpg",
         sold: false
     },
     {
@@ -87,7 +97,7 @@ window.products = [
         dimensions: "33 x 25 cm",
         technique: "Pastel tiza sobre papel",
         category: "gatos",
-        image: "../portfolio/sections/obras/MG_0327.jpg",
+        image: "/portfolio/sections/obras/MG_0327.jpg",
         sold: false
     },
     {
@@ -97,7 +107,7 @@ window.products = [
         dimensions: "35 x 25 cm",
         technique: "Pastel tiza sobre papel",
         category: "gatos",
-        image: "../portfolio/sections/obras/MG_0328.jpg",
+        image: "/portfolio/sections/obras/MG_0328.jpg",
         sold: false
     },
     {
@@ -107,7 +117,7 @@ window.products = [
         dimensions: "205 x 210 cm",
         technique: "Pastel sobre tela",
         category: "gatos",
-        image: "../portfolio/sections/obras/MG_1192.jpg",
+        image: "/portfolio/sections/obras/MG_1192.jpg",
         sold: false
     },
     {
@@ -117,7 +127,7 @@ window.products = [
         dimensions: "50 x 35 cm",
         technique: "Tecnica mixta sobre papel",
         category: "pasteles",
-        image: "../portfolio/sections/obras/Diego+de+Aduriz+-+The+future+is+stupid+-+tecnica+mixta+sobre+papel+-+50+x+35+cm+-+2015.jpeg",
+        image: "/portfolio/sections/obras/Diego+de+Aduriz+-+The+future+is+stupid+-+tecnica+mixta+sobre+papel+-+50+x+35+cm+-+2015.jpeg",
         sold: false
     },
     {
@@ -127,7 +137,7 @@ window.products = [
         dimensions: "182 x 102 cm",
         technique: "Pintura y collage sobre tela",
         category: "paisajes",
-        image: "../portfolio/sections/obras/mascara2.jpg",
+        image: "/portfolio/sections/obras/mascara2.jpg",
         sold: false
     },
     {
@@ -137,7 +147,7 @@ window.products = [
         dimensions: "150 x 100 cm",
         technique: "Pastel y acrílico sobre tela",
         category: "pasteles",
-        image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Abecedario+-+150+x+100+cm+-+Pastel+y+acrilico+sobre+tela+-+2021.jpg",
+        image: "/portfolio/sections/obras/Diego+de+Aduriz+-+Abecedario+-+150+x+100+cm+-+Pastel+y+acrilico+sobre+tela+-+2021.jpg",
         sold: false
     },
     {
@@ -147,7 +157,7 @@ window.products = [
         dimensions: "Consultar medidas",
         technique: "Técnica mixta",
         category: "pasteles",
-        image: "../portfolio/sections/obras/micuerpo.jpg",
+        image: "/portfolio/sections/obras/micuerpo.jpg",
         sold: false
     },
     {
@@ -157,7 +167,7 @@ window.products = [
         dimensions: "110 x 150 cm",
         technique: "Marcadores sobre papel",
         category: "pasteles",
-        image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Autorretrato+-+110+x+150+cm+-+Marcadores+sobre+papel+-+2007.jpg",
+        image: "/portfolio/sections/obras/Diego+de+Aduriz+-+Autorretrato+-+110+x+150+cm+-+Marcadores+sobre+papel+-+2007.jpg",
         sold: true
     },
     {
@@ -167,7 +177,7 @@ window.products = [
         dimensions: "100 x 65 cm",
         technique: "pastel sobre papel",
         category: "gatos",
-        image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Gato+arcoiris+-+100+x+65+cm+-++pastel+sobre+papel+-+2020.jpg",
+        image: "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+arcoiris+-+100+x+65+cm+-++pastel+sobre+papel+-+2020.jpg",
         sold: false
     },
     {
@@ -177,7 +187,7 @@ window.products = [
         dimensions: "25 x 18 cm",
         technique: "Pastel tiza sobre papel",
         category: "gatos",
-        image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Gato+con+flor+de+loto+-+Pastel+tiza+sobre+papel+-+25+x+18+cm+-+2018.jpeg",
+        image: "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+con+flor+de+loto+-+Pastel+tiza+sobre+papel+-+25+x+18+cm+-+2018.jpeg",
         sold: false
     },
     {
@@ -187,7 +197,7 @@ window.products = [
         dimensions: "80 x 110 cm",
         technique: "Pastel tiza",
         category: "gatos",
-        image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Gato+cosmico+-+Pastel+tiza+-+80+x+110+cm+2013.jpeg",
+        image: "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+cosmico+-+Pastel+tiza+-+80+x+110+cm+2013.jpeg",
         sold: true
     },
     {
@@ -197,7 +207,7 @@ window.products = [
         dimensions: "160 x 200 cm",
         technique: "Pastel y acrilico sobre tela",
         category: "paisajes",
-        image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Mi+cuerpo+electrico+29+160+x+200+-+Pastel+y+acrilico+sobre+tela+-+2021.jpg",
+        image: "/portfolio/sections/obras/Diego+de+Aduriz+-+Mi+cuerpo+electrico+29+160+x+200+-+Pastel+y+acrilico+sobre+tela+-+2021.jpg",
         sold: false
     },
     {
@@ -207,7 +217,7 @@ window.products = [
         dimensions: "24 x 34 cm",
         technique: "Tecnica mixta sobre papel",
         category: "paisajes",
-        image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Paisaje+teorico+-+Tecnica+mixta+sobre+papel+-+24+x+34+cm+-+2009.jpeg",
+        image: "/portfolio/sections/obras/Diego+de+Aduriz+-+Paisaje+teorico+-+Tecnica+mixta+sobre+papel+-+24+x+34+cm+-+2009.jpeg",
         sold: false
     },
     {
@@ -217,7 +227,7 @@ window.products = [
         dimensions: "Consultar medidas",
         technique: "Collage",
         category: "paisajes",
-        image: "../portfolio/sections/obras/paisaje-azul-collage.png",
+        image: "/portfolio/sections/obras/paisaje-azul-collage.png",
         sold: false
     },
     {
@@ -227,7 +237,7 @@ window.products = [
         dimensions: "24 x 34 cm",
         technique: "Lapiz sobre papel",
         category: "paisajes",
-        image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Piasaje+con+monstruo+amistoso+-+Lapiz+sobre+papel+-+24+x+34+cm+-+2011.jpeg",
+        image: "/portfolio/sections/obras/Diego+de+Aduriz+-+Piasaje+con+monstruo+amistoso+-+Lapiz+sobre+papel+-+24+x+34+cm+-+2011.jpeg",
         sold: false
     },
     {
@@ -237,8 +247,22 @@ window.products = [
         dimensions: "210 x 92 cm",
         technique: "Pintura y pastel tiza sobre madera",
         category: "pasteles",
-        image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Puerta+Azul+-+210+x+92+cm+-+Pintura+y+pastel+tiza+sobre+madera+-+2015_2017.jpeg",
+        image: "/portfolio/sections/obras/Diego+de+Aduriz+-+Puerta+Azul+-+210+x+92+cm+-+Pintura+y+pastel+tiza+sobre+madera+-+2015_2017.jpeg",
         sold: true
+    },
+    {
+        id: "puerta-1",
+        title: "Espíritu (Humito)",
+        price: "Consultar",
+        dimensions: "Consultar medidas",
+        technique: "Pastel sobre puerta / Técnica mixta sobre madera",
+        category: "pasteles",
+        image: "/portfolio/sections/obras/puerta-1-espiritu(humite)-tecnica-pastel-sobre-puerta-tecnoca-mixta-sobre-madera.png",
+        images: [
+            "/portfolio/sections/obras/puerta-1-espiritu(humite)-tecnica-pastel-sobre-puerta-tecnoca-mixta-sobre-madera.png",
+            "/portfolio/sections/obras/puerta-1-back.png"
+        ],
+        sold: false
     },
     {
         id: "sin-titulo",
@@ -247,7 +271,7 @@ window.products = [
         dimensions: "34 x 24 cm",
         technique: "Tecnica mixta sobre papel",
         category: "pasteles",
-        image: "../portfolio/sections/obras/Diego+de+Aduriz+-+Sin+titulo+-+Tecnica+mixta+sobre+papel+-+34+x+24+cm+-+2012.jpg",
+        image: "/portfolio/sections/obras/Diego+de+Aduriz+-+Sin+titulo+-+Tecnica+mixta+sobre+papel+-+34+x+24+cm+-+2012.jpg",
         sold: false
     },
     {
@@ -257,7 +281,7 @@ window.products = [
         dimensions: "180 x 210 cm",
         technique: "Acrílico y pastel sobre tela",
         category: "pasteles",
-        image: "../portfolio/sections/obras/luz_azul.jpg",
+        image: "/portfolio/sections/obras/luz_azul.jpg",
         sold: false
     },
     {
@@ -267,7 +291,7 @@ window.products = [
         dimensions: "Consultar medidas",
         technique: "Pastel sobre tela",
         category: "pasteles",
-        image: "../portfolio/sections/obras/cuarto-creciente-pastel-sobre-tela.png",
+        image: "/portfolio/sections/obras/cuarto-creciente-pastel-sobre-tela.png",
         sold: false
     },
     {
@@ -277,7 +301,7 @@ window.products = [
         dimensions: "Consultar medidas",
         technique: "Consultar técnica",
         category: "pasteles",
-        image: "../portfolio/sections/obras/sin-título.png",
+        image: "/portfolio/sections/obras/sin-título.png",
         sold: false
     },
     {
@@ -287,17 +311,17 @@ window.products = [
         dimensions: "Consultar medidas",
         technique: "Técnica mixta",
         category: "pasteles",
-        image: "../portfolio/sections/obras/IMG_0402+copia.jpg",
+        image: "/portfolio/sections/obras/IMG_0402+copia.jpg",
         sold: false
     },
     {
         id: "obra-sin-titulo-mg-0329",
-        title: "Obra sin título (MG_0329)",
+        title: "Paisaje con duende",
         price: "Consultar",
         dimensions: "Consultar medidas",
         technique: "Pastel tiza sobre papel",
         category: "pasteles",
-        image: "../portfolio/sections/obras/MG_0329.jpeg",
+        image: "/portfolio/sections/obras/MG_0329.jpeg",
         sold: false
     },
     {
@@ -307,7 +331,7 @@ window.products = [
         dimensions: "Consultar medidas",
         technique: "Pintura y collage sobre tela",
         category: "pasteles",
-        image: "../portfolio/sections/obras/mascara1.jpg",
+        image: "/portfolio/sections/obras/mascara1.jpg",
         sold: false
     },
     {
@@ -317,7 +341,7 @@ window.products = [
         dimensions: "Consultar medidas",
         technique: "Pastel sobre tela",
         category: "pasteles",
-        image: "../portfolio/sections/obras/don-diego-y-pastel-sobre-explosion-pastel-sobre-tela.png",
+        image: "/portfolio/sections/obras/don-diego-y-pastel-sobre-explosion-pastel-sobre-tela.png",
         sold: false
     },
     {
@@ -327,7 +351,7 @@ window.products = [
         dimensions: "Consultar medidas",
         technique: "Pastel sobre papel",
         category: "pasteles",
-        image: "../portfolio/sections/obras/do-re-mi-fa-sol-la-si-pastel-sobre-papel.png",
+        image: "/portfolio/sections/obras/do-re-mi-fa-sol-la-si-pastel-sobre-papel.png",
         sold: false
     },
     {
@@ -337,7 +361,7 @@ window.products = [
         dimensions: "Consultar medidas",
         technique: "Pastel sobre papel",
         category: "paisajes",
-        image: "../portfolio/sections/obras/paisaje-con-sol-sonriente-pastel-sonre-papel.png",
+        image: "/portfolio/sections/obras/paisaje-con-sol-sonriente-pastel-sonre-papel.png",
         sold: false
     },
     {
@@ -347,7 +371,7 @@ window.products = [
         dimensions: "Consultar medidas",
         technique: "Pastel sobre papel",
         category: "pasteles",
-        image: "../portfolio/sections/obras/4-cabezas-pastel-sobre-papel.png",
+        image: "/portfolio/sections/obras/4-cabezas-pastel-sobre-papel.png",
         sold: false
     },
     // Digital
@@ -393,54 +417,54 @@ window.products = [
     },
     // Ilustraciones
     {
-        id: "dibu-1", title: "diábolo", price: "12 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu1.jpg", sold: false
+        id: "dibu-1", title: "diábolo", price: "12 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "/Ilustrates/dibu1.jpg", sold: false
     },
     {
-        id: "dibu-2", title: "Ilustración #2", price: "22 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu2.jpg", sold: false
+        id: "dibu-2", title: "Ilustración #2", price: "22 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "/Ilustrates/dibu2.jpg", sold: false
     },
     {
-        id: "dibu-3", title: "Ilustración #3", price: "8 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu3.jpg", sold: false
+        id: "dibu-3", title: "Ilustración #3", price: "8 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "/Ilustrates/dibu3.jpg", sold: false
     },
     {
-        id: "dibu-4", title: "Ilustración #4", price: "15 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu4.jpg", sold: false
+        id: "dibu-4", title: "Ilustración #4", price: "15 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "/Ilustrates/dibu4.jpg", sold: false
     },
     {
-        id: "dibu-5", title: "Ilustración #5", price: "19 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu5.jpg", sold: false
+        id: "dibu-5", title: "Ilustración #5", price: "19 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "/Ilustrates/dibu5.jpg", sold: false
     },
     {
-        id: "dibu-6", title: "Ilustración #6", price: "6 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu6.jpg", sold: false
+        id: "dibu-6", title: "Ilustración #6", price: "6 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "/Ilustrates/dibu6.jpg", sold: false
     },
     {
-        id: "dibu-7", title: "Ilustración #7", price: "24 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu7.jpg", sold: false
+        id: "dibu-7", title: "Ilustración #7", price: "24 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "/Ilustrates/dibu7.jpg", sold: false
     },
     {
-        id: "dibu-8", title: "Ilustración #8", price: "11 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu8.jpg", sold: false
+        id: "dibu-8", title: "Ilustración #8", price: "11 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "/Ilustrates/dibu8.jpg", sold: false
     },
     {
-        id: "dibu-9", title: "Ilustración #9", price: "20 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu9.jpg", sold: false
+        id: "dibu-9", title: "Ilustración #9", price: "20 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "/Ilustrates/dibu9.jpg", sold: false
     },
     {
-        id: "dibu-10", title: "Paisaje con Flor y Hombre Plateado", price: "14 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "paisajes", image: "../Ilustrates/dibu10.jpg", sold: false
+        id: "dibu-10", title: "Paisaje con Flor y Hombre Plateado", price: "14 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "paisajes", image: "/Ilustrates/dibu10.jpg", sold: false
     },
     {
-        id: "dibu-11", title: "diábolo1", price: "9 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu11.jpg", sold: false
+        id: "dibu-11", title: "diábolo1", price: "9 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "/Ilustrates/dibu11.jpg", sold: false
     },
     {
-        id: "dibu-12", title: "Paisaje fenomenal", price: "25 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu12.jpg", sold: false
+        id: "dibu-12", title: "Paisaje fenomenal", price: "25 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "/Ilustrates/dibu12.jpg", sold: false
     },
     {
-        id: "dibu-14", title: "diábolo4", price: "7 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu14.jpg", sold: false
+        id: "dibu-14", title: "diábolo4", price: "7 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "/Ilustrates/dibu14.jpg", sold: false
     },
     {
-        id: "dibu-15", title: "diábolo5", price: "18 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu15.jpg", sold: false
+        id: "dibu-15", title: "diábolo5", price: "18 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "/Ilustrates/dibu15.jpg", sold: false
     },
     {
-        id: "dibu-16", title: "diábolo6", price: "23 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu16.jpg", sold: false
+        id: "dibu-16", title: "diábolo6", price: "23 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "/Ilustrates/dibu16.jpg", sold: false
     },
     {
-        id: "dibu-19", title: "diábolo9", price: "16 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu19.jpg", sold: false
+        id: "dibu-19", title: "diábolo9", price: "16 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "/Ilustrates/dibu19.jpg", sold: false
     },
     {
-        id: "dibu-20", title: "Ilustración #20", price: "13 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "../Ilustrates/dibu20.jpg", sold: false
+        id: "dibu-20", title: "Ilustración #20", price: "13 USD", dimensions: "Consultar medidas", technique: "Técnica mixta sobre papel", category: "ilustraciones", image: "/Ilustrates/dibu20.jpg", sold: false
     }
 ];

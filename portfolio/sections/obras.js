@@ -7,70 +7,211 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalBuyBtn = document.getElementById('modalBuyBtn');
   const modalClose = document.querySelector('.modal-close');
 
+  // Initialize grids from products.js
+  renderPortfolio();
+
   // Setup modal triggers
-  const triggers = document.querySelectorAll('.grid-modal-trigger');
-  triggers.forEach(trigger => {
-    // Dynamically inject professional hover overlay
-    if (!trigger.querySelector('.masonry-overlay')) {
-      const overlay = document.createElement('div');
-      overlay.className = 'masonry-overlay';
+  initModalTriggers();
 
-      const title = trigger.dataset.title || '';
-      const dims = trigger.dataset.dimensions || '';
-      const tech = trigger.dataset.technique || '';
+  function renderPortfolio() {
+    if (!window.products) return;
 
-      overlay.innerHTML = `
-        <div class="overlay-content">
-          <h3 class="overlay-title">${title}</h3>
-          <p class="overlay-details">
-            ${dims}<br>
-            ${tech}
-          </p>
-          <button class="btn-grid-details" style="pointer-events: auto; margin-top: 15px; background: transparent; border: 1px solid #111; color: #111; padding: 10px 20px; font-family: var(--font-body); font-size: 0.8rem; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s ease;">DETALLES</button>
-        </div>
-      `;
-      trigger.appendChild(overlay);
-    }
+    // Define category to container mapping
+    const sectionMap = {
+      'pasteles': document.querySelector('#pasteles .masonry-grid'),
+      'gatos': document.querySelector('#gatos .masonry-grid'),
+      'paisajes': document.querySelector('#paisajes .masonry-grid'),
+      'digital': document.querySelector('#digital .masonry-grid'),
+      'ilustraciones': document.querySelector('#ilustraciones .masonry-grid'),
+      'Autorretratos': document.querySelector('#Autorretratos .masonry-grid')
+    };
 
-    trigger.addEventListener('click', (e) => {
-      // Find current image inside trigger
-      const img = trigger.querySelector('img');
+    // Clear existing content securely
+    Object.values(sectionMap).forEach(grid => {
+      if (grid) grid.innerHTML = '';
+    });
 
-      // If clicking the image directly, open the Zoom Lightbox
-      if (e.target.tagName === 'IMG' || !e.target.closest('.btn-grid-details')) {
-        let imagesToPass = img ? [img.src] : [];
-        if (trigger.dataset.images) {
-          try {
-            imagesToPass = JSON.parse(trigger.dataset.images);
-          } catch (error) { }
+    window.products.forEach(product => {
+      const grid = sectionMap[product.category];
+      if (!grid) return;
+
+      const item = document.createElement('div');
+      item.className = 'masonry-item grid-modal-trigger';
+
+      // Store complete dataset context
+      if (product.dimensions && product.dimensions !== "Consultar medidas") {
+        item.dataset.dimensions = product.dimensions;
+      } else {
+        item.dataset.dimensions = "Consultar medidas";
+      }
+
+      if (product.technique && product.technique !== "Consultar técnica") {
+        item.dataset.technique = product.technique;
+      } else {
+        item.dataset.technique = "Consultar técnica";
+      }
+
+      item.dataset.title = product.title;
+      // Encode whatsapp link with title
+      item.dataset.waLink = `https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20la%20obra:%20${encodeURIComponent(product.title)}`;
+
+      // Resolve images data attribute if multiple images exist
+      if (product.images && product.images.length > 1) {
+        // Adjust paths for portfolio context if necessary
+        item.dataset.images = JSON.stringify(product.images);
+      }
+
+      // Ensure primary image path is adjusted for portfolio context
+      let imagePath = product.image || '';
+      if (imagePath.startsWith('../')) {
+        imagePath = '../' + imagePath;
+      }
+      item.innerHTML = `<img alt="${product.title}" src="${imagePath}" />`;
+      grid.appendChild(item);
+    });
+  }
+
+  function initModalTriggers() {
+    const triggers = document.querySelectorAll('.grid-modal-trigger');
+    triggers.forEach(trigger => {
+      // ... existing trigger logic ...
+      // Dynamically inject professional hover overlay
+      if (!trigger.querySelector('.masonry-overlay')) {
+        const overlay = document.createElement('div');
+        overlay.className = 'masonry-overlay';
+
+        const title = trigger.dataset.title || '';
+        const dims = trigger.dataset.dimensions || '';
+        const tech = trigger.dataset.technique || '';
+
+        overlay.innerHTML = `
+          <div class="overlay-content">
+            <h3 class="overlay-title">${title}</h3>
+            <p class="overlay-details">
+              ${dims}<br>
+              ${tech}
+            </p>
+            <button class="btn-grid-details" style="pointer-events: auto; margin-top: 15px; background: transparent; border: 1px solid #111; color: #111; padding: 10px 20px; font-family: var(--font-body); font-size: 0.8rem; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s ease;">DETALLES</button>
+          </div>
+        `;
+        trigger.appendChild(overlay);
+      }
+
+      trigger.addEventListener('click', (e) => {
+        // Find current image inside trigger
+        const img = trigger.querySelector('img');
+        const imgSrcToMatch = img ? (img.getAttribute('src') || img.src) : '';
+
+        let productData = null;
+        if (imgSrcToMatch && window.products) {
+          const filename = imgSrcToMatch.split('/').pop().split('?')[0];
+          const found = window.products.find(p => {
+            return (p.image && p.image.includes(filename)) ||
+              (p.images && p.images.some(i => i.includes(filename)));
+          });
+
+          if (found) {
+            const fixPath = (p) => {
+              if (!p) return p;
+              if (p.startsWith('../')) return '../' + p;
+              return p.replace('../portfolio/sections/', '../sections/');
+            };
+            productData = {
+              title: found.title,
+              technique: found.technique,
+              dimensions: found.dimensions,
+              price: found.price,
+              images: found.images ? found.images.map(fixPath) : [fixPath(found.image)]
+            };
+          }
         }
-        if (imagesToPass.length > 0) openLightBox(imagesToPass);
-        return;
-      }
 
-      // Otherwise, they clicked DETALLES -> open the info modal
-      if (img && modalImage) {
-        modalImage.src = img.src;
-        modalImage.alt = img.alt || 'Artwork details';
-      }
+        // If clicking the image directly, open the Zoom Lightbox
+        if (e.target.tagName === 'IMG' || !e.target.closest('.btn-grid-details')) {
+          let imagesToPass = img ? [imgSrcToMatch] : [];
+          if (productData && productData.images && productData.images.length > 0) {
+            imagesToPass = productData.images;
+          } else if (trigger.dataset.images) {
+            try {
+              imagesToPass = JSON.parse(trigger.dataset.images);
+            } catch (error) { }
+          }
+          if (imagesToPass.length > 0) openLightBox(imagesToPass);
+          return;
+        }
 
-      // Set details
-      if (modalTitle) modalTitle.textContent = trigger.dataset.title || '';
-      if (modalTechnique) modalTechnique.textContent = trigger.dataset.technique || '';
-      if (modalDimensions) modalDimensions.textContent = trigger.dataset.dimensions || '';
+        // Otherwise, they clicked DETALLES -> open the info modal
+        const imagesToPass = (productData && productData.images && productData.images.length > 0)
+          ? productData.images
+          : (img ? [imgSrcToMatch] : []);
 
-      // Set whatsapp link
-      if (modalBuyBtn) {
-        modalBuyBtn.href = trigger.dataset.waLink || 'https://wa.me/5491168750007';
-      }
+        window.obrasModalImages = imagesToPass;
+        window.obrasModalCurrentIndex = 0;
 
-      // Show modal
-      if (modal) {
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        const modalPrev = document.getElementById('modalPrev');
+        const modalNext = document.getElementById('modalNext');
+
+        if (modalPrev && modalNext) {
+          if (window.obrasModalImages.length > 1) {
+            modalPrev.style.display = 'flex';
+            modalNext.style.display = 'flex';
+          } else {
+            modalPrev.style.display = 'none';
+            modalNext.style.display = 'none';
+          }
+        }
+
+        if (modalImage && window.obrasModalImages.length > 0) {
+          modalImage.src = window.obrasModalImages[0];
+          modalImage.alt = productData ? productData.title : (img ? img.alt : 'Artwork details');
+        }
+
+        // Set details
+        if (modalTitle) modalTitle.textContent = productData ? productData.title : (trigger.dataset.title || '');
+        if (modalTechnique) modalTechnique.textContent = productData ? productData.technique : (trigger.dataset.technique || '');
+        if (modalDimensions) modalDimensions.textContent = productData ? productData.dimensions : (trigger.dataset.dimensions || '');
+
+        // Set whatsapp link (always fallback to dataset since products.js doesn't have it)
+        if (modalBuyBtn) {
+          modalBuyBtn.href = trigger.dataset.waLink || 'https://wa.me/5491168750007';
+        }
+
+        // Show modal
+        if (modal) {
+          modal.classList.add('active');
+          document.body.style.overflow = 'hidden';
+        }
+      });
+    });
+  }
+
+  const modalPrev = document.getElementById('modalPrev');
+  const modalNext = document.getElementById('modalNext');
+
+  window.obrasModalImages = [];
+  window.obrasModalCurrentIndex = 0;
+
+  if (modalPrev) {
+    modalPrev.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (window.obrasModalImages.length > 1) {
+        window.obrasModalCurrentIndex = (window.obrasModalCurrentIndex - 1 + window.obrasModalImages.length) % window.obrasModalImages.length;
+        const modalImg = document.getElementById('modalImage');
+        if (modalImg) modalImg.src = window.obrasModalImages[window.obrasModalCurrentIndex];
       }
     });
-  });
+  }
+
+  if (modalNext) {
+    modalNext.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (window.obrasModalImages.length > 1) {
+        window.obrasModalCurrentIndex = (window.obrasModalCurrentIndex + 1) % window.obrasModalImages.length;
+        const modalImg = document.getElementById('modalImage');
+        if (modalImg) modalImg.src = window.obrasModalImages[window.obrasModalCurrentIndex];
+      }
+    });
+  }
 
   // Lightbox Zoom functionality
   const lightBoxModal = document.getElementById('lightBoxModal');
