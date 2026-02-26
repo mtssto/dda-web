@@ -1,173 +1,247 @@
-// Immersive Gallery Logic
+// Carousel Logic for Index Page
+let artImages = [];
 
-// Image Database (Combined sources)
-const artImages = [
-    // --- ILUSTRATES ---
-    './Ilustrates/dibu1.jpg',
-    './Ilustrates/dibu2.jpg',
-    './Ilustrates/dibu3.jpg',
-    './Ilustrates/dibu4.jpg',
-    './Ilustrates/dibu5.jpg',
-    './Ilustrates/dibu6.jpg',
-    './Ilustrates/dibu7.jpg',
-    './Ilustrates/dibu8.jpg',
-    './Ilustrates/dibu9.jpg',
-    './Ilustrates/dibu10.jpg',
-    './Ilustrates/dibu11.jpg',
-    './Ilustrates/dibu12.jpg',
-    './Ilustrates/dibu14.jpg',
-    './Ilustrates/dibu15.jpg',
-    './Ilustrates/dibu16.jpg',
-    './Ilustrates/dibu19.jpg',
-    './Ilustrates/dibu20.jpg',
+function loadCarouselImages() {
+    artImages = [];
+    if (window.products) {
+        const isMobile = window.innerWidth <= 768;
 
-    // --- OBRAS (Local) ---
-    './portfolio/sections/obras/micuerpo.jpg',
-    './portfolio/sections/obras/Diego+de+Aduriz+-+Abecedario+-+150+x+100+cm+-+Pastel+y+acrilico+sobre+tela+-+2021.jpg',
-    './portfolio/sections/obras/Diego+de+Aduriz+-+Autorretrato+-+110+x+150+cm+-+Marcadores+sobre+papel+-+2007.jpg',
-    './portfolio/sections/obras/Diego+de+Aduriz+-+Gato+arcoiris+-+100+x+65+cm+-++pastel+sobre+papel+-+2020.jpg',
-    './portfolio/sections/obras/Diego+de+Aduriz+-+Gato+con+flor+de+loto+-+Pastel+tiza+sobre+papel+-+25+x+18+cm+-+2018.jpeg',
-    './portfolio/sections/obras/Diego+de+Aduriz+-+Gato+cosmico+-+Pastel+tiza+-+80+x+110+cm+2013.jpeg',
-    './portfolio/sections/obras/Diego+de+Aduriz+-+Mi+cuerpo+electrico+29+160+x+200+-+Pastel+y+acrilico+sobre+tela+-+2021.jpg',
-    './portfolio/sections/obras/Diego+de+Aduriz+-+Paisaje+teorico+-+Tecnica+mixta+sobre+papel+-+24+x+34+cm+-+2009.jpeg',
-    './portfolio/sections/obras/Diego+de+Aduriz+-+Piasaje+con+monstruo+amistoso+-+Lapiz+sobre+papel+-+24+x+34+cm+-+2011.jpeg',
-    './portfolio/sections/obras/Diego+de+Aduriz+-+Puerta+Azul+-+210+x+92+cm+-+Pintura+y+pastel+tiza+sobre+madera+-+2015_2017.jpeg',
-    './portfolio/sections/obras/Diego+de+Aduriz+-+Sin+titulo+-+Tecnica+mixta+sobre+papel+-+34+x+24+cm+-+2012.jpg',
-    './portfolio/sections/obras/Diego+de+Aduriz+-+The+future+is+stupid+-+tecnica+mixta+sobre+papel+-+50+x+35+cm+-+2015.jpeg',
-    './portfolio/sections/obras/luz_azul.jpg',
-    './portfolio/sections/obras/IMG_0402+copia.jpg',
-    './portfolio/sections/obras/MG_0307.jpg',
-    './portfolio/sections/obras/MG_0312_1.jpg',
-    './portfolio/sections/obras/MG_0327.jpg',
-    './portfolio/sections/obras/MG_0328.jpg',
-    './portfolio/sections/obras/MG_0329.jpeg',
-    './portfolio/sections/obras/MG_1192.jpg',
-    './portfolio/sections/obras/mascara1.jpg',
-    './portfolio/sections/obras/mascara2.jpg'
-];
+        // Define desired filenames for each view
+        const desktopFilenames = [
+            "Diego+de+Aduriz+-+Mi+cuerpo+electrico+29+160+x+200+-+Pastel+y+acrilico+sobre+tela+-+2021",
+            "luz_azul",
+            "Diego+de+Aduriz+-+Autorretrato+-+110+x+150+cm+-+Marcadores+sobre+papel+-+2007",
+            "Diego+de+Aduriz+-+Paisaje+teorico+-+Tecnica+mixta+sobre+papel+-+24+x+34+cm+-+2009",
+            "Diego+de+Aduriz+-+Piasaje+con+monstruo+amistoso+-+Lapiz+sobre+papel+-+24+x+34+cm+-+2011"
+        ];
 
-const canvas = document.getElementById('art-canvas');
-const CELL_SIZE_TARGET = 150; // Target pixel size for cells (balancing count vs visible detail)
+        const mobileFilenames = [
+            "puerta-1-espiritu(humite)-tecnica-pastel-sobre-puerta-tecnoca-mixta-sobre-madera",
+            "payaso",
+            "MG_0312_1",
+            "mascara1",
+            "mascara2"
+        ];
 
-function initGrid() {
-    if (!canvas || artImages.length === 0) return;
+        const activeFilenames = isMobile ? mobileFilenames : desktopFilenames;
 
-    // 1. Calculate Dimensions
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+        artImages = window.products
+            .filter(p => {
+                if (!p.image) return false;
+                // Check if any of the active filenames are in the product's image path
+                return activeFilenames.some(filename => p.image.includes(filename));
+            })
+            .map(p => {
+                return {
+                    ...p,
+                    displayImage: p.image.startsWith('/') ? '.' + p.image : (p.image.startsWith('../') ? p.image.substring(3) : p.image)
+                };
+            });
+    }
 
-    const cols = Math.ceil(width / CELL_SIZE_TARGET);
-    const rows = Math.ceil(height / CELL_SIZE_TARGET);
-
-    // 2. Set CSS Grid
-    canvas.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-    canvas.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-
-    // 3. Populate Grid
-    const totalCells = cols * rows;
-    canvas.innerHTML = ''; // Clear existing
-
-    for (let i = 0; i < totalCells; i++) {
-        const img = document.createElement('img');
-        img.classList.add('gallery-image');
-
-        // Random initial image
-        img.src = artImages[getRandomInt(0, artImages.length - 1)];
-
-        // Staggered fade in for initial load
-        img.style.transitionDelay = `${Math.random() * 2}s`;
-
-        // Add click listener
-        img.onclick = function () {
-            // Find product in data source logic
-            const srcResult = img.src;
-            // Decode just in case
-            const decodedSrc = decodeURIComponent(srcResult);
-
-            // Try to find matching image in products
-            // Note: products.js must be loaded. window.products should exist.
-            const products = window.products || [];
-
-            // Loose match: check if product image path is contained in src
-            // Because src might be full URL (http://...) and product.image is relative (../portfolio...)
-            let foundProduct = products.find(p => decodedSrc.includes(p.image.replace(/^\.\//, '')));
-            // Also try matching just using filename if path differs completely
-            if (!foundProduct) {
-                const filename = srcResult.substring(srcResult.lastIndexOf('/') + 1);
-                foundProduct = products.find(p => p.image.includes(filename));
-            }
-
-            if (foundProduct) {
-                openModal(foundProduct);
-            } else {
-                // Fallback if not found in shop (e.g. just an illustration)
-                // Open just the image in modal? Or do nothing?
-                // User said "add comprar", implies shop items. 
-                // For now, let's open it with generic info or just log.
-                // Let's open with just the image.
-                openModal({
-                    title: 'Diego de Aduriz',
-                    image: img.src,
-                    price: '',
-                    dimensions: '',
-                    technique: '',
-                    isGeneric: true // Flag to hide buy button if needed
-                });
-            }
-        };
-
-        canvas.appendChild(img);
-
-        // Trigger fade in after append
-        requestAnimationFrame(() => {
-            img.style.opacity = 1;
-        });
+    // Fallback
+    if (artImages.length === 0) {
+        artImages = [
+            { displayImage: './portfolio/sections/obras/MG_0307.jpg', title: 'Fallback 1' },
+            { displayImage: './portfolio/sections/obras/IMG_0402+copia.jpg', title: 'Fallback 2' }
+        ];
     }
 }
 
-// Update a single random cell
-function updateRandomCell() {
-    const images = document.querySelectorAll('.gallery-image');
-    if (images.length === 0) return;
+// Initial load
+loadCarouselImages();
 
-    const randomIdx = getRandomInt(0, images.length - 1);
-    const img = images[randomIdx];
+const canvas = document.getElementById('art-canvas');
+let currentIndex = 0;
+let autoSlideInterval;
 
-    // Fade Out
-    img.style.transitionDelay = '0s'; // Instant reaction
-    img.style.opacity = 0;
+function initCarousel() {
+    if (!canvas || artImages.length === 0) return;
 
-    setTimeout(() => {
-        // Swap Source
-        img.src = artImages[getRandomInt(0, artImages.length - 1)];
+    // Setup Canvas for Carousel
+    canvas.innerHTML = '';
+    canvas.className = 'carousel-container';
 
-        // Fade In
-        img.onload = () => {
-            img.style.opacity = 1;
-        };
-    }, 1000); // Wait for fade out (matches CSS transition time)
+    const track = document.createElement('div');
+    track.className = 'carousel-track';
+
+    // Add images to track
+    artImages.forEach((art, idx) => {
+        const slide = document.createElement('div');
+        slide.className = 'carousel-slide';
+
+        const img = document.createElement('img');
+        img.src = art.displayImage;
+        img.alt = art.title || 'Artwork';
+        img.className = 'carousel-image';
+
+        // Click to open modal
+        img.onclick = () => openModal(art);
+
+        slide.appendChild(img);
+        track.appendChild(slide);
+    });
+
+    canvas.appendChild(track);
+
+    // Add Navigation Arrows
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'carousel-btn prev-btn';
+    prevBtn.innerHTML = '&#10094;';
+    prevBtn.onclick = () => moveSlide(-1);
+
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'carousel-btn next-btn';
+    nextBtn.innerHTML = '&#10095;';
+    nextBtn.onclick = () => moveSlide(1);
+
+    canvas.appendChild(prevBtn);
+    canvas.appendChild(nextBtn);
+
+    updateCarousel();
+    startAutoSlide();
+
+    // Pause on hover
+    canvas.addEventListener('mouseenter', stopAutoSlide);
+    canvas.addEventListener('mouseleave', startAutoSlide);
+
+    // Setup Touch/Drag Support
+    let startX = 0;
+    let isDragging = false;
+    let currentTranslate = 0;
+    let prevTranslate = 0;
+
+    track.addEventListener('mousedown', dragStart);
+    track.addEventListener('mouseup', dragEnd);
+    track.addEventListener('mouseleave', dragEnd);
+    track.addEventListener('mousemove', drag);
+
+    track.addEventListener('touchstart', dragStart, { passive: true });
+    track.addEventListener('touchend', dragEnd);
+    track.addEventListener('touchmove', drag, { passive: true });
+
+    function dragStart(e) {
+        if (e.type === 'touchstart') {
+            startX = e.touches[0].clientX;
+        } else {
+            e.preventDefault();
+            startX = e.clientX;
+        }
+        isDragging = true;
+        stopAutoSlide();
+        track.style.transition = 'none';
+    }
+
+    function drag(e) {
+        if (!isDragging) return;
+        const currentX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+        const diffX = currentX - startX;
+
+        // Calculate raw translation
+        const slideWidth = track.children[0].offsetWidth;
+        const baseTranslate = -(currentIndex * slideWidth);
+        track.style.transform = `translateX(${baseTranslate + diffX}px)`;
+    }
+
+    function dragEnd(e) {
+        if (!isDragging) return;
+        isDragging = false;
+
+        const currentX = e.type === 'touchend' ? e.changedTouches[0].clientX : e.clientX;
+        const diffX = currentX - startX;
+
+        track.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+
+        if (Math.abs(diffX) > 50) { // Threshold for swipe
+            if (diffX > 0) moveSlide(-1);
+            else moveSlide(1);
+        } else {
+            updateCarousel(); // Snap back
+        }
+
+        startAutoSlide();
+    }
 }
 
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+function moveSlide(direction) {
+    currentIndex += direction;
+    const track = document.querySelector('.carousel-track');
+
+    // Smooth Loop
+    if (currentIndex < 0) {
+        currentIndex = artImages.length - 1;
+        if (track) track.style.transition = 'none'; // Instant jump
+    } else if (currentIndex >= artImages.length) {
+        currentIndex = 0;
+        if (track) track.style.transition = 'none'; // Instant jump to start
+    } else {
+        if (track) track.style.transition = 'transform 1.2s cubic-bezier(0.25, 1, 0.5, 1)'; // Slow ease
+    }
+
+    // Need a tiny timeout to apply the transition change if it was 'none'
+    setTimeout(updateCarousel, 50);
+}
+
+function updateCarousel() {
+    const track = document.querySelector('.carousel-track');
+    if (!track) return;
+
+    // Get width of one slide
+    const slide = track.children[0];
+    if (!slide) return;
+
+    const slideWidth = slide.offsetWidth;
+    track.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+
+    // Restore transition if it was removed for looping
+    setTimeout(() => {
+        track.style.transition = 'transform 1.2s cubic-bezier(0.25, 1, 0.5, 1)';
+    }, 50);
+}
+
+function startAutoSlide() {
+    stopAutoSlide();
+    autoSlideInterval = setInterval(() => {
+        moveSlide(1);
+    }, 2800); // Fast, continuous feeling (2.8 seconds per slide)
+}
+
+function stopAutoSlide() {
+    clearInterval(autoSlideInterval);
 }
 
 // Initial Setup
-initGrid();
+initCarousel();
 
-// Handle Resize (Debounced roughly)
+// Handle Resize
 let resizeTimeout;
+let wasMobile = window.innerWidth <= 768;
+
 window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(initGrid, 300);
-});
+    resizeTimeout = setTimeout(() => {
+        const isMobileNow = window.innerWidth <= 768;
 
-// Start "Living Wall" Cycle
-// Update one cell every X ms
-setInterval(updateRandomCell, 800); // Slower updates (was 200)
+        // If we crossed the breakpoint, reload images and re-init
+        if (wasMobile !== isMobileNow) {
+            wasMobile = isMobileNow;
+            loadCarouselImages();
+            currentIndex = 0; // Reset
+            initCarousel();
+            return;
+        }
+
+        // Just fix styles if breakpoint didn't change
+        const track = document.querySelector('.carousel-track');
+        if (track) track.style.transition = 'none';
+        updateCarousel();
+        setTimeout(() => { if (track) track.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'; }, 50);
+    }, 300);
+});
 
 // --- Modal Logic (Ported from Shop) ---
 function openModal(product) {
+    stopAutoSlide(); // Pause carousel while modal is open
     const modal = document.getElementById('imageModal');
     if (!modal) return;
 
@@ -179,12 +253,7 @@ function openModal(product) {
     const modalBuyBtn = document.getElementById('modalBuyBtn');
 
     if (modalImg) {
-        // Fix path for index page: Remove leading "../" since products.js has paths relative to shop folder
-        let displayImage = product.image;
-        if (displayImage.startsWith('../')) {
-            displayImage = displayImage.substring(3);
-        }
-        modalImg.src = displayImage;
+        modalImg.src = product.displayImage;
         modalImg.alt = product.title || 'Artwork';
     }
     if (modalTitle) modalTitle.textContent = product.title || '';
@@ -195,7 +264,7 @@ function openModal(product) {
     // Buy Button Logic
     if (modalBuyBtn) {
         if (product.sold) {
-            modalBuyBtn.textContent = 'VENDIDO'; // Hardcoded for now, or use i18n if available
+            modalBuyBtn.textContent = 'VENDIDO';
             modalBuyBtn.href = '#';
             modalBuyBtn.style.pointerEvents = 'none';
             modalBuyBtn.style.opacity = '0.5';
@@ -239,6 +308,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
             closeModal();
+        } else if (e.key === 'ArrowRight' && (!modal || !modal.classList.contains('active'))) {
+            moveSlide(1);
+        } else if (e.key === 'ArrowLeft' && (!modal || !modal.classList.contains('active'))) {
+            moveSlide(-1);
         }
     });
 });
@@ -248,5 +321,6 @@ function closeModal() {
     if (modal) {
         modal.classList.remove('active');
         document.body.style.overflow = '';
+        startAutoSlide(); // Resume carousel
     }
 }
