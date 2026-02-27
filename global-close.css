@@ -1,8 +1,9 @@
 /* Minimalist Close Button Global Styles */
 .close-container {
-    padding: 40px;
+    padding: 30px 40px;
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     position: absolute;
     top: 0;
     right: 0;
