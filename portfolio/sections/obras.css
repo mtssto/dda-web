@@ -118,14 +118,22 @@ footer p {
   .overlay-title {
     font-size: 1.1rem;
     margin-bottom: 5px;
+    line-height: 1.1;
   }
 
   .overlay-details {
     font-size: 0.75rem;
+    line-height: 1.1;
+  }
+
+  .overlay-details a.btn-link {
+    font-size: 0.65rem;
+    padding: 6px 12px;
+    margin-top: 10px;
   }
 
   .masonry-overlay {
-    padding: 15px;
+    padding: 10px;
   }
 }
 
@@ -145,7 +153,10 @@ footer p {
   display: inline-block;
   position: relative;
   overflow: hidden;
-  line-height: 0;
+  line-height: normal;
+  /* Restore line height for text inside */
+  font-size: 1rem;
+  /* Restore font size for overlay text */
   /* Ensures no gap below image */
 }
 
