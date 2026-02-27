@@ -139,17 +139,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
             initialX = parseFloat(item.style.left) || 0;
             initialY = parseFloat(item.style.top) || 0;
-        });
+
+            // Do not prevent default here to allow clicking
+        }, { passive: false });
 
         document.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
+
+            // Prevent scrolling and pull-to-refresh while dragging an image
+            e.preventDefault();
+
             const touch = e.touches[0];
             const dx = touch.clientX - startX;
             const dy = touch.clientY - startY;
 
             item.style.left = `${initialX + dx}px`;
             item.style.top = `${initialY + dy}px`;
-        });
+        }, { passive: false });
 
         document.addEventListener('touchend', () => {
             if (isDragging) {
