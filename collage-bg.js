@@ -18,24 +18,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const images = [
-        'Ilustrates/aaaa.jpg',
-        'Ilustrates/bb.jpg',
-        'Ilustrates/ccc.jpg',
-        'Ilustrates/dibu1.jpg',
-        'Ilustrates/dibu2.jpg',
-        'Ilustrates/dibu10.jpg',
-        'portfolio/sections/BUOH/1.jpg',
-        'portfolio/sections/BUOH/10.jpg',
-        'portfolio/sections/BUOH/11.jpg',
-        'portfolio/sections/BUOH/12.jpg',
+    const buohImages = Array.from({ length: 15 }, (_, i) => `portfolio/sections/BUOH/${i + 1}.jpg`).concat(['portfolio/sections/BUOH/title.jpg']);
+    const ilusJpgs = Array.from({ length: 20 }, (_, i) => `Ilustrates/dibu${i + 1}.jpg`);
+    const ilusJpegs = ['Ilustrates/dibu21.jpeg', 'Ilustrates/dibu22.jpeg', 'Ilustrates/dibu23.jpeg'];
+    const otherIlus = [
+        'Ilustrates/aaaa.jpg', 'Ilustrates/aaaaa.jpg', 'Ilustrates/aaaaaa.jpg', 'Ilustrates/aaaaaaa.jpg', 'Ilustrates/aaaaaaaa.jpg',
+        'Ilustrates/b.jpg', 'Ilustrates/bb.jpg', 'Ilustrates/bbb.jpg', 'Ilustrates/bbbb.jpg', 'Ilustrates/bbbbb.jpg', 'Ilustrates/bbbbbbb.jpg', 'Ilustrates/bbbbbbbb.jpg', 'Ilustrates/bbbbbbbbbb.jpg',
+        'Ilustrates/c.jpg', 'Ilustrates/cc.jpg', 'Ilustrates/ccc.jpg', 'Ilustrates/cccc.jpg', 'Ilustrates/ccccc.jpg',
+        'Ilustrates/collage_new_chars.jpg'
+    ];
+    const oldMiscImages = [
         'ddaImages/MACBA.jpg',
-        'Ilustrates/collage_new_chars.jpg',
         'portfolio/sections/images/2222.jpg',
         'portfolio/sections/images/gato1.jpg',
-        'portfolio/sections/images/flor.jpg',
-        'Ilustrates/dibu21.jpeg'
+        'portfolio/sections/images/flor.jpg'
     ];
+
+    const images = [...buohImages, ...ilusJpgs, ...ilusJpegs, ...otherIlus, ...oldMiscImages];
 
     // Number of images to display
     const numImages = Math.floor(Math.random() * 6) + 12; // 12 to 17 images
