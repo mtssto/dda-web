@@ -114,17 +114,18 @@ footer p {
     column-gap: 0px;
   }
 
-  /* Since column goes to 1, images are huge again, so font can scale back up slightly */
+  /* On mobile 1 column looks good, scale font down to fit better */
   .overlay-title {
-    font-size: 1.5rem;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
   }
 
   .overlay-details {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
   }
 
   .masonry-overlay {
-    padding: 25px;
+    padding: 15px;
   }
 }
 
