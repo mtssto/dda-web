@@ -75,6 +75,7 @@ html {
 @media (max-width: 768px) {
     .index-nav-wrapper a {
         font-size: 1.5rem;
+        letter-spacing: -2px;
     }
 }
 
