@@ -77,6 +77,7 @@ footer p {
 
   .masonry-grid {
     column-count: 2;
+    column-gap: 0px;
   }
 
   .overlay-title {
@@ -110,7 +111,7 @@ footer p {
 
   .masonry-grid {
     column-count: 1;
-    column-gap: 15px;
+    column-gap: 0px;
   }
 
   /* Since column goes to 1, images are huge again, so font can scale back up slightly */
@@ -130,25 +131,32 @@ footer p {
 /* CSS Hacks for Dense Masonry Grid */
 .masonry-grid {
   column-count: 3;
-  column-gap: 8px;
+  column-gap: 0px;
   padding-bottom: 20px;
+  font-size: 0;
 }
 
 .masonry-item {
   break-inside: avoid;
-  margin-bottom: 8px;
+  margin-bottom: 0px;
+  /* Fix for inline-block bottom gap */
   width: 100%;
   display: inline-block;
   position: relative;
   overflow: hidden;
+  line-height: 0;
+  /* Ensures no gap below image */
 }
 
 .masonry-item img {
   width: 100%;
   height: auto;
   display: block;
+  /* Important to remove inline flex gaps */
   cursor: pointer;
   transition: opacity .4s, transform .4s;
+  margin: 0;
+  padding: 0;
 }
 
 /* Hover details overlay */
