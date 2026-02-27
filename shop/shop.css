@@ -186,7 +186,7 @@ body.lang-en .product-card.sold .product-image::after {
 .lightbox-modal {
     display: none;
     position: fixed;
-    z-index: 4000;
+    z-index: 10000;
     top: 0;
     left: 0;
     width: 100%;
@@ -221,7 +221,7 @@ body.lang-en .product-card.sold .product-image::after {
     font-size: 40px;
     font-weight: 300;
     cursor: pointer;
-    z-index: 4001;
+    z-index: 10001;
     transition: color 0.3s;
 }
 
@@ -238,7 +238,7 @@ body.lang-en .product-card.sold .product-image::after {
     font-size: 30px;
     font-weight: 300;
     cursor: pointer;
-    z-index: 4001;
+    z-index: 10001;
     transition: color 0.3s, background-color 0.3s;
     background-color: rgba(0, 0, 0, 0.4);
     width: 50px;
