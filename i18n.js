@@ -4,20 +4,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const commonTranslations = {
         es: {
-            'nav.bio': 'ABOUT ME',
+            'nav.bio': 'SOBRE MÍ',
             'nav.prensa': 'PRENSA',
             'nav.muestras': 'MUESTRAS',
-            'nav.obras': 'ARTWORKS',
+            'nav.obras': 'OBRAS',
             'nav.proyectos': 'PROYECTOS',
             'nav.textos': 'TEXTOS',
             'nav.shop': 'SHOP',
-            'nav.contact': 'CONTACT',
+            'nav.contact': 'CONTACTO',
             'footer.rights': 'Todos los derechos reservados.',
             'auth.guarantee': 'Authenticity Guaranteed',
             'auth.shipping': 'Global Shipping',
             'auth.service': 'Personal Service',
             'close': 'CLOSE',
-            'more': 'MORE'
+            'more': 'MÁS'
         },
         en: {
             'nav.bio': 'ABOUT ME',
@@ -77,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'EXHIBITIONS': 'nav.muestras',
             'SHOP': 'nav.shop',
             'ARTWORKS': 'nav.obras',
+            'OBRAS': 'nav.obras',
             'PRENSA': 'nav.prensa',
             'PRESS': 'nav.prensa',
             'PROYECTOS': 'nav.proyectos',
@@ -84,9 +85,12 @@ document.addEventListener('DOMContentLoaded', () => {
             'TEXTOS': 'nav.textos',
             'TEXTS': 'nav.textos',
             'ABOUT ME': 'nav.bio',
+            'SOBRE MÍ': 'nav.bio',
             'CONTACT': 'nav.contact',
+            'CONTACTO': 'nav.contact',
             'CLOSE': 'close',
-            'MORE': 'more'
+            'MORE': 'more',
+            'MÁS': 'more'
         };
 
         // Specially target index.html a wrappers and close-btn
