@@ -31,7 +31,7 @@
     backdrop-filter: blur(2px);
     /* Slight blur helps readability but keeps it transparent */
     transition: background 0.3s ease;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Inter', sans-serif;
 }
 
 /* Hover effect: make it slightly visible when hovered */
@@ -40,12 +40,15 @@
 }
 
 .navbar__brand {
-    font-size: 1.2rem;
-    font-weight: 700;
-    text-transform: uppercase;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-style: italic;
+    font-weight: 400;
+    text-transform: none;
+    /* Let the serif speak for itself */
     text-decoration: none;
     color: var(--nav-text);
-    letter-spacing: 2px;
+    letter-spacing: 0.5px;
 }
 
 /* Specific to override Materialize 'nav' element styles */
@@ -71,16 +74,19 @@ nav.navbar-drawer__links,
 .navbar__links a {
     text-decoration: none;
     color: var(--nav-text);
+    font-family: 'Inter', sans-serif;
     font-size: 0.9rem;
+    font-weight: 300;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
     padding: 5px 10px;
     border-radius: 4px;
-    transition: background 0.2s;
+    transition: color 0.3s ease;
 }
 
 .navbar__links a:hover {
-    background: rgba(0, 0, 0, 0.05);
+    color: #888;
+    background: transparent;
 }
 
 /* Burger Button - Replaced with "MENU" text */
@@ -92,12 +98,12 @@ nav.navbar-drawer__links,
     cursor: pointer;
     padding: 10px;
     z-index: 1002;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Inter', sans-serif;
     font-size: 1rem;
-    font-weight: 700;
+    font-weight: 300;
     color: var(--nav-text);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
 }
 
 /* Hide the old spans (lines) */
@@ -179,8 +185,11 @@ body.has-navbar {
 .navbar-drawer__links a {
     text-decoration: none;
     color: var(--nav-text);
+    font-family: 'Inter', sans-serif;
     font-size: 1.1rem;
+    font-weight: 300;
     text-transform: uppercase;
+    letter-spacing: 1.5px;
     padding: 10px;
     border-radius: 6px;
     background: transparent !important;

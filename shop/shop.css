@@ -46,6 +46,7 @@ body {
 
 .shop-title {
     font-family: var(--font-heading);
+    font-style: italic;
     font-size: 5rem;
     font-weight: 400;
     letter-spacing: -0.02em;

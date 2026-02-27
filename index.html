@@ -5,145 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Diego de Aduriz</title>
-  <link rel="stylesheet" href="gallery-style.css">
-  <link rel="stylesheet" href="navbar.css">
-</head>
-
-<body>
-
-  <header class="navbar">
-    <a class="navbar__brand" href="./index.html">Diego de Aduriz</a>
-
-    <nav class="navbar__links" aria-label="Main navigation">
-      <a href="./bio/bio.html">Bio</a>
-      <a href="./prensa/prensa.html">Prensa</a>
-      <!-- Muestras Dropdown -->
-      <div class="navbar__item">
-        <a href="./muestras/muestras.html">Muestras</a>
-        <div class="dropdown-content">
-          <a href="./portfolio/sections/microcentroCuenta.html">Microcentro Cuenta</a>
-          <a href="./portfolio/sections/elefantesEnElBazar.html">Elefantes en el Bazar</a>
-          <a href="./portfolio/sections/laLlaveyElTestigo.html">La Llave y el Testigo</a>
-          <a href="./portfolio/sections/miCuerpoElectrico.html">Mi Cuerpo Eléctrico</a>
-          <a href="./portfolio/sections/friezeArt.html">Frieze Art Fair</a>
-          <a href="./portfolio/sections/muralSeptimo.html">Mural Séptimo</a>
-          <a href="./portfolio/sections/todoLoQueBrillaEsOro.html">Todo lo que brilla es oro</a>
-          <a href="./portfolio/sections/lasNaves.html">Las Naves</a>
-        </div>
-      </div>
-
-      <!-- Obras Dropdown -->
-      <div class="navbar__item">
-        <a href="./portfolio/sections/obras.html">Obras</a>
-        <div class="dropdown-content">
-          <a href="./portfolio/sections/obras.html#pasteles">Pasteles</a>
-          <a href="./portfolio/sections/obras.html#gatos">Gatos</a>
-          <a href="./portfolio/sections/obras.html#paisajes">Paisajes</a>
-          <a href="./portfolio/sections/obras.html#Autorretratos">Autorretratos</a>
-          <a href="./portfolio/sections/obras.html#digital">Digital</a>
-          <a href="./portfolio/sections/obras.html#ilustraciones">Ilustraciones</a>
-          <a href="./portfolio/sections/obras.html#videos">Videos</a>
-        </div>
-      </div>
-
-      <a href="./proyectos/proyectos.html">Proyectos</a>
-      <a href="./textos/textos.html">Textos</a>
-      <a href="./shop/shop.html">Shop</a>
-      <a href="mailto:contact@diegodeaduriz.com">Contact</a>
-    </nav>
-
-    <button class="navbar__burger" id="navBurger" type="button" aria-label="Open menu" aria-controls="navDrawer"
-      aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
-  </header>
-
-
-  <div class="navbar-overlay" id="navOverlay" hidden></div>
-
-  <aside class="navbar-drawer" id="navDrawer" aria-label="Mobile menu">
-    <div class="navbar-drawer__head">
-      <a class="navbar__brand" href="./index.html">Diego de Aduriz</a>
-      <button class="navbar-drawer__close" id="navClose" type="button" aria-label="Close menu">✕</button>
-    </div>
-
-    <nav class="navbar-drawer__links">
-      <a href="./bio/bio.html">Bio</a>
-      <a href="./prensa/prensa.html">Prensa</a>
-
-      <!-- Muestras Dropdown in Mobile -->
-      <div class="navbar__item">
-        <a href="./muestras/muestras.html">Muestras</a>
-        <div class="dropdown-content">
-          <a href="./portfolio/sections/microcentroCuenta.html">Microcentro Cuenta</a>
-          <a href="./portfolio/sections/elefantesEnElBazar.html">Elefantes en el Bazar</a>
-          <a href="./portfolio/sections/laLlaveyElTestigo.html">La Llave y el Testigo</a>
-          <a href="./portfolio/sections/miCuerpoElectrico.html">Mi Cuerpo Eléctrico</a>
-          <a href="./portfolio/sections/friezeArt.html">Frieze Art Fair</a>
-          <a href="./portfolio/sections/muralSeptimo.html">Mural Séptimo</a>
-          <a href="./portfolio/sections/todoLoQueBrillaEsOro.html">Todo lo que brilla es oro</a>
-          <a href="./portfolio/sections/lasNaves.html">Las Naves</a>
-        </div>
-      </div>
-
-      <!-- Obras Dropdown in Mobile -->
-      <div class="navbar__item">
-        <a href="./portfolio/sections/obras.html">Obras</a>
-        <div class="dropdown-content">
-          <a href="./portfolio/sections/obras.html#pasteles">Pasteles</a>
-          <a href="./portfolio/sections/obras.html#gatos">Gatos</a>
-          <a href="./portfolio/sections/obras.html#paisajes">Paisajes</a>
-          <a href="./portfolio/sections/obras.html#Autorretratos">Autorretratos</a>
-          <a href="./portfolio/sections/obras.html#digital">Digital</a>
-          <a href="./portfolio/sections/obras.html#ilustraciones">Ilustraciones</a>
-          <a href="./portfolio/sections/obras.html#videos">Videos</a>
-        </div>
-      </div>
-
-      <a href="./proyectos/proyectos.html">Proyectos</a>
-      <a href="./textos/textos.html">Textos</a>
-      <a href="./shop/shop.html">Shop</a>
-      <a href="mailto:contact@diegodeaduriz.com">Contact</a>
-    </nav>
-  </aside>
-
-  <div class="has-navbar">
-    <div id="loading-indicator"></div>
-    <div id="art-canvas"></div>
-  </div>
-
-  <!-- Modal for Image View -->
-  <div id="imageModal" class="image-modal">
-    <span class="modal-close">&times;</span>
-    <div class="modal-container">
-      <div class="modal-image-wrapper">
-        <img class="modal-image" id="modalImage" alt="Artwork">
-      </div>
-      <div class="modal-info-wrapper">
-        <h2 id="modalTitle" class="modal-title"></h2>
-        <p id="modalTechnique" class="modal-technique"></p>
-        <p id="modalDimensions" class="modal-dimensions"></p>
-        <p id="modalPrice" class="modal-price"></p>
-        <a id="modalBuyBtn" href="#" class="modal-buy-btn" target="_blank">CONSULTAR / COMPRAR</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Welcome Shop Popup (Small Toast) -->
-  <div id="welcomeShopModal"
-    style="display: none; position: fixed; bottom: 30px; right: 30px; z-index: 2000; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); padding: 25px 35px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05); text-align: center; max-width: 350px;">
-    <span class="modal-close" id="welcomeClose"
-      style="position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #666; line-height: 1;">&times;</span>
-    <p
-      style="font-family: var(--font-body); font-size: 1rem; color: #111; margin-bottom: 20px; line-height: 1.4; margin-top: 10px;">
-      Descubre obras originales exclusivas.
-    </p>
-    <a href="./shop/shop.html" class="modal-buy-btn"
-      style="text-decoration: none; display: inline-block; width: 100%; border-radius: 4px; padding: 12px 20px; box-sizing: border-box; font-size: 0.9rem;">IR
-      AL SHOP</a>
-    <!-- Explore button removed to keep it simple -->
-    <button id="welcomeExploreBtn" style="display: none;"></button>
-  </div>
+  <link rel="stylesheet" href="index-custom.css">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -151,11 +13,82 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
     rel="stylesheet">
+</head>
 
+<body>
 
-  <script src="navbar.js"></script>
-  <script src="shop/products.js"></script>
-  <script src="immersive-gallery.js"></script>
+  <div class="index-nav-wrapper">
+    <!-- Top Left -->
+    <a href="./muestras/muestras.html" class="nav-past">MUESTRAS</a>
+
+    <!-- Top Center -->
+    <a href="./shop/shop.html" class="nav-now">SHOP</a>
+
+    <!-- Top Right Stack -->
+    <div class="nav-right-stack">
+      <div class="nav-dropdown">
+        <a href="#" class="nav-more">MORE</a>
+        <div class="nav-dropdown-content">
+          <a href="portfolio/sections/obras.html">ARTWORKS</a>
+          <a href="./prensa/prensa.html">PRENSA</a>
+          <a href="./proyectos/proyectos.html">PROYECTOS</a>
+          <a href="./textos/textos.html">TEXTOS</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Left -->
+    <a href="./bio/bio.html" class="nav-about">ABOUT ME</a>
+
+    <!-- Bottom Right -->
+    <a href="mailto:contact@diegodeaduriz.com" class="nav-contact">CONTACT</a>
+  </div>
+
+  <div id="collage-bg-container">
+    <!-- Images will be injected here by collage-bg.js -->
+  </div>
+
+  <!-- Welcome Shop Popup (Small Toast) -->
+  <div id="welcomeShopModal"
+    style="display: none; position: fixed; bottom: 30px; left: 30px; z-index: 2000; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); padding: 25px 35px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05); text-align: center; max-width: 350px;">
+    <span class="modal-close" id="welcomeClose"
+      style="position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #666; line-height: 1;">&times;</span>
+    <p
+      style="font-family: var(--font-body); font-size: 1rem; color: #111; margin-bottom: 20px; line-height: 1.4; margin-top: 10px;">
+      Descubre obras originales exclusivas.
+    </p>
+    <a href="./shop/shop.html" class="modal-buy-btn"
+      style="text-decoration: none; display: inline-block; width: 100%; border-radius: 4px; padding: 12px 20px; box-sizing: border-box; font-size: 0.9rem; background: #000; color: #fff;">IR
+      AL SHOP</a>
+    <button id="welcomeExploreBtn" style="display: none;"></button>
+  </div>
+
+  <!-- Note: We are not importing navbar.js here so we can keep the index pristine. -->
+  <script src="collage-bg.js"></script>
+  <script>
+    // Minimal script to handle shop popup if immersive-gallery isn't imported
+    document.addEventListener('DOMContentLoaded', () => {
+      const welcomeShopModal = document.getElementById('welcomeShopModal');
+      const welcomeClose = document.getElementById('welcomeClose');
+
+      // Show after a delay and if not closed before
+      if (!sessionStorage.getItem('shopWelcomeClosed')) {
+        setTimeout(() => {
+          if (welcomeShopModal) {
+            welcomeShopModal.style.display = 'block';
+          }
+        }, 3000);
+      }
+
+      if (welcomeClose) {
+        welcomeClose.addEventListener('click', () => {
+          if (welcomeShopModal) welcomeShopModal.style.display = 'none';
+          sessionStorage.setItem('shopWelcomeClosed', 'true');
+        });
+      }
+    });
+
+  </script>
 </body>
 
 </html>

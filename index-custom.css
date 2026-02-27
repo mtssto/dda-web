@@ -1,0 +1,166 @@
+/* index-custom.css */
+body,
+html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    /* No scrolling on index */
+    background-color: #f4eaf2
+        /* Light grey */
+        font-family: 'Inter', sans-serif;
+}
+
+#collage-bg-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    overflow: hidden;
+    transition: filter 0.4s ease;
+}
+
+.collage-item {
+    position: absolute;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    background: transparent;
+    transform-origin: center;
+    transition: transform 0.3s ease;
+}
+
+.collage-item img {
+    max-width: 100%;
+    display: block;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    /* Subtle edge */
+}
+
+/* Navbar */
+.index-nav-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10;
+    pointer-events: none;
+    /* Let clicks pass through empty space */
+}
+
+/* Hovering the nav wrapper blurs the background */
+.index-nav-wrapper.hovered~#collage-bg-container {
+    filter: blur(12px);
+}
+
+.index-nav-wrapper a {
+    position: absolute;
+    color: #111;
+    text-decoration: none;
+    font-size: 2rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    pointer-events: auto;
+    /* Re-enable clicks on links */
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    /* Helps readability over images */
+}
+
+@media (max-width: 768px) {
+    .index-nav-wrapper a {
+        font-size: 1.5rem;
+    }
+}
+
+.index-nav-wrapper a:hover {
+    color: #555;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 1);
+}
+
+/* Positions from mockup */
+.nav-past {
+    top: 2vw;
+    left: 2vw;
+}
+
+.nav-now {
+    top: 2vw;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nav-right-stack {
+    position: absolute;
+    top: 2vw;
+    right: 2vw;
+    text-align: right;
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.2rem;
+}
+
+.nav-right-stack a {
+    position: relative;
+    /* Inside flex container */
+}
+
+.nav-about {
+    position: absolute;
+    bottom: 2vw;
+    left: 2vw;
+}
+
+.nav-contact {
+    position: absolute;
+    bottom: 2vw;
+    right: 2vw;
+}
+
+/* Nav Dropdown for MORE */
+.nav-dropdown {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    /* right-align */
+}
+
+.nav-dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    /* Drop down below the MORE button */
+    right: 0;
+    /* Align to the right edge of MORE */
+    background: transparent;
+    padding-top: 5px;
+    /* Subtle gap below MORE */
+    text-align: right;
+    flex-direction: column;
+    gap: 0.2rem;
+    z-index: 20;
+}
+
+/* Reveal on hover */
+.nav-dropdown:hover .nav-dropdown-content {
+    display: flex;
+}
+
+/* Make dropdown links slightly smaller to distinguish them from top-level */
+.nav-dropdown-content a {
+    position: relative;
+    font-size: 1.5rem;
+    color: #111;
+}
+
+@media (max-width: 768px) {
+    .nav-dropdown-content a {
+        font-size: 1.2rem;
+    }
+}

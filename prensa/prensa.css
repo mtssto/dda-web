@@ -1,27 +1,49 @@
 /* Press Archive Styles */
 body {
     background-color: #fdfdfd;
-    font-family: 'Courier New', Courier, monospace;
-    color: #333;
+    font-family: 'Inter', sans-serif;
+    color: #111;
     margin: 0;
 }
 
+/* Minimalist Close Button */
+.close-container {
+    padding: 40px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.close-btn {
+    text-decoration: none;
+    color: #111;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: #888;
+}
+
 .container {
-    max-width: 900px;
+    max-width: 1000px;
     margin: 0 auto;
-    padding: 120px 20px 60px;
-    /* Top padding clears fixed navbar */
+    padding: 40px 40px 80px;
 }
 
 .press-header h1 {
-    font-size: 3rem;
-    font-weight: normal;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 400;
+    font-style: italic;
+    color: #111;
     margin-bottom: 60px;
-    border-bottom: 2px solid #333;
-    padding-bottom: 20px;
+    margin-top: 0;
+    text-transform: none;
+    /* Let the serif style speak */
 }
 
 .press-archive {
@@ -32,41 +54,49 @@ body {
 .press-row {
     display: flex;
     align-items: baseline;
-    padding: 15px 0;
-    border-bottom: 1px solid #e0e0e0;
+    padding: 25px 0;
+    border-bottom: 1px solid #eaeaea;
     text-decoration: none;
-    color: #333;
-    transition: background-color 0.2s ease, padding-left 0.2s ease;
+    color: #111;
+    transition: color 0.3s ease;
 }
 
 .press-row:hover {
-    background-color: #f5f5f5;
-    padding-left: 10px;
+    color: #888;
+}
+
+.press-row:hover .press-year,
+.press-row:hover .press-outlet {
+    color: #888;
 }
 
 .press-year {
-    font-weight: bold;
+    font-weight: 300;
     width: 80px;
     flex-shrink: 0;
-    font-size: 1rem;
-    color: #666;
+    font-size: 1.1rem;
+    color: #888;
+    transition: color 0.3s ease;
 }
 
 .press-title {
     flex-grow: 1;
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin-right: 20px;
-    line-height: 1.4;
+    font-size: 1.4rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    margin-right: 40px;
+    line-height: 1.3;
 }
 
 .press-outlet {
-    width: 200px;
+    width: 250px;
     text-align: right;
+    font-family: 'Playfair Display', serif;
     font-style: italic;
-    font-size: 0.95rem;
-    color: #555;
+    font-size: 1.1rem;
+    color: #666;
     flex-shrink: 0;
+    transition: color 0.3s ease;
 }
 
 /* Mobile Responsiveness */

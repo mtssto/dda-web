@@ -1,0 +1,27 @@
+/* Minimalist Close Button Global Styles */
+.close-container {
+    padding: 40px;
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 9999;
+}
+
+.close-btn {
+    text-decoration: none;
+    color: #111;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: #888;
+}

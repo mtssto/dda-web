@@ -6,8 +6,30 @@ html {
     height: 100%;
     background-color: #fff;
     /* Clean white background */
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    color: #333;
+    font-family: 'Inter', sans-serif;
+    color: #111;
+}
+
+/* Minimalist Close Button */
+.close-container {
+    padding-bottom: 40px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.close-btn {
+    text-decoration: none;
+    color: #111;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: #888;
 }
 
 .book-container {
@@ -85,21 +107,19 @@ html {
 
 /* --- Catalog View Styles --- */
 .catalog-view {
-    padding: 120px 20px 60px;
+    padding: 40px 40px 80px;
     max-width: 1200px;
     margin: 0 auto;
     text-align: center;
 }
 
 .catalog-title {
-    font-family: 'Courier New', Courier, monospace;
-    /* Consistent with other pages */
-    font-size: 2.5rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
     margin-bottom: 60px;
-    color: #000;
+    color: #111;
     font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    font-style: italic;
 }
 
 .catalog-grid {
@@ -157,12 +177,12 @@ html {
 }
 
 .book-title {
-    font-size: 1.1rem;
-    color: #000;
+    font-size: 1.4rem;
+    color: #111;
     margin: 10px 0 5px 0;
     font-weight: 400;
-    letter-spacing: 0.05em;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    letter-spacing: 0.02em;
+    font-family: 'Inter', sans-serif;
 }
 
 .book-btn {

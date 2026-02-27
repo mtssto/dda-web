@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../index copy.css">
   <link rel="stylesheet" href="../navbar.css">
+  <link rel="stylesheet" href="muestras-minimal.css">
   <style>
     body {
       background-color: #ffffff;
@@ -15,208 +16,78 @@
   </style>
 </head>
 
-<body class="has-navbar">
+<body class="minimal-muestras">
 
-  <header class="navbar">
-    <a class="navbar__brand" href="../index.html">Diego de Aduriz</a>
+  <div class="close-container">
+    <a href="../index.html" class="close-btn">CLOSE</a>
+  </div>
 
-    <nav class="navbar__links" aria-label="Main navigation">
-      <a href="../bio/bio.html">Bio</a>
-      <a href="../prensa/prensa.html">Prensa</a>
-      <!-- Muestras Dropdown -->
-      <div class="navbar__item">
-        <a href="../muestras/muestras.html">Muestras</a>
-        <div class="dropdown-content">
-          <a href="../portfolio/sections/microcentroCuenta.html">Microcentro Cuenta</a>
-          <a href="../portfolio/sections/elefantesEnElBazar.html">Elefantes en el Bazar</a>
-          <a href="../portfolio/sections/laLlaveyElTestigo.html">La Llave y el Testigo</a>
-          <a href="../portfolio/sections/miCuerpoElectrico.html">Mi Cuerpo Eléctrico</a>
-          <a href="../portfolio/sections/friezeArt.html">Frieze Art Fair</a>
-          <a href="../portfolio/sections/muralSeptimo.html">Mural Séptimo</a>
-          <a href="../portfolio/sections/todoLoQueBrillaEsOro.html">Todo lo que brilla es oro</a>
-          <a href="../portfolio/sections/lasNaves.html">Las Naves</a>
-        </div>
-      </div>
+  <main class="muestras-list-container">
+    <ul class="muestras-list">
 
-      <!-- Obras Dropdown -->
-      <div class="navbar__item">
-        <a href="../portfolio/sections/obras.html">Obras</a>
-        <div class="dropdown-content">
-          <a href="../portfolio/sections/obras.html#pasteles">Pasteles</a>
-          <a href="../portfolio/sections/obras.html#gatos">Gatos</a>
-          <a href="../portfolio/sections/obras.html#paisajes">Paisajes</a>
-          <a href="../portfolio/sections/obras.html#Autorretratos">Autorretratos</a>
-          <a href="../portfolio/sections/obras.html#digital">Digital</a>
-          <a href="../portfolio/sections/obras.html#ilustraciones">Ilustraciones</a>
-          <a href="../portfolio/sections/obras.html#videos">Videos</a>
-        </div>
-      </div>
-
-      <a href="../proyectos/proyectos.html">Proyectos</a>
-      <a href="../textos/textos.html">Textos</a>
-      <a href="../shop/shop.html">Shop</a>
-      <a href="mailto:contact@diegodeaduriz.com">Contact</a>
-    </nav>
-
-    <button class="navbar__burger" id="navBurger" type="button" aria-label="Open menu" aria-controls="navDrawer"
-      aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
-  </header>
-
-  <div class="navbar-overlay" id="navOverlay" hidden></div>
-
-  <aside class="navbar-drawer" id="navDrawer" aria-label="Mobile menu">
-    <div class="navbar-drawer__head">
-      <a class="navbar__brand" href="../index.html">Diego de Aduriz</a>
-      <button class="navbar-drawer__close" id="navClose" type="button" aria-label="Close menu">✕</button>
-    </div>
-
-    <nav class="navbar-drawer__links">
-      <a href="../bio/bio.html">Bio</a>
-      <a href="../prensa/prensa.html">Prensa</a>
-
-      <!-- Muestras Dropdown in Mobile -->
-      <div class="navbar__item">
-        <a href="../muestras/muestras.html">Muestras</a>
-        <div class="dropdown-content">
-          <a href="../portfolio/sections/microcentroCuenta.html">Microcentro Cuenta</a>
-          <a href="../portfolio/sections/elefantesEnElBazar.html">Elefantes en el Bazar</a>
-          <a href="../portfolio/sections/laLlaveyElTestigo.html">La Llave y el Testigo</a>
-          <a href="../portfolio/sections/miCuerpoElectrico.html">Mi Cuerpo Eléctrico</a>
-          <a href="../portfolio/sections/friezeArt.html">Frieze Art Fair</a>
-          <a href="../portfolio/sections/muralSeptimo.html">Mural Séptimo</a>
-          <a href="../portfolio/sections/todoLoQueBrillaEsOro.html">Todo lo que brilla es oro</a>
-          <a href="../portfolio/sections/lasNaves.html">Las Naves</a>
-        </div>
-      </div>
-
-      <!-- Obras Dropdown in Mobile -->
-      <div class="navbar__item">
-        <a href="../portfolio/sections/obras.html">Obras</a>
-        <div class="dropdown-content">
-          <a href="../portfolio/sections/obras.html#pasteles">Pasteles</a>
-          <a href="../portfolio/sections/obras.html#gatos">Gatos</a>
-          <a href="../portfolio/sections/obras.html#paisajes">Paisajes</a>
-          <a href="../portfolio/sections/obras.html#Autorretratos">Autorretratos</a>
-          <a href="../portfolio/sections/obras.html#digital">Digital</a>
-          <a href="../portfolio/sections/obras.html#ilustraciones">Ilustraciones</a>
-          <a href="../portfolio/sections/obras.html#videos">Videos</a>
-        </div>
-      </div>
-
-      <a href="../proyectos/proyectos.html">Proyectos</a>
-      <a href="../textos/textos.html">Textos</a>
-      <a href="../shop/shop.html">Shop</a>
-      <a href="mailto:contact@diegodeaduriz.com">Contact</a>
-    </nav>
-  </aside>
-
-  <main class="container clearfix">
-    <div class="cards">
-      <div data-aos="fade-right">
-        <div class="card">
-          <a href="../portfolio/sections/microcentroCuenta.html" style="flex: 1;">
-            <img src="../portfolio/sections/Microcentro cuenta/1.jpg" alt="MICROCENTRO CUENTA">
-
-            <div class="feature-card-footer">
-              <b><span>MICROCENTRO CUENTA</span></b>
-            </div>
-          </a>
-        </div>
-      </div>
-      <div data-aos="fade-right">
-        <div class="card">
-          <a href="../portfolio/sections/elefantesEnElBazar.html" style="flex: 1;">
-            <img src="../portfolio/sections/Legislatura/10.jpg" alt="" />
-
-        </div>
-        <div class="feature-card-footer">
-          <b><span>ELEFANTES EN EL BAZAR</span></b>
-        </div>
+      <li class="muestras-list-item">
+        <a href="../portfolio/sections/microcentroCuenta.html" class="muestras-link">
+          <span class="muestras-title">Microcentro Cuenta</span>
+          <span class="muestras-year">2023</span>
         </a>
-      </div>
+      </li>
 
-      <div class="card large">
-        <div data-aos="fade-right">
-          <a href="../portfolio/sections/laLlaveyElTestigo.html" style="flex: 1;">
-            <img
-              src="https://museomacba.org/wp-content/uploads/2022/08/MACBA_Diego-de-Aduriz_Flyer-cuadrado-1080x1080px_01B-min.jpg"
-              alt="" />
-        </div>
-        <div class="feature-card-footer">
-          <b><span>LA LLAVE Y EL TESTIGO</span></b>
-        </div>
+      <li class="muestras-list-item">
+        <a href="../portfolio/sections/elefantesEnElBazar.html" class="muestras-link">
+          <span class="muestras-title">Elefantes en el Bazar</span>
+          <span class="muestras-year">2022</span>
         </a>
-      </div>
+      </li>
 
-      <div data-aos="fade-right">
-        <div class="card">
-          <a href="../portfolio/sections/miCuerpoElectrico.html" style="flex: 1;">
-            <img src="../portfolio//sections/micuerpoelectrico/FACHADA+ADURIZ+2.jpeg" alt="" />
-        </div>
-        <div class="feature-card-footer">
-          <b><span>MI CUERPO ELÉCTRICO</span></b>
-        </div>
+      <li class="muestras-list-item">
+        <a href="../portfolio/sections/laLlaveyElTestigo.html" class="muestras-link">
+          <span class="muestras-title">La Llave y el Testigo</span>
+          <span class="muestras-year">2002 - 2022</span>
         </a>
-      </div>
+      </li>
 
-      <div data-aos="fade-up">
-        <div class="card large">
-          <a href="../portfolio/sections/friezeArt.html" style="flex: 1;">
-            <img src="../portfolio/sections/Frieze Art Fair -London 2008/1.jpg" alt="">
-
-        </div>
-        <div class="feature-card-footer">
-          <b><span>FRIEZE ART FAIR-LONDON</span></b>
-        </div>
+      <li class="muestras-list-item">
+        <a href="../portfolio/sections/miCuerpoElectrico.html" class="muestras-link">
+          <span class="muestras-title">Mi Cuerpo Eléctrico</span>
+          <span class="muestras-year">2021</span>
         </a>
-      </div>
+      </li>
 
-      <div class="card large">
-        <div data-aos="fade-right">
-          <a href="../portfolio/sections/muralSeptimo.html" style="flex: 1;">
-            <img src="../portfolio/sections/MURAL SEP7IMO/27.jpg" alt="">.
-          </a>
-        </div>
-        <div class="feature-card-footer">
-          <b><span>MURAL SÉP7IMO</span></b>
-        </div>
-      </div>
+      <li class="muestras-list-item">
+        <a href="../portfolio/sections/lasNaves.html" class="muestras-link">
+          <span class="muestras-title">Las Naves</span>
+          <span class="muestras-year">2021</span>
+        </a>
+      </li>
 
-      <div data-aos="fade-up">
-        <div class="card">
-          <a href="../portfolio/sections/todoLoQueBrillaEsOro.html" style="flex: 1;">
-            <img src="../portfolio/sections/TODO LO QUE BRILLA ES ORO/2.jpg" alt="">
-          </a>
-        </div>
-        <div class="feature-card-footer">
-          <b><span>TODO LO QUE BRILLA ES ORO</span></b>
-        </div>
-      </div>
+      <li class="muestras-list-item">
+        <a href="../portfolio/sections/muralSeptimo.html" class="muestras-link">
+          <span class="muestras-title">Mural Séptimo</span>
+          <span class="muestras-year">2019</span>
+        </a>
+      </li>
 
-      <div class="card large">
-        <div data-aos="fade-up">
-          <a href="../portfolio/sections/lasNaves.html" style="flex: 1;">
-            <img src="../portfolio/sections/Las Naves/1.jpg" alt="">
-          </a>
-        </div>
-        <div class="feature-card-footer">
-          <b><span>LAS NAVES</span></b>
-        </div>
-      </div>
+      <li class="muestras-list-item">
+        <a href="../portfolio/sections/todoLoQueBrillaEsOro.html" class="muestras-link">
+          <span class="muestras-title">Todo lo que brilla es oro</span>
+          <span class="muestras-year">2018</span>
+        </a>
+      </li>
 
-    </div>
+      <li class="muestras-list-item">
+        <a href="../portfolio/sections/friezeArt.html" class="muestras-link">
+          <span class="muestras-title">Frieze Art Fair - London</span>
+          <span class="muestras-year">2008</span>
+        </a>
+      </li>
+
+    </ul>
   </main>
-  <footer>
-    <p>&copy; 2024 Diego de Aduriz. All rights reserved.</p>
+
+  <footer style="text-align: center; margin-bottom: 2rem;">
+    <p style="color: #888; font-size: 0.9rem;">&copy; 2024 Diego de Aduriz. All rights reserved.</p>
   </footer>
-  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-  <script>
-    AOS.init();
-  </script>
   <script src="../index.js"></script>
-  <script src="../navbar.js"></script>
 
 </body>
 

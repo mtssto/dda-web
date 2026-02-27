@@ -1,8 +1,35 @@
+body {
+  margin: 0;
+  background-color: #fdfdfd;
+}
+
+/* Minimalist Close Button */
+.close-container {
+  padding: 40px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.close-btn {
+  text-decoration: none;
+  color: #111;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+  color: #888;
+}
+
 /* Main Container */
 .about-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 0px 40px 80px;
   min-height: calc(100vh - 160px);
   /* Adjust based on navbar/footer height */
   display: flex;
@@ -49,43 +76,45 @@
 
 /* Text Styling */
 .about-text {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  /* Clean, modern font */
-  color: #333;
+  font-family: 'Inter', sans-serif;
+  color: #111;
 }
 
 .about-text h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  color: #000;
-  letter-spacing: -1px;
+  font-family: 'Playfair Display', serif;
+  font-size: 3.5rem;
+  font-weight: 400;
+  margin-bottom: 2rem;
+  color: #111;
+  font-style: italic;
 }
 
 .hero_par {
-  font-size: 1.1rem;
-  line-height: 1.7;
-  margin-bottom: 1.5rem;
+  font-size: 1.15rem;
+  line-height: 1.8;
+  margin-bottom: 1.8rem;
   color: #555;
+  font-weight: 300;
 }
 
 /* Contact Button */
 .about-contact-wrapper {
-  margin-top: 2rem;
+  margin-top: 3rem;
 }
 
 .btn-contact {
   display: inline-block;
   padding: 12px 30px;
-  background-color: #000;
-  color: #fff;
+  background-color: transparent;
+  color: #111;
+  border: 1px solid #111;
   text-decoration: none;
-  font-size: 1rem;
-  font-weight: 500;
-  border-radius: 30px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 400;
   transition: all 0.3s ease;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
 }
 
 .btn-contact:hover {

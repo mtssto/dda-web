@@ -10,93 +10,15 @@
     <!-- Estilos CSS -->
     <link href="obras.css" rel="stylesheet" />
     <link href="../../navbar.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../../global-close.css">
 </head>
 
-<body class="has-navbar">
-    <header class="navbar">
-        <a class="navbar__brand" href="../../index.html">Diego de Aduriz</a>
-        <nav aria-label="Main navigation" class="navbar__links">
-            <a href="../../bio/bio.html">Bio</a>
-            <a href="../../prensa/prensa.html">Prensa</a>
-            <!-- Muestras Dropdown -->
-            <div class="navbar__item">
-                <a href="../../muestras/muestras.html">Muestras</a>
-                <div class="dropdown-content">
-                    <a href="microcentroCuenta.html">Microcentro Cuenta</a>
-                    <a href="elefantesEnElBazar.html">Elefantes en el Bazar</a>
-                    <a href="laLlaveyElTestigo.html">La Llave y el Testigo</a>
-                    <a href="miCuerpoElectrico.html">Mi Cuerpo Eléctrico</a>
-                    <a href="friezeArt.html">Frieze Art Fair</a>
-                    <a href="muralSeptimo.html">Mural Séptimo</a>
-                    <a href="todoLoQueBrillaEsOro.html">Todo lo que brilla es oro</a>
-                    <a href="lasNaves.html">Las Naves</a>
-                </div>
-            </div>
-            <!-- Obras Dropdown -->
-            <div class="navbar__item">
-                <a href="obras.html">Obras</a>
-                <div class="dropdown-content">
-                    <a href="#pasteles">Pasteles</a>
-                    <a href="#gatos">Gatos</a>
-                    <a href="#paisajes">Paisajes</a>
-                    <a href="#Autorretratos">Autorretratos</a>
-                    <a href="#digital">Digital</a>
-                    <a href="#ilustraciones">Ilustraciones</a>
-                    <a href="#videos">Videos</a>
-                </div>
-            </div>
-            <a href="../../proyectos/proyectos.html">Proyectos</a>
-            <a href="../../textos/textos.html">Textos</a>
-            <a href="../../shop/shop.html">Shop</a>
-            <a href="mailto:contact@diegodeaduriz.com">Contact</a>
-        </nav>
-        <button aria-controls="navDrawer" aria-expanded="false" aria-label="Open menu" class="navbar__burger"
-            id="navBurger" type="button">
-            <span></span><span></span><span></span>
-        </button>
-    </header>
-    <div class="navbar-overlay" hidden="" id="navOverlay"></div>
-    <aside aria-label="Mobile menu" class="navbar-drawer" id="navDrawer">
-        <div class="navbar-drawer__head">
-            <a class="navbar__brand" href="../../index.html">Diego de Aduriz</a>
-            <button aria-label="Close menu" class="navbar-drawer__close" id="navClose" type="button">✕</button>
-        </div>
-        <nav class="navbar-drawer__links">
-            <a href="../../bio/bio.html">Bio</a>
-            <a href="../../prensa/prensa.html">Prensa</a>
-            <!-- Muestras Dropdown in Mobile -->
-            <div class="navbar__item">
-                <a href="../../muestras/muestras.html">Muestras</a>
-                <div class="dropdown-content">
-                    <a href="microcentroCuenta.html">Microcentro Cuenta</a>
-                    <a href="elefantesEnElBazar.html">Elefantes en el Bazar</a>
-                    <a href="laLlaveyElTestigo.html">La Llave y el Testigo</a>
-                    <a href="miCuerpoElectrico.html">Mi Cuerpo Eléctrico</a>
-                    <a href="friezeArt.html">Frieze Art Fair</a>
-                    <a href="muralSeptimo.html">Mural Séptimo</a>
-                    <a href="todoLoQueBrillaEsOro.html">Todo lo que brilla es oro</a>
-                    <a href="lasNaves.html">Las Naves</a>
-                </div>
-            </div>
-            <!-- Obras Dropdown in Mobile -->
-            <div class="navbar__item">
-                <a href="obras.html">Obras</a>
-                <div class="dropdown-content">
-                    <a href="#pasteles">Pasteles</a>
-                    <a href="#gatos">Gatos</a>
-                    <a href="#paisajes">Paisajes</a>
-                    <a href="#Autorretratos">Autorretratos</a>
-                    <a href="#digital">Digital</a>
-                    <a href="#ilustraciones">Ilustraciones</a>
-                    <a href="#videos">Videos</a>
-                </div>
-            </div>
-            <a href="../../proyectos/proyectos.html">Proyectos</a>
-            <a href="../../textos/textos.html">Textos</a>
-            <a href="../../shop/shop.html">Shop</a>
-            <a href="mailto:contact@diegodeaduriz.com">Contact</a>
-        </nav>
-    </aside>
+<body>
+
+    <div class="close-container">
+        <a href="../../index.html" class="close-btn">CLOSE</a>
+    </div>
+
     <main class="container">
         <!-- SECTION 1: PASTELES -->
         <section id="pasteles">
@@ -196,7 +118,6 @@
         <p>© 2024 Diego de Aduriz. All rights reserved.</p>
     </footer>
     <!-- Materialize for Materialboxed images -->
-    <script src="../../navbar.js"></script>
     <script src="../../shop/products.js"></script>
     <script src="obras.js"></script>
 </body>

@@ -1,0 +1,108 @@
+/* muestras-minimal.css */
+body.minimal-muestras {
+    background-color: #ffffff;
+    color: #111111;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.close-container {
+    padding: 40px;
+    display: flex;
+    justify-content: flex-end;
+    /* Align right */
+}
+
+.close-btn {
+    text-decoration: none;
+    color: #111;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: #888;
+}
+
+.muestras-list-container {
+    max-width: 1200px;
+    margin: 40px auto 80px auto;
+    padding: 0 40px;
+}
+
+.muestras-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    /* Space between items */
+}
+
+.muestras-list-item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding-bottom: 1rem;
+}
+
+.muestras-list-item:last-child {
+    border-bottom: none;
+}
+
+.muestras-link {
+    text-decoration: none;
+    color: #111;
+    display: flex;
+    flex-direction: column;
+    /* Stack title and year if present, or just title */
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.muestras-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 3rem;
+    /* Large imposing text */
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1.1;
+    transition: font-style 0.3s ease;
+}
+
+.muestras-year {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: #888;
+    margin-top: 0.5rem;
+    font-weight: 400;
+}
+
+/* Hover Effect - Elegant Italicization or shift */
+.muestras-link:hover .muestras-title {
+    color: #555;
+    font-style: italic;
+    font-family: 'Playfair Display', serif;
+    /* Switch to serif on hover for a sophisticated feel */
+}
+
+.muestras-link:hover {
+    transform: translateX(10px);
+    /* Slight nudge */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .muestras-list-container {
+        margin-top: 100px;
+        padding: 0 20px;
+    }
+
+    .muestras-title {
+        font-size: 2rem;
+    }
+}

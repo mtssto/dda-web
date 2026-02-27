@@ -1,8 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+
+:root {
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+}
+
 /* General Proyectos Styles */
 body {
     background-color: #fff;
     color: #333;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: var(--font-body);
     margin: 0;
     padding: 0;
 }
@@ -21,10 +28,10 @@ body {
 }
 
 .proyectos-title {
+    font-family: var(--font-heading);
+    font-style: italic;
     font-size: 4rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 4px;
+    font-weight: 400;
     margin: 0 0 20px 0;
     color: #000;
 }
@@ -68,10 +75,10 @@ body {
 }
 
 .project-name {
-    font-size: 2rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 2.2rem;
+    font-weight: 400;
     margin: 0;
     color: #000;
 }
@@ -127,12 +134,12 @@ body {
     background: #fff;
     color: #000;
     border: none;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: var(--font-body);
     text-transform: uppercase;
     letter-spacing: 2px;
     text-decoration: none;
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 0.9rem;
+    font-weight: 500;
     transition: all 0.3s ease;
     display: inline-block;
 }
@@ -228,7 +235,8 @@ body {
     font-size: 0.9rem;
     letter-spacing: 1px;
     transition: all 0.3s ease;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: var(--font-body);
+    font-weight: 500;
     margin-top: 10px;
 }
 

@@ -36,6 +36,7 @@ section:last-child {
 .section-title {
   text-align: center;
   font-family: var(--font-heading);
+  font-style: italic;
   font-size: 2.5rem;
   font-weight: 400;
   margin-bottom: 40px;
