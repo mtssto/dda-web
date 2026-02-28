@@ -22,9 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const ilusJpgs = Array.from({ length: 20 }, (_, i) => `Ilustrates/dibu${i + 1}.jpg`);
     const ilusJpegs = ['Ilustrates/dibu21.jpeg', 'Ilustrates/dibu22.jpeg', 'Ilustrates/dibu23.jpeg'];
     const otherIlus = [
-        'Ilustrates/aaaa.jpg', 'Ilustrates/aaaaa.jpg', 'Ilustrates/aaaaaa.jpg', 'Ilustrates/aaaaaaa.jpg', 'Ilustrates/aaaaaaaa.jpg',
-        'Ilustrates/b.jpg', 'Ilustrates/bb.jpg', 'Ilustrates/bbb.jpg', 'Ilustrates/bbbb.jpg', 'Ilustrates/bbbbb.jpg', 'Ilustrates/bbbbbbb.jpg', 'Ilustrates/bbbbbbbb.jpg', 'Ilustrates/bbbbbbbbbb.jpg',
-        'Ilustrates/c.jpg', 'Ilustrates/cc.jpg', 'Ilustrates/ccc.jpg', 'Ilustrates/cccc.jpg', 'Ilustrates/ccccc.jpg',
+        'Ilustrates/aaaa.jpg', 'Ilustrates/aaaaaaaa.jpg',
+        'Ilustrates/bbb.jpg', 'Ilustrates/bbbb.jpg', 'Ilustrates/bbbbbbbb.jpg',
+        'Ilustrates/c.jpg', 'Ilustrates/ccc.jpg',
         'Ilustrates/collage_new_chars.jpg'
     ];
     const oldMiscImages = [

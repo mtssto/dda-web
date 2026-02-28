@@ -13,10 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
             'nav.shop': 'SHOP',
             'nav.contact': 'CONTACTO',
             'footer.rights': 'Todos los derechos reservados.',
-            'auth.guarantee': 'Authenticity Guaranteed',
-            'auth.shipping': 'Global Shipping',
-            'auth.service': 'Personal Service',
-            'close': 'CLOSE',
+            'auth.guarantee': 'Autenticidad Garantizada',
+            'auth.shipping': 'Envío Global',
+            'auth.service': 'Atención Personal',
+            'close': 'CERRAR',
             'more': 'MÁS'
         },
         en: {
@@ -89,6 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'CONTACT': 'nav.contact',
             'CONTACTO': 'nav.contact',
             'CLOSE': 'close',
+            'CERRAR': 'close',
             'MORE': 'more',
             'MÁS': 'more'
         };
