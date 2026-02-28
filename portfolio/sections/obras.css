@@ -110,8 +110,8 @@ footer p {
   }
 
   .masonry-grid {
-    column-count: 1;
-    column-gap: 0px;
+    column-count: 2 !important;
+    column-gap: 0px !important;
   }
 
   /* On mobile 1 column looks good, scale font down to fit better */
