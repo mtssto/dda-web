@@ -29,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
     const oldMiscImages = [
         'ddaImages/MACBA.jpg',
-        'portfolio/sections/images/2222.jpg',
         'portfolio/sections/images/gato1.jpg',
         'portfolio/sections/images/flor.jpg'
     ];

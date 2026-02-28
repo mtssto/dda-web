@@ -74,12 +74,14 @@ body.minimal-muestras {
     transition: font-style 0.3s ease;
 }
 
-.muestras-year {
-    font-family: 'Inter', sans-serif;
-    font-size: 1rem;
-    color: #888;
-    margin-top: 0.5rem;
-    font-weight: 400;
+.muestras-description {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: #666;
+    margin-top: 0.8rem;
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: 0.5px;
 }
 
 /* Hover Effect - Elegant Italicization or shift */

@@ -18,6 +18,13 @@ body {
     padding: 0;
     -webkit-font-smoothing: antialiased;
     line-height: 1.6;
+    overflow-x: hidden;
+    width: 100%;
+}
+
+html {
+    overflow-x: hidden;
+    width: 100%;
 }
 
 .shop-container {
@@ -140,8 +147,7 @@ body {
 
 .product-image {
     width: 100%;
-    background: #f4f4f4;
-    padding: 10px;
+    background: transparent;
     margin-bottom: 0px;
     overflow: hidden;
     position: relative;
@@ -267,17 +273,19 @@ body.lang-en .product-card.sold .product-image::after {
 
 /* Info */
 .product-info {
-    text-align: left;
+    text-align: center;
     flex-grow: 1;
+    padding-top: 15px;
+    display: flex;
+    flex-direction: column;
 }
 
 .product-title {
     font-family: var(--font-heading);
     font-style: italic;
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 400;
     margin: 0 0 4px 0;
-    margin-left: 0.3rem;
     color: #000;
 }
 
@@ -293,11 +301,10 @@ body.lang-en .product-card.sold .product-image::after {
 .product-price {
     color: #000;
     font-family: var(--font-body);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 500;
-    margin-top: 15px;
-    margin-left: 0.3rem;
-    margin-bottom: 0;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 /* Shop Info Section */
@@ -692,8 +699,8 @@ footer p {
 }
 
 .carousel-container-mini .carousel-card {
-    flex: 0 0 280px;
-    /* Use a slightly wider card for organic aspect ratios to breathe */
+    flex: 0 0 450px;
+    /* Use a significantly wider card for organic aspect ratios to breathe and appreciate the image */
     margin: 0;
     scroll-snap-align: center;
     box-sizing: border-box;
@@ -709,10 +716,12 @@ footer p {
 
 .carousel-container-mini .product-image img {
     height: auto;
+    max-height: 450px;
+    object-fit: contain;
 }
 
 .carousel-container-mini .product-title {
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     margin-bottom: 5px;
 }
 
@@ -738,7 +747,7 @@ footer p {
     }
 
     .carousel-container-mini .carousel-card {
-        flex: 0 0 240px;
+        flex: 0 0 320px;
     }
 
     .carousel-container-mini .product-image {
@@ -836,7 +845,7 @@ footer p {
 
     /* Hero adjusts to content */
     .shop-hero-vertical {
-        padding: 0 15px !important;
+        padding: 27px 15px !important;
         gap: 20px;
         display: flex;
         flex-direction: column;
