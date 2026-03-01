@@ -81,9 +81,11 @@ body {
 
 .press-title {
     flex-grow: 1;
-    font-size: 1.4rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
     font-weight: 400;
-    letter-spacing: -0.02em;
+    font-style: italic;
+    letter-spacing: 0.02em;
     margin-right: 40px;
     line-height: 1.3;
 }
@@ -125,7 +127,7 @@ body {
     .press-title {
         margin-right: 0;
         margin-bottom: 8px;
-        font-size: 1rem;
+        font-size: 1.3rem;
     }
 
     .press-outlet {

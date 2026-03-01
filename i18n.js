@@ -17,7 +17,19 @@ document.addEventListener('DOMContentLoaded', () => {
             'auth.shipping': 'Envío Global',
             'auth.service': 'Atención Personal',
             'close': 'CERRAR',
-            'more': 'MÁS'
+            'more': 'MÁS',
+            'press.title': 'Archivo de Prensa',
+            'press.1': '“El ánimo por las nubes”: nuevos compradores en arteba',
+            'press.2': 'Arteba 2025 cerró con buenas ventas',
+            'press.3': 'Las galerías debutantes y jóvenes propuestas',
+            'press.4': 'Utopia en arteba: experimentan con nuevos materiales',
+            'press.5': 'Abrió arteba 2025, con ilusión y un mercado en movimiento',
+            'press.6': 'Diego de Aduriz, sus kimonos y sus máscaras',
+            'press.7': 'Macba celebra sus 10 años con dos muestras...',
+            'press.8': 'Diez años del Museo de Arte Contemporáneo',
+            'press.9': 'La llave y el testigo, de Diego de Aduriz',
+            'press.10': 'Nuevo espacio en barrio La Sexta',
+            'press.11': 'Muestras colectivas de fin de año'
         },
         en: {
             'nav.bio': 'ABOUT ME',
@@ -33,7 +45,19 @@ document.addEventListener('DOMContentLoaded', () => {
             'auth.shipping': 'Global Shipping',
             'auth.service': 'Personal Service',
             'close': 'CLOSE',
-            'more': 'MORE'
+            'more': 'MORE',
+            'press.title': 'Press Archive',
+            'press.1': '“Spirits are high”: new buyers at arteba',
+            'press.2': 'Arteba 2025 closed with good sales',
+            'press.3': 'Debuting galleries and young proposals',
+            'press.4': 'Utopia at arteba: experimenting with new materials',
+            'press.5': 'Arteba 2025 opened, with illusion and a moving market',
+            'press.6': 'Diego de Aduriz, his kimonos and his masks',
+            'press.7': 'Macba celebrates its 10 years with two exhibitions...',
+            'press.8': 'Ten years of the Museum of Contemporary Art',
+            'press.9': 'The key and the witness, by Diego de Aduriz',
+            'press.10': 'New space in La Sexta neighborhood',
+            'press.11': 'End of year collective exhibitions'
         }
     };
 
