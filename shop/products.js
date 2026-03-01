@@ -1,5 +1,19 @@
 window.products = [
     {
+        "id": "criatura-que-sopla",
+        "title": "Criatura que sopla",
+        "price": "Consultar",
+        "dimensions": "Consultar medidas",
+        "technique": "Pastel al óleo sobre madera",
+        "category": "pasteles",
+        "image": "/portfolio/sections/obras/criatura-que-sopla-pastel-al-oleo-sobre-madera-2025.png",
+        "images": [
+            "/portfolio/sections/obras/criatura-que-sopla-pastel-al-oleo-sobre-madera-2025.png",
+            "/portfolio/sections/obras/criatura-que-sopla-pastel-al-oleo-sobre-madera-2025-back.png"
+        ],
+        "sold": false
+    },
+    {
         "id": "rayo-dorado",
         "title": "Rayo dorado",
         "price": "$3000 USD",
@@ -170,7 +184,7 @@ window.products = [
         "dimensions": "150 x 100 cm",
         "technique": "Pastel y acrílico sobre tela",
         "category": "pasteles",
-        "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Abecedario+-+150+x+100+cm+-+Pastel+y+acrilico+sobre+tela+-+2021.jpg",
+        "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Abecedario+-+150+x+100+cm+-+Pastel+y+acrilico+sobre+tela+-+2021.png",
         "sold": false
     },
     {

@@ -19,8 +19,9 @@
     <main class="proyectos-container">
         <!-- Hero Section -->
         <section class="proyectos-hero">
-            <h1 class="proyectos-title">Proyectos</h1>
-            <p class="proyectos-subtitle">Dirección y desarrollo de proyectos artísticos y culturales</p>
+            <h1 class="proyectos-title" data-i18n="page.title">Proyectos</h1>
+            <p class="proyectos-subtitle" data-i18n="page.subtitle">Dirección y desarrollo de proyectos artísticos y
+                culturales</p>
         </section>
 
         <!-- Projects Grid -->
@@ -37,36 +38,39 @@
                     <iframe src="https://elcastillo.art/" title="El Castillo - Espacio de arte contemporáneo"
                         class="website-iframe" loading="lazy"></iframe>
                     <div class="preview-overlay">
-                        <a href="https://elcastillo.art/" target="_blank" rel="noopener noreferrer" class="btn-visit">
-                            Visit Website
+                        <a href="https://elcastillo.art/" target="_blank" rel="noopener noreferrer" class="btn-visit"
+                            data-i18n="project1.visit">
+                            Visitar Sitio
                         </a>
                     </div>
                 </div>
 
                 <div class="project-info">
-                    <h3 class="project-title">Espacio de Arte Contemporáneo</h3>
-                    <p class="project-description">
-                        El Castillo is a contemporary art space in Argentina, featuring exhibitions,
-                        artists, and a curated shop. The website showcases the venue's cultural programming
-                        and artistic vision.
+                    <h3 class="project-title" data-i18n="project1.type">Espacio de Arte Contemporáneo</h3>
+                    <p class="project-description" data-i18n="project1.desc">
+                        El Castillo es un espacio de arte contemporáneo en Argentina, que presenta exhibiciones,
+                        artistas y una tienda curada. El sitio web muestra la programación cultural del espacio
+                        y su visión artística.
                     </p>
 
                     <div class="project-credits">
-                        <h4>Role & Contributions</h4>
+                        <h4 data-i18n="project1.role_title">Rol & Contribuciones</h4>
                         <ul>
-                            <li><strong>Art Direction</strong> - Diego de Aduriz es el creador y director del espacio.
+                            <li><strong><span data-i18n="project1.role_name">Dirección de Arte</span></strong> - <span
+                                    data-i18n="project1.role_text">Diego de Aduriz es el creador y director del
+                                    espacio.</span>
                             </li>
                         </ul>
                     </div>
 
                     <div class="project-tags">
-                        <span class="tag">Art Direction</span>
-                        <span class="tag">Digital Curation</span>
+                        <span class="tag" data-i18n="project1.tag1">Dirección de Arte</span>
+                        <span class="tag" data-i18n="project1.tag2">Curaduría Digital</span>
                     </div>
 
-                    <a href="https://elcastillo.art/" target="_blank" rel="noopener noreferrer"
-                        class="btn-project-link">
-                        Explore El Castillo →
+                    <a href="https://elcastillo.art/" target="_blank" rel="noopener noreferrer" class="btn-project-link"
+                        data-i18n="project1.btn">
+                        Explorar El Castillo →
                     </a>
                 </div>
             </article>
@@ -75,8 +79,9 @@
             <article class="project-card project-card--coming-soon">
                 <div class="coming-soon-content">
                     <div class="coming-soon-icon">+</div>
-                    <h3 class="coming-soon-text">More Projects Coming Soon</h3>
-                    <p class="coming-soon-subtitle">Stay tuned for upcoming collaborations and digital works</p>
+                    <h3 class="coming-soon-text" data-i18n="coming.title">Más proyectos próximamente</h3>
+                    <p class="coming-soon-subtitle" data-i18n="coming.subtitle">Mantente atento a próximas
+                        colaboraciones y trabajos digitales</p>
                 </div>
             </article>
 
@@ -84,10 +89,45 @@
     </main>
 
     <footer>
-        <p>&copy; 2024 Diego de Aduriz. All rights reserved.</p>
+        <p>&copy; 2024 Diego de Aduriz. <span data-i18n="footer.rights">Todos los derechos reservados.</span></p>
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        window.pageTranslations = {
+            es: {
+                'page.title': 'Proyectos',
+                'page.subtitle': 'Dirección y desarrollo de proyectos artísticos y culturales',
+                'project1.type': 'Espacio de Arte Contemporáneo',
+                'project1.desc': 'El Castillo es un espacio de arte contemporáneo en Argentina, que presenta exhibiciones, artistas y una tienda curada. El sitio web muestra la programación cultural del espacio y su visión artística.',
+                'project1.role_title': 'Rol & Contribuciones',
+                'project1.role_name': 'Dirección de Arte',
+                'project1.role_text': 'Diego de Aduriz es el creador y director del espacio.',
+                'project1.tag1': 'Dirección de Arte',
+                'project1.tag2': 'Curaduría Digital',
+                'project1.btn': 'Explorar El Castillo →',
+                'project1.visit': 'Visitar Sitio',
+                'coming.title': 'Más proyectos próximamente',
+                'coming.subtitle': 'Mantente atento a próximas colaboraciones y trabajos digitales'
+            },
+            en: {
+                'page.title': 'Projects',
+                'page.subtitle': 'Direction and development of artistic and cultural projects',
+                'project1.type': 'Contemporary Art Space',
+                'project1.desc': 'El Castillo is a contemporary art space in Argentina, featuring exhibitions, artists, and a curated shop. The website showcases the venue\'s cultural programming and artistic vision.',
+                'project1.role_title': 'Role & Contributions',
+                'project1.role_name': 'Art Direction',
+                'project1.role_text': 'Diego de Aduriz is the creator and director of the space.',
+                'project1.tag1': 'Art Direction',
+                'project1.tag2': 'Digital Curation',
+                'project1.btn': 'Explore El Castillo →',
+                'project1.visit': 'Visit Website',
+                'coming.title': 'More Projects Coming Soon',
+                'coming.subtitle': 'Stay tuned for upcoming collaborations and digital works'
+            }
+        };
+    </script>
+    <script src="../i18n.js"></script>
     <script src="proyectos.js"></script>
 </body>
 
