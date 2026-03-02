@@ -20,7 +20,7 @@ window.products = [
         "dimensions": "140 x 82 cm",
         "technique": "Aerosol y pastel sobre madera",
         "category": "paisajes",
-        "image": "/portfolio/sections/obras/MG_0312_1.jpg",
+        "image": "/portfolio/sections/obras/MG_0312_1.png",
         "sold": false
     },
     {
@@ -40,7 +40,7 @@ window.products = [
         "dimensions": "33 x 25 cm",
         "technique": "Pastel tiza sobre papel",
         "category": "gatos",
-        "image": "/portfolio/sections/obras/MG_0327.jpg",
+        "image": "/portfolio/sections/obras/MG_0327.jpg.png",
         "sold": false
     },
     {
@@ -94,7 +94,7 @@ window.products = [
         "dimensions": "100 x 65 cm",
         "technique": "pastel sobre papel",
         "category": "gatos",
-        "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+arcoiris+-+100+x+65+cm+-++pastel+sobre+papel+-+2020.jpg",
+        "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+arcoiris+-+100+x+65+cm+-++pastel+sobre+papel+-+2020.png",
         "sold": false
     },
     {
@@ -104,7 +104,7 @@ window.products = [
         "dimensions": "25 x 18 cm",
         "technique": "Pastel tiza sobre papel",
         "category": "gatos",
-        "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+con+flor+de+loto+-+Pastel+tiza+sobre+papel+-+25+x+18+cm+-+2018.jpeg",
+        "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+con+flor+de+loto+-+Pastel+tiza+sobre+papel+-+25+x+18+cm+-+2018.png",
         "sold": false
     },
     {
@@ -164,7 +164,7 @@ window.products = [
         "dimensions": "Consultar medidas",
         "technique": "Pastel tiza sobre madera",
         "category": "Autorretratos",
-        "image": "/portfolio/sections/obras/retrato-2.png",
+        "image": "/portfolio/sections/obras/retrato-2.jpeg",
         "sold": false
     },
     {
@@ -174,7 +174,7 @@ window.products = [
         "dimensions": "50 x 35 cm",
         "technique": "Tecnica mixta sobre papel",
         "category": "pasteles",
-        "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+The+future+is+stupid+-+tecnica+mixta+sobre+papel+-+50+x+35+cm+-+2015.jpeg",
+        "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+The+future+is+stupid+-+tecnica+mixta+sobre+papel+-+50+x+35+cm+-+2015.png",
         "sold": false
     },
     {
@@ -194,7 +194,7 @@ window.products = [
         "dimensions": "34 x 24 cm",
         "technique": "Tecnica mixta sobre papel",
         "category": "pasteles",
-        "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Sin+titulo+-+Tecnica+mixta+sobre+papel+-+34+x+24+cm+-+2012.jpg",
+        "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Sin+titulo+-+Tecnica+mixta+sobre+papel+-+34+x+24+cm+-+2012.png",
         "sold": false
     },
     {
@@ -254,7 +254,7 @@ window.products = [
         "dimensions": "Consultar medidas",
         "technique": "Pastel tiza sobre papel",
         "category": "pasteles",
-        "image": "/portfolio/sections/obras/MG_0329.jpeg",
+        "image": "/portfolio/sections/obras/MG_0329.png",
         "sold": false
     },
     {
@@ -274,7 +274,7 @@ window.products = [
         "dimensions": "24 x 34 cm",
         "technique": "Tecnica mixta sobre papel",
         "category": "paisajes",
-        "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Paisaje+teorico+-+Tecnica+mixta+sobre+papel+-+24+x+34+cm+-+2009.jpeg",
+        "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Paisaje+teorico+-+Tecnica+mixta+sobre+papel+-+24+x+34+cm+-+2009.png",
         "sold": false
     },
     {
@@ -284,7 +284,7 @@ window.products = [
         "dimensions": "140 x 125 cm",
         "technique": "Aerosol y pastel sobre madera",
         "category": "paisajes",
-        "image": "/portfolio/sections/obras/MG_0307.jpg",
+        "image": "/portfolio/sections/obras/MG_0307.png",
         "sold": false
     },
     {
