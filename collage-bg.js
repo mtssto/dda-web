@@ -18,16 +18,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Decide whether to show the single image background OR the collage
-    const showSingleImage = Math.random() > 0.5;
+    // Now we have 3 options:
+    // 0: Full-screen background image "Las naves escenografía"
+    // 1: Full-screen background image "dibu24.jpg"
+    // 2: The Collage Grabbing Logic
 
-    if (showSingleImage) {
-        // Option 1: Full-screen background image
+    const option = Math.floor(Math.random() * 3);
+
+    if (option === 0) {
         container.style.backgroundImage = 'url("portfolio/sections/obras/Las naves escenografía.JPG")';
         container.style.backgroundSize = 'cover';
         container.style.backgroundPosition = 'center';
         container.style.backgroundRepeat = 'no-repeat';
-        // We do not load the other images
+        return;
+    } else if (option === 1) {
+        container.style.backgroundImage = 'url("Ilustrates/dibu24.jpg")';
+        container.style.backgroundSize = 'cover';
+        container.style.backgroundPosition = 'center';
+        container.style.backgroundRepeat = 'no-repeat';
         return;
     }
 
