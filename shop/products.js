@@ -1,5 +1,16 @@
 window.products = [
     {
+        "id": "belleza-y-felicidad-con-sol-y-luna",
+        "title": "Belleza y felicidad con sol y luna",
+        "price": "Consultar",
+        "dimensions": "Consultar medidas",
+        "technique": "Pastel tiza sobre papel",
+        "category": "pasteles",
+        "image": "/portfolio/sections/obras/Belleza-y-felicidad-con-sol-y-luna-2014- pastel-tiz-sobre-papel.png",
+        "sold": true,
+        "year": "2014"
+    },
+    {
         "id": "criatura-que-sopla",
         "title": "Criatura que sopla",
         "price": "Consultar",
@@ -11,7 +22,8 @@ window.products = [
             "/portfolio/sections/obras/criatura-que-sopla-pastel-al-oleo-sobre-madera-2025.png",
             "/portfolio/sections/obras/criatura-que-sopla-pastel-al-oleo-sobre-madera-2025-back.png"
         ],
-        "sold": false
+        "sold": false,
+        "year": "2025"
     },
     {
         "id": "rayo-dorado",
@@ -21,7 +33,8 @@ window.products = [
         "technique": "Aerosol y pastel sobre madera",
         "category": "paisajes",
         "image": "/portfolio/sections/obras/MG_0312_1.png",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "paisaje-sol-sonriente",
@@ -31,7 +44,8 @@ window.products = [
         "technique": "Pastel sobre papel",
         "category": "paisajes",
         "image": "/portfolio/sections/obras/paisaje-con-sol-sonriente-pastel-sonre-papel.png",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "yukito",
@@ -41,7 +55,8 @@ window.products = [
         "technique": "Pastel tiza sobre papel",
         "category": "gatos",
         "image": "/portfolio/sections/obras/MG_0327.jpg.png",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "payaso",
@@ -55,7 +70,8 @@ window.products = [
             "/portfolio/sections/obras/payaso.png",
             "/portfolio/sections/obras/payaso-1-back.png"
         ],
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "ascension",
@@ -65,7 +81,8 @@ window.products = [
         "technique": "Pastel tiza sobre madera",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/ascension.png",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "don-diego-explosion",
@@ -75,7 +92,8 @@ window.products = [
         "technique": "Pastel sobre tela",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/don-diego-y-pastel-sobre-explosion-pastel-sobre-tela.png",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "do-re-mi-fa",
@@ -85,7 +103,8 @@ window.products = [
         "technique": "Pastel sobre papel",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/do-re-mi-fa-sol-la-si-pastel-sobre-papel.png",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "gato-arcoiris",
@@ -95,7 +114,8 @@ window.products = [
         "technique": "pastel sobre papel",
         "category": "gatos",
         "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+arcoiris+-+100+x+65+cm+-++pastel+sobre+papel+-+2020.png",
-        "sold": false
+        "sold": false,
+        "year": "2020"
     },
     {
         "id": "gato-con-flor-de-loto",
@@ -105,7 +125,8 @@ window.products = [
         "technique": "Pastel tiza sobre papel",
         "category": "gatos",
         "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+con+flor+de+loto+-+Pastel+tiza+sobre+papel+-+25+x+18+cm+-+2018.png",
-        "sold": false
+        "sold": false,
+        "year": "2018"
     },
     {
         "id": "cartas-a-dios",
@@ -115,7 +136,8 @@ window.products = [
         "technique": "Consultar técnica",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/cartas-a-dios.png",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "Autorretrato",
@@ -125,7 +147,8 @@ window.products = [
         "technique": "Pastel tiza sobre madera",
         "category": "Autorretratos",
         "image": "/portfolio/sections/obras/autorretrato.png",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "Autorretrato",
@@ -135,7 +158,8 @@ window.products = [
         "technique": "Marcadores sobre papel",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Autorretrato+-+110+x+150+cm+-+Marcadores+sobre+papel+-+2007.jpg",
-        "sold": true
+        "sold": true,
+        "year": "2007"
     },
     {
         "id": "carta-7",
@@ -145,7 +169,8 @@ window.products = [
         "technique": "Aerosol, acrílico, pastel sobre tela",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/carta-7-aeresol, acrilico, pastel sobre tela.png",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "retrato-1",
@@ -155,7 +180,8 @@ window.products = [
         "technique": "Pastel tiza sobre madera",
         "category": "Autorretratos",
         "image": "/portfolio/sections/obras/retrato-1.png",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "retrato-2",
@@ -165,7 +191,8 @@ window.products = [
         "technique": "Pastel tiza sobre madera",
         "category": "Autorretratos",
         "image": "/portfolio/sections/obras/retrato-2.jpeg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "the-future-is-stupid",
@@ -175,7 +202,8 @@ window.products = [
         "technique": "Tecnica mixta sobre papel",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+The+future+is+stupid+-+tecnica+mixta+sobre+papel+-+50+x+35+cm+-+2015.png",
-        "sold": false
+        "sold": false,
+        "year": "2015"
     },
     {
         "id": "abecedario",
@@ -185,7 +213,8 @@ window.products = [
         "technique": "Pastel y acrílico sobre tela",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Abecedario+-+150+x+100+cm+-+Pastel+y+acrilico+sobre+tela+-+2021.png",
-        "sold": false
+        "sold": false,
+        "year": "2021"
     },
     {
         "id": "sin-titulo",
@@ -195,7 +224,8 @@ window.products = [
         "technique": "Tecnica mixta sobre papel",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Sin+titulo+-+Tecnica+mixta+sobre+papel+-+34+x+24+cm+-+2012.png",
-        "sold": false
+        "sold": false,
+        "year": "2012"
     },
     {
         "id": "mi-cuerpo-electrico-24",
@@ -205,7 +235,8 @@ window.products = [
         "technique": "Técnica mixta",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/micuerpo.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "mi-cuerpo-electrico-29",
@@ -215,7 +246,8 @@ window.products = [
         "technique": "Pastel y acrilico sobre tela",
         "category": "paisajes",
         "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Mi+cuerpo+electrico+29+160+x+200+-+Pastel+y+acrilico+sobre+tela+-+2021.jpg",
-        "sold": false
+        "sold": false,
+        "year": "2021"
     },
     {
         "id": "sin-titulo-3",
@@ -225,7 +257,8 @@ window.products = [
         "technique": "Consultar técnica",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/sin-título.png",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "dibu-10",
@@ -235,7 +268,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "paisajes",
         "image": "/Ilustrates/dibu10.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "obra-sin-titulo",
@@ -245,7 +279,8 @@ window.products = [
         "technique": "Técnica mixta",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/IMG_0402+copia.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "obra-sin-titulo-mg-0329",
@@ -255,7 +290,8 @@ window.products = [
         "technique": "Pastel tiza sobre papel",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/MG_0329.png",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "4-cabezas",
@@ -265,7 +301,8 @@ window.products = [
         "technique": "Pastel sobre papel",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/4-cabezas-pastel-sobre-papel.png",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "paisaje-teorico",
@@ -275,7 +312,8 @@ window.products = [
         "technique": "Tecnica mixta sobre papel",
         "category": "paisajes",
         "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Paisaje+teorico+-+Tecnica+mixta+sobre+papel+-+24+x+34+cm+-+2009.png",
-        "sold": false
+        "sold": false,
+        "year": "2009"
     },
     {
         "id": "paisaje-con-oso",
@@ -285,7 +323,8 @@ window.products = [
         "technique": "Aerosol y pastel sobre madera",
         "category": "paisajes",
         "image": "/portfolio/sections/obras/MG_0307.png",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "cuarto-creciente",
@@ -295,7 +334,8 @@ window.products = [
         "technique": "Pastel sobre tela",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/cuarto-creciente-pastel-sobre-tela.png",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "gato-merlin",
@@ -305,7 +345,8 @@ window.products = [
         "technique": "Pastel sobre tela",
         "category": "gatos",
         "image": "/portfolio/sections/obras/MG_1192.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "paisaje-con-mascara-i",
@@ -315,7 +356,8 @@ window.products = [
         "technique": "Pintura y collage sobre tela",
         "category": "paisajes",
         "image": "/portfolio/sections/obras/mascara2.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "gato-cosmico",
@@ -325,7 +367,8 @@ window.products = [
         "technique": "Pastel tiza",
         "category": "gatos",
         "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+cosmico+-+Pastel+tiza+-+80+x+110+cm+2013.jpeg",
-        "sold": true
+        "sold": true,
+        "year": "2013"
     },
     {
         "id": "paisaje-con-mascara-ii",
@@ -335,7 +378,8 @@ window.products = [
         "technique": "Pintura y collage sobre tela",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/mascara1.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "paisaje-azul-collage",
@@ -345,7 +389,8 @@ window.products = [
         "technique": "Collage",
         "category": "paisajes",
         "image": "/portfolio/sections/obras/paisaje-azul-collage.png",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "paisaje-con-monstruo-amistoso",
@@ -355,7 +400,8 @@ window.products = [
         "technique": "Lapiz sobre papel",
         "category": "paisajes",
         "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Piasaje+con+monstruo+amistoso+-+Lapiz+sobre+papel+-+24+x+34+cm+-+2011.jpeg",
-        "sold": false
+        "sold": false,
+        "year": "2011"
     },
     {
         "id": "luz-azul",
@@ -365,7 +411,8 @@ window.products = [
         "technique": "Acrílico y pastel sobre tela",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/luz_azul.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "gato-celeste",
@@ -375,7 +422,8 @@ window.products = [
         "technique": "Pastel tiza sobre papel",
         "category": "gatos",
         "image": "/portfolio/sections/obras/MG_0328.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "puerta-azul",
@@ -385,7 +433,8 @@ window.products = [
         "technique": "Pintura y pastel tiza sobre madera",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Puerta+Azul+-+210+x+92+cm+-+Pintura+y+pastel+tiza+sobre+madera+-+2015_2017.jpeg",
-        "sold": true
+        "sold": true,
+        "year": "2015"
     },
     {
         "id": "puerta-1",
@@ -399,7 +448,8 @@ window.products = [
             "/portfolio/sections/obras/puerta-1-espiritu(humite)-tecnica-pastel-sobre-puerta-tecnoca-mixta-sobre-madera.png",
             "/portfolio/sections/obras/puerta-1-back.png"
         ],
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "dibu-1",
@@ -409,7 +459,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "ilustraciones",
         "image": "/Ilustrates/dibu1.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "dibu-2",
@@ -419,7 +470,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "ilustraciones",
         "image": "/Ilustrates/dibu2.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "dibu-3",
@@ -429,7 +481,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "ilustraciones",
         "image": "/Ilustrates/dibu3.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "dibu-4",
@@ -439,7 +492,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "ilustraciones",
         "image": "/Ilustrates/dibu4.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "dibu-5",
@@ -449,7 +503,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "ilustraciones",
         "image": "/Ilustrates/dibu5.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "dibu-6",
@@ -459,7 +514,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "ilustraciones",
         "image": "/Ilustrates/dibu6.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "dibu-7",
@@ -469,7 +525,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "ilustraciones",
         "image": "/Ilustrates/dibu7.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "dibu-8",
@@ -479,7 +536,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "ilustraciones",
         "image": "/Ilustrates/dibu8.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "dibu-9",
@@ -489,7 +547,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "ilustraciones",
         "image": "/Ilustrates/dibu9.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "dibu-11",
@@ -499,7 +558,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "ilustraciones",
         "image": "/Ilustrates/dibu11.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "dibu-12",
@@ -509,7 +569,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "ilustraciones",
         "image": "/Ilustrates/dibu12.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "dibu-14",
@@ -519,7 +580,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "ilustraciones",
         "image": "/Ilustrates/dibu14.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "dibu-15",
@@ -529,7 +591,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "ilustraciones",
         "image": "/Ilustrates/dibu15.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "dibu-16",
@@ -539,7 +602,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "ilustraciones",
         "image": "/Ilustrates/dibu16.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "dibu-19",
@@ -549,7 +613,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "ilustraciones",
         "image": "/Ilustrates/dibu19.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "dibu-20",
@@ -559,7 +624,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "ilustraciones",
         "image": "/Ilustrates/dibu20.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "digital-artwork-1",
@@ -569,7 +635,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "digital",
         "image": "https://64.media.tumblr.com/c29b535685cd870a467bdc6eb0d60ef2/tumblr_n27f1t2IvP1r74tb2o1_1280.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "digital-artwork-2",
@@ -579,7 +646,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "digital",
         "image": "https://64.media.tumblr.com/c3123779be189a5a8737b190f595574a/tumblr_n275dsU7Xr1r74tb2o1_250.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "digital-artwork-3",
@@ -589,7 +657,8 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "digital",
         "image": "https://64.media.tumblr.com/9e5c31eb51ce7e28c7982f271746f302/tumblr_n275eaKQwf1r74tb2o1_640.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     },
     {
         "id": "digital-artwork-4",
@@ -599,6 +668,7 @@ window.products = [
         "technique": "Técnica mixta sobre papel",
         "category": "digital",
         "image": "https://64.media.tumblr.com/15528b2c6461bb6795b432f0b5a67bd3/tumblr_n2757yIlWR1r74tb2o1_540.jpg",
-        "sold": false
+        "sold": false,
+        "year": "Consultar año"
     }
 ];

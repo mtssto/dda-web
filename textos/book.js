@@ -18,12 +18,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- Book Data ---
     window.pageTranslations = {
         es: {
-            'catalog.title': 'Textos y Libros',
+            'catalog.title': 'Publicaciones',
+            'catalog.empty': 'No hay publicaciones disponibles en esta categoría.',
             'book.read': 'Leer',
             'book.back': '← Volver al Catálogo'
         },
         en: {
-            'catalog.title': 'Texts and Books',
+            'catalog.title': 'Publications',
+            'catalog.empty': 'No publications available in this category.',
             'book.read': 'Read',
             'book.back': '← Back to Catalog'
         }

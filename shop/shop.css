@@ -169,8 +169,8 @@ html {
     position: absolute;
     top: 0;
     right: 0;
-    background: rgba(200, 200, 200, 0.6);
-    color: #444;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
     padding: 8px 16px;
     font-size: 0.8rem;
     font-weight: 400;
@@ -186,6 +186,14 @@ body.lang-en .product-card.sold .product-image::after {
     text-decoration: line-through;
     opacity: 0.5;
     display: none;
+}
+
+.product-card.sold .btn-grid-buy {
+    display: none !important;
+}
+
+.product-card.sold .btn-grid-details {
+    border-right: none;
 }
 
 /* Lightbox Modal (Pure Image Zoom) */

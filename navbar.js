@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'nav.muestras': 'Muestras',
             'nav.obras': 'Obras',
             'nav.proyectos': 'Proyectos',
-            'nav.textos': 'Textos',
+            'nav.textos': 'Publicaciones',
             'nav.shop': 'Shop',
             'nav.contact': 'Contact',
             'footer.rights': 'Todos los derechos reservados.'
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'nav.muestras': 'Exhibitions',
             'nav.obras': 'Artworks',
             'nav.proyectos': 'Projects',
-            'nav.textos': 'Texts',
+            'nav.textos': 'Publications',
             'nav.shop': 'Shop',
             'nav.contact': 'Contact',
             'footer.rights': 'All rights reserved.'
@@ -143,7 +143,9 @@ document.addEventListener('DOMContentLoaded', () => {
             'Muestras': 'nav.muestras',
             'Obras': 'nav.obras',
             'Proyectos': 'nav.proyectos',
-            'Textos': 'nav.textos',
+            'Projects': 'nav.proyectos',
+            'Publicaciones': 'nav.textos',
+            'Publications': 'nav.textos',
             'Shop': 'nav.shop',
             'Contact': 'nav.contact'
         };

@@ -133,6 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <h2 id="modalTitle" class="modal-title"></h2>
                     <p id="modalTechnique" class="modal-technique"></p>
                     <p id="modalDimensions" class="modal-dimensions"></p>
+                    <p id="modalYear" class="modal-year" style="color: #666; font-size: 0.9rem; margin-top: 5px;"></p>
                     <p id="modalPrice" class="modal-price"></p>
                     <button id="modalBuyBtn" class="btn-modal-buy" data-i18n="modal.consult">CONSULTAR / COMPRAR</button>
                 </div>
@@ -427,6 +428,7 @@ function openModal(productOrElement) {
             price: price ? price.innerText : '',
             dimensions: el.dataset.dimensions || '',
             technique: el.dataset.technique || '',
+            year: el.dataset.year || '',
             // If needed, we can parse category too
             category: el.dataset.category || ''
         };
@@ -441,6 +443,7 @@ function openModal(productOrElement) {
     const modalPrice = document.getElementById('modalPrice');
     const modalDimensions = document.getElementById('modalDimensions');
     const modalTechnique = document.getElementById('modalTechnique');
+    const modalYear = document.getElementById('modalYear');
     const modalBuyBtn = document.getElementById('modalBuyBtn');
 
     // Image Carousel Logic for Info Modal
@@ -481,14 +484,32 @@ function openModal(productOrElement) {
         }
     }
 
-    if (modalTechnique) modalTechnique.textContent = product.technique;
+    if (modalTechnique) modalTechnique.textContent = product.technique || '';
+
+    if (modalYear) {
+        let yearText = product.year || '';
+        if (yearText && yearText !== "Consultar año") {
+            modalYear.textContent = yearText;
+            modalYear.style.display = 'block';
+        } else if (yearText === "Consultar año") {
+            modalYear.textContent = "Consultar año";
+            modalYear.style.display = 'block';
+        } else {
+            modalYear.style.display = 'none';
+        }
+    }
 
     if (modalBuyBtn) {
-        modalBuyBtn.textContent = translations['modal.consult'] || 'CONSULTAR / COMPRAR';
-        modalBuyBtn.onclick = (e) => {
-            e.preventDefault();
-            buyProduct(product);
-        };
+        if (product.sold) {
+            modalBuyBtn.style.display = 'none';
+        } else {
+            modalBuyBtn.style.display = 'inline-block';
+            modalBuyBtn.textContent = translations['modal.consult'] || 'CONSULTAR / COMPRAR';
+            modalBuyBtn.onclick = (e) => {
+                e.preventDefault();
+                buyProduct(product);
+            };
+        }
     }
 
     modal.classList.add('active');
@@ -719,6 +740,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         yPos += 7;
                         doc.text(`Dimensiones: ${productData.dimensions}`, margin, yPos);
                         yPos += 7;
+
+                        let yearText = productData.year || '';
+                        let yearPrint = '';
+                        if (yearText && yearText !== "Consultar año") {
+                            yearPrint = yearText;
+                        } else if (yearText === "Consultar año") {
+                            yearPrint = `Consultar año`;
+                        }
+                        if (yearPrint) {
+                            doc.text(yearPrint, margin, yPos);
+                            yPos += 7;
+                        }
                     }
 
                     doc.setFontSize(14);

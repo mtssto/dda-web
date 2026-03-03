@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diego de Aduriz | Textos</title>
+    <title>Diego de Aduriz | Publicaciones</title>
 
     <!-- Styles -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,6 +13,7 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="book.css">
+    <link rel="stylesheet" href="../global-close.css">
 
     <!-- PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
@@ -30,10 +31,10 @@
     <!-- Catalog View -->
     <div id="catalog-view" class="catalog-view">
         <div class="close-container">
-            <a href="../index.html" class="close-btn">CLOSE</a>
+            <a href="../index.html" class="close-btn" data-i18n="close">CLOSE</a>
         </div>
 
-        <h1 class="catalog-title">Textos y Libros</h1>
+        <h1 class="catalog-title">Publicaciones</h1>
         <div id="catalog-grid" class="catalog-grid">
             <!-- Book items will be injected here JS -->
         </div>
@@ -60,6 +61,7 @@
         </div>
     </div>
 
+    <script src="../i18n.js"></script>
     <script src="book.js"></script>
 </body>
 

@@ -51,6 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
         item.dataset.technique = "Consultar técnica";
       }
 
+      if (product.year && product.year !== "Consultar año") {
+        item.dataset.year = product.year;
+      } else {
+        item.dataset.year = "Consultar año";
+      }
+
       item.dataset.title = product.title;
       // Encode whatsapp link with title
       item.dataset.waLink = `https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20la%20obra:%20${encodeURIComponent(product.title)}`;
@@ -83,13 +89,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const title = trigger.dataset.title || '';
         const dims = trigger.dataset.dimensions || '';
         const tech = trigger.dataset.technique || '';
+        const year = trigger.dataset.year || '';
+
+        let yearDisplay = '';
+        if (year && year !== 'Consultar año') {
+          yearDisplay = year;
+        } else if (year === 'Consultar año') {
+          yearDisplay = 'Consultar año';
+        }
 
         overlay.innerHTML = `
           <div class="overlay-content">
             <h3 class="overlay-title">${title}</h3>
             <p class="overlay-details">
               ${dims}<br>
-              ${tech}
+              ${tech}<br>
+              ${yearDisplay}
             </p>
             <button class="btn-grid-details" style="pointer-events: auto; margin-top: 15px; background: transparent; border: 1px solid #111; color: #111; padding: 10px 20px; font-family: var(--font-body); font-size: 0.8rem; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s ease;">DETALLES</button>
           </div>
@@ -120,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
               title: found.title,
               technique: found.technique,
               dimensions: found.dimensions,
+              year: found.year,
               price: found.price,
               images: found.images ? found.images.map(fixPath) : [fixPath(found.image)]
             };
@@ -170,6 +186,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modalTitle) modalTitle.textContent = productData ? productData.title : (trigger.dataset.title || '');
         if (modalTechnique) modalTechnique.textContent = productData ? productData.technique : (trigger.dataset.technique || '');
         if (modalDimensions) modalDimensions.textContent = productData ? productData.dimensions : (trigger.dataset.dimensions || '');
+
+        const modalYear = document.getElementById('modalYear');
+        if (modalYear) {
+          let yearText = productData ? productData.year : (trigger.dataset.year || '');
+          if (yearText && yearText !== "Consultar año") {
+            modalYear.textContent = yearText;
+            modalYear.style.display = 'block';
+          } else if (yearText === "Consultar año") {
+            modalYear.textContent = "Consultar año";
+            modalYear.style.display = 'block';
+          } else {
+            modalYear.style.display = 'none';
+          }
+        }
 
         // Set whatsapp link (always fallback to dataset since products.js doesn't have it)
         if (modalBuyBtn) {
