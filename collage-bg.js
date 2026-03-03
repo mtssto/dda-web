@@ -18,12 +18,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Now we have 3 options:
+    // Now we have 4 options:
     // 0: Full-screen background image "Las naves escenografía"
     // 1: Full-screen background image "dibu24.jpg"
-    // 2: The Collage Grabbing Logic
+    // 2: Full-screen background image "Las naves escenografía (2)"
+    // 3: The Collage Grabbing Logic
 
-    const option = Math.floor(Math.random() * 3);
+    const option = Math.floor(Math.random() * 4);
 
     if (option === 0) {
         container.style.backgroundImage = 'url("portfolio/sections/obras/Las naves escenografía.JPG")';
@@ -33,6 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     } else if (option === 1) {
         container.style.backgroundImage = 'url("Ilustrates/dibu24.jpg")';
+        container.style.backgroundSize = 'cover';
+        container.style.backgroundPosition = 'center';
+        container.style.backgroundRepeat = 'no-repeat';
+        return;
+    } else if (option === 2) {
+        container.style.backgroundImage = 'url("portfolio/sections/obras/Las naves escenografía (2).JPG")';
         container.style.backgroundSize = 'cover';
         container.style.backgroundPosition = 'center';
         container.style.backgroundRepeat = 'no-repeat';
