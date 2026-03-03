@@ -241,3 +241,26 @@ footer {
   width: 100%;
   border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+  .about-container {
+    /* Override huge padding on mobile screens */
+    padding: 60px 20px 80px;
+    margin: 0 auto;
+  }
+
+  .bio-title {
+    /* Prevent title from breaking into multiple cramped lines */
+    font-size: 2.5rem;
+  }
+
+  .carousel-track img.profile-photo {
+    /* Reduce fixed height on mobile so the 3 images don't look stretched */
+    height: 300px;
+  }
+
+  .about-grid {
+    gap: 20px;
+  }
+}
