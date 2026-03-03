@@ -14,3 +14,94 @@ window.pageTranslations = {
         'bio.contact_me': 'Contact Me'
     }
 };
+
+document.addEventListener('DOMContentLoaded', () => {
+    const track = document.getElementById('bioCarouselTrack');
+    const prevBtn = document.querySelector('.carousel-prev');
+    const nextBtn = document.querySelector('.carousel-next');
+
+    if (track && prevBtn && nextBtn) {
+        let images = track.querySelectorAll('img');
+
+        // Clone first 3 images to create a seamless infinite loop
+        for (let i = 0; i < 3; i++) {
+            if (images[i]) {
+                const clone = images[i].cloneNode(true);
+                track.appendChild(clone);
+            }
+        }
+
+        images = track.querySelectorAll('img');
+        const numOriginals = images.length - 3;
+        let currentIndex = 0;
+        let isTransitioning = false;
+
+        const updateCarousel = (animate = true) => {
+            track.style.transition = animate ? 'transform 0.5s ease-in-out' : 'none';
+            // Translate by 33.3333% per image
+            const offset = -currentIndex * 33.3333;
+            track.style.transform = `translateX(${offset}%)`;
+        };
+
+        const slideNext = () => {
+            if (isTransitioning) return;
+            isTransitioning = true;
+            currentIndex++;
+            updateCarousel();
+
+            // If we reached the cloned images, snap back instantly after animation
+            if (currentIndex === numOriginals) {
+                setTimeout(() => {
+                    currentIndex = 0;
+                    updateCarousel(false);
+                    isTransitioning = false;
+                }, 500);
+            } else {
+                setTimeout(() => { isTransitioning = false; }, 500);
+            }
+        };
+
+        const slidePrev = () => {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
+            if (currentIndex === 0) {
+                // Snap to clone silently, then animate back one
+                currentIndex = numOriginals;
+                updateCarousel(false);
+
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        currentIndex--;
+                        updateCarousel(true);
+                        setTimeout(() => { isTransitioning = false; }, 500);
+                    });
+                });
+            } else {
+                currentIndex--;
+                updateCarousel();
+                setTimeout(() => { isTransitioning = false; }, 500);
+            }
+        };
+
+        nextBtn.addEventListener('click', () => {
+            slideNext();
+            resetInterval();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            slidePrev();
+            resetInterval();
+        });
+
+        let autoPlayInterval = setInterval(slideNext, 2500);
+
+        const resetInterval = () => {
+            clearInterval(autoPlayInterval);
+            autoPlayInterval = setInterval(slideNext, 2500);
+        };
+
+        track.addEventListener('mouseenter', () => clearInterval(autoPlayInterval));
+        track.addEventListener('mouseleave', resetInterval);
+    }
+});

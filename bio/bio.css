@@ -28,8 +28,8 @@ body {
 /* Main Container */
 .about-container {
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 0px 40px 80px;
+  margin: -20px auto;
+  padding: 123px 213px 255px;
   min-height: calc(100vh - 160px);
   /* Adjust based on navbar/footer height */
   display: flex;
@@ -38,21 +38,19 @@ body {
 
 /* Grid Layout */
 .about-grid {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 40px;
-  align-items: start;
+  align-items: center;
 }
 
 @media (min-width: 900px) {
   .about-grid {
-    grid-template-columns: 1fr 1.5fr;
     gap: 60px;
-    align-items: center;
   }
 }
 
-/* Image Styling */
+/* Image & Carousel Styling */
 .about-image {
   position: relative;
   width: 100%;
@@ -60,18 +58,87 @@ body {
   justify-content: center;
 }
 
-.profile-photo {
+.bio-carousel {
+  position: relative;
   width: 100%;
-  max-width: 450px;
-  height: auto;
-  object-fit: cover;
+  max-width: 1200px;
+  overflow: hidden;
   border-radius: 12px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease;
+  background: #000;
 }
 
-.profile-photo:hover {
-  transform: scale(1.02);
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  width: 100%;
+}
+
+.carousel-track img.profile-photo {
+  min-width: 33.3333%;
+  /* Show 3 images at once */
+  max-width: 33.3333%;
+  height: 600px;
+  /* Fixed height to keep triptych aligned */
+  object-fit: cover;
+  border-radius: 0;
+  transform: none;
+  border-right: 2px solid #fff;
+  /* Separator between images */
+}
+
+.carousel-track img.profile-photo:last-child {
+  border-right: none;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+  box-shadow: none;
+  opacity: 0.6;
+}
+
+.carousel-btn:hover {
+  background: transparent;
+  opacity: 1;
+}
+
+.carousel-btn::after {
+  content: '';
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  border-top: 3px solid #fff;
+  border-right: 3px solid #fff;
+}
+
+.carousel-prev {
+  left: 10px;
+}
+
+.carousel-prev::after {
+  transform: rotate(-135deg);
+  margin-left: 10px;
+}
+
+.carousel-next {
+  right: 10px;
+}
+
+.carousel-next::after {
+  transform: rotate(45deg);
+  margin-right: 10px;
 }
 
 /* Text Styling */
@@ -80,13 +147,15 @@ body {
   color: #111;
 }
 
-.about-text h1 {
+.bio-title {
   font-family: 'Playfair Display', serif;
   font-size: 3.5rem;
   font-weight: 400;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   color: #111;
   font-style: italic;
+  text-align: center;
+  width: 100%;
 }
 
 .hero_par {
