@@ -18,6 +18,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Decide whether to show the single image background OR the collage
+    const showSingleImage = Math.random() > 0.5;
+
+    if (showSingleImage) {
+        // Option 1: Full-screen background image
+        container.style.backgroundImage = 'url("portfolio/sections/obras/Las naves escenografía.JPG")';
+        container.style.backgroundSize = 'cover';
+        container.style.backgroundPosition = 'center';
+        container.style.backgroundRepeat = 'no-repeat';
+        // We do not load the other images
+        return;
+    }
+
+    // Option 2: The Collage Grabbing Logic
+
     // Load Las Naves images (1 to 11.jpg)
     const navesImages = Array.from({ length: 11 }, (_, i) => `portfolio/sections/Las Naves/${i + 1}.jpg`);
 
