@@ -513,7 +513,8 @@ function openModal(productOrElement) {
     }
 
     modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('no-scroll');
+    document.documentElement.classList.add('no-scroll');
 }
 
 function buyProduct(product) {
@@ -526,7 +527,8 @@ function closeModal() {
     const modal = document.getElementById('imageModal');
     if (modal) {
         modal.classList.remove('active');
-        document.body.style.overflow = '';
+        document.body.classList.remove('no-scroll');
+        document.documentElement.classList.remove('no-scroll');
     }
 }
 
@@ -564,7 +566,8 @@ function openLightBox(imageSrc) {
 
         updateLightBoxImage();
         lightBox.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        document.body.classList.add('no-scroll');
+        document.documentElement.classList.add('no-scroll');
     }
 }
 
@@ -585,7 +588,8 @@ function closeLightBox() {
 
     if (lightBox) {
         lightBox.classList.remove('active');
-        document.body.style.overflow = '';
+        document.body.classList.remove('no-scroll');
+        document.documentElement.classList.remove('no-scroll');
     }
     if (lightBoxImg) {
         lightBoxImg.dataset.zoomLevel = '0';
