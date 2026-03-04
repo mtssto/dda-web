@@ -17,20 +17,20 @@
 
 <body class="minimal-gallery">
 
-    <div class="close-container"><a href="../../muestras/muestras.html" class="close-btn">CLOSE</a></div>
-
+    <div class="close-container">
+        <script src="../../i18n.js"></script>
+        <a href="../../muestras/muestras.html" class="close-btn" data-i18n="close">CLOSE</a>
+    </div>
     <main class="gallery-container">
         <div class="artist-header">
             <h1 class="artist-title">LA LLAVE Y EL TESTIGO</h1>
             <h3 class="artist-subtitle">Museo de Arte Contemporáneo (MACBA)</h3>
         </div>
 
-        <!-- Video Embed -->
-        <div style="padding-bottom:56.25%; position:relative; display:block; width: 100%; margin-bottom: 4rem;">
-            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/Hhf79rzWmWE"
-                title="MACBA | LA LLAVE Y EL TESTIGO | DIEGO DE ADURIZ" frameborder="0" allowfullscreen=""
-                style="position:absolute; top:0; left: 0"></iframe>
-        </div>
+
+
+        <button class="gallery-nav-btn gallery-prev" aria-label="Previous image"></button>
+        <button class="gallery-nav-btn gallery-next" aria-label="Next image"></button>
 
         <div class="gallery-grid">
             <div class="gallery-item">
@@ -100,8 +100,9 @@
         <p>&copy; 2024 Diego de Aduriz. All rights reserved.</p>
     </footer>
 
-    
 
+
+    <script src="muestras-gallery.js"></script>
 </body>
 
 </html>

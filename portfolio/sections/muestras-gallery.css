@@ -5,44 +5,38 @@ body.minimal-gallery {
     font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
+    height: 100vh;
+    overflow-y: hidden;
+    /* Disable vertical scroll */
+    display: flex;
+    flex-direction: column;
 }
 
 .close-container {
     padding: 40px;
     display: flex;
     justify-content: flex-end;
-    /* Align right */
-    position: sticky;
-    top: 0;
+    flex-shrink: 0;
+    /* Keep header from shrinking */
     background: transparent;
     z-index: 100;
 }
 
-.close-btn {
-    text-decoration: none;
-    color: #111;
-    font-family: 'Inter', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 300;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: color 0.3s ease;
-}
-
-.close-btn:hover {
-    color: #888;
-}
-
 .gallery-container {
-    max-width: 1200px;
-    margin: 0 auto 80px auto;
-    padding: 0 40px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0 40px 40px 40px;
+    height: calc(100vh - 120px);
+    /* Fill available space minus close btn */
+    position: relative;
 }
 
 /* Header Typography */
 .artist-header {
-    margin-bottom: 60px;
-    text-align: left;
+    margin-bottom: 30px;
+    flex-shrink: 0;
 }
 
 .artist-title {
@@ -64,51 +58,113 @@ body.minimal-gallery {
     margin: 0;
 }
 
-/* Gallery Layout - Staggered/Masonry feel instead of a rigid grid */
+/* Gallery Layout - Horizontal Filmstrip */
 .gallery-grid {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 40px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: 100%;
+    align-items: center;
+}
+
+/* Hide scrollbar for Chrome/Safari/Webkit */
+.gallery-grid::-webkit-scrollbar {
+    height: 6px;
+}
+
+.gallery-grid::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.gallery-grid::-webkit-scrollbar-thumb {
+    background-color: #ddd;
+    border-radius: 10px;
+}
+
+/* Gallery Navigation Arrows */
+.gallery-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    /* Dark circle background */
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    /* Make it a circle */
+    cursor: pointer;
+    z-index: 50;
+    display: flex;
+    align-items: center;
     justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    opacity: 0.9;
+}
+
+.gallery-nav-btn:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.9);
+    transform: translateY(-50%) scale(1.05);
+    /* Slight pop */
+}
+
+.gallery-nav-btn::after {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-top: 2px solid #ffffff;
+    /* Bright white arrow */
+    border-right: 2px solid #ffffff;
+}
+
+.gallery-prev {
+    left: 20px;
+}
+
+.gallery-prev::after {
+    transform: rotate(-135deg);
+    margin-left: 6px;
+    /* Optically center */
+}
+
+.gallery-next {
+    right: 20px;
+}
+
+.gallery-next::after {
+    transform: rotate(45deg);
+    margin-right: 6px;
+    /* Optically center */
 }
 
 .gallery-item {
-    flex: 1 1 300px;
-    /* Base width */
-    max-width: 100%;
+    flex: 0 0 auto;
+    height: 100%;
+    scroll-snap-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .gallery-item img {
-    width: 100%;
-    height: auto;
+    height: 100%;
+    width: auto;
+    max-width: 85vw;
+    /* Ensure extremely wide images don't break viewport horizontally */
+    object-fit: contain;
     display: block;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    /* Very subtle shadow so it doesn't bleed */
-}
-
-/* Make some items larger or smaller to break the grid */
-.gallery-item:nth-child(3n+1) {
-    flex-basis: 100%;
-    /* Full width feature image occasionally */
-}
-
-.gallery-item:nth-child(3n+2) {
-    flex-basis: 45%;
-}
-
-.gallery-item:nth-child(3n+3) {
-    flex-basis: 45%;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .artist-title {
         font-size: 2rem;
-    }
-
-    .gallery-item:nth-child(n) {
-        flex-basis: 100%;
-        /* Stack on mobile */
     }
 
     .gallery-grid {
@@ -121,5 +177,14 @@ body.minimal-gallery {
 
     .gallery-container {
         padding: 0 20px;
+    }
+
+    /* Fix mobile overflow issue */
+    .gallery-item img {
+        width: 100vw;
+        max-width: 100%;
+        height: auto;
+        max-height: calc(100vh - 160px);
+        /* Leave room for headers and closing button */
     }
 }

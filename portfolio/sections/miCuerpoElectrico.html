@@ -17,13 +17,18 @@
 
 <body class="minimal-gallery">
 
-    <div class="close-container"><a href="../../muestras/muestras.html" class="close-btn">CLOSE</a></div>
-
+    <div class="close-container">
+        <script src="../../i18n.js"></script>
+        <a href="../../muestras/muestras.html" class="close-btn" data-i18n="close">CLOSE</a>
+    </div>
     <main class="gallery-container">
         <div class="artist-header">
             <h1 class="artist-title">MI CUERPO ELÉCTRICO</h1>
             <h3 class="artist-subtitle">Aldo De Sousa</h3>
         </div>
+
+        <button class="gallery-nav-btn gallery-prev" aria-label="Previous image"></button>
+        <button class="gallery-nav-btn gallery-next" aria-label="Next image"></button>
 
         <div class="gallery-grid">
             <div class="gallery-item">
@@ -63,8 +68,9 @@
         <p>&copy; 2024 Diego de Aduriz. All rights reserved.</p>
     </footer>
 
-    
 
+
+    <script src="muestras-gallery.js"></script>
 </body>
 
 </html>
