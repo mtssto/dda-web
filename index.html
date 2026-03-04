@@ -72,19 +72,14 @@
       const welcomeShopModal = document.getElementById('welcomeShopModal');
       const welcomeClose = document.getElementById('welcomeClose');
 
-      // Show after a delay and if not closed before
-      if (!sessionStorage.getItem('shopWelcomeClosed')) {
-        setTimeout(() => {
-          if (welcomeShopModal) {
-            welcomeShopModal.style.display = 'block';
-          }
-        }, 3000);
+      // Show after a delay
+      if (welcomeShopModal) {
+        welcomeShopModal.style.display = 'block';
       }
 
       if (welcomeClose) {
         welcomeClose.addEventListener('click', () => {
           if (welcomeShopModal) welcomeShopModal.style.display = 'none';
-          sessionStorage.setItem('shopWelcomeClosed', 'true');
         });
       }
     });

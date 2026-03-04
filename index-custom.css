@@ -193,3 +193,15 @@ html {
         font-size: 1.2rem;
     }
 }
+
+/* Welcome Shop Modal Mobile Positioning */
+@media (max-width: 768px) {
+    #welcomeShopModal {
+        bottom: 28px !important;
+        left: 19px !important;
+        right: 19px !important;
+        /* ensure it doesn't bleed off screen horizontally */
+        width: auto !important;
+        max-width: none !important;
+    }
+}
