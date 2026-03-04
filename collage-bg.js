@@ -18,32 +18,59 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Now we have 4 options:
-    // 0: Full-screen background image "Las naves escenografía"
-    // 1: Full-screen background image "dibu24.jpg"
-    // 2: Full-screen background image "Las naves escenografía (2)"
-    // 3: The Collage Grabbing Logic
+    const backgroundImages = [
+        'portfolio/sections/obras/Las naves escenografía.JPG',
+        'Ilustrates/dibu24.jpg',
+        'portfolio/sections/obras/Las naves escenografía (2).JPG',
+        'Ilustrates/collage_new_chars.jpg',
+        'Ilustrates/dibu10.jpg',
+        'Ilustrates/dibu12.jpg',
+        'portfolio/sections/obras/las-nave-dibu (6).JPG',
+        'portfolio/sections/obras/las-nave-dibu (7).JPG'
+    ];
 
-    const option = Math.floor(Math.random() * 4);
+    // Decide between Interactive Collage (50%) OR Single Clickable Background (50%)
+    const showSingleImage = Math.random() > 0.5;
 
-    if (option === 0) {
-        container.style.backgroundImage = 'url("portfolio/sections/obras/Las naves escenografía.JPG")';
-        container.style.backgroundSize = 'cover';
-        container.style.backgroundPosition = 'center';
-        container.style.backgroundRepeat = 'no-repeat';
-        return;
-    } else if (option === 1) {
-        container.style.backgroundImage = 'url("Ilustrates/dibu24.jpg")';
-        container.style.backgroundSize = 'cover';
-        container.style.backgroundPosition = 'center';
-        container.style.backgroundRepeat = 'no-repeat';
-        return;
-    } else if (option === 2) {
-        container.style.backgroundImage = 'url("portfolio/sections/obras/Las naves escenografía (2).JPG")';
-        container.style.backgroundSize = 'cover';
-        container.style.backgroundPosition = 'center';
-        container.style.backgroundRepeat = 'no-repeat';
-        return;
+    if (showSingleImage) {
+        let currentBgIndex = Math.floor(Math.random() * backgroundImages.length);
+        let isTransitioning = false;
+
+        // Add a smooth transition specifically for fading out/in
+        container.style.transition = 'opacity 0.5s ease-in-out';
+
+        const setBackground = (index) => {
+            container.style.backgroundImage = `url("${backgroundImages[index]}")`;
+            container.style.backgroundSize = 'cover';
+            container.style.backgroundPosition = 'center';
+            container.style.backgroundRepeat = 'no-repeat';
+        };
+
+        // Set initial background
+        setBackground(currentBgIndex);
+
+        // Add click listener to cycle backgrounds smoothly
+        container.style.cursor = 'pointer';
+        container.addEventListener('click', () => {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
+            // Fade out
+            container.style.opacity = '0';
+
+            setTimeout(() => {
+                currentBgIndex = (currentBgIndex + 1) % backgroundImages.length;
+                setBackground(currentBgIndex);
+
+                // Fade back in once the image source has been swapped
+                container.style.opacity = '1';
+
+                // Release the guard after fade in finishes
+                setTimeout(() => { isTransitioning = false; }, 500);
+            }, 500); // matches the 0.5s transition time
+        });
+
+        return; // Don't run the collage logic
     }
 
     // Option 2: The Collage Grabbing Logic
