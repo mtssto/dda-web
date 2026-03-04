@@ -151,7 +151,7 @@ body {
   font-family: 'Playfair Display', serif;
   font-size: 3.5rem;
   font-weight: 400;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
   color: #111;
   font-style: italic;
   text-align: center;
@@ -161,6 +161,7 @@ body {
 .hero_par {
   font-size: 1.15rem;
   line-height: 1.8;
+  margin-top: 0;
   margin-bottom: 1.8rem;
   color: #555;
   font-weight: 300;
@@ -256,8 +257,11 @@ footer {
   }
 
   .carousel-track img.profile-photo {
-    /* Reduce fixed height on mobile so the 3 images don't look stretched */
-    height: 300px;
+    /* Full width on mobile instead of triptych */
+    min-width: 100%;
+    max-width: 100%;
+    height: 450px;
+    border-right: none;
   }
 
   .about-grid {

@@ -38,10 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const updateCarousel = (animate = true) => {
             track.style.transition = animate ? 'transform 0.5s ease-in-out' : 'none';
-            // Translate by 33.3333% per image
-            const offset = -currentIndex * 33.3333;
+            // Translate by 33.3333% per image, or 100% on mobile
+            const offsetMultiplier = window.innerWidth <= 768 ? 100 : 33.3333;
+            const offset = -currentIndex * offsetMultiplier;
             track.style.transform = `translateX(${offset}%)`;
         };
+
+        window.addEventListener('resize', () => updateCarousel(false));
 
         const slideNext = () => {
             if (isTransitioning) return;
