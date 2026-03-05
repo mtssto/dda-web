@@ -1332,7 +1332,36 @@ footer p {
     /* Force 2 columns on mobile ONLY */
     .catalog-content .products-grid {
         grid-template-columns: repeat(2, 1fr) !important;
-        gap: 15px;
+        gap: 12px;
+    }
+
+    /* Scale down text to fit nicely in 2 columns */
+    .catalog-content .product-card {
+        margin-bottom: 15px;
+    }
+
+    .catalog-content .product-title {
+        font-size: 0.85rem;
+        line-height: 1.2;
+        margin-bottom: 3px;
+        padding: 0 5px;
+    }
+
+    .catalog-content .product-price {
+        font-size: 0.8rem;
+        margin-top: 5px;
+        margin-bottom: 10px;
+    }
+
+    .catalog-content .btn-grid-action {
+        font-size: 0.55rem;
+        padding: 8px 2px;
+        gap: 3px;
+    }
+
+    .catalog-content .btn-icon svg {
+        width: 12px;
+        height: 12px;
     }
 
     .product-card {

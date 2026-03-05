@@ -60,4 +60,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Start immediately
     startAutoScroll();
+
+    // Scroll Arrow Logic
+    const scrollableText = document.getElementById('scrollableText');
+    const scrollArrow = document.getElementById('scrollArrow');
+
+    if (scrollableText && scrollArrow) {
+        const checkTextScroll = () => {
+            // Check if scrollable at all
+            if (scrollableText.scrollHeight > scrollableText.clientHeight + 10) {
+                scrollArrow.style.display = 'flex';
+                // If scrolled to bottom, hide it
+                if (scrollableText.scrollTop + scrollableText.clientHeight >= scrollableText.scrollHeight - 20) {
+                    scrollArrow.style.opacity = '0';
+                } else {
+                    scrollArrow.style.opacity = '1';
+                }
+            } else {
+                scrollArrow.style.display = 'none';
+            }
+        };
+
+        scrollableText.addEventListener('scroll', checkTextScroll);
+        window.addEventListener('resize', checkTextScroll);
+
+        scrollArrow.addEventListener('click', () => {
+            scrollableText.scrollBy({ top: 200, behavior: 'smooth' });
+        });
+
+        // Wait a small moment for layout calculation
+        setTimeout(checkTextScroll, 100);
+    }
 });

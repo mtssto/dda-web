@@ -107,4 +107,35 @@ document.addEventListener('DOMContentLoaded', () => {
         track.addEventListener('mouseenter', () => clearInterval(autoPlayInterval));
         track.addEventListener('mouseleave', resetInterval);
     }
+
+    // Scroll Arrow Logic
+    const bioText = document.getElementById('bioText');
+    const scrollArrow = document.getElementById('scrollArrow');
+
+    if (bioText && scrollArrow) {
+        const checkScroll = () => {
+            // Check if scrollable at all
+            if (bioText.scrollHeight > bioText.clientHeight + 10) {
+                scrollArrow.style.display = 'flex';
+                // If scrolled to bottom, hide it
+                if (bioText.scrollTop + bioText.clientHeight >= bioText.scrollHeight - 20) {
+                    scrollArrow.style.opacity = '0';
+                } else {
+                    scrollArrow.style.opacity = '1';
+                }
+            } else {
+                scrollArrow.style.display = 'none';
+            }
+        };
+
+        bioText.addEventListener('scroll', checkScroll);
+        window.addEventListener('resize', checkScroll);
+
+        scrollArrow.addEventListener('click', () => {
+            bioText.scrollBy({ top: 200, behavior: 'smooth' });
+        });
+
+        // Wait a small moment for layout calculation
+        setTimeout(checkScroll, 100);
+    }
 });

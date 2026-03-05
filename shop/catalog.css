@@ -48,16 +48,15 @@
    ========================= */
 
 /* contenedor de acciones: 2 columnas */
-.catalog-page .product-actions,
+.catalog-page .product-actions-grid,
 .catalog-page .product-card__actions,
 .catalog-page .card-actions {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
+    display: flex !important;
 }
 
 /* cada acción: icono + texto en una sola línea */
-.catalog-page .product-actions a,
-.catalog-page .product-actions button,
+.catalog-page .product-actions-grid a,
+.catalog-page .product-actions-grid button,
 .catalog-page .product-card__actions a,
 .catalog-page .product-card__actions button,
 .catalog-page .card-actions a,
@@ -71,13 +70,13 @@
 }
 
 /* iconos: forzar inline-flex para que no salten arriba */
-.catalog-page .product-actions i,
-.catalog-page .product-actions svg,
-.catalog-page .product-actions img,
-.catalog-page .product-actions .icon,
-.catalog-page .product-actions .fa,
-.catalog-page .product-actions .material-icons,
-.catalog-page .product-actions .material-symbols-outlined,
+.catalog-page .product-actions-grid i,
+.catalog-page .product-actions-grid svg,
+.catalog-page .product-actions-grid img,
+.catalog-page .product-actions-grid .icon,
+.catalog-page .product-actions-grid .fa,
+.catalog-page .product-actions-grid .material-icons,
+.catalog-page .product-actions-grid .material-symbols-outlined,
 .catalog-page .product-card__actions i,
 .catalog-page .product-card__actions svg,
 .catalog-page .product-card__actions img,
@@ -100,7 +99,7 @@
 }
 
 /* Si el icono viene por pseudo-elemento (muy común) */
-.catalog-page .product-actions a::before,
+.catalog-page .product-actions-grid a::before,
 .catalog-page .product-card__actions a::before,
 .catalog-page .card-actions a::before {
     vertical-align: middle !important;
