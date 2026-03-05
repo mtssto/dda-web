@@ -203,9 +203,15 @@ body.minimal-gallery {
     display: flex;
     flex-direction: column;
     height: 100%;
-    overflow-y: hidden;
-    /* Remove scroll */
+    overflow-y: auto;
+    /* Allow scroll when text gets too big */
     padding-right: 15px;
+}
+
+/* Hide scrollbar for cleaner look if scrolling */
+.split-left::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
 }
 
 /* Ensure header inside split-left doesn't shrink unnecessarily */
