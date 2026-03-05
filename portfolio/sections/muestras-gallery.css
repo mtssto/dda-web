@@ -37,6 +37,8 @@ body.minimal-gallery {
 .artist-header {
     margin-bottom: 30px;
     flex-shrink: 0;
+    opacity: 0;
+    animation: fadeInLeft 1s ease-out forwards;
 }
 
 .artist-title {
@@ -68,6 +70,9 @@ body.minimal-gallery {
     overflow-y: hidden;
     height: 100%;
     align-items: center;
+    opacity: 0;
+    animation: fadeInRight 1s ease-out forwards;
+    animation-delay: 0.3s;
 }
 
 /* Hide scrollbar for Chrome/Safari/Webkit */
@@ -206,6 +211,8 @@ body.minimal-gallery {
     overflow-y: auto;
     /* Allow scroll when text gets too big */
     padding-right: 15px;
+    opacity: 0;
+    animation: fadeInLeft 1s ease-out forwards;
 }
 
 /* Hide scrollbar for cleaner look if scrolling */
@@ -223,12 +230,9 @@ body.minimal-gallery {
 .artist-statement p {
     font-family: 'Playfair Display', serif;
     font-size: 0.95rem;
-    /* Letra un poco más chica */
     line-height: 1.5;
-    /* Interlineado más ajustado */
     color: #444;
     margin-bottom: 15px;
-    /* Menos espacio entre párrafos */
     font-weight: 400;
     font-style: italic;
 }
@@ -244,6 +248,9 @@ body.minimal-gallery {
     height: 100%;
     position: relative;
     /* This establishes positioning context for arrows inside split-right */
+    opacity: 0;
+    animation: fadeInRight 1s ease-out forwards;
+    animation-delay: 0.3s;
 }
 
 /* Redefine Arrow positions if they are inside split-right */
@@ -322,5 +329,30 @@ body.minimal-gallery {
 
     60% {
         transform: translateY(-4px);
+    }
+}
+
+/* Keyframes for Left/Right Fade In */
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
     }
 }
