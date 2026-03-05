@@ -40,11 +40,12 @@ body.minimal-gallery {
 }
 
 .artist-title {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Playfair Display', serif;
+    /* Replaces var(--font-heading) */
+    font-style: italic;
     font-size: 3rem;
-    font-weight: 300;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-weight: 400;
+    letter-spacing: 0;
     margin: 0 0 10px 0;
     line-height: 1.1;
 }
@@ -186,5 +187,93 @@ body.minimal-gallery {
         height: auto;
         max-height: calc(100vh - 160px);
         /* Leave room for headers and closing button */
+    }
+}
+
+/* Split Layout for Muestras with Text */
+.gallery-container.split-layout {
+    flex-direction: row;
+    gap: 40px;
+    align-items: stretch;
+}
+
+.split-left {
+    flex: 0 0 40%;
+    /* Un poco más de ancho para que el texto ocupe menos líneas */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: hidden;
+    /* Remove scroll */
+    padding-right: 15px;
+}
+
+/* Ensure header inside split-left doesn't shrink unnecessarily */
+.split-left .artist-header {
+    margin-bottom: 20px;
+    flex-shrink: 0;
+}
+
+.artist-statement p {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    /* Letra un poco más chica */
+    line-height: 1.5;
+    /* Interlineado más ajustado */
+    color: #444;
+    margin-bottom: 15px;
+    /* Menos espacio entre párrafos */
+    font-weight: 400;
+    font-style: italic;
+}
+
+.artist-statement p:last-child {
+    margin-bottom: 0;
+}
+
+.split-right {
+    flex: 1;
+    min-width: 0;
+    /* Important for flex items with scrolling children */
+    height: 100%;
+    position: relative;
+    /* This establishes positioning context for arrows inside split-right */
+}
+
+/* Redefine Arrow positions if they are inside split-right */
+.split-layout .gallery-nav-btn {
+    top: 50%;
+}
+
+.split-layout .gallery-prev {
+    left: 10px;
+}
+
+.split-layout .gallery-next {
+    right: 10px;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 900px) {
+    .gallery-container.split-layout {
+        flex-direction: column;
+        overflow-y: auto;
+        display: block;
+        /* Disable flex column to let it naturally scroll */
+    }
+
+    .split-left {
+        flex: none;
+        height: auto;
+        overflow-y: visible;
+        margin-bottom: 40px;
+        padding-right: 0;
+    }
+
+    .split-right {
+        flex: none;
+        height: 50vh;
+        /* Give specific height to gallery on mobile since flex removes it */
+        min-height: 400px;
     }
 }

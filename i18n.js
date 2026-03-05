@@ -30,7 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
             'press.8': 'Diez años del Museo de Arte Contemporáneo',
             'press.9': 'La llave y el testigo, de Diego de Aduriz',
             'press.10': 'Nuevo espacio en barrio La Sexta',
-            'press.11': 'Muestras colectivas de fin de año'
+            'press.11': 'Muestras colectivas de fin de año',
+            'elefantes.p1': '“El nombre de la muestra surge en honor a los Atlantes de la galería: su presencia es tan imponente que terminan invadiendo todo lo que se desarrolle en ese lugar. Por eso, el artista y los atlantes firmaron un pacto de convivencia pacífica: las estatuas garantizan un espacio tranquilo para la muestra, y Diego de Aduriz ofrece una serie de obras a tono con estos gigantes de piedra y su paisaje neoclásico”, cuenta la curadora Silvana Moreno.',
+            'elefantes.p2': 'Hace 21 años que Diego de Aduriz viene creando su propia mitología: paisajes psíquicos, criaturas esotéricas y autorretratos donde abandona la dimensión humana. En esta muestra, se vuelve un poco atlante, él también, en una serie de autorretratos.',
+            'elefantes.p3': 'La imaginación ilimitada tiene su contrapeso terrenal en las técnicas clásicas de dibujo y pintura, con trazos limpios y geométricos en marcador, pastel tiza y al temple, en tonos tierra, ocre y óxido.',
+            'elefantes.p4': '“Aquí, lo celestial y lo carnal se unen en un bazar de pinturas rupestres extraterrestres”, describe la curadora.'
         },
         en: {
             'nav.bio': 'ABOUT ME',
@@ -59,7 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
             'press.8': 'Ten years of the Museum of Contemporary Art',
             'press.9': 'The key and the witness, by Diego de Aduriz',
             'press.10': 'New space in La Sexta neighborhood',
-            'press.11': 'End of year collective exhibitions'
+            'press.11': 'End of year collective exhibitions',
+            'elefantes.p1': '“The name of the exhibition pays tribute to the gallery’s Atlantes: their presence is so imposing that they end up permeating everything that takes place in that space. That is why the artist and the Atlantes signed a pact of peaceful coexistence: the statues guarantee a calm setting for the exhibition, and Diego de Aduriz offers a series of works attuned to these stone giants and their neoclassical landscape,” says curator Silvana Moreno.',
+            'elefantes.p2': 'For the past 21 years, Diego de Aduriz has been creating his own mythology: psychic landscapes, esoteric creatures, and self-portraits in which he abandons the human dimension. In this exhibition, he becomes a bit of an Atlante as well, in a series of self-portraits.',
+            'elefantes.p3': 'This boundless imagination is grounded by the counterweight of classical drawing and painting techniques, with clean, geometric strokes in marker, chalk pastel, and tempera, in earth, ochre, and rust tones.',
+            'elefantes.p4': '“Here, the celestial and the carnal come together in a bazaar of extraterrestrial cave paintings,” the curator describes.'
         }
     };
 
