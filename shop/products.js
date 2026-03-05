@@ -60,10 +60,10 @@ window.products = [
     },
     {
         "id": "payaso",
-        "title": "Payaso",
+        "title": "Payaso Iluminado",
         "price": "Consultar",
-        "dimensions": "Consultar medidas",
-        "technique": "Consultar técnica",
+        "dimensions": "51 x 98 cm",
+        "technique": "Acrilico y pastel oleo sobre puerta de madera",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/payaso.png",
         "images": [
@@ -165,12 +165,12 @@ window.products = [
         "id": "carta-7",
         "title": "Carta 7",
         "price": "Consultar",
-        "dimensions": "Consultar medidas",
+        "dimensions": "150 x 200 cm",
         "technique": "Aerosol, acrílico, pastel sobre tela",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/carta-7-aeresol, acrilico, pastel sobre tela.png",
         "sold": false,
-        "year": "Consultar año"
+        "year": "2022"
     },
     {
         "id": "retrato-1",
@@ -229,14 +229,14 @@ window.products = [
     },
     {
         "id": "mi-cuerpo-electrico-24",
-        "title": "Ultraizquierda Ultraderecha Ultratravesti",
+        "title": "ULTRAVIOLETA/INFRARROJO",
         "price": "Consultar",
-        "dimensions": "Consultar medidas",
-        "technique": "Técnica mixta",
+        "dimensions": "114 x 114 cm",
+        "technique": "Acrílico y aerosol sobre madera",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/micuerpo.jpg",
         "sold": false,
-        "year": "Consultar año"
+        "year": "2020"
     },
     {
         "id": "mi-cuerpo-electrico-29",
@@ -405,14 +405,14 @@ window.products = [
     },
     {
         "id": "luz-azul",
-        "title": "Luz azul",
+        "title": "LUZAZUL",
         "price": "Consultar",
         "dimensions": "180 x 210 cm",
-        "technique": "Acrílico y pastel sobre tela",
+        "technique": "Acrílico y pastel tiza sobre tela",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/luz_azul.jpg",
         "sold": false,
-        "year": "Consultar año"
+        "year": "2015"
     },
     {
         "id": "gato-celeste",
@@ -440,8 +440,8 @@ window.products = [
         "id": "puerta-1",
         "title": "Espíritu (Humito)",
         "price": "Consultar",
-        "dimensions": "Consultar medidas",
-        "technique": "Pastel sobre puerta / Técnica mixta sobre madera",
+        "dimensions": "80 x 195 cm",
+        "technique": "Acrílico y pastel oleo sobre puerta / Técnica mixta sobre madera",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/puerta-1-espiritu(humite)-tecnica-pastel-sobre-puerta-tecnoca-mixta-sobre-madera.png",
         "images": [
@@ -449,7 +449,7 @@ window.products = [
             "/portfolio/sections/obras/puerta-1-back.png"
         ],
         "sold": false,
-        "year": "Consultar año"
+        "year": "2018"
     },
     {
         "id": "dibu-1",
