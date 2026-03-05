@@ -50,6 +50,30 @@ body {
   }
 }
 
+/* Split Layout */
+.about-content-split {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 40px;
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  .about-content-split {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .about-text {
+    flex: 0 0 40%;
+  }
+
+  .about-image {
+    flex: 0 0 60%;
+    width: 100%;
+  }
+}
+
 /* Image & Carousel Styling */
 .about-image {
   position: relative;
@@ -75,9 +99,9 @@ body {
 }
 
 .carousel-track img.profile-photo {
-  min-width: 33.3333%;
-  /* Show 3 images at once */
-  max-width: 33.3333%;
+  min-width: 50%;
+  /* Show 2 images at once */
+  max-width: 50%;
   height: 600px;
   /* Fixed height to keep triptych aligned */
   object-fit: cover;

@@ -23,8 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (track && prevBtn && nextBtn) {
         let images = track.querySelectorAll('img');
 
-        // Clone first 3 images to create a seamless infinite loop
-        for (let i = 0; i < 3; i++) {
+        // Clone first 2 images to create a seamless infinite loop
+        for (let i = 0; i < 2; i++) {
             if (images[i]) {
                 const clone = images[i].cloneNode(true);
                 track.appendChild(clone);
@@ -32,14 +32,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         images = track.querySelectorAll('img');
-        const numOriginals = images.length - 3;
+        const numOriginals = images.length - 2;
         let currentIndex = 0;
         let isTransitioning = false;
 
         const updateCarousel = (animate = true) => {
             track.style.transition = animate ? 'transform 0.5s ease-in-out' : 'none';
-            // Translate by 33.3333% per image, or 100% on mobile
-            const offsetMultiplier = window.innerWidth <= 768 ? 100 : 33.3333;
+            // Translate by 50% per image, or 100% on mobile
+            const offsetMultiplier = window.innerWidth <= 768 ? 100 : 50;
             const offset = -currentIndex * offsetMultiplier;
             track.style.transform = `translateX(${offset}%)`;
         };
