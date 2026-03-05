@@ -111,7 +111,7 @@ window.products = [
         "title": "Gato arcoiris",
         "price": "Consultar",
         "dimensions": "100 x 65 cm",
-        "technique": "pastel sobre papel",
+        "technique": "Pastel tiza sobre papel",
         "category": "gatos",
         "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+arcoiris+-+100+x+65+cm+-++pastel+sobre+papel+-+2020.png",
         "sold": false,

@@ -356,7 +356,7 @@ function renderGrid(items) {
                         </span>
                         <span>DETALLES</span>
                     </button>
-                    <button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">🛒 COMPRAR</button>
+                    ${product.sold ? `<button class="btn-grid-action btn-grid-sold" data-i18n="card.sold" disabled style="background-color: #ddd; color: #666; cursor: not-allowed; opacity: 0.8; font-weight: bold;">AGOTADO</button>` : `<button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">🛒 COMPRAR</button>`}
                 </div>
             </div>
         `;
@@ -373,15 +373,19 @@ function renderGrid(items) {
         const btnDetails = card.querySelector('.btn-grid-details');
         const btnBuy = card.querySelector('.btn-grid-buy');
 
-        btnDetails.onclick = (e) => {
-            e.stopPropagation();
-            openModal(product);
-        };
+        if (btnDetails) {
+            btnDetails.onclick = (e) => {
+                e.stopPropagation();
+                openModal(product);
+            };
+        }
 
-        btnBuy.onclick = (e) => {
-            e.stopPropagation();
-            buyProduct(product);
-        };
+        if (btnBuy) {
+            btnBuy.onclick = (e) => {
+                e.stopPropagation();
+                buyProduct(product);
+            };
+        }
 
         grid.appendChild(card);
     });
@@ -407,11 +411,19 @@ function openModal(productOrElement) {
         let fullImages = [];
         let srcToMatch = '';
         if (img) {
-            srcToMatch = img.getAttribute('src') || img.src;
+            srcToMatch = img.src || img.getAttribute('src');
         }
 
+        let foundP = null;
         if (srcToMatch && window.products) {
-            const foundP = window.products.find(p => p.image === srcToMatch || (p.images && p.images.includes(srcToMatch)));
+            // Find product by matching the filename
+            foundP = window.products.find(p => {
+                const imgFileName = p.image ? p.image.split('/').pop() : '';
+                const matchMain = imgFileName && srcToMatch.includes(imgFileName);
+                const matchArray = p.images && p.images.some(imgUrl => imgUrl && srcToMatch.includes(imgUrl.split('/').pop()));
+                return matchMain || matchArray;
+            });
+
             if (foundP && foundP.images) {
                 fullImages = foundP.images;
             } else {
@@ -426,11 +438,11 @@ function openModal(productOrElement) {
             images: fullImages,
             title: title ? title.innerText : '',
             price: price ? price.innerText : '',
-            dimensions: el.dataset.dimensions || '',
-            technique: el.dataset.technique || '',
-            year: el.dataset.year || '',
-            // If needed, we can parse category too
-            category: el.dataset.category || ''
+            dimensions: (foundP && foundP.dimensions) ? foundP.dimensions : (el.dataset.dimensions || ''),
+            technique: (foundP && foundP.technique) ? foundP.technique : (el.dataset.technique || ''),
+            year: (foundP && foundP.year) ? foundP.year : (el.dataset.year || ''),
+            category: (foundP && foundP.category) ? foundP.category : (el.dataset.category || ''),
+            sold: foundP ? foundP.sold : el.classList.contains('sold')
         };
     } else {
         if (!product.images) {
