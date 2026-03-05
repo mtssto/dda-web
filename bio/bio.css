@@ -31,11 +31,10 @@ body {
 /* Main Container */
 .about-container {
   margin: 0;
-  padding: 120px 40px 40px 40px;
-  min-height: calc(100vh - 80px);
-  /* Account for smaller footer */
+  padding: 120px 40px 20px 40px;
+  flex: 1;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   width: 100%;
   box-sizing: border-box;
 }
@@ -45,7 +44,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 40px;
-  align-items: stretch;
+  align-items: center;
+  justify-content: center;
   width: 100%;
 }
 
@@ -71,7 +71,7 @@ body {
 
   .about-text {
     flex: 0 0 40%;
-    max-height: 480px;
+    max-height: 65vh;
   }
 
   .about-image {
@@ -105,8 +105,8 @@ body {
   min-width: 50%;
   /* Show 2 images at once */
   max-width: 50%;
-  height: 480px;
-  /* Fixed height to keep triptych aligned */
+  height: 65vh;
+  /* Dynamic height based on screen size */
   object-fit: cover;
   border-radius: 0;
   transform: none;
@@ -343,7 +343,7 @@ footer {
     /* Full width on mobile instead of triptych */
     min-width: 100%;
     max-width: 100%;
-    height: 380px;
+    height: 50vh;
     border-right: none;
   }
 
