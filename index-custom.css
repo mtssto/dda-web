@@ -113,6 +113,28 @@ html {
     /* Inside flex container */
 }
 
+.nav-explore-3d {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 15px 40px;
+    border-radius: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    font-size: 1.5rem !important;
+    /* Slightly smaller than main corners */
+    transition: all 0.3s ease !important;
+}
+
+.nav-explore-3d:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translate(-50%, -50%) scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
 .nav-about {
     position: absolute;
     bottom: 2vw;
@@ -138,6 +160,11 @@ html {
     .nav-right-stack {
         top: 20px;
         right: 20px;
+    }
+
+    .nav-explore-3d {
+        padding: 12px 25px;
+        font-size: 1.2rem !important;
     }
 
     .nav-about {
