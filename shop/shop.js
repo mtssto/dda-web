@@ -69,36 +69,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Filter Logic
     const categoryFilter = document.getElementById('categoryFilter');
-    const priceFilter = document.getElementById('priceFilter');
 
     function applyFilters() {
         const selectedCategory = categoryFilter ? categoryFilter.value : 'all';
-        const selectedPriceRange = priceFilter ? priceFilter.value : 'all';
-
         const productCards = document.querySelectorAll('.product-card');
 
         productCards.forEach(card => {
             const category = card.getAttribute('data-category');
-            const priceText = card.querySelector('.product-price').innerText;
-
-            // Parse price: remove non-numeric chars except period if present, handle USD
-            // Assuming format like "$2500 USD" or "$250"
-            const priceValue = parseFloat(priceText.replace(/[^0-9.]/g, ''));
-
             let categoryMatch = (selectedCategory === 'all' || category === selectedCategory);
-            let priceMatch = true;
 
-            if (selectedPriceRange !== 'all' && !isNaN(priceValue)) {
-                if (selectedPriceRange === 'under_1000') {
-                    priceMatch = priceValue < 1000;
-                } else if (selectedPriceRange === '1000_3000') {
-                    priceMatch = priceValue >= 1000 && priceValue <= 3000;
-                } else if (selectedPriceRange === 'over_3000') {
-                    priceMatch = priceValue > 3000;
-                }
-            }
-
-            if (categoryMatch && priceMatch) {
+            if (categoryMatch) {
                 card.style.display = '';
                 card.style.animation = 'none';
                 setTimeout(() => {
@@ -112,10 +92,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (categoryFilter) {
         categoryFilter.addEventListener('change', applyFilters);
-    }
-
-    if (priceFilter) {
-        priceFilter.addEventListener('change', applyFilters);
     }
 
     // Modal Injection Logic (as raw string to avoid CORS on file:/// protocol)
@@ -356,7 +332,7 @@ function renderGrid(items) {
                         </span>
                         <span>DETALLES</span>
                     </button>
-                    ${product.sold ? `<button class="btn-grid-action btn-grid-sold" data-i18n="card.sold" disabled style="background-color: #ddd; color: #666; cursor: not-allowed; opacity: 0.8; font-weight: bold;">AGOTADO</button>` : `<button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">🛒 COMPRAR</button>`}
+                    ${product.sold ? `<button class="btn-grid-action btn-grid-sold" data-i18n="card.sold" disabled aria-disabled="true" style="opacity:0.4;cursor:not-allowed">✗ VENDIDO</button>` : `<button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">🛒 COMPRAR</button>`}
                 </div>
             </div>
         `;
