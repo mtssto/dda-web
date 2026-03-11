@@ -322,6 +322,17 @@ function renderGrid(items) {
         card.innerHTML = `
             <div class="product-image">
                 <img src="${product.image}" alt="${product.title}">
+                <div class="masonry-overlay">
+                    <div class="overlay-content">
+                        <h3 class="overlay-title">${product.title}</h3>
+                        <p class="overlay-details">
+                            ${product.dimensions ? product.dimensions + '<br>' : ''}
+                            ${product.technique ? product.technique + '<br>' : ''}
+                            ${(!product.year || product.year === 'Consultar año') ? '' : product.year}
+                        </p>
+                        <button class="btn-grid-details-overlay" style="pointer-events: auto; margin-top: 15px; background: transparent; border: 1px solid #111; color: #111; padding: 10px 20px; font-family: var(--font-body); font-size: 0.8rem; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s ease;">DETALLES</button>
+                    </div>
+                </div>
             </div>
             <div class="product-info">
                 <h3 class="product-title">${product.title}</h3>
@@ -351,10 +362,18 @@ function renderGrid(items) {
 
         // Button actions
         const btnDetails = card.querySelector('.btn-grid-details');
+        const btnDetailsOverlay = card.querySelector('.btn-grid-details-overlay');
         const btnBuy = card.querySelector('.btn-grid-buy');
 
         if (btnDetails) {
             btnDetails.onclick = (e) => {
+                e.stopPropagation();
+                openModal(product);
+            };
+        }
+
+        if (btnDetailsOverlay) {
+            btnDetailsOverlay.onclick = (e) => {
                 e.stopPropagation();
                 openModal(product);
             };

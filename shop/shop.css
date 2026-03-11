@@ -168,6 +168,63 @@ body.no-scroll {
     height: auto;
     object-fit: contain;
     display: block;
+    transition: opacity .4s, transform .4s;
+}
+
+/* Hover details overlay for Shop/Catalog */
+.product-image .masonry-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 30px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    box-sizing: border-box;
+}
+
+.product-image:hover .masonry-overlay {
+    opacity: 1;
+}
+
+.product-image .overlay-content {
+    transform: translateY(15px);
+    transition: transform 0.4s ease;
+}
+
+.product-image:hover .overlay-content {
+    transform: translateY(0);
+}
+
+.product-image .overlay-title {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 1.6rem;
+    margin: 0 0 12px 0;
+    font-weight: 400;
+    color: #111;
+    line-height: 1.2;
+}
+
+.product-image .overlay-details {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: #555;
+    line-height: 1.6;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0;
+}
+
+.product-image:hover img {
+    transform: scale(1.05);
 }
 
 /* Sold Overlay */

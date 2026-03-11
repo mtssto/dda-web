@@ -460,14 +460,7 @@ export default function App() {
 
             <SpeedVignette />
 
-            <div style={{
-                position: 'fixed', bottom: 30, left: '50%', transform: 'translateX(-50%)',
-                background: 'rgba(255, 255, 255, 0.5)', backdropFilter: 'blur(12px)',
-                padding: '12px 24px', fontFamily: 'sans-serif', letterSpacing: '0.05em',
-                color: '#665d50', fontSize: '11px', textAlign: 'center', whiteSpace: 'nowrap',
-                borderRadius: '30px', boxShadow: '0 4px 15px rgba(200,180,150,0.15)',
-                pointerEvents: 'none', zIndex: 10, textTransform: 'uppercase'
-            }}>
+            <div className="gallery-instructions">
                 TAP PARA VOLAR &nbsp;·&nbsp; ARRASTRAR PARA MIRAR &nbsp;·&nbsp; FLECHAS PARA MOVER &nbsp;·&nbsp; CLICK EN OBRA PARA ABRIR
             </div>
 
