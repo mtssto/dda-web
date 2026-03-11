@@ -258,7 +258,8 @@ function CameraController() {
             const toTarget = flyTarget.current.clone().sub(camera.position)
             const dist = toTarget.length()
             if (dist > 8) {
-                velocity.current.lerp(toTarget.normalize().multiplyScalar(Math.min(dist * 0.02, 8)), 0.04)
+                // Increased max speed from 8 to 45, and distance multiplier for faster approach
+                velocity.current.lerp(toTarget.normalize().multiplyScalar(Math.min(dist * 0.06, 45)), 0.08)
             } else {
                 flyTarget.current = null
                 velocity.current.multiplyScalar(0.3)
@@ -278,7 +279,8 @@ function CameraController() {
 
             if (move.length() > 0) {
                 move.normalize()
-                velocity.current.add(move.multiplyScalar(15.0 * dt * 60))
+                // Increased arrow key acceleration
+                velocity.current.add(move.multiplyScalar(25.0 * dt * 60))
             } else {
                 // Auto-drift when idle
                 const driftFwd = new THREE.Vector3(0, 0, -1).applyQuaternion(qYaw)
