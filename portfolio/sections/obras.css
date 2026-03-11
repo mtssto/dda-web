@@ -334,6 +334,7 @@ footer p {
 
 .modal-container {
   display: flex;
+  margin: auto;
   background: #fff;
   width: 90%;
   max-width: 1000px;

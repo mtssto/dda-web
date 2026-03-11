@@ -26,7 +26,9 @@ window.pageTranslations = {
         'shop.service': 'Atención Personalizada',
         'shop.service_desc': 'Contacto directo por WhatsApp para consultas.',
         'catalog.title': 'Catálogo',
-        'catalog.download': 'Descargar Catálogo (PDF)'
+        'catalog.download': 'Descargar Catálogo (PDF)',
+        'shop.see_all': 'VER TODOS LOS PRODUCTOS',
+        'shop.whatsapp_float': 'Consultar por WhatsApp'
     },
     en: {
         'hero.subtitle': 'Original Artworks & Limited Editions',
@@ -51,7 +53,9 @@ window.pageTranslations = {
         'shop.service': 'Personal Service',
         'shop.service_desc': 'Direct contact via WhatsApp for inquiries.',
         'catalog.title': 'Catalog',
-        'catalog.download': 'Download Catalog (PDF)'
+        'catalog.download': 'Download Catalog (PDF)',
+        'shop.see_all': 'SEE ALL PRODUCTS',
+        'shop.whatsapp_float': 'Inquire via WhatsApp'
     }
 };
 
@@ -359,7 +363,11 @@ function renderGrid(items) {
         if (btnBuy) {
             btnBuy.onclick = (e) => {
                 e.stopPropagation();
-                buyProduct(product);
+                if (typeof openInquiry === 'function') {
+                    openInquiry(product.title, product.price);
+                } else {
+                    buyProduct(product);
+                }
             };
         }
 
@@ -495,7 +503,9 @@ function openModal(productOrElement) {
             modalBuyBtn.textContent = translations['modal.consult'] || 'CONSULTAR / COMPRAR';
             modalBuyBtn.onclick = (e) => {
                 e.preventDefault();
-                buyProduct(product);
+                const waNumber = '5491168750007';
+                const message = `Hola, me interesa comprar: ${product.title}`;
+                window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`, '_blank');
             };
         }
     }
@@ -506,9 +516,13 @@ function openModal(productOrElement) {
 }
 
 function buyProduct(product) {
-    const waNumber = '5491168750007';
-    const message = `Hola, me interesa comprar: ${product.title}`;
-    window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`, '_blank');
+    if (typeof openInquiry === 'function') {
+        openInquiry(product.title, product.price);
+    } else {
+        const waNumber = '5491168750007';
+        const message = `Hola, me interesa comprar: ${product.title}`;
+        window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`, '_blank');
+    }
 }
 
 function closeModal() {

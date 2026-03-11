@@ -234,7 +234,7 @@ body.minimal-gallery {
     color: #444;
     margin-bottom: 15px;
     font-weight: 400;
-    font-style: italic;
+    font-style: normal;
 }
 
 .artist-statement p:last-child {

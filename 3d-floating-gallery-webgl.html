@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diego de Aduriz | WebGL Gallery</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #dbe2e8;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .overlay {
+            position: absolute;
+            z-index: 100;
+            padding: 20px;
+            color: #111;
+        }
+
+        .header {
+            top: 0;
+            left: 0;
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-style: italic;
+        }
+
+        .instructions {
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            color: #555;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            text-decoration: none;
+            color: #111;
+            letter-spacing: 2px;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #888;
+        }
+
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+    <!-- Import Three.js (WebGL Library) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+
+<body>
+    <div class="overlay header">WebGL Universe</div>
+    <a href="index.html" class="overlay close-btn">CLOSE</a>
+    <div class="overlay instructions">Scroll to fly &bull; Move mouse to look<br><small>Powered by WebGL
+            (Three.js)</small></div>
+
+    <div id="canvas-container"></div>
+
+    <script>
+        // Set up scene, camera, renderer
+        const scene = new THREE.Scene();
+        // Add a soft fog to blend into the background color. WebGL does this beautifully.
+        scene.background = new THREE.Color(0xdbe2e8);
+        scene.fog = new THREE.Fog(0xdbe2e8, 1000, 8000); // Things far away fade into fog
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // Variables for interaction
+        let targetZ = 0;
+        let currentZ = 0;
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+
+        // Group to hold all images
+        const group = new THREE.Group();
+        scene.add(group);
+
+        // Load textures dynamically
+        const textureLoader = new THREE.TextureLoader();
+
+        // Fetch images
+        fetch('3d-images.json')
+            .then(response => response.json())
+            .then(images => {
+                images.sort(() => Math.random() - 0.5);
+
+                // Because we are using WebGL, your graphic card does the processing.
+                // We can safely render 200 images without lagging, unlike CSS!
+                const imageCount = Math.min(200, images.length);
+
+                for (let i = 0; i < imageCount; i++) {
+                    textureLoader.load(images[i], (texture) => {
+                        // Calculate internal aspect ratio of the actual image
+                        const aspect = texture.image.width / texture.image.height;
+
+                        // Create geometry (a flat 3D plane) based on aspect ratio
+                        const geometry = new THREE.PlaneGeometry(200 * aspect, 200);
+
+                        // Create material (painting the texture onto the plane)
+                        const material = new THREE.MeshBasicMaterial({
+                            map: texture,
+                            side: THREE.DoubleSide, // Seen from front and back
+                            transparent: true
+                        });
+
+                        const mesh = new THREE.Mesh(geometry, material);
+
+                        // Random position in true 3D space
+                        mesh.position.x = (Math.random() - 0.5) * 4000;
+                        mesh.position.y = (Math.random() - 0.5) * 3000;
+                        mesh.position.z = -(Math.random() * 8000); // Spread deep into Z
+
+                        // Random rotation
+                        mesh.rotation.z = (Math.random() - 0.5) * 0.2; // Slight tilt
+                        mesh.rotation.y = (Math.random() - 0.5) * 0.2; // Slight turn towards/away camera
+
+                        // Random scale
+                        const scale = 0.5 + Math.random() * 1.5;
+                        mesh.scale.set(scale, scale, scale);
+
+                        group.add(mesh);
+                    });
+                }
+            });
+
+        // Event listeners
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        window.addEventListener('wheel', (e) => {
+            // Move camera target deeper (scroll down = negative Y on wheel, we want negative Z movement)
+            targetZ -= e.deltaY;
+            // Prevent flying past the end or too far backward
+            targetZ = Math.max(-8500, Math.min(targetZ, 500));
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - window.innerWidth / 2);
+            mouseY = (e.clientY - window.innerHeight / 2);
+        });
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Smooth camera depth movement
+            currentZ += (targetZ - currentZ) * 0.05;
+            camera.position.z = currentZ;
+
+            // Smooth camera panning
+            targetX = mouseX * 2;
+            targetY = -mouseY * 2; // Invert Y for native feel
+
+            camera.position.x += (targetX - camera.position.x) * 0.05;
+            camera.position.y += (targetY - camera.position.y) * 0.05;
+
+            // Give the entire galaxy a very slow, subtle breath/drift
+            group.position.x = Math.sin(Date.now() * 0.0002) * 100;
+            group.position.y = Math.cos(Date.now() * 0.0003) * 100;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+
+</html>
