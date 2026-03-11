@@ -201,11 +201,12 @@ html {
 /* Welcome Shop Modal Mobile Positioning */
 @media (max-width: 768px) {
     #welcomeShopModal {
-        bottom: 87px !important;
-        left: 191px !important;
-        right: -49px !important;
-        width: auto !important;
-        top: 584px !important;
-        max-width: none !important;
+        top: auto !important;
+        bottom: 80px !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        width: 90% !important;
+        max-width: 350px !important;
     }
 }
