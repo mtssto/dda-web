@@ -356,9 +356,9 @@ function Scene({ items, onImageClick }) {
 
 function generatePositions(images, phrases) {
     const combined = []
-    const INNER = 200
-    const OUTER = 2200
-    const DEPTH = Math.max(5000, images.length * 40)
+    const INNER = 150
+    const OUTER = 1200
+    const DEPTH = Math.max(3000, images.length * 20)
 
     images.forEach((img, i) => {
         const goldenAngle = Math.PI * (3 - Math.sqrt(5))
