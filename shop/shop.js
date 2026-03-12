@@ -4,6 +4,7 @@
 // Language Configuration (Shop Specific)
 window.pageTranslations = {
     es: {
+        'hero.eyebrow': 'Arte Argentino Contemporáneo',
         'hero.subtitle': 'Obras Originales y Ediciones Limitadas',
         'hero.featured': 'Destacados',
         'filter.all': 'Todos',
@@ -27,10 +28,15 @@ window.pageTranslations = {
         'shop.service_desc': 'Contacto directo por WhatsApp para consultas.',
         'catalog.title': 'Catálogo',
         'catalog.download': 'Descargar Catálogo (PDF)',
-        'shop.see_all': 'VER TODOS LOS PRODUCTOS',
+        'shop.see_all': 'Ver catálogo completo',
+        'shop.ver_todo': 'Ver catálogo completo',
+        'shop.cta_eyebrow': 'Obras originales · Ediciones limitadas · Envíos internacionales',
+        'shop.float_cta': '¿Querés ver todas las obras?',
+        'shop.float_btn': 'Ver catálogo completo',
         'shop.whatsapp_float': 'Consultar por WhatsApp'
     },
     en: {
+        'hero.eyebrow': 'Contemporary Argentine Art',
         'hero.subtitle': 'Original Artworks & Limited Editions',
         'hero.featured': 'Featured',
         'filter.all': 'All',
@@ -55,6 +61,10 @@ window.pageTranslations = {
         'catalog.title': 'Catalog',
         'catalog.download': 'Download Catalog (PDF)',
         'shop.see_all': 'SEE ALL PRODUCTS',
+        'shop.ver_todo': 'View full catalog →',
+        'shop.cta_eyebrow': 'Original artworks · Limited editions · International shipping',
+        'shop.float_cta': 'Want to see all the works?',
+        'shop.float_btn': 'View full catalog',
         'shop.whatsapp_float': 'Inquire via WhatsApp'
     }
 };
@@ -64,6 +74,24 @@ document.addEventListener('DOMContentLoaded', function () {
     const savedLang = localStorage.getItem('preferredLanguage') || 'es';
     if (window.changeLanguage) {
         window.changeLanguage(savedLang);
+    }
+
+    // Dynamic product count on hero + "See All" button
+    const btnSeeAll = document.getElementById('btnSeeAll');
+    const heroCount = document.getElementById('heroObraCount');
+    if (window.products && window.products.length > 0) {
+        const count = window.products.length;
+        const lang = localStorage.getItem('preferredLanguage') || 'es';
+        if (btnSeeAll) {
+            btnSeeAll.textContent = lang === 'en'
+                ? `VIEW ALL ${count} WORKS`
+                : `VER LAS ${count} OBRAS DEL CATÁLOGO`;
+        }
+        if (heroCount) {
+            heroCount.textContent = lang === 'en'
+                ? `${count} works available`
+                : `${count} obras disponibles`;
+        }
     }
 
     const gridParams = document.getElementById('productsGrid');
@@ -282,17 +310,49 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Carousel Logic for multiple carousels
+    // Carousel Logic — manual buttons + auto-scroll
     const carouselContainers = document.querySelectorAll('.carousel-container-mini');
     carouselContainers.forEach(container => {
         const track = container.querySelector('.carousel-track');
         const prevBtn = container.querySelector('.prev-btn');
         const nextBtn = container.querySelector('.next-btn');
 
-        if (track) {
-            if (prevBtn) prevBtn.addEventListener('click', () => { track.scrollBy({ left: -170, behavior: 'smooth' }); });
-            if (nextBtn) nextBtn.addEventListener('click', () => { track.scrollBy({ left: 170, behavior: 'smooth' }); });
+        if (!track) return;
+
+        const cardWidth = () => {
+            const card = track.querySelector('.carousel-card');
+            return card ? card.offsetWidth + 20 : 320;
+        };
+
+        if (prevBtn) prevBtn.addEventListener('click', () => { track.scrollBy({ left: -cardWidth(), behavior: 'smooth' }); });
+        if (nextBtn) nextBtn.addEventListener('click', () => { track.scrollBy({ left: cardWidth(), behavior: 'smooth' }); });
+
+        // Auto-scroll: advance one card every 3.5s, pause on hover/touch
+        let autoTimer = null;
+        let paused = false;
+
+        function autoAdvance() {
+            if (paused) return;
+            const maxScroll = track.scrollWidth - track.clientWidth;
+            if (track.scrollLeft >= maxScroll - 4) {
+                track.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                track.scrollBy({ left: cardWidth(), behavior: 'smooth' });
+            }
         }
+
+        function startAuto() { autoTimer = setInterval(autoAdvance, 5000); }
+        function stopAuto() { clearInterval(autoTimer); }
+
+        startAuto();
+
+        container.addEventListener('mouseenter', () => { paused = true; stopAuto(); });
+        container.addEventListener('mouseleave', () => { paused = false; startAuto(); });
+        container.addEventListener('touchstart', () => { paused = true; stopAuto(); }, { passive: true });
+        container.addEventListener('touchend', () => {
+            paused = false;
+            setTimeout(startAuto, 2000); // resume after 2s of inactivity
+        }, { passive: true });
     });
 
     // Global Event Delegation for LightBox (catches all .product-image img clicks including static carousels)
@@ -489,7 +549,7 @@ function openModal(productOrElement) {
         modalImg.alt = product.title;
     }
     if (modalTitle) modalTitle.textContent = product.title;
-    
+
     const isCatalogModal = window.location.pathname.includes('catalog');
     if (modalPrice) modalPrice.textContent = isCatalogModal ? '' : product.price;
 

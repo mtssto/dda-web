@@ -159,6 +159,67 @@
          UX ADDITIONS: Inquiry Modal + WhatsApp btn
     ═══════════════════════════════════════════ -->
     <style>
+        /* ── Floating Catalog Banner ── */
+        .catalog-float {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            z-index: 9998;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #111;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 13px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+
+        .catalog-float.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .catalog-float:hover {
+            background: #333;
+            color: #fff;
+        }
+
+        .catalog-float-text {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .catalog-float-count {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 400;
+            letter-spacing: 0.05em;
+        }
+
+        .catalog-float-arrow {
+            font-size: 1rem;
+            opacity: 0.7;
+            transition: transform 0.2s;
+        }
+
+        .catalog-float:hover .catalog-float-arrow {
+            transform: translateX(3px);
+            opacity: 1;
+        }
+
         /* ── WhatsApp Floating Button ── */
         .whatsapp-float {
             position: fixed;
@@ -327,8 +388,25 @@
         <!-- Hero Section -->
         <section class="shop-hero-vertical">
             <div class="hero-header">
+                <p class="hero-eyebrow">
+                    <span class="hero-eyebrow-line"></span>
+                    <span data-i18n="hero.eyebrow">Arte Argentino Contemporáneo</span>
+                    <span class="hero-eyebrow-line"></span>
+                </p>
                 <h1 class="shop-title">Diego de Aduriz</h1>
                 <p class="shop-subtitle" data-i18n="hero.subtitle">Obras Originales y Ediciones Limitadas</p>
+                <div class="hero-actions">
+                    <a href="catalog.html" class="hero-catalog-btn" id="heroCatalogBtn"
+                        onclick="trackEvent('click', 'Navigation', 'Hero — Ver Catálogo')">
+                        <span data-i18n="shop.see_all">Ver catálogo completo</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                            <polyline points="12 5 19 12 12 19" />
+                        </svg>
+                    </a>
+                    <span class="hero-obra-count" id="heroObraCount"></span>
+                </div>
             </div>
 
             <div class="hero-featured">
@@ -426,14 +504,6 @@
                     </div>
                 </div>
             </div>
-        </section>
-
-        <!-- See All Products Section -->
-        <section class="shop-cta-section">
-            <a href="catalog.html" class="btn-see-all" data-i18n="shop.see_all"
-                onclick="trackEvent('click', 'Navigation', 'Ver Todos los Productos')">
-                VER TODOS LOS PRODUCTOS
-            </a>
         </section>
 
         <!-- Novedades Carousel Section -->
@@ -566,7 +636,7 @@
                                 data-dimensions="24 x 34 cm" data-technique="Tecnica mixta sobre papel"
                                 onclick="openModal(this)">
                                 <div class="product-image">
-                                    <img src="../portfolio/sections/obras/Diego+de+Aduriz+-+Paisaje+teorico+-   +Tecnica+mixta+sobre+papel+-+24+x+34+cm+-+2009.jpeg"
+                                    <img src="../portfolio/sections/obras/Diego+de+Aduriz+-+Paisaje+teorico+-+Tecnica+mixta+sobre+papel+-+24+x+34+cm+-+2009.jpeg"
                                         alt="Paisaje teórico — Diego de Aduriz, 2009">
                                 </div>
                                 <div class="product-info">
@@ -1120,6 +1190,18 @@
     <footer>
         <p>&copy; 2024 Diego de Aduriz. <span data-i18n="footer.rights">All rights reserved.</span></p>
     </footer>
+
+    <!-- ═══════════════════════════════════════════
+         UX: Floating Catalog Banner
+    ═══════════════════════════════════════════ -->
+    <a class="catalog-float" id="catalogFloat" href="catalog.html"
+        onclick="trackEvent('click', 'Navigation', 'Floating Catalog Banner')">
+        <span class="catalog-float-text">
+            <span class="catalog-float-label" data-i18n="shop.float_label">Ver catálogo completo</span>
+            <span class="catalog-float-count" id="catalogFloatCount"></span>
+        </span>
+        <span class="catalog-float-arrow">→</span>
+    </a>
 
     <!-- ═══════════════════════════════════════════
          UX: WhatsApp Floating Button

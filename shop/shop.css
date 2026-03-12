@@ -657,30 +657,119 @@ footer p {
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 60px 20px 40px;
+    padding: 80px 20px 48px;
     gap: 40px;
 }
 
 .hero-header {
-    max-width: 800px;
+    max-width: 680px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+}
+
+/* Eyebrow line */
+.hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #bbb;
+    margin: 0 0 22px;
+}
+
+.hero-eyebrow-line {
+    flex: 1;
+    max-width: 60px;
+    height: 1px;
+    background: #ddd;
+    display: block;
+}
+
+/* Title */
+.shop-hero-vertical .shop-title {
+    font-size: 4.2rem;
+    margin: 0 0 12px;
+    line-height: 1.05;
+}
+
+/* Subtitle */
+.shop-hero-vertical .shop-subtitle {
+    font-size: 0.78rem;
+    color: #aaa;
+    letter-spacing: 0.22em;
+    margin: 0 0 36px;
+}
+
+/* CTA area */
+.hero-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+.hero-catalog-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #000;
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 16px 36px;
+    transition: background 0.22s, gap 0.22s;
+}
+
+.hero-catalog-btn svg {
+    transition: transform 0.22s;
+    flex-shrink: 0;
+}
+
+.hero-catalog-btn:hover {
+    background: #222;
+    gap: 16px;
+    color: #fff;
+}
+
+.hero-catalog-btn:hover svg {
+    transform: translateX(4px);
+}
+
+.hero-obra-count {
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: #bbb;
+    text-transform: uppercase;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .shop-hero-vertical .shop-title {
+        font-size: 2.8rem;
+    }
+    .hero-catalog-btn {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 .hero-featured {
     width: 100%;
     max-width: 100%;
-    /* Allow carousel to span the whole page width */
 }
 
-/* Adjustments for title/subtitle in vertical layout */
-.shop-hero-vertical .shop-title {
-    font-size: 3.5rem;
-    margin: 0 0 10px 0;
-}
 
-.shop-hero-vertical .shop-subtitle {
-    font-size: 1.1rem;
-    color: var(--color-subtext);
-}
 
 /* --- Carousel Styling Refinement --- */
 .shop-hero-vertical .featured-carousel-wrapper {
@@ -720,6 +809,11 @@ footer p {
     margin-left: 15px;
 }
 
+/* When label is inside the row (has a sibling link), hide the right line */
+.featured-label-row .featured-label::after {
+    display: none;
+}
+
 /* Restore Carousel Logic Styles */
 .carousel-container-mini {
     position: relative;
@@ -731,7 +825,6 @@ footer p {
 .carousel-container-mini .carousel-track {
     display: flex;
     align-items: flex-start;
-    /* Align cards to the top natively */
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
@@ -789,16 +882,14 @@ footer p {
 
 .carousel-container-mini .product-image {
     aspect-ratio: auto;
-    height: auto;
-    /* Let height adapt organically */
-    min-height: 200px;
-    /* Provide a minimum baseline so empty images don't collapse */
+    height: 320px;
 }
 
 .carousel-container-mini .product-image img {
-    height: auto;
-    max-height: 450px;
+    height: 100%;
+    max-height: 320px;
     object-fit: contain;
+    width: 100%;
 }
 
 .carousel-container-mini .product-title {
@@ -970,10 +1061,7 @@ footer p {
     }
 
     .carousel-container-mini .product-image {
-        height: auto;
-        aspect-ratio: auto;
-        margin: 0 auto 10px;
-        width: 100%;
+        height: 220px;
     }
 
     .carousel-container-mini .carousel-card {
@@ -1327,27 +1415,81 @@ footer p {
     gap: 30px;
 }
 
-/* See All Button */
+/* ── Floating Catalog Banner (removed) ── */
+
 .shop-cta-section {
     text-align: center;
+    padding: 72px 20px;
+    background: #0e0e0e;
+    margin: 20px 0 0;
+    position: relative;
+    overflow: hidden;
 }
 
+.shop-cta-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 40px,
+        rgba(255,255,255,0.018) 40px,
+        rgba(255,255,255,0.018) 41px
+    );
+    pointer-events: none;
+}
+
+.cta-eyebrow {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin: 0 0 28px;
+    position: relative;
+}
+
+/* Featured label row (unused now, kept for safety) */
+.featured-label-row { display: contents; }
+.featured-ver-todo { display: none; }
+
 .btn-see-all {
-    display: inline-block;
-    background: #000;
-    color: #fff;
-    padding: 15px 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    background: #fff;
+    color: #000;
+    padding: 20px 52px;
     text-decoration: none;
     font-family: var(--font-body);
-    font-size: 0.9rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    transition: background 0.3s ease;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    position: relative;
+    transition: background 0.25s, gap 0.3s, box-shadow 0.25s;
+}
+
+.btn-see-all::after {
+    content: '→';
+    font-size: 1rem;
+    font-weight: 300;
+    transition: transform 0.25s;
 }
 
 .btn-see-all:hover {
-    background: #333;
+    background: #f0f0f0;
+    gap: 22px;
+    box-shadow: 0 0 50px rgba(255,255,255,0.14);
+    color: #000;
 }
+
+.btn-see-all:hover::after {
+    transform: translateX(5px);
+}
+
+
 
 /* Mobile Responsiveness for Catalog */
 @media (max-width: 900px) {
