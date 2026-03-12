@@ -313,15 +313,15 @@ function renderGrid(items) {
 
     grid.innerHTML = ''; // Clear existing
 
+    const isCatalog = window.location.pathname.includes('catalog');
+
     items.forEach(product => {
         const card = document.createElement('div');
         card.className = 'product-card';
         card.setAttribute('data-category', product.category);
         if (product.sold) card.classList.add('sold');
 
-        card.innerHTML = `
-            <div class="product-image">
-                <img src="${product.image}" alt="${product.title}">
+        const overlayHTML = isCatalog ? '' : `
                 <div class="masonry-overlay">
                     <div class="overlay-content">
                         <h3 class="overlay-title">${product.title}</h3>
@@ -332,11 +332,18 @@ function renderGrid(items) {
                         </p>
                         <button class="btn-grid-details-overlay" style="pointer-events: auto; margin-top: 15px; background: transparent; border: 1px solid #111; color: #111; padding: 10px 20px; font-family: var(--font-body); font-size: 0.8rem; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s ease;">DETALLES</button>
                     </div>
-                </div>
+                </div>`;
+
+        const priceHTML = isCatalog ? '' : `<p class="product-price">${product.price}</p>`;
+
+        card.innerHTML = `
+            <div class="product-image">
+                <img src="${product.image}" alt="${product.title}">
+                ${overlayHTML}
             </div>
             <div class="product-info">
                 <h3 class="product-title">${product.title}</h3>
-                <p class="product-price">${product.price}</p>
+                ${priceHTML}
                 <div class="product-actions-grid">
                     <button class="btn-grid-action btn-grid-details" data-i18n="card.details">
                         <span class="btn-icon" aria-hidden="true">
@@ -482,7 +489,9 @@ function openModal(productOrElement) {
         modalImg.alt = product.title;
     }
     if (modalTitle) modalTitle.textContent = product.title;
-    if (modalPrice) modalPrice.textContent = product.price;
+    
+    const isCatalogModal = window.location.pathname.includes('catalog');
+    if (modalPrice) modalPrice.textContent = isCatalogModal ? '' : product.price;
 
     const lang = localStorage.getItem('preferredLanguage') || 'es';
     // Access translations safely
