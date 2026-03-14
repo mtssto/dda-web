@@ -9,6 +9,9 @@ const speedRef = { current: 0 }
 // Click target — where camera should fly to
 const flyTarget = { current: null }
 
+// Set true when pointer goes down on a 3D mesh — suppresses fly-to
+const pointerOnMesh = { current: false }
+
 function ImageNode({ url, position, onImageClick }) {
     const { camera } = useThree()
     const groupRef = useRef()
@@ -88,9 +91,10 @@ function ImageNode({ url, position, onImageClick }) {
             </mesh>
             <mesh
                 ref={meshRef}
+                onPointerDown={(e) => { e.stopPropagation(); pointerOnMesh.current = true }}
                 onClick={(e) => { 
                     e.stopPropagation(); 
-                    flyTarget.current = null; // Prevent camera from flying away
+                    flyTarget.current = null;
                     if (onImageClick) onImageClick(url); 
                 }}
                 onPointerOver={() => setHovered(true)}
@@ -142,8 +146,8 @@ function CameraController() {
     const lastPointer = useRef({ x: 0, y: 0 })
     const pointerDown = useRef({ x: 0, y: 0 })
 
-    const FRICTION = 0.80
-    const ROT_FRICTION = 0.82
+    const FRICTION = 0.88
+    const ROT_FRICTION = 0.90
 
     useEffect(() => {
         const canvas = gl.domElement
@@ -167,13 +171,17 @@ function CameraController() {
                 flyTarget.current = null
             }
             lastPointer.current = { x: clientX, y: clientY }
-            yawVel.current -= dx * 0.0012
-            pitchVel.current -= dy * 0.0012
+            // Clamp per-frame delta to avoid shake from fast moves
+            const sensitivity = 0.0007
+            yawVel.current   = Math.max(-0.03, Math.min(0.03, yawVel.current   - dx * sensitivity))
+            pitchVel.current = Math.max(-0.02, Math.min(0.02, pitchVel.current - dy * sensitivity))
         }
 
         const onPointerUp = (clientX, clientY) => {
             dragging.current = false
-            if (!dragMoved.current) {
+            const wasOnMesh = pointerOnMesh.current
+            pointerOnMesh.current = false
+            if (!dragMoved.current && !wasOnMesh) {
                 const rect = canvas.getBoundingClientRect()
                 const nx = ((clientX - rect.left) / rect.width) * 2 - 1
                 const ny = -((clientY - rect.top) / rect.height) * 2 + 1
@@ -246,8 +254,8 @@ function CameraController() {
         yaw.current += yawVel.current
         pitch.current += pitchVel.current
         pitch.current = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, pitch.current))
-        yawVel.current *= ROT_FRICTION
-        pitchVel.current *= ROT_FRICTION
+        yawVel.current   = Math.max(-0.03, Math.min(0.03, yawVel.current   * ROT_FRICTION))
+        pitchVel.current = Math.max(-0.02, Math.min(0.02, pitchVel.current * ROT_FRICTION))
 
         const qYaw = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yaw.current)
         const qPitch = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), pitch.current)
@@ -259,7 +267,7 @@ function CameraController() {
             const dist = toTarget.length()
             if (dist > 8) {
                 // Increased max speed from 8 to 45, and distance multiplier for faster approach
-                velocity.current.lerp(toTarget.normalize().multiplyScalar(Math.min(dist * 0.06, 45)), 0.08)
+                velocity.current.lerp(toTarget.normalize().multiplyScalar(Math.min(dist * 0.03, 20)), 0.05)
             } else {
                 flyTarget.current = null
                 velocity.current.multiplyScalar(0.3)
@@ -280,7 +288,7 @@ function CameraController() {
             if (move.length() > 0) {
                 move.normalize()
                 // Increased arrow key acceleration
-                velocity.current.add(move.multiplyScalar(25.0 * dt * 60))
+                velocity.current.add(move.multiplyScalar(8.0 * dt * 60))
             } else {
                 // Auto-drift when idle
                 const driftFwd = new THREE.Vector3(0, 0, -1).applyQuaternion(qYaw)
@@ -299,9 +307,9 @@ function CameraController() {
 
         speedRef.current = velocity.current.length()
 
-        camera.position.x = THREE.MathUtils.clamp(camera.position.x, -2000, 2000)
-        camera.position.y = THREE.MathUtils.clamp(camera.position.y, -1200, 1200)
-        camera.position.z = THREE.MathUtils.clamp(camera.position.z, -6500, 200)
+        camera.position.x = THREE.MathUtils.clamp(camera.position.x, -2200, 2200)
+        camera.position.y = THREE.MathUtils.clamp(camera.position.y, -1500, 1500)
+        camera.position.z = THREE.MathUtils.clamp(camera.position.z, -6200, 200)
     })
 
     return null
@@ -356,9 +364,9 @@ function Scene({ items, onImageClick }) {
 
 function generatePositions(images, phrases) {
     const combined = []
-    const INNER = 150
-    const OUTER = 1200
-    const DEPTH = Math.max(3000, images.length * 20)
+    const INNER = 200
+    const OUTER = 2200
+    const DEPTH = 5000
 
     images.forEach((img, i) => {
         const goldenAngle = Math.PI * (3 - Math.sqrt(5))
