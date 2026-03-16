@@ -758,6 +758,7 @@ footer p {
     .shop-hero-vertical .shop-title {
         font-size: 2.8rem;
     }
+
     .hero-catalog-btn {
         width: 100%;
         justify-content: center;
@@ -946,6 +947,28 @@ footer p {
     .shop-info-section {
         padding: 50px 20px;
         margin-top: 60px;
+    }
+
+    /* Catalog: 2 columnas iguales en mobile */
+    .catalog-content .products-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+    }
+
+    /* Imágenes uniformes en catálogo mobile */
+    .catalog-content .product-image {
+        height: 286px !important;
+        overflow: hidden !important;
+        background: #f8f8f8 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .catalog-content .product-image img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important;
     }
 
     .image-modal {
@@ -1430,13 +1453,11 @@ footer p {
     content: '';
     position: absolute;
     inset: 0;
-    background: repeating-linear-gradient(
-        -45deg,
-        transparent,
-        transparent 40px,
-        rgba(255,255,255,0.018) 40px,
-        rgba(255,255,255,0.018) 41px
-    );
+    background: repeating-linear-gradient(-45deg,
+            transparent,
+            transparent 40px,
+            rgba(255, 255, 255, 0.018) 40px,
+            rgba(255, 255, 255, 0.018) 41px);
     pointer-events: none;
 }
 
@@ -1445,14 +1466,19 @@ footer p {
     font-size: 0.72rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.35);
+    color: rgba(255, 255, 255, 0.35);
     margin: 0 0 28px;
     position: relative;
 }
 
 /* Featured label row (unused now, kept for safety) */
-.featured-label-row { display: contents; }
-.featured-ver-todo { display: none; }
+.featured-label-row {
+    display: contents;
+}
+
+.featured-ver-todo {
+    display: none;
+}
 
 .btn-see-all {
     display: inline-flex;
@@ -1481,7 +1507,7 @@ footer p {
 .btn-see-all:hover {
     background: #f0f0f0;
     gap: 22px;
-    box-shadow: 0 0 50px rgba(255,255,255,0.14);
+    box-shadow: 0 0 50px rgba(255, 255, 255, 0.14);
     color: #000;
 }
 
@@ -1534,12 +1560,6 @@ footer p {
 
     .shop-subtitle {
         font-size: 0.9rem;
-    }
-
-    /* Force 2 columns on mobile ONLY */
-    .catalog-content .products-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 12px;
     }
 
     /* Scale down text to fit nicely in 2 columns */
