@@ -10,6 +10,17 @@ window.products = [
         "image": "/portfolio/sections/obras/Belleza-y-felicidad-con-sol-y-luna-2014- pastel-tiz-sobre-papel.png",
         "sold": true,
         "year": "2014"
+    }, {
+        "id": "diablo-elegante",
+        "title": "Diablo elegante",
+        "description": "100 x 70 cm de pastel tiza sobre papel (2015). El diablo elegante no es una figura amenazante — es un ser de pura presencia, casi un dandy del inframundo. Obra vendida que muestra la versatilidad del artista para trabajar con humor y profundidad.",
+        "price": "Consultar",
+        "dimensions": "100 x 70 cm",
+        "technique": "Pastel tiza sobre papel",
+        "category": "obras",
+        "image": "/portfolio/sections/obras/diablo-elegante-pastel-tiza-sobre-papel-2015.jpg",
+        "sold": true,
+        "year": "2015"
     },
     {
         "id": "criatura-que-sopla",
@@ -730,5 +741,5 @@ window.products = [
         "image": "https://64.media.tumblr.com/15528b2c6461bb6795b432f0b5a67bd3/tumblr_n2757yIlWR1r74tb2o1_540.jpg",
         "sold": false,
         "year": "Consultar año"
-    }
+    },
 ];
