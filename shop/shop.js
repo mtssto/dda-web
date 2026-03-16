@@ -731,6 +731,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 doc.setTextColor(0);
 
+                // Watermark function
+                function addWatermark(doc) {
+                    const pageW = doc.internal.pageSize.getWidth();
+                    const pageH = doc.internal.pageSize.getHeight();
+                    doc.saveGraphicsState();
+                    doc.setGState(new doc.GState({ opacity: 0.06 }));
+                    doc.setFont("helvetica", "bold");
+                    doc.setFontSize(72);
+                    doc.setTextColor(0);
+                    doc.text("dda", pageW / 2, pageH / 2, { align: "center", angle: 45 });
+                    doc.restoreGraphicsState();
+                }
+
+                // Apply watermark to first page
+                addWatermark(doc);
+
                 // Get visible products
                 const visibleCards = Array.from(document.querySelectorAll('.product-card')).filter(card => card.style.display !== 'none');
 
@@ -752,31 +768,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     const title = card.querySelector('.product-title').innerText;
-                    const price = card.querySelector('.product-price').innerText;
+                    const priceEl = card.querySelector('.product-price');
+                    const price = priceEl ? priceEl.innerText : 'Consultar';
                     const imgSrc = card.querySelector('img').src;
 
-                    // Find product data from global array to get dimensions/technique
+                    // Find product data from global array
                     const productData = (window.products || []).find(p => imgSrc.includes(p.image.split('/').pop()));
 
-                    // Add Image using Promise to ensure base64 generation doesn't block or taint
-                    try {
-                        let base64Data;
-                        const domImg = card.querySelector('img');
-                        if (!domImg || !domImg.src) throw new Error('No image source');
-
-                        // Attempt 1: Fetch as Blob and convert to Base64 (best quality, works locally if server is running without CORS headers)
+                    // Helper: fetch image as base64
+                    async function fetchBase64(src) {
                         try {
-                            const response = await fetch(domImg.src);
+                            const response = await fetch(src);
                             const blob = await response.blob();
-                            base64Data = await new Promise((resolve, reject) => {
+                            return await new Promise((resolve, reject) => {
                                 const reader = new FileReader();
                                 reader.onloadend = () => resolve(reader.result);
                                 reader.onerror = reject;
                                 reader.readAsDataURL(blob);
                             });
                         } catch (fetchErr) {
-                            // Attempt 2: Fallback to Canvas (works on some file:/// setups without CrossOrigin requirements)
-                            base64Data = await new Promise((resolve, reject) => {
+                            return await new Promise((resolve, reject) => {
                                 const img = new Image();
                                 img.onload = () => {
                                     const canvas = document.createElement('canvas');
@@ -784,89 +795,125 @@ document.addEventListener('DOMContentLoaded', () => {
                                     canvas.height = img.height || 800;
                                     const ctx = canvas.getContext('2d');
                                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                                    try {
-                                        resolve(canvas.toDataURL('image/jpeg', 0.8));
-                                    } catch (e) {
-                                        reject(e); // Catch canvas tainting DOMException
-                                    }
+                                    try { resolve(canvas.toDataURL('image/jpeg', 0.8)); }
+                                    catch (e) { reject(e); }
                                 };
                                 img.onerror = () => reject('Image load error');
-                                img.src = domImg.src;
+                                img.src = src;
                             });
                         }
-
-                        // Calculate aspect ratio to fit within massive A4 bounds (margins 20mm)
-                        const margin = 20;
-                        const maxImgWidth = 170; // 210 - 40
-                        const maxImgHeight = 160; // Leave room below for title and description
-
-                        let imgWidth = domImg.naturalWidth || domImg.width || 800;
-                        let imgHeight = domImg.naturalHeight || domImg.height || 800;
-
-                        let renderWidth = maxImgWidth;
-                        let renderHeight = maxImgHeight;
-
-                        if (imgWidth / imgHeight > maxImgWidth / maxImgHeight) {
-                            renderHeight = (imgHeight / imgWidth) * maxImgWidth;
-                        } else {
-                            renderWidth = (imgWidth / imgHeight) * maxImgHeight;
-                        }
-
-                        // Center the image horizontally
-                        const xOffset = margin + (maxImgWidth - renderWidth) / 2;
-                        const imgY = yPos;
-
-                        doc.addImage(base64Data, 'JPEG', xOffset, imgY, renderWidth, renderHeight);
-
-                        // Move cursor down below image
-                        yPos += renderHeight + 15;
-
-                    } catch (imgErr) {
-                        console.warn('Could not add image to PDF', imgErr);
-                        const margin = 20;
-                        doc.setDrawColor(200);
-                        doc.rect(margin, yPos, 170, 100);
-                        doc.setFontSize(12);
-                        doc.text("Sin imagen", 105, yPos + 50, { align: "center" });
-                        yPos += 115;
                     }
 
-                    // Add Text Info Below Image
+                    // Helper: get image natural dimensions from base64
+                    async function getImgDims(base64) {
+                        return new Promise(r => {
+                            const img = new Image();
+                            img.onload = () => r({ w: img.naturalWidth || 800, h: img.naturalHeight || 800 });
+                            img.src = base64;
+                        });
+                    }
+
+                    // Helper: fit image into a box preserving aspect ratio, returns {w, h}
+                    function fitInBox(imgW, imgH, boxW, boxH) {
+                        if (imgW / imgH > boxW / boxH) {
+                            return { w: boxW, h: (imgH / imgW) * boxW };
+                        } else {
+                            return { w: (imgW / imgH) * boxH, h: boxH };
+                        }
+                    }
+
+                    const hasBack = productData && productData.images && productData.images.length > 1;
                     const margin = 20;
-                    doc.setFontSize(16);
+                    const pageW = 210;
+                    const maxImgH = 150;
+
+                    if (hasBack) {
+                        // Side by side: each image gets half the page width minus margins
+                        const colW = (pageW - margin * 2 - 8) / 2; // 8px gap between
+                        try {
+                            const frontBase64 = await fetchBase64(productData.images[0]);
+                            const backBase64 = await fetchBase64(productData.images[1]);
+                            const frontDims = await getImgDims(frontBase64);
+                            const backDims = await getImgDims(backBase64);
+                            const frontFit = fitInBox(frontDims.w, frontDims.h, colW, maxImgH);
+                            const backFit = fitInBox(backDims.w, backDims.h, colW, maxImgH);
+                            const rowH = Math.max(frontFit.h, backFit.h);
+
+                            // Front image — left column, centered vertically
+                            const frontX = margin + (colW - frontFit.w) / 2;
+                            const frontY = yPos + (rowH - frontFit.h) / 2;
+                            doc.addImage(frontBase64, 'JPEG', frontX, frontY, frontFit.w, frontFit.h);
+
+                            // Back image — right column, centered vertically
+                            const backX = margin + colW + 8 + (colW - backFit.w) / 2;
+                            const backY = yPos + (rowH - backFit.h) / 2;
+                            doc.addImage(backBase64, 'JPEG', backX, backY, backFit.w, backFit.h);
+
+                            // Labels below images
+                            doc.setFontSize(7);
+                            doc.setTextColor(180);
+                            doc.text('FRENTE', margin + colW / 2, yPos + rowH + 5, { align: 'center' });
+                            doc.text('REVERSO', margin + colW + 8 + colW / 2, yPos + rowH + 5, { align: 'center' });
+
+                            yPos += rowH + 10;
+                        } catch (e) {
+                            console.warn('Error adding side-by-side images', e);
+                            yPos += 10;
+                        }
+                    } else {
+                        // Single image centered
+                        try {
+                            const frontBase64 = await fetchBase64(imgSrc);
+                            const frontDims = await getImgDims(frontBase64);
+                            const fit = fitInBox(frontDims.w, frontDims.h, 170, maxImgH);
+                            const xOffset = margin + (170 - fit.w) / 2;
+                            doc.addImage(frontBase64, 'JPEG', xOffset, yPos, fit.w, fit.h);
+                            yPos += fit.h + 10;
+                        } catch (e) {
+                            console.warn('Could not add image to PDF', e);
+                            doc.setDrawColor(200);
+                            doc.rect(margin, yPos, 170, 80);
+                            doc.setFontSize(10);
+                            doc.text("Sin imagen", 105, yPos + 40, { align: "center" });
+                            yPos += 90;
+                        }
+                    }
+
+                    // Text info
+                    if (yPos > pageHeight - 60) { doc.addPage(); yPos = 20; addWatermark(doc); }
+                    doc.setFontSize(15);
                     doc.setFont("helvetica", "bold");
+                    doc.setTextColor(0);
                     doc.text(title, margin, yPos);
                     yPos += 8;
 
-                    doc.setFontSize(12);
+                    doc.setFontSize(10);
                     doc.setFont("helvetica", "normal");
-                    doc.setTextColor(80);
+                    doc.setTextColor(90);
                     if (productData) {
-                        doc.text(`Técnica: ${productData.technique}`, margin, yPos);
-                        yPos += 7;
-                        doc.text(`Dimensiones: ${productData.dimensions}`, margin, yPos);
-                        yPos += 7;
-
-                        let yearText = productData.year || '';
-                        let yearPrint = '';
-                        if (yearText && yearText !== "Consultar año") {
-                            yearPrint = yearText;
-                        } else if (yearText === "Consultar año") {
-                            yearPrint = `Consultar año`;
-                        }
-                        if (yearPrint) {
-                            doc.text(yearPrint, margin, yPos);
-                            yPos += 7;
+                        if (productData.technique) { doc.text(`Técnica: ${productData.technique}`, margin, yPos); yPos += 5; }
+                        if (productData.dimensions) { doc.text(`Dimensiones: ${productData.dimensions}`, margin, yPos); yPos += 5; }
+                        if (productData.year && productData.year !== "Consultar año") { doc.text(productData.year, margin, yPos); yPos += 5; }
+                        if (productData.description) {
+                            yPos += 2;
+                            doc.setFontSize(9);
+                            doc.setTextColor(70);
+                            doc.setFont("helvetica", "italic");
+                            const descLines = doc.splitTextToSize(productData.description, 170);
+                            doc.text(descLines, margin, yPos);
+                            yPos += descLines.length * 4.5 + 3;
                         }
                     }
 
-                    doc.setFontSize(14);
+                    doc.setFontSize(12);
                     doc.setFont("helvetica", "bold");
                     doc.setTextColor(0);
                     doc.text(`Precio: ${price}`, margin, yPos + 2);
 
-                    // Ensure next item gets a new page if this was a large image
-                    yPos += 200; // Force page break on next loop
+                    // New page for next product + watermark
+                    doc.addPage();
+                    addWatermark(doc);
+                    yPos = 20;
                 }
 
                 // Save the PDF
