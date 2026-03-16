@@ -2,6 +2,7 @@ window.products = [
     {
         "id": "belleza-y-felicidad-con-sol-y-luna",
         "title": "Belleza y felicidad con sol y luna",
+        "description": "Una obra que celebra la dualidad: el sol y la luna conviven en un mismo espacio cargado de energía y color. Pastel tiza trabajado con una sensibilidad única que define el universo visual de Diego de Aduriz.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Pastel tiza sobre papel",
@@ -13,6 +14,7 @@ window.products = [
     {
         "id": "criatura-que-sopla",
         "title": "Criatura que sopla",
+        "description": "Obra reciente de 2025, pintada sobre madera con pastel al óleo. Una figura enigmática que exhala vida y movimiento. Pieza única con reverso trabajado — se entrega con certificado de autenticidad.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Pastel al óleo sobre madera",
@@ -28,6 +30,7 @@ window.products = [
     {
         "id": "rayo-dorado",
         "title": "Rayo dorado",
+        "description": "140 x 82 cm de pura energía sobre madera. La combinación de aerosol y pastel crea capas de profundidad y luz que cambian según el ángulo de visión. Una obra de gran presencia para espacios que buscan impacto visual.",
         "price": "$3000 USD",
         "dimensions": "140 x 82 cm",
         "technique": "Aerosol y pastel sobre madera",
@@ -39,6 +42,7 @@ window.products = [
     {
         "id": "paisaje-sol-sonriente",
         "title": "Paisaje con sol sonriente",
+        "description": "Un paisaje que irradia calidez. El sol como protagonista con una expresividad propia del universo simbólico de Aduriz. Obra en pastel sobre papel, delicada y luminosa.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Pastel sobre papel",
@@ -50,6 +54,7 @@ window.products = [
     {
         "id": "yukito",
         "title": "Yukito",
+        "description": "Un gato de formato íntimo (33 x 25 cm) trabajado con pastel tiza sobre papel. Ideal para espacios pequeños o como primera obra de colección. La mirada del animal transmite una calma hipnótica.",
         "price": "$2000 USD",
         "dimensions": "33 x 25 cm",
         "technique": "Pastel tiza sobre papel",
@@ -61,9 +66,10 @@ window.products = [
     {
         "id": "payaso",
         "title": "Payaso Iluminado",
+        "description": "Pintado sobre una puerta de madera real (51 x 98 cm), esta obra rompe el límite entre objeto y arte. El acrílico y el pastel óleo se combinan sobre una superficie que ya tiene historia propia. Reverso intervenido — una pieza escultórica tanto como pictórica.",
         "price": "Consultar",
         "dimensions": "51 x 98 cm",
-        "technique": "Acrilico y pastel oleo sobre puerta de madera",
+        "technique": "Acrílico y pastel óleo sobre puerta de madera",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/payaso.png",
         "images": [
@@ -76,6 +82,7 @@ window.products = [
     {
         "id": "ascension",
         "title": "Ascensión",
+        "description": "Una figura que asciende, trabajada en pastel tiza sobre madera. La verticalidad de la composición refuerza el movimiento hacia arriba, hacia la luz. Una obra de gran carga simbólica y espiritual.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Pastel tiza sobre madera",
@@ -87,6 +94,7 @@ window.products = [
     {
         "id": "don-diego-explosion",
         "title": "Don Diego y los soles en explosión",
+        "description": "Autorretrato expandido: el artista en medio de una explosión de soles, sobre tela. Una obra autobiográfica y cósmica al mismo tiempo. El pastel sobre tela logra una textura rica y vibrante que hay que ver en persona.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Pastel sobre tela",
@@ -98,6 +106,7 @@ window.products = [
     {
         "id": "do-re-mi-fa",
         "title": "Do re mi fa sol la si",
+        "description": "La música traducida en imagen. Una obra que evoca ritmo y color a partir de las notas de la escala, trabajada en pastel sobre papel con la libertad gestual característica de Aduriz.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Pastel sobre papel",
@@ -109,6 +118,7 @@ window.products = [
     {
         "id": "gato-arcoiris",
         "title": "Gato arcoiris",
+        "description": "100 x 65 cm de color puro. Un gato envuelto en el espectro del arcoiris, en pastel tiza sobre papel. Una de las obras más celebradas de la serie felina de Aduriz — festiva, luminosa e imposible de ignorar.",
         "price": "Consultar",
         "dimensions": "100 x 65 cm",
         "technique": "Pastel tiza sobre papel",
@@ -120,6 +130,7 @@ window.products = [
     {
         "id": "gato-con-flor-de-loto",
         "title": "Gato con flor de loto",
+        "description": "Un pequeño gran cuadro: 25 x 18 cm donde conviven la delicadeza de la flor de loto y la presencia del gato. Formato íntimo, ideal como regalo o primera pieza de colección. Pastel tiza sobre papel, 2018.",
         "price": "Consultar",
         "dimensions": "25 x 18 cm",
         "technique": "Pastel tiza sobre papel",
@@ -131,6 +142,7 @@ window.products = [
     {
         "id": "cartas-a-dios",
         "title": "Cartas a Dios",
+        "description": "Una obra que dialoga con lo sagrado y lo cotidiano. El título sugiere una comunicación directa, íntima, casi imposible — y sin embargo, la imagen la hace posible. Una de las piezas más personales del artista.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Consultar técnica",
@@ -142,6 +154,7 @@ window.products = [
     {
         "id": "Autorretrato",
         "title": "Autorretrato",
+        "description": "El artista frente a sí mismo. Trabajado en pastel tiza sobre madera, este autorretrato captura una mirada introspectiva y directa. Pieza única dentro de la serie de autorretratos de Aduriz.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Pastel tiza sobre madera",
@@ -151,8 +164,9 @@ window.products = [
         "year": "Consultar año"
     },
     {
-        "id": "Autorretrato",
+        "id": "Autorretrato-2007",
         "title": "Autorretrato",
+        "description": "110 x 150 cm en marcadores sobre papel — una de las obras más tempranas y sorprendentes del artista (2007). La escala y la técnica inusual hacen de esta pieza un documento histórico dentro de su obra.",
         "price": "Consultar",
         "dimensions": "110 x 150 cm",
         "technique": "Marcadores sobre papel",
@@ -164,6 +178,7 @@ window.products = [
     {
         "id": "carta-7",
         "title": "Carta 7",
+        "description": "Una obra monumental: 150 x 200 cm de aerosol, acrílico y pastel sobre tela (2022). La superposición de técnicas crea un campo pictórico denso y vibrante. Una de las piezas más ambiciosas y recientes de Aduriz — ideal para espacios de gran escala.",
         "price": "Consultar",
         "dimensions": "150 x 200 cm",
         "technique": "Aerosol, acrílico, pastel sobre tela",
@@ -175,6 +190,7 @@ window.products = [
     {
         "id": "retrato-1",
         "title": "Autorretrato con collar",
+        "description": "Un autorretrato que juega con la identidad y el adorno. El collar como elemento de poder y vulnerabilidad al mismo tiempo. Pastel tiza sobre madera con una presencia que no pasa desapercibida.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Pastel tiza sobre madera",
@@ -186,6 +202,7 @@ window.products = [
     {
         "id": "retrato-2",
         "title": "Autorretrato con máscara de gato",
+        "description": "Entre humano y animal, entre persona y personaje. El artista usa la máscara de gato para explorar otra identidad posible. Una obra cargada de humor, misterio y profundidad. Pastel tiza sobre madera.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Pastel tiza sobre madera",
@@ -197,9 +214,10 @@ window.products = [
     {
         "id": "the-future-is-stupid",
         "title": "The future is stupid",
+        "description": "50 x 35 cm de ironía y color (2015). Una obra que envejeció muy bien — su título resuena hoy más que nunca. Técnica mixta sobre papel con la gestualidad directa de Aduriz. Para los que coleccionan arte con punto de vista.",
         "price": "$2000 USD",
         "dimensions": "50 x 35 cm",
-        "technique": "Tecnica mixta sobre papel",
+        "technique": "Técnica mixta sobre papel",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+The+future+is+stupid+-+tecnica+mixta+sobre+papel+-+50+x+35+cm+-+2015.png",
         "sold": false,
@@ -208,6 +226,7 @@ window.products = [
     {
         "id": "abecedario",
         "title": "Abecedario",
+        "description": "150 x 100 cm donde el lenguaje se vuelve imagen. Las letras del abecedario se transforman en un campo pictórico vivo, trabajado en pastel y acrílico sobre tela (2021). Una obra que habla del origen de todo: las palabras, la comunicación, el arte mismo.",
         "price": "$2500 USD",
         "dimensions": "150 x 100 cm",
         "technique": "Pastel y acrílico sobre tela",
@@ -219,9 +238,10 @@ window.products = [
     {
         "id": "sin-titulo",
         "title": "Sin titulo",
+        "description": "34 x 24 cm de técnica mixta sobre papel (2012). Una obra temprana que muestra la voz en formación: gestual, instintiva, sin concesiones. Para los que quieren seguir la trayectoria del artista desde sus inicios.",
         "price": "Consultar",
         "dimensions": "34 x 24 cm",
-        "technique": "Tecnica mixta sobre papel",
+        "technique": "Técnica mixta sobre papel",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Sin+titulo+-+Tecnica+mixta+sobre+papel+-+34+x+24+cm+-+2012.png",
         "sold": false,
@@ -230,6 +250,7 @@ window.products = [
     {
         "id": "mi-cuerpo-electrico-24",
         "title": "ULTRAVIOLETA/INFRARROJO",
+        "description": "114 x 114 cm cuadrados de acrílico y aerosol sobre madera (2020). Un formato perfecto, una paleta extrema. La obra vibra entre longitudes de onda invisibles al ojo humano — pero el arte las hace visibles.",
         "price": "Consultar",
         "dimensions": "114 x 114 cm",
         "technique": "Acrílico y aerosol sobre madera",
@@ -241,9 +262,10 @@ window.products = [
     {
         "id": "mi-cuerpo-electrico-29",
         "title": "Séptimo rayo",
+        "description": "Una obra de gran escala (160 x 200 cm) en pastel y acrílico sobre tela (2021). El séptimo rayo como metáfora de la transformación — una energía que atraviesa y cambia todo lo que toca. Pieza central para una colección o espacio de gran envergadura.",
         "price": "Consultar",
         "dimensions": "160 x 200 cm",
-        "technique": "Pastel y acrilico sobre tela",
+        "technique": "Pastel y acrílico sobre tela",
         "category": "paisajes",
         "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Mi+cuerpo+electrico+29+160+x+200+-+Pastel+y+acrilico+sobre+tela+-+2021.jpg",
         "sold": false,
@@ -252,6 +274,7 @@ window.products = [
     {
         "id": "sin-titulo-3",
         "title": "Sin título",
+        "description": "Una obra que habla por sí sola, sin necesitar nombre. La ausencia de título es una invitación a proyectar el significado propio. Disponible para consulta.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Consultar técnica",
@@ -263,6 +286,7 @@ window.products = [
     {
         "id": "dibu-10",
         "title": "Paisaje con Flor y Hombre Plateado",
+        "description": "Un paisaje de bolsillo con protagonistas insólitos: una flor y un hombre plateado que conviven en la misma escena. Técnica mixta sobre papel, pequeño formato, gran imaginación.",
         "price": "14 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -274,6 +298,7 @@ window.products = [
     {
         "id": "obra-sin-titulo",
         "title": "ESTE ES UN LUGAR SAGRADO",
+        "description": "El título lo dice todo — y la imagen lo confirma. Una obra de técnica mixta que invoca la sacralidad del espacio pictórico. Para quienes buscan arte con intención y presencia.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta",
@@ -285,6 +310,7 @@ window.products = [
     {
         "id": "obra-sin-titulo-mg-0329",
         "title": "Paisaje con duende",
+        "description": "Un paisaje habitado por una presencia mágica. El duende aparece integrado a la naturaleza, como si siempre hubiera estado ahí. Pastel tiza sobre papel con la ternura y el misterio característicos de Aduriz.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Pastel tiza sobre papel",
@@ -296,6 +322,7 @@ window.products = [
     {
         "id": "4-cabezas",
         "title": "Cuatro cabezas",
+        "description": "Cuatro personalidades, cuatro miradas, un mismo plano. Una obra que multiplica la presencia y genera un diálogo silencioso entre figuras. Pastel sobre papel con composición densa y expresiva.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Pastel sobre papel",
@@ -307,9 +334,10 @@ window.products = [
     {
         "id": "paisaje-teorico",
         "title": "Paisaje teórico",
+        "description": "24 x 34 cm de técnica mixta sobre papel (2009). Un paisaje que no existe en la naturaleza sino en la mente — construido con lógica propia, colores imposibles y una coherencia que solo el arte puede lograr.",
         "price": "Consultar",
         "dimensions": "24 x 34 cm",
-        "technique": "Tecnica mixta sobre papel",
+        "technique": "Técnica mixta sobre papel",
         "category": "paisajes",
         "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Paisaje+teorico+-+Tecnica+mixta+sobre+papel+-+24+x+34+cm+-+2009.png",
         "sold": false,
@@ -318,6 +346,7 @@ window.products = [
     {
         "id": "paisaje-con-oso",
         "title": "Paisaje con oso",
+        "description": "140 x 125 cm de aerosol y pastel sobre madera. Un oso en un paisaje que lo contiene y lo celebra — monumental como el animal, libre como la técnica. Una de las piezas más potentes del catálogo.",
         "price": "$2500 USD",
         "dimensions": "140 x 125 cm",
         "technique": "Aerosol y pastel sobre madera",
@@ -329,6 +358,7 @@ window.products = [
     {
         "id": "cuarto-creciente",
         "title": "Cuarto creciente",
+        "description": "La luna en su fase de crecimiento como tema y como forma. Pastel sobre tela con una paleta nocturna y una energía expansiva. Una obra que cambia con la luz del espacio donde se instale.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Pastel sobre tela",
@@ -340,6 +370,7 @@ window.products = [
     {
         "id": "gato-merlin",
         "title": "Gato Merlín",
+        "description": "La obra más grande e icónica de la serie felina: 205 x 210 cm de pastel sobre tela. Merlín no es un gato — es una presencia. Una obra de museo que domina cualquier espacio con autoridad y carisma. Para coleccionistas que buscan una pieza central e irrepetible.",
         "price": "$5000 USD",
         "dimensions": "205 x 210 cm",
         "technique": "Pastel sobre tela",
@@ -351,6 +382,7 @@ window.products = [
     {
         "id": "paisaje-con-mascara-i",
         "title": "Paisaje con máscara I",
+        "description": "182 x 102 cm de pintura y collage sobre tela. La máscara aparece como elemento extraño y necesario al mismo tiempo — flotando en un paisaje que la absorbe sin explicarla. Una obra que genera preguntas.",
         "price": "$3000 USD",
         "dimensions": "182 x 102 cm",
         "technique": "Pintura y collage sobre tela",
@@ -362,6 +394,7 @@ window.products = [
     {
         "id": "gato-cosmico",
         "title": "Gato cósmico",
+        "description": "80 x 110 cm de pastel tiza (2013). Un gato que trasciende lo terrestre y ocupa el cosmos como si le perteneciera. Obra vendida — si te interesa una pieza similar, escribinos.",
         "price": "Consultar",
         "dimensions": "80 x 110 cm",
         "technique": "Pastel tiza",
@@ -373,6 +406,7 @@ window.products = [
     {
         "id": "paisaje-con-mascara-ii",
         "title": "Paisaje con máscara II",
+        "description": "La segunda entrega de la serie de máscaras en paisajes. Pintura y collage sobre tela — la máscara como segundo rostro del territorio. Una obra que dialoga con la primera y puede exhibirse junto a ella.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Pintura y collage sobre tela",
@@ -384,6 +418,7 @@ window.products = [
     {
         "id": "paisaje-azul-collage",
         "title": "Paisaje azul",
+        "description": "Collage de atmósfera serena y profunda. El azul domina y unifica una composición construida con fragmentos que juntos forman un territorio propio. Una obra contemplativa para espacios que buscan calma.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Collage",
@@ -395,9 +430,10 @@ window.products = [
     {
         "id": "paisaje-con-monstruo-amistoso",
         "title": "Paisaje con monstruo amistoso",
+        "description": "24 x 34 cm de lápiz sobre papel (2011). El monstruo aquí no da miedo — es parte del paisaje, casi un vecino. Una obra tierna y precisa que muestra el universo de Aduriz desde sus fundamentos gráficos.",
         "price": "Consultar",
         "dimensions": "24 x 34 cm",
-        "technique": "Lapiz sobre papel",
+        "technique": "Lápiz sobre papel",
         "category": "paisajes",
         "image": "/portfolio/sections/obras/Diego+de+Aduriz+-+Piasaje+con+monstruo+amistoso+-+Lapiz+sobre+papel+-+24+x+34+cm+-+2011.jpeg",
         "sold": false,
@@ -406,6 +442,7 @@ window.products = [
     {
         "id": "luz-azul",
         "title": "LUZAZUL",
+        "description": "180 x 210 cm de acrílico y pastel tiza sobre tela (2015). Una obra que llena una habitación de luz azul — una presencia física, casi meteorológica. De las obras más importantes y de mayor escala del artista.",
         "price": "Consultar",
         "dimensions": "180 x 210 cm",
         "technique": "Acrílico y pastel tiza sobre tela",
@@ -417,6 +454,7 @@ window.products = [
     {
         "id": "gato-celeste",
         "title": "Gato celeste",
+        "description": "35 x 25 cm de pastel tiza sobre papel — pequeño, intenso, celestial. El gato celeste flota entre el cielo y la tierra con una gracia que solo el pastel puede capturar así. Ideal como primera obra o regalo para amantes del arte y los gatos.",
         "price": "$1500 USD",
         "dimensions": "35 x 25 cm",
         "technique": "Pastel tiza sobre papel",
@@ -428,6 +466,7 @@ window.products = [
     {
         "id": "puerta-azul",
         "title": "Puerta Azul",
+        "description": "210 x 92 cm de pintura y pastel tiza sobre madera (2015–2017). Una puerta real convertida en umbral simbólico — azul como el cielo, como el agua, como lo que está del otro lado. Obra vendida que dejó huella.",
         "price": "Consultar",
         "dimensions": "210 x 92 cm",
         "technique": "Pintura y pastel tiza sobre madera",
@@ -439,9 +478,10 @@ window.products = [
     {
         "id": "puerta-1",
         "title": "Espíritu (Humito)",
+        "description": "80 x 195 cm de acrílico y pastel óleo sobre puerta de madera (2018). El espíritu emerge como humito — liviano, efímero, irresistible. El soporte puerta le da una dimensión corporal única: esta obra tiene la escala de una persona.",
         "price": "Consultar",
         "dimensions": "80 x 195 cm",
-        "technique": "Acrílico y pastel oleo sobre puerta / Técnica mixta sobre madera",
+        "technique": "Acrílico y pastel óleo sobre puerta / Técnica mixta sobre madera",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/puerta-1-espiritu(humite)-tecnica-pastel-sobre-puerta-tecnoca-mixta-sobre-madera.png",
         "images": [
@@ -453,7 +493,8 @@ window.products = [
     },
     {
         "id": "dibu-1",
-        "title": "diábolo",
+        "title": "Diábolo",
+        "description": "Ilustración original en técnica mixta sobre papel. Pequeño formato coleccionable, firmado por el artista. Ideal para iniciar una colección accesible.",
         "price": "12 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -465,6 +506,7 @@ window.products = [
     {
         "id": "dibu-2",
         "title": "Ilustración #2",
+        "description": "Ilustración original en técnica mixta sobre papel. Pieza única, firmada. Una forma accesible de tener una obra original de Diego de Aduriz.",
         "price": "22 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -476,6 +518,7 @@ window.products = [
     {
         "id": "dibu-3",
         "title": "Ilustración #3",
+        "description": "Ilustración original en técnica mixta sobre papel. Pieza única y firmada — arte original a precio de entrada.",
         "price": "8 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -487,6 +530,7 @@ window.products = [
     {
         "id": "dibu-4",
         "title": "Ilustración #4",
+        "description": "Ilustración original en técnica mixta sobre papel. Pieza única, firmada por el artista.",
         "price": "15 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -498,6 +542,7 @@ window.products = [
     {
         "id": "dibu-5",
         "title": "Ilustración #5",
+        "description": "Ilustración original en técnica mixta sobre papel. Pieza única, firmada por el artista.",
         "price": "19 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -509,6 +554,7 @@ window.products = [
     {
         "id": "dibu-6",
         "title": "Ilustración #6",
+        "description": "Ilustración original en técnica mixta sobre papel. Pieza única, firmada por el artista.",
         "price": "6 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -520,6 +566,7 @@ window.products = [
     {
         "id": "dibu-7",
         "title": "Ilustración #7",
+        "description": "Ilustración original en técnica mixta sobre papel. Pieza única, firmada por el artista.",
         "price": "24 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -531,6 +578,7 @@ window.products = [
     {
         "id": "dibu-8",
         "title": "Ilustración #8",
+        "description": "Ilustración original en técnica mixta sobre papel. Pieza única, firmada por el artista.",
         "price": "11 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -542,6 +590,7 @@ window.products = [
     {
         "id": "dibu-9",
         "title": "Ilustración #9",
+        "description": "Ilustración original en técnica mixta sobre papel. Pieza única, firmada por el artista.",
         "price": "20 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -552,7 +601,8 @@ window.products = [
     },
     {
         "id": "dibu-11",
-        "title": "diábolo1",
+        "title": "Diábolo 1",
+        "description": "Ilustración original en técnica mixta sobre papel. Pieza única, firmada por el artista.",
         "price": "9 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -564,6 +614,7 @@ window.products = [
     {
         "id": "dibu-12",
         "title": "Paisaje fenomenal",
+        "description": "Un paisaje que merece su nombre. Ilustración original en técnica mixta sobre papel — pequeño formato, gran universo.",
         "price": "25 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -574,7 +625,8 @@ window.products = [
     },
     {
         "id": "dibu-14",
-        "title": "diábolo4",
+        "title": "Diábolo 4",
+        "description": "Ilustración original en técnica mixta sobre papel. Pieza única, firmada por el artista.",
         "price": "7 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -585,7 +637,8 @@ window.products = [
     },
     {
         "id": "dibu-15",
-        "title": "diábolo5",
+        "title": "Diábolo 5",
+        "description": "Ilustración original en técnica mixta sobre papel. Pieza única, firmada por el artista.",
         "price": "18 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -596,7 +649,8 @@ window.products = [
     },
     {
         "id": "dibu-16",
-        "title": "diábolo6",
+        "title": "Diábolo 6",
+        "description": "Ilustración original en técnica mixta sobre papel. Pieza única, firmada por el artista.",
         "price": "23 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -607,7 +661,8 @@ window.products = [
     },
     {
         "id": "dibu-19",
-        "title": "diábolo9",
+        "title": "Diábolo 9",
+        "description": "Ilustración original en técnica mixta sobre papel. Pieza única, firmada por el artista.",
         "price": "16 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -619,6 +674,7 @@ window.products = [
     {
         "id": "dibu-20",
         "title": "Ilustración #20",
+        "description": "Ilustración original en técnica mixta sobre papel. Pieza única, firmada por el artista.",
         "price": "13 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -630,9 +686,10 @@ window.products = [
     {
         "id": "digital-artwork-1",
         "title": "Digital Artwork #1",
+        "description": "Obra digital original. Impresión de alta calidad disponible en 30 x 40 cm. El arte digital de Aduriz trae su universo visual a un formato reproducible y accesible.",
         "price": "$20.00 USD",
         "dimensions": "30 x 40 cm",
-        "technique": "Técnica mixta sobre papel",
+        "technique": "Arte digital",
         "category": "digital",
         "image": "https://64.media.tumblr.com/c29b535685cd870a467bdc6eb0d60ef2/tumblr_n27f1t2IvP1r74tb2o1_1280.jpg",
         "sold": false,
@@ -641,9 +698,10 @@ window.products = [
     {
         "id": "digital-artwork-2",
         "title": "Digital Artwork #2",
+        "description": "Obra digital original. Impresión de alta calidad disponible en 30 x 40 cm.",
         "price": "$20.00 USD",
         "dimensions": "30 x 40 cm",
-        "technique": "Técnica mixta sobre papel",
+        "technique": "Arte digital",
         "category": "digital",
         "image": "https://64.media.tumblr.com/c3123779be189a5a8737b190f595574a/tumblr_n275dsU7Xr1r74tb2o1_250.jpg",
         "sold": false,
@@ -652,9 +710,10 @@ window.products = [
     {
         "id": "digital-artwork-3",
         "title": "Digital Artwork #3",
+        "description": "Obra digital original. Impresión de alta calidad disponible en 30 x 40 cm.",
         "price": "$20.00 USD",
         "dimensions": "30 x 40 cm",
-        "technique": "Técnica mixta sobre papel",
+        "technique": "Arte digital",
         "category": "digital",
         "image": "https://64.media.tumblr.com/9e5c31eb51ce7e28c7982f271746f302/tumblr_n275eaKQwf1r74tb2o1_640.jpg",
         "sold": false,
@@ -663,9 +722,10 @@ window.products = [
     {
         "id": "digital-artwork-4",
         "title": "Digital Artwork #4",
+        "description": "Obra digital original. Impresión de alta calidad disponible en 30 x 40 cm.",
         "price": "$20.00 USD",
         "dimensions": "30 x 40 cm",
-        "technique": "Técnica mixta sobre papel",
+        "technique": "Arte digital",
         "category": "digital",
         "image": "https://64.media.tumblr.com/15528b2c6461bb6795b432f0b5a67bd3/tumblr_n2757yIlWR1r74tb2o1_540.jpg",
         "sold": false,

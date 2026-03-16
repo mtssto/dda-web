@@ -139,6 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
                 <div class="modal-info-wrapper">
                     <h2 id="modalTitle" class="modal-title"></h2>
+                    <p id="modalDescription" class="modal-description" style="font-size: 0.9rem; color: #444; line-height: 1.7; margin: 10px 0 16px; font-style: italic;"></p>
                     <p id="modalTechnique" class="modal-technique"></p>
                     <p id="modalDimensions" class="modal-dimensions"></p>
                     <p id="modalYear" class="modal-year" style="color: #666; font-size: 0.9rem; margin-top: 5px;"></p>
@@ -508,6 +509,7 @@ function openModal(productOrElement) {
             images: fullImages,
             title: title ? title.innerText : '',
             price: price ? price.innerText : '',
+            description: (foundP && foundP.description) ? foundP.description : '',
             dimensions: (foundP && foundP.dimensions) ? foundP.dimensions : (el.dataset.dimensions || ''),
             technique: (foundP && foundP.technique) ? foundP.technique : (el.dataset.technique || ''),
             year: (foundP && foundP.year) ? foundP.year : (el.dataset.year || ''),
@@ -549,6 +551,16 @@ function openModal(productOrElement) {
         modalImg.alt = product.title;
     }
     if (modalTitle) modalTitle.textContent = product.title;
+
+    const modalDescription = document.getElementById('modalDescription');
+    if (modalDescription) {
+        if (product.description) {
+            modalDescription.textContent = product.description;
+            modalDescription.style.display = 'block';
+        } else {
+            modalDescription.style.display = 'none';
+        }
+    }
 
     const isCatalogModal = window.location.pathname.includes('catalog');
     if (modalPrice) modalPrice.textContent = isCatalogModal ? '' : product.price;
