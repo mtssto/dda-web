@@ -250,7 +250,7 @@ diff a/bio/bio.html b/bio/bio.html	(rejected hunks)
      </div>
 -  </main>
 -  <footer>
--    <p>&copy; 2024 Diego de Aduriz. All rights reserved.</p>
+-    <p>&copy; 2026 Diego de Aduriz. All rights reserved.</p>
 -  </footer>
 -  <script src="../index.js"></script>
 -  <script src="bio.js"></script>
@@ -289,7 +289,7 @@ diff a/bio/bio.html b/bio/bio.html	(rejected hunks)
 +    </main>
 +
 +    <footer>
-+        <p>&copy; 2024 Diego de Aduriz. All rights reserved.</p>
++        <p>&copy; 2026 Diego de Aduriz. All rights reserved.</p>
 +    </footer>
 +
 +</body>
