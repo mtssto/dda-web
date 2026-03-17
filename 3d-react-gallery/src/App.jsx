@@ -6,11 +6,35 @@ import * as THREE from 'three'
 // Shared ref for camera speed (used by vignette overlay)
 const speedRef = { current: 0 }
 
+// LSD dream state — shared between components
+const dreamState = {
+    hueShift: 0,         // triggered on image touch
+    flashIntensity: 0,   // white flash on image open
+    distort: 0,          // screen distortion amount
+    breathe: 0,          // global breathe timer
+}
+
 // Click target — where camera should fly to
 const flyTarget = { current: null }
 
 // Set true when pointer goes down on a 3D mesh — suppresses fly-to
 const pointerOnMesh = { current: false }
+
+// Hand tracking — palm position drives camera look, pinch = click
+const handInput = {
+    active: false,
+    yawDelta: 0,
+    pitchDelta: 0,
+    gesture: 'none',   // 'point' | 'fly' | 'open' | 'none'
+    flying: false,
+    pointJustFired: false,
+}
+
+// Callback set by App so pinch can open images
+const pinchClickCallback = { current: null }
+
+// Touch joystick state — shared so visual can read it
+const joystickState = { active: false, baseX: 0, baseY: 0, dx: 0, dy: 0 }
 
 function ImageNode({ url, position, onImageClick }) {
     const { camera } = useThree()
@@ -32,8 +56,9 @@ function ImageNode({ url, position, onImageClick }) {
         )
     }, [url])
 
-    useFrame(() => {
+    useFrame((state) => {
         if (!groupRef.current) return
+        const t = state.clock.elapsedTime
 
         // Billboard — lazily face camera
         groupRef.current.quaternion.slerp(
@@ -46,16 +71,34 @@ function ImageNode({ url, position, onImageClick }) {
             0.03
         )
 
-        // Fade in based on distance — appear as you approach
+        // Fade in based on distance
         if (meshRef.current?.material) {
-            const dist = camera.position.distanceTo(new THREE.Vector3(...position))
+            const dist = camera.position.distanceTo(groupRef.current.position)
             const targetOpacity = dist < 1800 ? THREE.MathUtils.clamp((1800 - dist) / 1000, 0, 1) : 0
             opacity.current = THREE.MathUtils.lerp(opacity.current, targetOpacity, 0.04)
             meshRef.current.material.opacity = opacity.current
             if (glowRef.current) glowRef.current.material.opacity = opacity.current * 0.06
+
+            // LSD: very close = trigger hue shift + glow burst
+            if (dist < 200 && opacity.current > 0.3) {
+                dreamState.hueShift = (dreamState.hueShift + 0.008) % 1
+                dreamState.distort = Math.min(dreamState.distort + 0.02, 1)
+                if (glowRef.current) {
+                    glowRef.current.material.opacity = THREE.MathUtils.lerp(
+                        glowRef.current.material.opacity, 0.45, 0.08
+                    )
+                }
+            } else {
+                dreamState.distort = THREE.MathUtils.lerp(dreamState.distort, 0, 0.02)
+            }
         }
 
         if (!meshRef.current) return
+
+        // Breathe — slow scale pulse
+        const breatheScale = 1 + Math.sin(t * 0.6 + position[0] * 0.01) * 0.025
+        const hoverTarget = hovered ? 1.04 : 1
+        meshRef.current.scale.setScalar(THREE.MathUtils.lerp(meshRef.current.scale.x, hoverTarget * breatheScale, 0.05))
 
         if (hovered) {
             const lx = (hoverUV.current.x - 0.5) * 5
@@ -72,9 +115,6 @@ function ImageNode({ url, position, onImageClick }) {
             meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, 0, 0.05)
             meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, 0, 0.05)
         }
-
-        const targetScale = hovered ? 1.04 : 1
-        meshRef.current.scale.setScalar(THREE.MathUtils.lerp(meshRef.current.scale.x, targetScale, 0.05))
     })
 
     if (!texture) return null
@@ -91,11 +131,14 @@ function ImageNode({ url, position, onImageClick }) {
             </mesh>
             <mesh
                 ref={meshRef}
+                userData={{ imageUrl: url }}
                 onPointerDown={(e) => { e.stopPropagation(); pointerOnMesh.current = true }}
-                onClick={(e) => { 
-                    e.stopPropagation(); 
+                onClick={(e) => {
+                    e.stopPropagation();
                     flyTarget.current = null;
-                    if (onImageClick) onImageClick(url); 
+                    dreamState.flashIntensity = 1
+                    dreamState.hueShift = (dreamState.hueShift + 0.15 + Math.random() * 0.2) % 1
+                    if (onImageClick) onImageClick(url);
                 }}
                 onPointerOver={() => setHovered(true)}
                 onPointerOut={() => setHovered(false)}
@@ -116,7 +159,9 @@ function FloatingText({ text, position, scale = 1 }) {
     useFrame(() => {
         if (!textRef.current) return
         textRef.current.lookAt(camera.position)
-        const dist = camera.position.distanceTo(new THREE.Vector3(...position))
+        const dist = textRef.current
+            ? camera.position.distanceTo(textRef.current.position)
+            : 9999
         const target = dist < 1800 ? THREE.MathUtils.clamp((1800 - dist) / 1200, 0, 1) : 0
         opacity.current = THREE.MathUtils.lerp(opacity.current, target, 0.04)
         textRef.current.fillOpacity = opacity.current
@@ -146,6 +191,10 @@ function CameraController() {
     const lastPointer = useRef({ x: 0, y: 0 })
     const pointerDown = useRef({ x: 0, y: 0 })
 
+    // Two-finger touch: left = joystick move, right = look
+    const joystick = useRef({ active: false, id: null, baseX: 0, baseY: 0, dx: 0, dy: 0 })
+    const lookTouch = useRef({ active: false, id: null, lastX: 0, lastY: 0 })
+
     const FRICTION = 0.88
     const ROT_FRICTION = 0.90
 
@@ -173,7 +222,7 @@ function CameraController() {
             lastPointer.current = { x: clientX, y: clientY }
             // Clamp per-frame delta to avoid shake from fast moves
             const sensitivity = 0.0007
-            yawVel.current   = Math.max(-0.03, Math.min(0.03, yawVel.current   - dx * sensitivity))
+            yawVel.current = Math.max(-0.03, Math.min(0.03, yawVel.current - dx * sensitivity))
             pitchVel.current = Math.max(-0.02, Math.min(0.02, pitchVel.current - dy * sensitivity))
         }
 
@@ -196,18 +245,52 @@ function CameraController() {
         const onMouseMove = (e) => onPointerMove(e.clientX, e.clientY)
         const onMouseUp = (e) => onPointerUp(e.clientX, e.clientY)
 
+        // Multi-touch: left half = joystick, right half = look
         const onTouchStart = (e) => {
-            const t = e.touches[0]
-            onPointerDown(t.clientX, t.clientY)
+            e.preventDefault()
+            Array.from(e.changedTouches).forEach(t => {
+                const isLeft = t.clientX < window.innerWidth / 2
+                if (isLeft && !joystick.current.active) {
+                    joystick.current = { active: true, id: t.identifier, baseX: t.clientX, baseY: t.clientY, dx: 0, dy: 0 }
+                    Object.assign(joystickState, { active: true, baseX: t.clientX, baseY: t.clientY, dx: 0, dy: 0 })
+                } else if (!isLeft && !lookTouch.current.active) {
+                    lookTouch.current = { active: true, id: t.identifier, lastX: t.clientX, lastY: t.clientY }
+                    onPointerDown(t.clientX, t.clientY)
+                }
+            })
         }
         const onTouchMove = (e) => {
             e.preventDefault()
-            const t = e.touches[0]
-            onPointerMove(t.clientX, t.clientY)
+            Array.from(e.changedTouches).forEach(t => {
+                if (joystick.current.active && t.identifier === joystick.current.id) {
+                    joystick.current.dx = t.clientX - joystick.current.baseX
+                    joystick.current.dy = t.clientY - joystick.current.baseY
+                    joystickState.dx = joystick.current.dx
+                    joystickState.dy = joystick.current.dy
+                }
+                if (lookTouch.current.active && t.identifier === lookTouch.current.id) {
+                    const dx = t.clientX - lookTouch.current.lastX
+                    const dy = t.clientY - lookTouch.current.lastY
+                    lookTouch.current.lastX = t.clientX
+                    lookTouch.current.lastY = t.clientY
+                    yawVel.current = Math.max(-0.03, Math.min(0.03, yawVel.current - dx * 0.0007))
+                    pitchVel.current = Math.max(-0.02, Math.min(0.02, pitchVel.current - dy * 0.0007))
+                    onPointerMove(t.clientX, t.clientY)
+                }
+            })
         }
         const onTouchEnd = (e) => {
-            const t = e.changedTouches[0]
-            onPointerUp(t.clientX, t.clientY)
+            e.preventDefault()
+            Array.from(e.changedTouches).forEach(t => {
+                if (joystick.current.active && t.identifier === joystick.current.id) {
+                    joystick.current = { active: false, id: null, baseX: 0, baseY: 0, dx: 0, dy: 0 }
+                    Object.assign(joystickState, { active: false, dx: 0, dy: 0 })
+                }
+                if (lookTouch.current.active && t.identifier === lookTouch.current.id) {
+                    lookTouch.current = { active: false, id: null, lastX: 0, lastY: 0 }
+                    onPointerUp(t.clientX, t.clientY)
+                }
+            })
         }
 
         const onKeyDown = (e) => {
@@ -253,8 +336,43 @@ function CameraController() {
         // Rotation inertia
         yaw.current += yawVel.current
         pitch.current += pitchVel.current
+
+        // Hand tracking — palm steers camera, pinch flies/clicks
+        if (handInput.active) {
+            const deadzone = 0.0008
+            const fy = Math.abs(handInput.yawDelta) > deadzone ? handInput.yawDelta * 0.4 : 0
+            const fp = Math.abs(handInput.pitchDelta) > deadzone ? handInput.pitchDelta * 0.4 : 0
+            yaw.current += Math.max(-0.012, Math.min(0.012, fy))
+            pitch.current += Math.max(-0.009, Math.min(0.009, fp))
+
+            // GESTURE: open hand = stop all movement
+            if (handInput.gesture === 'open') {
+                velocity.current.set(0, 0, 0)
+                flyTarget.current = null
+            }
+
+            // GESTURE: 4 fingers touch thumb = fly forward
+            if (handInput.flying) {
+                const qY = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yaw.current)
+                const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(qY)
+                velocity.current.lerp(dir.multiplyScalar(18), 0.06)
+            }
+
+            // GESTURE: index point (on trigger) = open image under crosshair
+            if (handInput.pointJustFired) {
+                handInput.pointJustFired = false
+                const ray = new THREE.Raycaster()
+                ray.setFromCamera({ x: 0, y: 0 }, camera)
+                const meshes = []
+                camera.parent?.traverse(obj => { if (obj.isMesh && obj.material?.map) meshes.push(obj) })
+                const hits = ray.intersectObjects(meshes, false)
+                if (hits.length > 0 && hits[0].object.userData?.imageUrl && pinchClickCallback.current) {
+                    pinchClickCallback.current(hits[0].object.userData.imageUrl)
+                }
+            }
+        }
         pitch.current = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, pitch.current))
-        yawVel.current   = Math.max(-0.03, Math.min(0.03, yawVel.current   * ROT_FRICTION))
+        yawVel.current = Math.max(-0.03, Math.min(0.03, yawVel.current * ROT_FRICTION))
         pitchVel.current = Math.max(-0.02, Math.min(0.02, pitchVel.current * ROT_FRICTION))
 
         const qYaw = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yaw.current)
@@ -284,6 +402,17 @@ function CameraController() {
             if (keys.current['ArrowRight']) move.add(right)
             if (keys.current['Space']) move.add(up)
             if (keys.current['ShiftLeft'] || keys.current['ShiftRight']) move.sub(up)
+
+            // Touch joystick (left thumb)
+            if (joystick.current.active) {
+                const jx = joystick.current.dx / 60
+                const jy = joystick.current.dy / 60
+                const jLen = Math.min(Math.sqrt(jx * jx + jy * jy), 1)
+                if (jLen > 0.1) {
+                    move.add(forward.clone().multiplyScalar(-jy * jLen))
+                    move.add(right.clone().multiplyScalar(jx * jLen))
+                }
+            }
 
             if (move.length() > 0) {
                 move.normalize()
@@ -315,38 +444,129 @@ function CameraController() {
     return null
 }
 
+// All background images — add as many as you want here
+const BG_IMAGES = [
+    '../portfolio/sections/obras/sin-titulo-4-marcadores-sobre-papel.png',
+    // Add more paths here, e.g.:
+    // '../portfolio/sections/obras/otra-obra.png',
+    // '../portfolio/sections/obras/tercera-obra.png',
+]
+
 function DynamicBackground() {
-    const { scene, camera } = useThree()
-    const color = useRef(new THREE.Color('#081b33'))
+    const { scene } = useThree()
+    const mesh1Ref = useRef()  // current bg
+    const mesh2Ref = useRef()  // next bg (for crossfade)
+    const dreamHue = useRef(0)
+    const textures = useRef([])
+    const currentIdx = useRef(0)
+    const fadeAlpha = useRef(1)
+    const fadingIn = useRef(false)
+    const timer = useRef(0)
+    const CYCLE_TIME = 18  // seconds between bg switches
 
     useEffect(() => {
-        scene.background = color.current
-        scene.fog = new THREE.Fog(color.current, 1500, 9000)
+        const loader = new THREE.TextureLoader()
+
+        // Load all textures
+        BG_IMAGES.forEach((path, i) => {
+            loader.load(path, (tex) => {
+                tex.colorSpace = THREE.SRGBColorSpace
+                tex.anisotropy = 16  // maximum sharpness
+                tex.minFilter = THREE.LinearFilter
+                tex.magFilter = THREE.LinearFilter
+                textures.current[i] = tex
+                // Set first texture immediately
+                if (i === 0 && mesh1Ref.current) {
+                    mesh1Ref.current.material.map = tex
+                    mesh1Ref.current.material.needsUpdate = true
+                }
+            })
+        })
+
+        scene.background = null
+        scene.fog = new THREE.Fog('#f5efe0', 800, 6000)
+        return () => { scene.fog = null }
     }, [scene])
 
-    useFrame(() => {
-        // Shift between heavenly golden, pale pink, soft white, and sky blue
-        // Hues: 0.1 (Gold/Orange), 0.55 (Sky Blue), 0.85 (Pink)
-        const baseHue = 0.55
-        const hueShift = (Math.sin(camera.position.x * 0.0003) * 0.2) + (Math.cos(camera.position.z * 0.0002) * 0.25) + (Math.sin(camera.position.y * 0.0008) * 0.1)
-        
-        let h = baseHue + hueShift
-        if (h < 0) h += 1
-        if (h > 1) h -= 1
+    useFrame((state, delta) => {
+        const t = state.clock.elapsedTime
+        if (!mesh1Ref.current || !mesh2Ref.current) return
 
-        // Use very high lightness (0.75-0.9) to make it feel ethereal/heavenly
-        const lightness = 0.82 + (Math.sin(Date.now() * 0.0005) * 0.08)
-        
-        const targetColor = new THREE.Color().setHSL(h, 0.45, lightness)
-        color.current.lerp(targetColor, 0.015) // Smooth color transition interpolation
-        
-        scene.background = color.current
+        // Dream hue tint
+        dreamHue.current = THREE.MathUtils.lerp(dreamHue.current, dreamState.hueShift, 0.02)
+        const tintH = (0.08 + dreamHue.current * 0.3) % 1
+        const tintS = 0.08 + dreamState.distort * 0.3
+        mesh1Ref.current.material.color.setHSL(tintH, tintS, 1.0)
+        mesh2Ref.current.material.color.setHSL(tintH, tintS, 1.0)
+
+        // Slow Y drift for spatial parallax — feels like moving through space
+        const slowDrift = t * 0.002
+        mesh1Ref.current.rotation.y = slowDrift
+        mesh2Ref.current.rotation.y = slowDrift
+        // Gentle vertical bob on the sphere
+        mesh1Ref.current.rotation.x = Math.sin(t * 0.05) * 0.08
+        mesh2Ref.current.rotation.x = Math.sin(t * 0.05) * 0.08
+
+        // Fog: breathes with speed and dream state for depth
         if (scene.fog) {
-            scene.fog.color = color.current
+            const baseFar = 6000
+            const speedPush = speedRef.current * 80   // faster = fog pushes back
+            const dreamPull = dreamState.distort * -1500
+            scene.fog.far = THREE.MathUtils.lerp(scene.fog.far, baseFar + speedPush + dreamPull, 0.03)
+            scene.fog.near = THREE.MathUtils.lerp(scene.fog.near, 800 + dreamState.distort * -400, 0.03)
+            scene.fog.color.setHSL(tintH, 0.06, 0.97)
+        }
+
+        // Cycle backgrounds if more than 1
+        if (BG_IMAGES.length <= 1) return
+
+        timer.current += delta
+        if (!fadingIn.current && timer.current > CYCLE_TIME) {
+            // Start crossfade to next image
+            const nextIdx = (currentIdx.current + 1) % textures.current.length
+            const nextTex = textures.current[nextIdx]
+            if (nextTex) {
+                mesh2Ref.current.material.map = nextTex
+                mesh2Ref.current.material.needsUpdate = true
+                mesh2Ref.current.material.opacity = 0
+                fadingIn.current = true
+                timer.current = 0
+            }
+        }
+
+        if (fadingIn.current) {
+            const newAlpha = Math.min(1, mesh2Ref.current.material.opacity + delta * 0.3)
+            mesh2Ref.current.material.opacity = newAlpha
+            mesh1Ref.current.material.opacity = 1 - newAlpha
+
+            if (newAlpha >= 1) {
+                // Swap: mesh2 becomes current
+                const tmp = mesh1Ref.current.material.map
+                mesh1Ref.current.material.map = mesh2Ref.current.material.map
+                mesh1Ref.current.material.opacity = 1
+                mesh2Ref.current.material.opacity = 0
+                mesh2Ref.current.material.map = tmp
+                mesh1Ref.current.material.needsUpdate = true
+                mesh2Ref.current.material.needsUpdate = true
+                currentIdx.current = (currentIdx.current + 1) % textures.current.length
+                fadingIn.current = false
+            }
         }
     })
 
-    return null
+    return (
+        <>
+            {/* High quality sphere — 128 segments for sharp curved image */}
+            <mesh ref={mesh1Ref} scale={[-1, 1, 1]}>
+                <sphereGeometry args={[9000, 128, 64]} />
+                <meshBasicMaterial side={THREE.BackSide} color="#ffffff" transparent opacity={1} />
+            </mesh>
+            <mesh ref={mesh2Ref} scale={[-1, 1, 1]}>
+                <sphereGeometry args={[8990, 128, 64]} />
+                <meshBasicMaterial side={THREE.BackSide} color="#ffffff" transparent opacity={0} />
+            </mesh>
+        </>
+    )
 }
 
 function Scene({ items, onImageClick }) {
@@ -354,7 +574,9 @@ function Scene({ items, onImageClick }) {
         <>
             <CameraController />
             {items.map((item, i) => {
-                if (item.type === 'image') return <ImageNode key={i} url={item.url} position={item.position} onImageClick={onImageClick} />
+                if (item.type === 'image') return (
+                    <ImageNode key={i} url={item.url} position={item.position} onImageClick={onImageClick} />
+                )
                 if (item.type === 'text') return <FloatingText key={i} text={item.text} position={item.position} scale={item.scale} />
                 return null
             })}
@@ -380,7 +602,7 @@ function generatePositions(images, phrases) {
                 Math.sin(phi) * Math.cos(theta) * r,
                 Math.cos(phi) * r * 0.5,
                 -(INNER + Math.sin(phi) * Math.sin(theta) * r * 0.5 + Math.random() * DEPTH)
-            ]
+            ],
         })
     })
 
@@ -395,13 +617,368 @@ function generatePositions(images, phrases) {
             position: [
                 Math.cos(theta) * r,
                 (Math.random() - 0.5) * 600,
-                -(400 + Math.random() * DEPTH * 0.8)
-            ]
+                -(400 + Math.random() * DEPTH * 0.8),
+            ],
         })
     })
 
-    combined.push({ type: 'end', position: [0, 0, -(DEPTH + 800)] })
     return combined
+}
+
+function loadScript(src) {
+    return new Promise((resolve, reject) => {
+        if (document.querySelector(`script[src="${src}"]`)) return resolve()
+        const s = document.createElement('script')
+        s.src = src; s.onload = resolve; s.onerror = reject
+        document.head.appendChild(s)
+    })
+}
+
+// Professor X — head movement steers the camera
+function HandTracker() {
+    const videoRef = useRef()
+    const canvasRef = useRef()
+    const [active, setActive] = useState(false)
+    const [status, setStatus] = useState('idle')
+    const [label, setLabel] = useState('')
+    const smoothX = useRef(0)
+    const smoothY = useRef(0)
+    const neutralX = useRef(null)
+    const neutralY = useRef(null)
+    const wasPointing = useRef(false)
+    const prevPalmPos = useRef(null)
+    const pinchMoveDist = useRef(0)
+    const rafRef = useRef()
+
+    const start = async () => {
+        setStatus('loading')
+        try {
+            await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js')
+
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240, facingMode: 'user' } })
+            videoRef.current.srcObject = stream
+            await videoRef.current.play()
+
+            const hands = new window.Hands({
+                locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`
+            })
+            hands.setOptions({
+                maxNumHands: 1,
+                modelComplexity: 0,
+                minDetectionConfidence: 0.65,
+                minTrackingConfidence: 0.55,
+            })
+
+            hands.onResults((results) => {
+                const ctx = canvasRef.current?.getContext('2d')
+                if (!ctx) return
+                ctx.clearRect(0, 0, 160, 120)
+                ctx.save()
+                ctx.scale(-1, 1)
+                ctx.drawImage(videoRef.current, -160, 0, 160, 120)
+                ctx.restore()
+
+                if (!results.multiHandLandmarks?.length) {
+                    handInput.active = false
+                    setLabel('MOSTRÁ TU MANO')
+                    return
+                }
+
+                const lm = results.multiHandLandmarks[0]
+
+                // Palm center = average of wrist (0) + knuckles (5,9,13,17)
+                const palmX = [0, 5, 9, 13, 17].reduce((s, i) => s + lm[i].x, 0) / 5
+                const palmY = [0, 5, 9, 13, 17].reduce((s, i) => s + lm[i].y, 0) / 5
+
+                // Set neutral on first frame
+                if (neutralX.current === null) {
+                    neutralX.current = palmX
+                    neutralY.current = palmY
+                }
+
+                // Offset from neutral, smoothed
+                const offsetX = palmX - neutralX.current
+                const offsetY = palmY - neutralY.current
+                smoothX.current += (offsetX - smoothX.current) * 0.12
+                smoothY.current += (offsetY - smoothY.current) * 0.12
+
+                handInput.yawDelta = smoothX.current * -0.05
+                handInput.pitchDelta = smoothY.current * -0.04
+                handInput.active = true
+
+                // --- Gesture detection ---
+
+                // Finger tip and base landmarks
+                const thumbTip = lm[4], thumbBase = lm[2]
+                const indexTip = lm[8], indexBase = lm[5]
+                const middleTip = lm[12], middleBase = lm[9]
+                const ringTip = lm[16], ringBase = lm[13]
+                const pinkyTip = lm[20], pinkyBase = lm[17]
+
+                // A finger is "extended" if its tip is farther from wrist than its base
+                const wrist = lm[0]
+                const extended = (tip, base) =>
+                    Math.hypot(tip.x - wrist.x, tip.y - wrist.y) >
+                    Math.hypot(base.x - wrist.x, base.y - wrist.y) * 1.1
+
+                const indexUp = extended(indexTip, indexBase)
+                const middleUp = extended(middleTip, middleBase)
+                const ringUp = extended(ringTip, ringBase)
+                const pinkyUp = extended(pinkyTip, pinkyBase)
+
+                // Finger touching thumb = tip close to thumb tip
+                const nearThumb = (tip) => Math.hypot(tip.x - thumbTip.x, tip.y - thumbTip.y) < 0.08
+
+                const indexNear = nearThumb(indexTip)
+                const middleNear = nearThumb(middleTip)
+                const ringNear = nearThumb(ringTip)
+                const pinkyNear = nearThumb(pinkyTip)
+
+                // GESTURE 1: index pointing — only index extended, rest curled
+                const isPointing = indexUp && !middleUp && !ringUp && !pinkyUp
+
+                // GESTURE 2: 4 fingers touching thumb — fly
+                const isFlying = indexNear && middleNear && ringNear && pinkyNear
+
+                // GESTURE 3: open hand — all 4 fingers extended
+                const isOpen = indexUp && middleUp && ringUp && pinkyUp
+
+                handInput.gesture = isPointing ? 'point' : isFlying ? 'fly' : isOpen ? 'open' : 'none'
+
+                // Fire point gesture once per trigger
+                if (isPointing && !wasPointing.current) {
+                    handInput.pointJustFired = true
+                }
+                wasPointing.current = isPointing
+
+                // Fly gesture active while held
+                handInput.flying = isFlying
+
+                // Draw skeleton
+                const connections = [[0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 7], [7, 8], [5, 9], [9, 10], [10, 11], [11, 12], [9, 13], [13, 14], [14, 15], [15, 16], [13, 17], [17, 18], [18, 19], [19, 20], [0, 17]]
+                ctx.strokeStyle = 'rgba(255,255,255,0.4)'
+                ctx.lineWidth = 1
+                connections.forEach(([a, b]) => {
+                    ctx.beginPath()
+                    ctx.moveTo((1 - lm[a].x) * 160, lm[a].y * 120)
+                    ctx.lineTo((1 - lm[b].x) * 160, lm[b].y * 120)
+                    ctx.stroke()
+                })
+
+                // Fingertip dots — colour by role
+                const tipColors = {
+                    4: isFlying ? '#ff6644' : '#ffffff',
+                    8: isPointing ? '#44ffaa' : '#ffffff',
+                    12: isFlying ? '#ff6644' : '#ffffff',
+                    16: isFlying ? '#ff6644' : '#ffffff',
+                    20: isFlying ? '#ff6644' : '#ffffff',
+                }
+                    ;[4, 8, 12, 16, 20].forEach(i => {
+                        ctx.beginPath()
+                        ctx.arc((1 - lm[i].x) * 160, lm[i].y * 120, 5, 0, Math.PI * 2)
+                        ctx.fillStyle = tipColors[i] || '#fff'
+                        ctx.fill()
+                    })
+
+                const gestureLabel = isPointing ? '☞ ABRIR IMAGEN'
+                    : isFlying ? '✦ VOLANDO'
+                        : isOpen ? '✋ DETENIDO'
+                            : 'MOVER PARA MIRAR'
+                setLabel(gestureLabel)
+            })
+
+            const processFrame = async () => {
+                if (videoRef.current?.readyState === 4) await hands.send({ image: videoRef.current })
+                rafRef.current = requestAnimationFrame(processFrame)
+            }
+            rafRef.current = requestAnimationFrame(processFrame)
+            setStatus('running')
+            setActive(true)
+            setLabel('MOSTRÁ TU MANO')
+        } catch (e) {
+            console.error('Hand tracking error:', e)
+            setStatus('error')
+        }
+    }
+
+    const recalibrate = () => {
+        neutralX.current = null
+        neutralY.current = null
+        smoothX.current = 0
+        smoothY.current = 0
+    }
+
+    const stop = () => {
+        cancelAnimationFrame(rafRef.current)
+        if (videoRef.current?.srcObject) {
+            videoRef.current.srcObject.getTracks().forEach(t => t.stop())
+            videoRef.current.srcObject = null
+        }
+        handInput.active = false
+        handInput.flying = false
+        neutralX.current = null
+        prevPalmPos.current = null
+        pinchMoveDist.current = 0
+        setActive(false)
+        setStatus('idle')
+    }
+
+    return (
+        <div style={{
+            position: 'fixed', bottom: 20, right: 20, zIndex: 20,
+            display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8,
+        }}>
+            <div style={{
+                borderRadius: 10, overflow: 'hidden', position: 'relative',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                border: `1px solid ${handInput.pinching ? 'rgba(255,80,80,0.6)' : 'rgba(255,255,255,0.15)'}`,
+                display: active ? 'block' : 'none',
+                transition: 'border-color 0.2s',
+            }}>
+                <video ref={videoRef} width={160} height={120}
+                    style={{ display: 'block', transform: 'scaleX(-1)' }} muted playsInline />
+                <canvas ref={canvasRef} width={160} height={120}
+                    style={{ position: 'absolute', top: 0, left: 0 }} />
+                <div style={{
+                    position: 'absolute', bottom: 0, left: 0, right: 0,
+                    background: 'rgba(0,0,0,0.45)', padding: '4px 0',
+                    textAlign: 'center', fontSize: 9,
+                    color: 'rgba(255,255,255,0.9)', fontFamily: 'serif', letterSpacing: '0.08em'
+                }}>
+                    {label}
+                </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 6 }}>
+                {active && (
+                    <button onClick={recalibrate} style={{
+                        background: 'rgba(255,252,245,0.85)', backdropFilter: 'blur(8px)',
+                        border: 'none', borderRadius: 6, cursor: 'pointer',
+                        padding: '9px 14px', fontFamily: 'serif', letterSpacing: '0.08em',
+                        fontSize: 11, color: '#2a2520', boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                    }}>↺ CENTRO</button>
+                )}
+                <button onClick={active ? stop : start} style={{
+                    background: active
+                        ? 'linear-gradient(135deg, rgba(40,120,80,0.95), rgba(40,160,100,0.95))'
+                        : 'rgba(255,252,245,0.85)',
+                    backdropFilter: 'blur(8px)', border: 'none', borderRadius: 6,
+                    cursor: 'pointer', padding: '9px 18px',
+                    fontFamily: 'serif', letterSpacing: '0.1em',
+                    fontSize: 11, color: active ? '#fff' : '#2a2520',
+                    boxShadow: active ? '0 2px 12px rgba(40,160,80,0.5)' : '0 2px 8px rgba(0,0,0,0.15)',
+                    transition: 'all 0.3s ease',
+                }}>
+                    {status === 'loading' ? 'CARGANDO...' : active ? '✋ DESACTIVAR' : '✋ MANO'}
+                </button>
+            </div>
+        </div>
+    )
+}
+
+function TouchJoystick() {
+    const [state, setState] = useState({ active: false, baseX: 0, baseY: 0, dx: 0, dy: 0 })
+    const frameRef = useRef()
+
+    useEffect(() => {
+        const tick = () => {
+            setState({ ...joystickState })
+            frameRef.current = requestAnimationFrame(tick)
+        }
+        frameRef.current = requestAnimationFrame(tick)
+        return () => cancelAnimationFrame(frameRef.current)
+    }, [])
+
+    if (!state.active) return null
+
+    const MAX = 60
+    const clampedDx = Math.max(-MAX, Math.min(MAX, state.dx))
+    const clampedDy = Math.max(-MAX, Math.min(MAX, state.dy))
+
+    return (
+        <div style={{
+            position: 'fixed', pointerEvents: 'none', zIndex: 15,
+            left: state.baseX - MAX, top: state.baseY - MAX
+        }}>
+            {/* Outer ring */}
+            <div style={{
+                width: MAX * 2, height: MAX * 2, borderRadius: '50%',
+                border: '2px solid rgba(255,252,245,0.35)',
+                background: 'rgba(255,252,245,0.07)',
+                position: 'relative',
+            }}>
+                {/* Inner knob */}
+                <div style={{
+                    width: 36, height: 36, borderRadius: '50%',
+                    background: 'rgba(255,252,245,0.5)',
+                    backdropFilter: 'blur(4px)',
+                    position: 'absolute',
+                    left: MAX - 18 + clampedDx,
+                    top: MAX - 18 + clampedDy,
+                    transition: 'none',
+                }} />
+            </div>
+        </div>
+    )
+}
+
+function LSDOverlay() {
+    const frameRef = useRef()
+    const overlayRef = useRef()
+    const t = useRef(0)
+
+    useEffect(() => {
+        const tick = () => {
+            t.current += 0.016
+            dreamState.breathe = t.current
+
+            // Flash decays
+            dreamState.flashIntensity = Math.max(0, dreamState.flashIntensity - 0.04)
+            dreamState.distort = Math.max(0, dreamState.distort - 0.005)
+
+            if (overlayRef.current) {
+                const flash = dreamState.flashIntensity
+                const dist = dreamState.distort
+                const breathe = Math.sin(t.current * 0.4) * 0.5 + 0.5
+
+                // Hue rotate + saturate based on dream state
+                const hueRot = (dreamState.hueShift * 360).toFixed(1)
+                const sat = (1 + dist * 2).toFixed(2)
+                const blurPx = (dist * 3).toFixed(2)
+
+                overlayRef.current.style.filter =
+                    `hue-rotate(${hueRot}deg) saturate(${sat}) blur(${blurPx}px)`
+
+                // Flash overlay
+                overlayRef.current.style.background =
+                    `radial-gradient(ellipse at center,
+                        rgba(255,255,255,${(flash * 0.7).toFixed(2)}) 0%,
+                        rgba(255,255,255,0) 70%)`
+
+                // Vignette breathes with dream intensity
+                overlayRef.current.style.boxShadow =
+                    `inset 0 0 ${(80 + breathe * 40 + dist * 120).toFixed(0)}px
+                     ${(40 + dist * 80).toFixed(0)}px
+                     rgba(0,0,0,${(0.08 + dist * 0.25).toFixed(2)})`
+            }
+
+            frameRef.current = requestAnimationFrame(tick)
+        }
+        frameRef.current = requestAnimationFrame(tick)
+        return () => cancelAnimationFrame(frameRef.current)
+    }, [])
+
+    return (
+        <div
+            ref={overlayRef}
+            style={{
+                position: 'fixed', inset: 0,
+                pointerEvents: 'none', zIndex: 4,
+                mixBlendMode: 'normal',
+                transition: 'filter 0.3s ease',
+            }}
+        />
+    )
 }
 
 function SpeedVignette() {
@@ -433,6 +1010,22 @@ export default function App() {
     const [progress, setProgress] = useState(0)
     const [selectedImage, setSelectedImage] = useState(null)
 
+    const phrases = [
+        "A talking organism", "#BUÓH", "Elefantes en el Bazar", "Mi Cuerpo Eléctrico",
+        "Todo lo que brilla es oro", "Working Progress", "La Llave y el Testigo",
+        "Paisajes psíquicos", "Criaturas esotéricas", "Pinturas rupestres extraterrestres",
+        "Besos Brujos", "Diego de Aduriz"
+    ]
+
+    // Wire pinch gesture to open images + trigger LSD flash
+    useEffect(() => {
+        pinchClickCallback.current = (url) => {
+            dreamState.flashIntensity = 1
+            dreamState.hueShift = (dreamState.hueShift + 0.15 + Math.random() * 0.2) % 1
+            setSelectedImage(url)
+        }
+    }, [])
+
     useEffect(() => {
         THREE.DefaultLoadingManager.onProgress = (url, loaded, total) => {
             setProgress(Math.round((loaded / total) * 100))
@@ -441,14 +1034,7 @@ export default function App() {
             .then(r => r.json())
             .then(images => {
                 images.sort(() => Math.random() - 0.5)
-                const selected = images
-                const phrases = [
-                    "A talking organism", "#BUÓH", "Elefantes en el Bazar", "Mi Cuerpo Eléctrico",
-                    "Todo lo que brilla es oro", "Working Progress", "La Llave y el Testigo",
-                    "Paisajes psíquicos", "Criaturas esotéricas", "Pinturas rupestres extraterrestres",
-                    "Besos Brujos", "Diego de Aduriz"
-                ]
-                setItems(generatePositions(selected, phrases))
+                setItems(generatePositions(images, phrases))
             })
     }, [])
 
@@ -466,16 +1052,19 @@ export default function App() {
             <div className="overlay header">UNIVERSO DDA</div>
             <a href="../index.html" className="overlay close-btn" style={{ pointerEvents: 'auto' }}>CERRAR</a>
 
+            <LSDOverlay />
             <SpeedVignette />
+            <HandTracker />
+            <TouchJoystick />
 
             <div className="gallery-instructions">
                 TAP PARA VOLAR &nbsp;·&nbsp; ARRASTRAR PARA MIRAR &nbsp;·&nbsp; FLECHAS PARA MOVER &nbsp;·&nbsp; CLICK EN OBRA PARA ABRIR
             </div>
 
             {selectedImage && (
-                <div 
+                <div
                     style={{
-                        position: 'fixed', inset: 0, zIndex: 100, 
+                        position: 'fixed', inset: 0, zIndex: 100,
                         background: 'rgba(255, 252, 245, 0.85)', backdropFilter: 'blur(12px)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         opacity: 1, animation: 'fadeIn 0.4s ease-out forwards',
@@ -486,14 +1075,14 @@ export default function App() {
                     <div style={{ position: 'absolute', top: 30, right: 40, color: '#887c6b', fontFamily: 'sans-serif', fontSize: '18px', letterSpacing: '2px' }}>
                         CLOSE
                     </div>
-                    <img 
-                        src={selectedImage} 
+                    <img
+                        src={selectedImage}
                         style={{
-                            maxWidth: '90%', maxHeight: '90%', 
-                            objectFit: 'contain', 
+                            maxWidth: '90%', maxHeight: '90%',
+                            objectFit: 'contain',
                             boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
                             animation: 'scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards'
-                        }} 
+                        }}
                         alt="Enlarged gallery view"
                     />
                     <style>{`
