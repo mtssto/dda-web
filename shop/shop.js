@@ -603,7 +603,7 @@ function openModal(productOrElement) {
             modalBuyBtn.textContent = translations['modal.consult'] || 'CONSULTAR / COMPRAR';
             modalBuyBtn.onclick = (e) => {
                 e.preventDefault();
-                const waNumber = '5491168750007';
+                const waNumber = '5491160139563';
                 const message = `Hola, me interesa comprar: ${product.title}`;
                 window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`, '_blank');
             };
@@ -619,7 +619,7 @@ function buyProduct(product) {
     if (typeof openInquiry === 'function') {
         openInquiry(product.title, product.price);
     } else {
-        const waNumber = '5491168750007';
+        const waNumber = '5491160139563';
         const message = `Hola, me interesa comprar: ${product.title}`;
         window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`, '_blank');
     }

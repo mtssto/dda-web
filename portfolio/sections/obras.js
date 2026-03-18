@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       item.dataset.title = product.title;
       // Encode whatsapp link with title
-      item.dataset.waLink = `https://wa.me/5491168750007?text=Hola,%20quisiera%20consultar%20por%20la%20obra:%20${encodeURIComponent(product.title)}`;
+      item.dataset.waLink = `https://wa.me/5491160139563?text=Hola,%20quisiera%20consultar%20por%20la%20obra:%20${encodeURIComponent(product.title)}`;
 
       // Resolve images data attribute if multiple images exist
       if (product.images && product.images.length > 1) {
@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Set whatsapp link (always fallback to dataset since products.js doesn't have it)
         if (modalBuyBtn) {
-          modalBuyBtn.href = trigger.dataset.waLink || 'https://wa.me/5491168750007';
+          modalBuyBtn.href = trigger.dataset.waLink || 'https://wa.me/5491160139563';
         }
 
         // Show modal
