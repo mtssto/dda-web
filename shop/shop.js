@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function () {
         body.modal-open .whatsapp-float {
             display: none !important;
         }
-    \`;
+    `;
     document.head.appendChild(modalFixStyle);
 
     // Re-apply translations for the newly injected modal
@@ -287,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const xPercent = (x / rect.width) * 100;
                     const yPercent = (y / rect.height) * 100;
 
-                    this.style.transformOrigin = `${ xPercent }% ${ yPercent }% `;
+                    this.style.transformOrigin = `${xPercent}% ${yPercent}%`;
                     this.style.transform = 'scale(2)';
                 } else if (currentZoom === 2) {
                     // Zoom deeper into the already established origin
@@ -462,22 +462,22 @@ function renderGrid(items) {
         if (product.sold) card.classList.add('sold');
 
         const overlayHTML = isCatalog ? '' : `
-        < div class="masonry-overlay" >
-            <div class="overlay-content">
-                <h3 class="overlay-title">${product.title}</h3>
-                <p class="overlay-details">
-                    ${product.dimensions ? product.dimensions + '<br>' : ''}
-                    ${product.technique ? product.technique + '<br>' : ''}
-                    ${(!product.year || product.year === 'Consultar año') ? '' : product.year}
-                </p>
-                <button class="btn-grid-details-overlay" style="pointer-events: auto; margin-top: 15px; background: transparent; border: 1px solid #111; color: #111; padding: 10px 20px; font-family: var(--font-body); font-size: 0.8rem; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s ease;">DETALLES</button>
-            </div>
-                </div > `;
+                <div class="masonry-overlay">
+                    <div class="overlay-content">
+                        <h3 class="overlay-title">${product.title}</h3>
+                        <p class="overlay-details">
+                            ${product.dimensions ? product.dimensions + '<br>' : ''}
+                            ${product.technique ? product.technique + '<br>' : ''}
+                            ${(!product.year || product.year === 'Consultar año') ? '' : product.year}
+                        </p>
+                        <button class="btn-grid-details-overlay" style="pointer-events: auto; margin-top: 15px; background: transparent; border: 1px solid #111; color: #111; padding: 10px 20px; font-family: var(--font-body); font-size: 0.8rem; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s ease;">DETALLES</button>
+                    </div>
+                </div>`;
 
-        const priceHTML = isCatalog ? '' : `< p class="product-price" > ${ product.price }</p > `;
+        const priceHTML = isCatalog ? '' : `<p class="product-price">${product.price}</p>`;
 
         card.innerHTML = `
-        < div class="product-image" >
+            <div class="product-image">
                 <img src="${product.image}" alt="${product.title}">
                 ${overlayHTML}
             </div>
@@ -497,7 +497,7 @@ function renderGrid(items) {
                     ${product.sold ? `<button class="btn-grid-action btn-grid-sold" data-i18n="card.sold" disabled aria-disabled="true" style="opacity:0.4;cursor:not-allowed">✗ VENDIDO</button>` : `<button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">🛒 COMPRAR</button>`}
                 </div>
             </div>
-    `;
+        `;
 
         // Attach click to card
         card.onclick = (e) => {
@@ -652,7 +652,7 @@ function openModal(productOrElement) {
     // Check if dimensions are valid before showing "undefined"
     if (modalDimensions) {
         if (product.dimensions && product.dimensions !== 'undefined') {
-            modalDimensions.textContent = `${ dimLabel }: ${ product.dimensions } `;
+            modalDimensions.textContent = `${dimLabel}: ${product.dimensions}`;
             modalDimensions.style.display = 'block';
         } else {
             modalDimensions.style.display = 'none';
@@ -683,16 +683,16 @@ function openModal(productOrElement) {
             modalBuyBtn.onclick = (e) => {
                 e.preventDefault();
                 const waNumber = '5491160139563';
-                const message = `Hola, me interesa comprar: ${ product.title } `;
+                const message = `Hola, me interesa comprar: ${product.title}`;
                 window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`, '_blank');
             };
         }
     }
 
-modal.classList.add('active');
-document.body.classList.add('no-scroll');
-document.body.classList.add('modal-open');
-document.documentElement.classList.add('no-scroll');
+    modal.classList.add('active');
+    document.body.classList.add('no-scroll');
+    document.body.classList.add('modal-open');
+    document.documentElement.classList.add('no-scroll');
 }
 
 function buyProduct(product) {
