@@ -1,5 +1,77 @@
 window.products = [
     {
+        "id": "autorretrato-con-moño",
+        "title": "Autorretrato con moño",
+        "description": "",
+        "price": "Consultar",
+        "dimensions": "82 x 56 cm",
+        "technique": "Pastel al óleo sobre madera",
+        "category": "pasteles",
+        "image": "/portfolio/sections/obras/autorretrato-con-moño-2025-82x56.png",
+        "sold": false,
+        "year": "2025"
+    },
+    {
+        "id": "gato-blanco-nuevo",
+        "title": "Gato Blanco Nuevo",
+        "description": "",
+        "price": "Consultar",
+        "dimensions": "69 x 59 cm",
+        "technique": "Pastel al óleo sobre puerta de chapa",
+        "category": "pasteles",
+        "image": "/portfolio/sections/obras/Gato-Blanco-Nuevo-2025-69x59.png",
+        "sold": false,
+        "year": "2025"
+    },
+    {
+        "id": "gato-11-11",
+        "title": "Gato 11:11",
+        "description": "",
+        "price": "Consultar",
+        "dimensions": "69 x 30 cm",
+        "technique": "Pastel al óleo sobre madera",
+        "category": "pasteles",
+        "image": "/portfolio/sections/obras/gato-11-11-2025-69x30.png",
+        "sold": false,
+        "year": "2025"
+    },
+    {
+        "id": "convivencia-pacifica",
+        "title": "Convivencia pacífica",
+        "description": "",
+        "price": "Consultar",
+        "dimensions": "40 x 30 cm",
+        "technique": "Pastel al óleo sobre tela",
+        "category": "pasteles",
+        "image": "/portfolio/sections/obras/convivencia-pacifica-2024-40x30.png",
+        "sold": false,
+        "year": "2024"
+    },
+    {
+        "id": "gato-alfa-omega",
+        "title": "Gato Alfa & Omega",
+        "description": "",
+        "price": "Consultar",
+        "dimensions": "60 x 40 cm",
+        "technique": "Pastel al óleo sobre chapa",
+        "category": "pasteles",
+        "image": "/portfolio/sections/obras/gato-alfa-&-omega-2025-60x40.png",
+        "sold": false,
+        "year": "2025"
+    },
+    {
+        "id": "pitufex",
+        "title": "Pitufex",
+        "description": "",
+        "price": "Consultar",
+        "dimensions": "46 x 36 cm",
+        "technique": "Pastel al óleo sobre puerta de madera pequeña",
+        "category": "pasteles",
+        "image": "/portfolio/sections/obras/pitufex-2025-46x36.png",
+        "sold": false,
+        "year": "2025"
+    },
+    {
         "id": "andromeda",
         "title": "Andrómedan",
         "description": "Puerta intervenida de doble cara: anverso en pastel azul eléctrico con figura cósmica andrógina coronada con el número 7; reverso en madera desnuda con cadena de palabras en tiza que mutan entre idiomas hasta terminar en Twice upon a time. Objeto único. Se ofrece a restaurar.",
