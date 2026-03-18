@@ -128,6 +128,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Modal Injection Logic (as raw string to avoid CORS on file:/// protocol)
     const modalHTML = `
+        <style>
+            .modal-container { display: flex !important; max-height: 90vh !important; overflow: hidden !important; }
+            .modal-info-wrapper { display: flex !important; flex-direction: column !important; overflow: hidden !important; min-height: 0 !important; }
+            .modal-info-scroll { flex: 1 1 auto !important; overflow-y: auto !important; min-height: 0 !important; padding-right: 4px !important; }
+            .modal-info-scroll::-webkit-scrollbar { width: 4px; }
+            .modal-info-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 2px; }
+            .modal-btn-footer { flex-shrink: 0 !important; padding-top: 14px !important; }
+            .modal-btn-footer .btn-modal-buy { width: 100% !important; }
+            @media (max-width: 768px) {
+                .modal-container { flex-direction: column !important; max-height: 92vh !important; }
+                .modal-image-wrapper { flex-shrink: 0 !important; max-height: 42vh !important; overflow: hidden !important; }
+                .modal-image-wrapper img { width: 100% !important; height: 100% !important; object-fit: contain !important; }
+                .modal-info-wrapper { flex: 1 1 auto !important; }
+            }
+        </style>
         <!-- Modal for Info View -->
         <div id="imageModal" class="image-modal">
             <span class="modal-close">&times;</span>
@@ -138,13 +153,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     <img class="modal-image" id="modalImage" alt="Artwork">
                 </div>
                 <div class="modal-info-wrapper">
-                    <h2 id="modalTitle" class="modal-title"></h2>
-                    <p id="modalDescription" class="modal-description" style="font-size: 0.9rem; color: #444; line-height: 1.7; margin: 10px 0 16px; font-style: italic;"></p>
-                    <p id="modalTechnique" class="modal-technique"></p>
-                    <p id="modalDimensions" class="modal-dimensions"></p>
-                    <p id="modalYear" class="modal-year" style="color: #666; font-size: 0.9rem; margin-top: 5px;"></p>
-                    <p id="modalPrice" class="modal-price"></p>
-                    <button id="modalBuyBtn" class="btn-modal-buy" data-i18n="modal.consult">CONSULTAR / COMPRAR</button>
+                    <div class="modal-info-scroll">
+                        <h2 id="modalTitle" class="modal-title"></h2>
+                        <p id="modalDescription" class="modal-description" style="font-size: 0.9rem; color: #444; line-height: 1.7; margin: 10px 0 16px; font-style: italic;"></p>
+                        <p id="modalTechnique" class="modal-technique"></p>
+                        <p id="modalDimensions" class="modal-dimensions"></p>
+                        <p id="modalYear" class="modal-year" style="color: #666; font-size: 0.9rem; margin-top: 5px;"></p>
+                        <p id="modalPrice" class="modal-price"></p>
+                    </div>
+                    <div class="modal-btn-footer">
+                        <button id="modalBuyBtn" class="btn-modal-buy" data-i18n="modal.consult">CONSULTAR / COMPRAR</button>
+                    </div>
                 </div>
             </div>
         </div>
