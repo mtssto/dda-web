@@ -1,5 +1,21 @@
 window.products = [
     {
+        "id": "andromeda",
+        "title": "Andrómedan",
+        "description": "Puerta intervenida de doble cara: anverso en pastel azul eléctrico con figura cósmica andrógina coronada con el número 7; reverso en madera desnuda con cadena de palabras en tiza que mutan entre idiomas hasta terminar en Twice upon a time. Objeto único. Se ofrece a restaurar.",
+        "price": "Consultar",
+        "dimensions": "1,70 x 50 cm",
+        "technique": "Pastel al óleo sobre madera",
+        "category": "pasteles",
+        "image": "/portfolio/sections/obras/andromedan-2025-pastel-tiza-sobre-puerta.png",
+        "images": [
+            "/portfolio/sections/obras/andromedan-2025-pastel-tiza-sobre-puerta.png",
+            "/portfolio/sections/obras/andromedan-2025-pastel-tiza-sobre-puerta-reverso.png"
+        ],
+        "sold": false,
+        "year": "2025"
+    },
+    {
         "id": "belleza-y-felicidad-con-sol-y-luna",
         "title": "Belleza y felicidad con sol y luna",
         "description": "Una obra que celebra la dualidad: el sol y la luna conviven en un mismo espacio cargado de energía y color. Pastel tiza trabajado con una sensibilidad única que define el universo visual de Diego de Aduriz.",
@@ -27,7 +43,7 @@ window.products = [
         "title": "Criatura que sopla",
         "description": "Obra reciente de 2025, pintada sobre madera con pastel al óleo. Una figura enigmática que exhala vida y movimiento. Pieza única con reverso trabajado — se entrega con certificado de autenticidad.",
         "price": "Consultar",
-        "dimensions": "Consultar medidas",
+        "dimensions": "34 x 19 cm",
         "technique": "Pastel al óleo sobre madera",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/criatura-que-sopla-pastel-al-oleo-sobre-madera-2025.png",
@@ -72,7 +88,7 @@ window.products = [
         "category": "gatos",
         "image": "/portfolio/sections/obras/MG_0327.jpg.png",
         "sold": false,
-        "year": "Consultar año"
+        "year": "2020"
     },
     {
         "id": "payaso",
@@ -88,19 +104,19 @@ window.products = [
             "/portfolio/sections/obras/payaso-1-back.png"
         ],
         "sold": false,
-        "year": "Consultar año"
+        "year": "2025"
     },
     {
         "id": "ascension",
         "title": "Ascensión",
         "description": "Una figura que asciende, trabajada en pastel tiza sobre madera. La verticalidad de la composición refuerza el movimiento hacia arriba, hacia la luz. Una obra de gran carga simbólica y espiritual.",
         "price": "Consultar",
-        "dimensions": "Consultar medidas",
+        "dimensions": "160 x 81 cm",
         "technique": "Pastel tiza sobre madera",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/ascension.png",
         "sold": false,
-        "year": "Consultar año"
+        "year": "2025"
     },
     {
         "id": "don-diego-explosion",
@@ -172,7 +188,7 @@ window.products = [
         "category": "Autorretratos",
         "image": "/portfolio/sections/obras/autorretrato.png",
         "sold": false,
-        "year": "Consultar año"
+        "year": "2025"
     },
     {
         "id": "Autorretrato-2007",
@@ -208,19 +224,19 @@ window.products = [
         "category": "Autorretratos",
         "image": "/portfolio/sections/obras/retrato-1.png",
         "sold": false,
-        "year": "Consultar año"
+        "year": "2025"
     },
     {
         "id": "retrato-2",
         "title": "Autorretrato con máscara de gato",
         "description": "Entre humano y animal, entre persona y personaje. El artista usa la máscara de gato para explorar otra identidad posible. Una obra cargada de humor, misterio y profundidad. Pastel al óleo sobre madera.",
         "price": "Consultar",
-        "dimensions": "Consultar medidas",
+        "dimensions": "1,55 x 64 cm",
         "technique": "Pastel al óleo sobre madera",
         "category": "Autorretratos",
         "image": "/portfolio/sections/obras/retrato-2.jpeg",
         "sold": false,
-        "year": "Consultar año"
+        "year": "2025"
     },
     {
         "id": "the-future-is-stupid",
@@ -400,7 +416,7 @@ window.products = [
         "category": "paisajes",
         "image": "/portfolio/sections/obras/mascara2.jpg",
         "sold": false,
-        "year": "Consultar año"
+        "year": "2020"
     },
     {
         "id": "gato-cosmico",
@@ -424,7 +440,7 @@ window.products = [
         "category": "pasteles",
         "image": "/portfolio/sections/obras/mascara1.jpg",
         "sold": false,
-        "year": "Consultar año"
+        "year": "2020"
     },
     {
         "id": "paisaje-azul-collage",
