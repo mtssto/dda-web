@@ -555,7 +555,7 @@ function openModal(productOrElement) {
     const modalDescription = document.getElementById('modalDescription');
     if (modalDescription) {
         if (product.description) {
-            modalDescription.textContent = product.description;
+            modalDescription.innerHTML = product.description;
             modalDescription.style.display = 'block';
         } else {
             modalDescription.style.display = 'none';
@@ -899,7 +899,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             doc.setFontSize(9);
                             doc.setTextColor(70);
                             doc.setFont("helvetica", "italic");
-                            const descLines = doc.splitTextToSize(productData.description, 170);
+                            const plainDesc = productData.description.replace(/<[^>]*>/g, ""); const descLines = doc.splitTextToSize(plainDesc, 170);
                             doc.text(descLines, margin, yPos);
                             yPos += descLines.length * 4.5 + 3;
                         }
