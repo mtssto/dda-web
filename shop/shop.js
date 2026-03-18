@@ -128,21 +128,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Modal Injection Logic (as raw string to avoid CORS on file:/// protocol)
     const modalHTML = `
-        <style>
-            .modal-container { display: flex !important; max-height: 90vh !important; overflow: hidden !important; }
-            .modal-info-wrapper { display: flex !important; flex-direction: column !important; overflow: hidden !important; min-height: 0 !important; }
-            .modal-info-scroll { flex: 1 1 auto !important; overflow-y: auto !important; min-height: 0 !important; padding-right: 4px !important; }
-            .modal-info-scroll::-webkit-scrollbar { width: 4px; }
-            .modal-info-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 2px; }
-            .modal-btn-footer { flex-shrink: 0 !important; padding-top: 14px !important; }
-            .modal-btn-footer .btn-modal-buy { width: 100% !important; }
-            @media (max-width: 768px) {
-                .modal-container { flex-direction: column !important; max-height: 92vh !important; }
-                .modal-image-wrapper { flex-shrink: 0 !important; max-height: 42vh !important; overflow: hidden !important; }
-                .modal-image-wrapper img { width: 100% !important; height: 100% !important; object-fit: contain !important; }
-                .modal-info-wrapper { flex: 1 1 auto !important; }
-            }
-        </style>
         <!-- Modal for Info View -->
         <div id="imageModal" class="image-modal">
             <span class="modal-close">&times;</span>

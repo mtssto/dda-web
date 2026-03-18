@@ -522,8 +522,44 @@ body.lang-en .product-card.sold::after {
     padding: 60px 40px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     text-align: left;
+    overflow: hidden;
+    /* contain children */
+    min-height: 0;
+    /* allow flex shrink */
+}
+
+/* Scrollable text area — title, description, metadata */
+.modal-info-scroll {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
+    padding-right: 6px;
+}
+
+.modal-info-scroll::-webkit-scrollbar {
+    width: 3px;
+}
+
+.modal-info-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modal-info-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 2px;
+}
+
+/* Button always pinned at bottom */
+.modal-btn-footer {
+    flex-shrink: 0;
+    padding-top: 16px;
+}
+
+.modal-btn-footer .btn-modal-buy {
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .modal-title {
@@ -1255,10 +1291,21 @@ footer p {
 
     .modal-info-wrapper {
         padding: 20px;
-        /* Reduced padding */
+        flex: 1 1 auto;
+        overflow: hidden;
+        min-height: 0;
+    }
+
+    .modal-info-scroll {
+        flex: 1 1 auto;
         overflow-y: auto;
-        /* Scroll info if needed */
-        max-height: 40vh;
+        min-height: 0;
+        max-height: none;
+    }
+
+    .modal-btn-footer {
+        flex-shrink: 0;
+        padding: 12px 0 4px;
     }
 
     .modal-title {
