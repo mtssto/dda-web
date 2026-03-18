@@ -4,12 +4,21 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 0;
     width: 100%;
     box-sizing: border-box;
     z-index: 9999;
+    transition: z-index 0s, opacity 0.2s;
+    pointer-events: auto;
+}
+
+/* Hide behind modal when modal is open */
+body.modal-open .close-container {
+    z-index: 1 !important;
+    pointer-events: none !important;
+    opacity: 0;
 }
 
 .close-btn {

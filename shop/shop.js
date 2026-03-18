@@ -236,6 +236,20 @@ document.addEventListener('DOMContentLoaded', function () {
         body.modal-open .whatsapp-float {
             display: none !important;
         }
+        /* ── Force modal above everything (close-container is z-index:9999) ── */
+        .image-modal {
+            z-index: 99999 !important;
+        }
+        /* ── Disable close-container and lang switcher while modal is open ── */
+        body.modal-open .close-container {
+            z-index: 1 !important;
+            pointer-events: none !important;
+        }
+        body.modal-open .lang-switcher,
+        body.modal-open [class*="lang-"] {
+            z-index: 1 !important;
+            pointer-events: none !important;
+        }
     `;
     document.head.appendChild(modalFixStyle);
 
