@@ -155,7 +155,6 @@
 
 /* Active filter indicator — shows a dot when size filter is not "all" */
 .sidebar-section:has(#sizeFilter:not([value="all"])) .sidebar-heading::after {
-    content: ' ●';
     font-size: 0.5rem;
     color: #000;
     vertical-align: super;
