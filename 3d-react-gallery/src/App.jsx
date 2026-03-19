@@ -1014,7 +1014,7 @@ export default function App() {
         "A talking organism", "#BUÓH", "Elefantes en el Bazar", "Mi Cuerpo Eléctrico",
         "Todo lo que brilla es oro", "Working Progress", "La Llave y el Testigo",
         "Paisajes psíquicos", "Criaturas esotéricas", "Pinturas rupestres extraterrestres",
-        "Besos Brujos", "Diego de Aduriz"
+        "Besos Brujos", "Diego De Aduriz"
     ]
 
     // Wire pinch gesture to open images + trigger LSD flash

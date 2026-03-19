@@ -927,7 +927,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Title
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(22);
-                doc.text("Catálogo - Diego de Aduriz", 14, 20);
+                doc.text("Catálogo - Diego De Aduriz", 14, 20);
 
                 // Subtitle
                 doc.setFont("helvetica", "normal");

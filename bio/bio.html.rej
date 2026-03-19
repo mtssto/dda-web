@@ -19,24 +19,24 @@ diff a/bio/bio.html b/bio/bio.html	(rejected hunks)
 +    <meta charset="UTF-8">
 +    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 +
-+    <title>Diego de Aduriz | Artista Plástico Argentino — Bio</title>
-+    <meta name="description" content="Diego de Aduriz, artista plástico nacido en Buenos Aires en 1977. Expuso en MACBA, MALBA, Frieze London, New York y Madrid. Premio Klemm, Beca Kuitca. Obras originales disponibles.">
-+    <meta name="keywords" content="Diego de Aduriz, artista plástico argentino, Buenos Aires, MACBA, MALBA, Frieze London, pastel, técnica mixta, arte contemporáneo argentino, Beca Kuitca, Premio Klemm">
-+    <meta name="author" content="Diego de Aduriz">
++    <title>Diego De Aduriz | Artista Plástico Argentino — Bio</title>
++    <meta name="description" content="Diego De Aduriz, artista plástico nacido en Buenos Aires en 1977. Expuso en MACBA, MALBA, Frieze London, New York y Madrid. Premio Klemm, Beca Kuitca. Obras originales disponibles.">
++    <meta name="keywords" content="Diego De Aduriz, artista plástico argentino, Buenos Aires, MACBA, MALBA, Frieze London, pastel, técnica mixta, arte contemporáneo argentino, Beca Kuitca, Premio Klemm">
++    <meta name="author" content="Diego De Aduriz">
 +    <meta name="robots" content="index, follow">
 +    <link rel="canonical" href="https://www.diegodeaduriz.art/bio/bio.html">
 +
 +    <!-- Open Graph -->
 +    <meta property="og:type" content="profile">
 +    <meta property="og:url" content="https://www.diegodeaduriz.art/bio/bio.html">
-+    <meta property="og:title" content="Diego de Aduriz — Artista Plástico Argentino">
++    <meta property="og:title" content="Diego De Aduriz — Artista Plástico Argentino">
 +    <meta property="og:description" content="Artista nacido en Buenos Aires en 1977. Expuso en MACBA, MALBA, Frieze London, New York y Madrid. Obras originales disponibles en su tienda.">
 +    <meta property="og:image" content="https://www.diegodeaduriz.art/dda.jpeg">
-+    <meta property="og:site_name" content="Diego de Aduriz">
++    <meta property="og:site_name" content="Diego De Aduriz">
 +
 +    <!-- Twitter Card -->
 +    <meta name="twitter:card" content="summary_large_image">
-+    <meta name="twitter:title" content="Diego de Aduriz — Artista Plástico Argentino">
++    <meta name="twitter:title" content="Diego De Aduriz — Artista Plástico Argentino">
 +    <meta name="twitter:description" content="Artista nacido en Buenos Aires en 1977. Expuso en MACBA, MALBA, Frieze London y New York.">
 +    <meta name="twitter:image" content="https://www.diegodeaduriz.art/dda.jpeg">
 +
@@ -46,7 +46,7 @@ diff a/bio/bio.html b/bio/bio.html	(rejected hunks)
 +      "@context": "https://schema.org",
 +      "@type": "Person",
 +      "@id": "https://www.diegodeaduriz.art/#artist",
-+      "name": "Diego de Aduriz",
++      "name": "Diego De Aduriz",
 +      "givenName": "Diego",
 +      "familyName": "de Aduriz",
 +      "birthDate": "1977",
@@ -104,7 +104,7 @@ diff a/bio/bio.html b/bio/bio.html	(rejected hunks)
 +    {
 +      "@context": "https://schema.org",
 +      "@type": "ItemList",
-+      "name": "Exposiciones de Diego de Aduriz",
++      "name": "Exposiciones de Diego De Aduriz",
 +      "itemListElement": [
 +        {
 +          "@type": "ExhibitionEvent",
@@ -196,7 +196,7 @@ diff a/bio/bio.html b/bio/bio.html	(rejected hunks)
 -    <div class="about-grid">
 -      <div class="about-content-split">
 -        <div class="about-text fade-in-left" id="bioText">
--          <h1 class="bio-title">Diego de Aduriz</h1>
+-          <h1 class="bio-title">Diego De Aduriz</h1>
 -          <p class="hero_par" data-i18n="bio.p1">Diego De Aduriz nació en la ciudad de Buenos Aires en 1977. Estudió
 -            Bellas Artes y Arquitectura. Trabaja en soportes múltiples: dibujo, pintura, collage, instalaciones,
 -            performance, diseño de indumentaria, edición de fanzines, escritura y redes sociales. En 2022 festejó sus 20
@@ -234,10 +234,10 @@ diff a/bio/bio.html b/bio/bio.html	(rejected hunks)
 -          <div class="bio-carousel">
 -            <button class="carousel-btn carousel-prev"></button>
 -            <div class="carousel-track" id="bioCarouselTrack">
--              <img src="../dda.jpeg" alt="Diego de Aduriz" class="profile-photo">
--              <img src="2.JPG" alt="Diego de Aduriz" class="profile-photo">
--              <img src="4.jpg" alt="Diego de Aduriz" class="profile-photo">
--              <img src="5.avif" alt="Diego de Aduriz" class="profile-photo">
+-              <img src="../dda.jpeg" alt="Diego De Aduriz" class="profile-photo">
+-              <img src="2.JPG" alt="Diego De Aduriz" class="profile-photo">
+-              <img src="4.jpg" alt="Diego De Aduriz" class="profile-photo">
+-              <img src="5.avif" alt="Diego De Aduriz" class="profile-photo">
 -            </div>
 -            <button class="carousel-btn carousel-next"></button>
 -          </div>
@@ -250,7 +250,7 @@ diff a/bio/bio.html b/bio/bio.html	(rejected hunks)
      </div>
 -  </main>
 -  <footer>
--    <p>&copy; 2026 Diego de Aduriz. All rights reserved.</p>
+-    <p>&copy; 2026 Diego De Aduriz. All rights reserved.</p>
 -  </footer>
 -  <script src="../index.js"></script>
 -  <script src="bio.js"></script>
@@ -260,7 +260,7 @@ diff a/bio/bio.html b/bio/bio.html	(rejected hunks)
 -</html>
 \ No newline at end of file
 +    <main>
-+        <h1>Diego de Aduriz</h1>
++        <h1>Diego De Aduriz</h1>
 +
 +        <p>Diego De Aduriz nació en la ciudad de Buenos Aires en 1977. Estudió
 +        Bellas Artes y Arquitectura. Trabaja en soportes múltiples: dibujo, pintura, collage, instalaciones,
@@ -282,14 +282,14 @@ diff a/bio/bio.html b/bio/bio.html	(rejected hunks)
 +
 +        <p><a href="mailto:contact@diegodeaduriz.com">Contact Me</a></p>
 +
-+        <img src="../dda.jpeg" alt="Diego de Aduriz, artista plástico argentino" width="800" loading="lazy">
-+        <img src="2.JPG" alt="Diego de Aduriz en su taller" width="800" loading="lazy">
-+        <img src="4.jpg" alt="Diego de Aduriz — obra" width="800" loading="lazy">
-+        <img src="5.avif" alt="Diego de Aduriz — exposición" width="800" loading="lazy">
++        <img src="../dda.jpeg" alt="Diego De Aduriz, artista plástico argentino" width="800" loading="lazy">
++        <img src="2.JPG" alt="Diego De Aduriz en su taller" width="800" loading="lazy">
++        <img src="4.jpg" alt="Diego De Aduriz — obra" width="800" loading="lazy">
++        <img src="5.avif" alt="Diego De Aduriz — exposición" width="800" loading="lazy">
 +    </main>
 +
 +    <footer>
-+        <p>&copy; 2026 Diego de Aduriz. All rights reserved.</p>
++        <p>&copy; 2026 Diego De Aduriz. All rights reserved.</p>
 +    </footer>
 +
 +</body>

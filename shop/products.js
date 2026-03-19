@@ -166,7 +166,7 @@ window.products = [
     {
         "id": "belleza-y-felicidad-con-sol-y-luna",
         "title": "Belleza y felicidad con sol y luna",
-        "description": "Una obra que celebra la dualidad: el sol y la luna conviven en un mismo espacio cargado de energía y color. <strong>Pastel tiza</strong> trabajado con una sensibilidad única que define el universo visual de Diego de Aduriz.",
+        "description": "Una obra que celebra la dualidad: el sol y la luna conviven en un mismo espacio cargado de energía y color. <strong>Pastel tiza</strong> trabajado con una sensibilidad única que define el universo visual de Diego De Aduriz.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Pastel tiza sobre papel",
@@ -682,7 +682,7 @@ window.products = [
     {
         "id": "dibu-2",
         "title": "Ilustración #2",
-        "description": "Ilustración original en <strong>técnica mixta sobre papel</strong>. <strong>Pieza única</strong>, firmada. Una forma accesible de tener una obra original de Diego de Aduriz.",
+        "description": "Ilustración original en <strong>técnica mixta sobre papel</strong>. <strong>Pieza única</strong>, firmada. Una forma accesible de tener una obra original de Diego De Aduriz.",
         "price": "22 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
