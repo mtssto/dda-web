@@ -277,15 +277,62 @@
             <aside class="catalog-sidebar">
                 <div class="sidebar-section">
                     <h3 class="sidebar-heading" data-i18n="filter.categories">CATEGORÍAS</h3>
-                    <select id="categoryFilter" class="filter-dropdown">
-                        <option value="all" data-i18n="filter.all">Ver todo</option>
-                        <option value="pasteles" data-i18n="filter.pasteles">Pasteles</option>
-                        <option value="digital" data-i18n="filter.digital">Arte digital</option>
-                        <option value="gatos" data-i18n="filter.gatos">Gatos</option>
-                        <option value="paisajes" data-i18n="filter.paisajes">Paisajes</option>
-                        <option value="Autorretratos" data-i18n="filter.Autorretratos">Autorretratos</option>
-                        <option value="ilustraciones" data-i18n="filter.ilustraciones">Ilustraciones</option>
+                    <!-- Hidden select for JS compatibility -->
+                    <select id="categoryFilter" style="display:none">
+                        <option value="all">Ver todo</option>
+                        <option value="pasteles">Pasteles</option>
+                        <option value="digital">Arte digital</option>
+                        <option value="gatos">Gatos</option>
+                        <option value="paisajes">Paisajes</option>
+                        <option value="Autorretratos">Autorretratos</option>
+                        <option value="ilustraciones">Ilustraciones</option>
                     </select>
+                    <div class="custom-dropdown" id="categoryDropdown">
+                        <button class="cd-trigger" aria-haspopup="listbox">
+                            <span class="cd-label">Ver todo</span>
+                            <svg class="cd-arrow" width="9" height="5" viewBox="0 0 9 5">
+                                <path d="M0 0l4.5 5L9 0z" fill="currentColor" />
+                            </svg>
+                        </button>
+                        <ul class="cd-list" role="listbox">
+                            <li class="cd-option active" data-value="all">Ver todo</li>
+                            <li class="cd-option" data-value="pasteles">Pasteles</li>
+                            <li class="cd-option" data-value="digital">Arte digital</li>
+                            <li class="cd-option" data-value="gatos">Gatos</li>
+                            <li class="cd-option" data-value="paisajes">Paisajes</li>
+                            <li class="cd-option" data-value="Autorretratos">Autorretratos</li>
+                            <li class="cd-option" data-value="ilustraciones">Ilustraciones</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3 class="sidebar-heading">TAMAÑO</h3>
+                    <select id="sizeFilter" style="display:none">
+                        <option value="all">Todos los tamaños</option>
+                        <option value="small">Pequeño — hasta 50 cm</option>
+                        <option value="medium">Mediano — 51 a 120 cm</option>
+                        <option value="large">Grande — más de 120 cm</option>
+                        <option value="consult">Consultar medidas</option>
+                    </select>
+                    <div class="custom-dropdown" id="sizeDropdown">
+                        <button class="cd-trigger" aria-haspopup="listbox">
+                            <span class="cd-label">Todos los tamaños</span>
+                            <svg class="cd-arrow" width="9" height="5" viewBox="0 0 9 5">
+                                <path d="M0 0l4.5 5L9 0z" fill="currentColor" />
+                            </svg>
+                        </button>
+                        <ul class="cd-list" role="listbox">
+                            <li class="cd-option active" data-value="all">Todos los tamaños</li>
+                            <li class="cd-option" data-value="small">Pequeño <span class="cd-hint">hasta 50 cm</span>
+                            </li>
+                            <li class="cd-option" data-value="medium">Mediano <span class="cd-hint">51 – 120 cm</span>
+                            </li>
+                            <li class="cd-option" data-value="large">Grande <span class="cd-hint">más de 120 cm</span>
+                            </li>
+                            <li class="cd-option" data-value="consult">Consultar medidas</li>
+                        </ul>
+                    </div>
                 </div>
 
             </aside>

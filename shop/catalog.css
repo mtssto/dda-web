@@ -146,3 +146,144 @@
     color: var(--primary-color, #1a1a1a);
     transform: translateY(-2px);
 }
+
+/* ── Size filter ── */
+#sizeFilter {
+    width: 100%;
+    margin-top: 4px;
+}
+
+/* Active filter indicator — shows a dot when size filter is not "all" */
+.sidebar-section:has(#sizeFilter:not([value="all"])) .sidebar-heading::after {
+    content: ' ●';
+    font-size: 0.5rem;
+    color: #000;
+    vertical-align: super;
+}
+
+/* ── Sidebar section spacing ─────────────────────────── */
+.sidebar-section {
+    margin-bottom: 32px;
+}
+
+.sidebar-heading {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.62rem;
+    font-weight: 400;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 14px;
+}
+
+/* ── Custom dropdown ─────────────────────────────────── */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+    user-select: none;
+}
+
+/* Trigger button */
+.cd-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 300;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #111;
+    cursor: pointer;
+    text-align: left;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.cd-trigger:hover,
+.custom-dropdown.open .cd-trigger {
+    border-bottom-color: #111;
+}
+
+.cd-arrow {
+    flex-shrink: 0;
+    color: #111;
+    transition: transform 0.2s ease;
+    margin-left: 8px;
+}
+
+.custom-dropdown.open .cd-arrow {
+    transform: rotate(180deg);
+}
+
+/* Dropdown list */
+.cd-list {
+    display: none;
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-top: none;
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+    z-index: 200;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+}
+
+.custom-dropdown.open .cd-list {
+    display: block;
+}
+
+/* Options */
+.cd-option {
+    padding: 10px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    color: #555;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.cd-option:hover {
+    background: #f8f8f8;
+    color: #111;
+}
+
+.cd-option.active {
+    color: #111;
+    font-weight: 500;
+}
+
+.cd-option.active::before {
+    content: '—';
+    font-size: 0.6rem;
+    opacity: 0.5;
+    margin-right: 2px;
+}
+
+/* Hint text inside option (e.g. "hasta 50 cm") */
+.cd-hint {
+    font-size: 0.68rem;
+    color: #bbb;
+    font-weight: 300;
+    letter-spacing: 0;
+}
+
+/* Active option hint stays visible */
+.cd-option.active .cd-hint {
+    color: #999;
+}

@@ -101,16 +101,47 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Filter Logic
     const categoryFilter = document.getElementById('categoryFilter');
+    const sizeFilter = document.getElementById('sizeFilter');
+
+    // ── Size classification ────────────────────────────────
+    // Returns 'small' (≤50cm), 'medium' (51-120cm), 'large' (>120cm), or 'consult'
+    function getSizeBucket(dimensionsStr) {
+        if (!dimensionsStr || dimensionsStr === 'Consultar medidas' ||
+            dimensionsStr === 'undefined' || dimensionsStr.trim() === '') {
+            return 'consult';
+        }
+        // Parse first two numbers from strings like "140 x 125 cm" or "1,70 x 50 cm"
+        const nums = dimensionsStr
+            .replace(/,/g, '.')           // "1,70" → "1.70"
+            .match(/[\d.]+/g);
+        if (!nums || nums.length < 2) return 'consult';
+
+        // Convert values < 10 to cm (* 100) — handles "1.70 x 50" → 170 x 50
+        const parse = v => {
+            const n = parseFloat(v);
+            return n < 10 ? n * 100 : n;
+        };
+        const max = Math.max(parse(nums[0]), parse(nums[1]));
+
+        if (max <= 50) return 'small';
+        if (max <= 120) return 'medium';
+        return 'large';
+    }
 
     function applyFilters() {
         const selectedCategory = categoryFilter ? categoryFilter.value : 'all';
+        const selectedSize = sizeFilter ? sizeFilter.value : 'all';
         const productCards = document.querySelectorAll('.product-card');
 
         productCards.forEach(card => {
-            const category = card.getAttribute('data-category');
-            let categoryMatch = (selectedCategory === 'all' || category === selectedCategory);
+            const category = card.getAttribute('data-category') || '';
+            const dimsRaw = card.getAttribute('data-dimensions') || '';
+            const sizeBucket = getSizeBucket(dimsRaw);
 
-            if (categoryMatch) {
+            const categoryMatch = (selectedCategory === 'all' || category === selectedCategory);
+            const sizeMatch = (selectedSize === 'all' || sizeBucket === selectedSize);
+
+            if (categoryMatch && sizeMatch) {
                 card.style.display = '';
                 card.style.animation = 'none';
                 setTimeout(() => {
@@ -125,6 +156,64 @@ document.addEventListener('DOMContentLoaded', function () {
     if (categoryFilter) {
         categoryFilter.addEventListener('change', applyFilters);
     }
+    if (sizeFilter) {
+        sizeFilter.addEventListener('change', applyFilters);
+    }
+
+    // ── Custom dropdown wiring ────────────────────────────
+    function initCustomDropdowns() {
+        document.querySelectorAll('.custom-dropdown').forEach(dropdown => {
+            const trigger = dropdown.querySelector('.cd-trigger');
+            const label = dropdown.querySelector('.cd-label');
+            const list = dropdown.querySelector('.cd-list');
+            const options = dropdown.querySelectorAll('.cd-option');
+            // Find the hidden <select> sibling
+            const selectEl = dropdown.previousElementSibling;
+
+            if (!trigger || !list) return;
+
+            // Toggle open/close
+            trigger.addEventListener('click', e => {
+                e.stopPropagation();
+                const isOpen = dropdown.classList.contains('open');
+                // Close all others
+                document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
+                if (!isOpen) dropdown.classList.add('open');
+            });
+
+            // Select option
+            options.forEach(opt => {
+                opt.addEventListener('click', () => {
+                    const val = opt.dataset.value;
+                    const text = opt.querySelector('.cd-hint')
+                        ? opt.childNodes[0].textContent.trim()
+                        : opt.textContent.trim();
+
+                    // Update label
+                    label.textContent = text;
+
+                    // Update active state
+                    options.forEach(o => o.classList.remove('active'));
+                    opt.classList.add('active');
+
+                    // Sync hidden select
+                    if (selectEl && selectEl.tagName === 'SELECT') {
+                        selectEl.value = val;
+                        selectEl.dispatchEvent(new Event('change'));
+                    }
+
+                    dropdown.classList.remove('open');
+                });
+            });
+        });
+
+        // Close on outside click
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
+        });
+    }
+
+    initCustomDropdowns();
 
     // Modal Injection Logic (as raw string to avoid CORS on file:/// protocol)
     const modalHTML = `
@@ -473,6 +562,7 @@ function renderGrid(items) {
         const card = document.createElement('div');
         card.className = 'product-card';
         card.setAttribute('data-category', product.category);
+        card.setAttribute('data-dimensions', product.dimensions || '');
         if (product.sold) card.classList.add('sold');
 
         const overlayHTML = isCatalog ? '' : `
