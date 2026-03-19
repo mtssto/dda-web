@@ -794,6 +794,12 @@ function openModal(productOrElement) {
     }
 
     modal.classList.add('active');
+    // Save scroll position and lock body (works on iOS Safari too)
+    const scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    document.body.dataset.scrollY = scrollY;
     document.body.classList.add('no-scroll');
     document.body.classList.add('modal-open');
     document.documentElement.classList.add('no-scroll');
@@ -813,9 +819,15 @@ function closeModal() {
     const modal = document.getElementById('imageModal');
     if (modal) {
         modal.classList.remove('active');
+        // Restore scroll position
+        const scrollY = parseInt(document.body.dataset.scrollY || '0');
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
         document.body.classList.remove('no-scroll');
         document.body.classList.remove('modal-open');
         document.documentElement.classList.remove('no-scroll');
+        window.scrollTo(0, scrollY);
     }
 }
 
@@ -853,6 +865,11 @@ function openLightBox(imageSrc) {
 
         updateLightBoxImage();
         lightBox.classList.add('active');
+        const lbScrollY = window.scrollY;
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${lbScrollY}px`;
+        document.body.style.width = '100%';
+        document.body.dataset.lbScrollY = lbScrollY;
         document.body.classList.add('no-scroll');
         document.documentElement.classList.add('no-scroll');
     }
@@ -875,8 +892,13 @@ function closeLightBox() {
 
     if (lightBox) {
         lightBox.classList.remove('active');
+        const lbScrollY = parseInt(document.body.dataset.lbScrollY || '0');
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
         document.body.classList.remove('no-scroll');
         document.documentElement.classList.remove('no-scroll');
+        window.scrollTo(0, lbScrollY);
     }
     if (lightBoxImg) {
         lightBoxImg.dataset.zoomLevel = '0';
