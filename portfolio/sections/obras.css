@@ -6,12 +6,15 @@
   --color-text: #1a1a1a;
   --color-subtext: #666;
   --color-bg: #fff;
-  --spacing-section: 120px;
-  --spacing-grid: 60px;
+  --nav-h: 84px;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background-color: var(--color-bg);
+  background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-body);
   margin: 0;
@@ -20,174 +23,235 @@ body {
   overflow-x: hidden;
 }
 
-/* Container */
+/* ── Sticky category nav ─────────────────────────── */
+:root {
+  --close-h: 0px;
+}
+
+.cat-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10000;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid #e8e8e8;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+}
+
+.cat-nav-inner {
+  flex: 1;
+  min-width: 0;
+  padding: 0 16px 0 40px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  /* prevent pills from wrapping to next line */
+  flex-wrap: nowrap;
+}
+
+.cat-nav-inner::-webkit-scrollbar {
+  display: none;
+}
+
+.cat-pill {
+  flex-shrink: 0;
+  padding: 4px 0;
+  margin: 0 14px 0 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #aaa;
+  position: relative;
+  transition: color 0.2s;
+  white-space: nowrap;
+  border-radius: 0;
+  background: none;
+}
+
+.cat-pill::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #111;
+  transform: scaleX(0);
+  transition: transform 0.2s ease;
+}
+
+.cat-pill:hover {
+  color: #111;
+  background: none;
+}
+
+.cat-pill:hover::after {
+  transform: scaleX(1);
+}
+
+.cat-pill.active {
+  color: #111;
+  background: none;
+  font-weight: 400;
+}
+
+.cat-pill.active::after {
+  transform: scaleX(1);
+}
+
+.cat-nav-right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0 40px 0 20px;
+  border-left: 1px solid #eee;
+  height: 100%;
+  margin-left: auto;
+}
+
+/* ES | EN — same style as original navbar lang switcher */
+.cat-lang-btn {
+  background: none;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #111;
+  cursor: pointer;
+  padding: 0 4px;
+  transition: color 0.3s ease;
+  line-height: 1;
+}
+
+.cat-lang-btn:hover {
+  color: #888;
+}
+
+.cat-lang-btn.active-lang {
+  color: #111;
+}
+
+.cat-lang-btn:not(.active-lang) {
+  color: #888;
+}
+
+.cat-lang-sep {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #ccc;
+  padding: 0 2px;
+  line-height: 1;
+}
+
+/* CERRAR — identical to .close-btn */
+.cat-close-btn {
+  margin-left: 16px;
+  text-decoration: none;
+  color: #111;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+.cat-close-btn:hover {
+  color: #888;
+}
+
+/* ── Container ───────────────────────────────────── */
 .container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 140px 40px 0;
+  /* top padding accounts for close-container (~80px) + nav (48px) */
+  padding: calc(var(--nav-h) + 24px) 40px 0;
 }
 
-/* Sections */
+/* ── Sections ────────────────────────────────────── */
+section {
+  padding-bottom: 60px;
+  /* was ~120px implicit */
+}
 
 section:last-child {
   border-bottom: none;
+}
+
+/* scroll-margin so sticky nav doesn't cover section title */
+section[id] {
+  scroll-margin-top: calc(var(--nav-h) + 8px);
 }
 
 .section-title {
   text-align: center;
   font-family: var(--font-heading);
   font-style: italic;
-  font-size: 2.5rem;
+  font-size: 1.8rem;
+  /* was 2.5rem — reduced so less space wasted */
   font-weight: 400;
-  margin-bottom: 40px;
+  margin: 0 0 20px;
+  /* was 40px */
   letter-spacing: -0.02em;
+  color: #111;
 }
 
-
-/* Video Grid */
-.video-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 40px;
-}
-
-.video-item video {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* Footer Override */
-footer {
-  padding: 60px 0;
-  text-align: center;
-  border-top: 1px solid #eee;
-}
-
-footer p {
-  font-size: 0.85rem;
-  color: #999;
-}
-
-/* Mobile Responsiveness */
-@media (max-width: 900px) {
-  .section-title {
-    font-size: 2.2rem;
-  }
-
-  .masonry-grid {
-    column-count: 2;
-    column-gap: 0px;
-  }
-
-  .overlay-title {
-    font-size: 1.2rem;
-    margin-bottom: 8px;
-  }
-
-  .overlay-details {
-    font-size: 0.7rem;
-  }
-
-  .masonry-overlay {
-    padding: 15px;
-  }
-}
-
-@media (max-width: 600px) {
-  .container {
-    padding: 47px 8px;
-  }
-
-  .section-title {
-    font-size: 1.8rem;
-    margin-bottom: 30px;
-  }
-
-  .video-grid {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-
-  .masonry-grid {
-    column-count: 2 !important;
-    column-gap: 0px !important;
-  }
-
-  /* On mobile 1 column looks good, scale font down to fit better */
-  .overlay-title {
-    font-size: 1.1rem;
-    margin-bottom: 5px;
-    line-height: 1.1;
-  }
-
-  .overlay-details {
-    font-size: 0.75rem;
-    line-height: 1.1;
-  }
-
-  .overlay-details a.btn-link {
-    font-size: 0.65rem;
-    padding: 6px 12px;
-    margin-top: 10px;
-  }
-
-  .masonry-overlay {
-    padding: 10px;
-  }
-}
-
-/* CSS Hacks for Dense Masonry Grid */
+/* ── Masonry grid ────────────────────────────────── */
 .masonry-grid {
   column-count: 3;
-  column-gap: 0px;
-  padding-bottom: 20px;
+  column-gap: 0;
+  padding-bottom: 10px;
   font-size: 0;
 }
 
 .masonry-item {
   break-inside: avoid;
-  margin-bottom: 0px;
-  /* Fix for inline-block bottom gap */
-  width: 100%;
   display: inline-block;
+  width: 100%;
   position: relative;
   overflow: hidden;
   line-height: normal;
-  /* Restore line height for text inside */
   font-size: 1rem;
-  /* Restore font size for overlay text */
-  /* Ensures no gap below image */
 }
 
 .masonry-item img {
   width: 100%;
   height: auto;
   display: block;
-  /* Important to remove inline flex gaps */
   cursor: pointer;
   transition: opacity .4s, transform .4s;
   margin: 0;
   padding: 0;
 }
 
-/* Hover details overlay */
+/* ── Hover overlay ───────────────────────────────── */
 .masonry-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: rgba(255, 255, 255, 0.95);
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 30px;
+  padding: 20px;
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.35s ease;
   pointer-events: none;
-  box-sizing: border-box;
 }
 
 .masonry-item:hover .masonry-overlay {
@@ -195,8 +259,8 @@ footer p {
 }
 
 .overlay-content {
-  transform: translateY(15px);
-  transition: transform 0.4s ease;
+  transform: translateY(12px);
+  transition: transform 0.35s ease;
 }
 
 .masonry-item:hover .overlay-content {
@@ -206,8 +270,8 @@ footer p {
 .overlay-title {
   font-family: var(--font-heading);
   font-style: italic;
-  font-size: 1.6rem;
-  margin: 0 0 12px 0;
+  font-size: 1.2rem;
+  margin: 0 0 8px;
   font-weight: 400;
   color: #111;
   line-height: 1.2;
@@ -215,28 +279,52 @@ footer p {
 
 .overlay-details {
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   color: #555;
-  line-height: 1.6;
+  line-height: 1.5;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
   margin: 0;
 }
 
 .masonry-item:hover img {
-  transform: scale(1.05);
+  transform: scale(1.04);
 }
 
-/* Lightbox Modal (Pure Image Zoom) */
+/* ── Video grid ──────────────────────────────────── */
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  /* was 40px */
+}
+
+.video-item video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ── Footer ──────────────────────────────────────── */
+footer {
+  padding: 40px 0;
+  text-align: center;
+  border-top: 1px solid #eee;
+  margin-top: 40px;
+}
+
+footer p {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+/* ── Lightbox ────────────────────────────────────── */
 .lightbox-modal {
   display: none;
   position: fixed;
   z-index: 10000;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(30, 30, 30, 0.95);
+  inset: 0;
+  background: rgba(20, 20, 20, 0.96);
   justify-content: center;
   align-items: center;
   opacity: 0;
@@ -253,7 +341,7 @@ footer p {
   max-height: 90vh;
   object-fit: contain;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  border-radius: 4px;
+  border-radius: 3px;
   cursor: zoom-in;
   transition: transform 0.3s ease;
 }
@@ -263,11 +351,11 @@ footer p {
   top: 20px;
   right: 30px;
   color: #fff;
-  font-size: 40px;
+  font-size: 38px;
   font-weight: 300;
   cursor: pointer;
   z-index: 10001;
-  transition: color 0.3s;
+  transition: color 0.2s;
 }
 
 .lightbox-close:hover {
@@ -280,46 +368,40 @@ footer p {
   top: 50%;
   transform: translateY(-50%);
   color: #fff;
-  font-size: 30px;
-  font-weight: 300;
+  font-size: 28px;
   cursor: pointer;
   z-index: 10001;
-  transition: color 0.3s, background-color 0.3s;
-  background-color: rgba(0, 0, 0, 0.4);
-  width: 50px;
-  height: 50px;
+  background: rgba(0, 0, 0, 0.4);
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   user-select: none;
+  transition: background 0.2s;
 }
 
 .lightbox-prev {
-  left: 40px;
+  left: 30px;
 }
 
 .lightbox-next {
-  right: 40px;
+  right: 30px;
 }
 
 .lightbox-prev:hover,
 .lightbox-next:hover {
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.8);
 }
 
-/* Modal for Image View */
+/* ── Info Modal ──────────────────────────────────── */
 .image-modal {
   display: none;
   position: fixed;
   z-index: 3000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(255, 255, 255, 0.95);
+  inset: 0;
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(5px);
   align-items: center;
   justify-content: center;
@@ -332,6 +414,20 @@ footer p {
   opacity: 1;
 }
 
+/* Hide close-container and cat-nav when modal open */
+body.obras-modal-open .close-container {
+  z-index: 1 !important;
+  pointer-events: none !important;
+  opacity: 0;
+}
+
+body.obras-modal-open .cat-nav {
+  z-index: 1 !important;
+  pointer-events: none !important;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
 .modal-container {
   display: flex;
   margin: auto;
@@ -340,6 +436,7 @@ footer p {
   max-width: 1000px;
   height: 80vh;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
 .modal-close {
@@ -352,6 +449,7 @@ footer p {
   cursor: pointer;
   z-index: 3001;
   transition: color 0.3s;
+  line-height: 1;
 }
 
 .modal-close:hover {
@@ -366,6 +464,7 @@ footer p {
   justify-content: center;
   padding: 40px;
   position: relative;
+  overflow: hidden;
 }
 
 .modal-prev,
@@ -374,136 +473,284 @@ footer p {
   top: 50%;
   transform: translateY(-50%);
   color: #111;
-  font-size: 24px;
-  font-weight: 300;
+  font-size: 22px;
   cursor: pointer;
   z-index: 3001;
-  transition: color 0.3s, background-color 0.3s;
-  background-color: rgba(255, 255, 255, 0.7);
-  width: 40px;
-  height: 40px;
+  background: rgba(255, 255, 255, 0.8);
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   user-select: none;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  transition: background 0.2s, color 0.2s;
 }
 
 .modal-prev {
-  left: 20px;
+  left: 16px;
 }
 
 .modal-next {
-  right: 20px;
+  right: 16px;
 }
 
 .modal-prev:hover,
 .modal-next:hover {
+  background: #111;
   color: #fff;
-  background-color: #111;
 }
 
 .modal-image {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 }
 
+/* Info panel: flex column with scroll + pinned button */
 .modal-info-wrapper {
   flex: 1;
-  padding: 60px 40px;
+  padding: 50px 36px 32px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: left;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.modal-info-scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 4px;
+}
+
+.modal-info-scroll::-webkit-scrollbar {
+  width: 3px;
+}
+
+.modal-info-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
+}
+
+.modal-btn-footer {
+  flex-shrink: 0;
+  padding-top: 20px;
 }
 
 .modal-title {
   font-family: var(--font-heading);
   font-style: italic;
-  font-size: 2rem;
-  margin-bottom: 20px;
+  font-size: 1.9rem;
+  margin: 0 0 16px;
   font-weight: 400;
 }
 
 .modal-technique,
 .modal-dimensions {
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: #666;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   line-height: 1.5;
 }
 
 .modal-actions {
-  margin-top: 30px;
+  margin-top: 24px;
 }
 
-.btn-modal-buy {
-  display: inline-block;
-  padding: 15px 30px;
+.btn-modal-buy,
+.modal-buy-btn {
+  display: block;
+  width: 100%;
+  padding: 14px 24px;
   background: #000;
   color: #fff;
   text-transform: uppercase;
   text-decoration: none;
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 500;
   letter-spacing: 0.1em;
-  transition: background 0.3s ease;
+  text-align: center;
+  transition: background 0.25s;
   border: none;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
-.btn-modal-buy:hover {
+.btn-modal-buy:hover,
+.modal-buy-btn:hover {
   background: #333;
 }
 
-@media (max-width: 768px) {
+/* ── Autorretratos: 2 cols (few items) ───────────── */
+#Autorretratos .masonry-grid {
+  column-count: 2;
+}
+
+/* ── Tablet 1100px ───────────────────────────────── */
+@media (max-width: 1100px) {
+  .masonry-grid {
+    column-count: 3;
+  }
+}
+
+/* ── Tablet 900px ────────────────────────────────── */
+@media (max-width: 900px) {
+  .section-title {
+    font-size: 1.6rem;
+  }
+
+  .masonry-grid {
+    column-count: 3;
+  }
+
+  .cat-nav-inner {
+    padding: 0 16px;
+  }
+
+  .cat-nav-right {
+    padding: 0 16px;
+  }
+}
+
+/* ── Mobile 600px ────────────────────────────────── */
+@media (max-width: 600px) {
+
+  /* Nav: reduce font to fit everything in one line */
+  :root {
+    --nav-h: 52px;
+  }
+
+  .cat-nav-inner {
+    padding: 0 8px;
+    gap: 0;
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .cat-pill {
+    font-size: 0.68rem;
+    padding: 4px 0;
+    margin: 0 10px 0 0;
+    letter-spacing: 1.5px;
+  }
+
+  .cat-nav-right {
+    padding: 0 10px 0 8px;
+    gap: 0;
+    flex-shrink: 0;
+  }
+
+  /* Scale down CERRAR + ES|EN on mobile */
+  .cat-lang-btn,
+  .cat-lang-sep {
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+  }
+
+  .cat-close-btn {
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    margin-left: 8px;
+  }
+
+  /* Content */
+  .container {
+    padding: calc(var(--nav-h) + 12px) 0 0;
+  }
+
+  .section-title {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+  }
+
+  section {
+    padding-bottom: 36px;
+  }
+
+  /* Grid: 2 columns */
+  .masonry-grid {
+    column-count: 2 !important;
+  }
+
+  #Autorretratos .masonry-grid {
+    column-count: 2 !important;
+  }
+
+  /* Video */
+  .video-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  /* Overlay: smaller text */
+  .overlay-title {
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+  }
+
+  .overlay-details {
+    font-size: 0.62rem;
+    line-height: 1.4;
+  }
+
+  .masonry-overlay {
+    padding: 12px;
+  }
+
+  /* ── Mobile modal: full screen stacked ─────────── */
   .image-modal {
-    background-color: #fff;
     align-items: flex-start;
-    /* Fixes top cutoff on scroll */
     padding: 0;
+    background: #fff;
   }
 
   .modal-container {
     flex-direction: column;
-    height: auto;
-    min-height: 100%;
-    max-height: none;
-    overflow: visible;
-    border-radius: 0;
-    margin: 0;
+    height: 100dvh;
+    max-height: 100dvh;
     width: 100%;
+    margin: 0;
+    border-radius: 0;
     box-shadow: none;
+    overflow: hidden;
   }
 
+  /* × button: top right, floating */
   .modal-close {
     position: fixed;
-    top: 15px;
-    right: 15px;
-    background: rgba(255, 255, 255, 0.9);
-    width: 45px;
-    height: 45px;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 30px;
+    font-size: 26px;
+    z-index: 10001;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    color: #000;
     line-height: 1;
-    z-index: 3002;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   }
 
+  /* Image: top 45% of screen */
   .modal-image-wrapper {
-    padding: 80px 20px 20px;
-    /* Space top for back button */
-    flex: none;
-    min-height: auto;
-    height: 55vh;
+    flex: 0 0 45vh;
+    height: 45vh;
+    min-height: 0;
+    padding: 12px 16px;
+    overflow: hidden;
+    background: #f5f5f5;
   }
 
   .modal-image {
@@ -512,21 +759,45 @@ footer p {
     object-fit: contain;
   }
 
+  /* Info: content-sized, not stretched */
   .modal-info-wrapper {
-    padding: 30px 20px 60px;
-    flex: none;
-    text-align: center;
+    flex: 0 0 auto;
+    padding: 16px 20px 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    /* shrink to content height */
+    max-height: 50vh;
+    min-height: 0;
+  }
+
+  .modal-info-scroll {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-right: 0;
+    min-height: 0;
   }
 
   .modal-title {
-    font-size: 1.8rem;
-    margin-bottom: 12px;
+    font-size: 1.3rem;
+    margin-bottom: 6px;
   }
 
-  .btn-modal-buy {
-    width: 100%;
-    padding: 16px 20px;
-    font-size: 1rem;
-    margin-top: 20px;
+  .modal-technique,
+  .modal-dimensions {
+    font-size: 0.82rem;
+    margin-bottom: 5px;
+  }
+
+  .modal-btn-footer {
+    flex-shrink: 0;
+    padding: 10px 0 14px;
+  }
+
+  .btn-modal-buy,
+  .modal-buy-btn {
+    padding: 14px 20px;
+    font-size: 0.82rem;
   }
 }

@@ -209,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Show modal
         if (modal) {
           modal.classList.add('active');
+          document.body.classList.add('obras-modal-open');
           document.body.style.overflow = 'hidden';
         }
       });
@@ -369,6 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModal = () => {
     if (modal) {
       modal.classList.remove('active');
+      document.body.classList.remove('obras-modal-open');
       document.body.style.overflow = '';
     }
   }
@@ -394,4 +396,70 @@ document.addEventListener('DOMContentLoaded', () => {
       if (lightBoxModal && lightBoxModal.classList.contains('active')) closeLightBox();
     }
   });
+
+  // ── Sticky nav: highlight active section ───────────────
+  const catPills = document.querySelectorAll('.cat-pill');
+  if (catPills.length && 'IntersectionObserver' in window) {
+    const sectionIds = ['pasteles', 'gatos', 'paisajes', 'Autorretratos', 'digital', 'ilustraciones', 'videos'];
+    const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          catPills.forEach(p => p.classList.remove('active'));
+          const activeId = entry.target.id;
+          const pill = document.querySelector(`.cat-pill[data-section="${activeId}"]`);
+          if (pill) {
+            pill.classList.add('active');
+            // Scroll pill into view within nav
+            pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
+        }
+      });
+    }, { rootMargin: '-40px 0px -60% 0px', threshold: 0 });
+
+    sections.forEach(s => observer.observe(s));
+  }
+
+  // Smooth scroll for nav pills
+  document.querySelectorAll('.cat-pill').forEach(pill => {
+    pill.addEventListener('click', e => {
+      e.preventDefault();
+      const id = pill.dataset.section;
+      const target = document.getElementById(id);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  // ── Language switching ───────────────────────────────────
+  const applyLang = (lang) => {
+    // 1. Save preference
+    localStorage.setItem('preferredLanguage', lang);
+    // 2. Call i18n.js changeLanguage if available (handles data-i18n elements)
+    if (window.changeLanguage) {
+      window.changeLanguage(lang);
+    } else {
+      // Fallback: update html lang attribute and data-i18n elements manually
+      document.documentElement.lang = lang;
+    }
+    // 3. Update active state on our buttons
+    document.querySelectorAll('.cat-lang-btn').forEach(btn => {
+      btn.classList.toggle('active-lang', btn.dataset.lang === lang);
+    });
+    // 4. Update modal buy button text
+    const buyBtn = document.getElementById('modalBuyBtn');
+    if (buyBtn) {
+      buyBtn.textContent = lang === 'en' ? 'INQUIRE / BUY' : 'CONSULTAR / COMPRAR';
+    }
+  };
+
+  // Wire up buttons using data-lang attribute
+  document.querySelectorAll('.cat-lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+  });
+
+  // Apply saved language on load
+  const savedLang = localStorage.getItem('preferredLanguage') || 'es';
+  applyLang(savedLang);
+
 });

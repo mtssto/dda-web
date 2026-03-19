@@ -1,5 +1,17 @@
 window.products = [
     {
+        "id": "pax-aeterna",
+        "title": "Pax æterna",
+        "description": "<strong>50 × 34 cm</strong> de <strong>marcadores sobre papel</strong>. Un papel que no tiene miedo al vacío: cada centímetro está habitado por alguna criatura, planta, símbolo o pequeño acontecimiento. Gnomo, cactus, diamante, gato alado, robot, casas, serpiente — todos conviven sin jerarquía y sin conflicto. Una obra de esas que cuanto más tiempo la mirás, más cosas encontrás. Ideal para un estudio, una habitación infantil o cualquier espacio que necesite energía y humor. <strong>Pieza única</strong>, firmada. <strong>Certificado de autenticidad</strong> incluido.",
+        "price": "Consultar",
+        "dimensions": "50 x 36 cm",
+        "technique": "Marcadores sobre papel",
+        "category": "obras",
+        "image": "/portfolio/sections/obras/Pax-æterna-50x36-2021.jpeg",
+        "sold": false,
+        "year": "2021"
+    },
+    {
         "id": "convivencia-pacifica-marcadores",
         "title": "Convivencia pacífica (marcadores)",
         "description": "<strong>50 × 34 cm</strong> de <strong>marcadores sobre papel</strong>. Un papel que no tiene miedo al vacío: cada centímetro está habitado por alguna criatura, planta, símbolo o pequeño acontecimiento. Gnomo, cactus, diamante, gato alado, robot, casas, serpiente — todos conviven sin jerarquía y sin conflicto. Una obra de esas que cuanto más tiempo la mirás, más cosas encontrás. Ideal para un estudio, una habitación infantil o cualquier espacio que necesite energía y humor. <strong>Pieza única</strong>, firmada. <strong>Certificado de autenticidad</strong> incluido.",
@@ -30,7 +42,7 @@ window.products = [
         "price": "Consultar",
         "dimensions": "50 x 34 cm",
         "technique": "Marcadores sobre papel",
-        "category": "ilustraciones",
+        "category": "paisajes",
         "image": "/portfolio/sections/obras/paisaje-con-dialogo-misterioso-marcadores-sobre-papel.png",
         "sold": false,
         "year": "2020"
@@ -42,7 +54,7 @@ window.products = [
         "price": "Consultar",
         "dimensions": "50 x 34 cm",
         "technique": "Lápiz y marcadores sobre papel",
-        "category": "ilustraciones",
+        "category": "paisajes",
         "image": "/portfolio/sections/obras/paisaje-regio-lapiz-marcadores-sobre-papel.png",
         "sold": false,
         "year": "2020"
@@ -54,7 +66,7 @@ window.products = [
         "price": "Consultar",
         "dimensions": "82 x 56 cm",
         "technique": "Pastel al óleo sobre madera",
-        "category": "pasteles",
+        "category": "Autorretratos",
         "image": "/portfolio/sections/obras/autorretrato-con-moño-2025-82x56.png",
         "sold": false,
         "year": "2025"

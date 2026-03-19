@@ -28,9 +28,28 @@
 
 <body>
 
-    <div class="close-container">
+    <div class="close-container" style="display:none">
         <a href="../../index.html" class="close-btn">CLOSE</a>
     </div>
+
+    <!-- Sticky category nav -->
+    <nav class="cat-nav" id="catNav">
+        <div class="cat-nav-inner">
+            <a class="cat-pill active" href="#pasteles" data-section="pasteles">Pasteles</a>
+            <a class="cat-pill" href="#gatos" data-section="gatos">Gatos</a>
+            <a class="cat-pill" href="#paisajes" data-section="paisajes">Paisajes</a>
+            <a class="cat-pill" href="#Autorretratos" data-section="Autorretratos">Autorretratos</a>
+            <a class="cat-pill" href="#digital" data-section="digital">Digital</a>
+            <a class="cat-pill" href="#ilustraciones" data-section="ilustraciones">Ilustraciones</a>
+            <a class="cat-pill" href="#videos" data-section="videos">Videos</a>
+        </div>
+        <div class="cat-nav-right">
+            <button class="cat-lang-btn active-lang" data-lang="es" id="navLangEs">ES</button>
+            <span class="cat-lang-sep">|</span>
+            <button class="cat-lang-btn" data-lang="en" id="navLangEn">EN</button>
+            <a href="../../index.html" class="cat-close-btn">CERRAR</a>
+        </div>
+    </nav>
 
     <main class="container">
         <!-- SECTION 1: PASTELES -->
@@ -108,11 +127,14 @@
                     <img alt="Artwork" class="modal-image" id="modalImage" />
                 </div>
                 <div class="modal-info-wrapper">
-                    <h2 class="modal-title" id="modalTitle"></h2>
-                    <p class="modal-technique" id="modalTechnique"></p>
-                    <p class="modal-dimensions" id="modalDimensions"></p>
-                    <p class="modal-year" id="modalYear" style="color: #666; font-size: 0.9rem; margin-top: 5px;"></p>
-                    <div class="modal-actions">
+                    <div class="modal-info-scroll">
+                        <h2 class="modal-title" id="modalTitle"></h2>
+                        <p class="modal-technique" id="modalTechnique"></p>
+                        <p class="modal-dimensions" id="modalDimensions"></p>
+                        <p class="modal-year" id="modalYear" style="color: #666; font-size: 0.9rem; margin-top: 5px;">
+                        </p>
+                    </div>
+                    <div class="modal-btn-footer">
                         <a class="modal-buy-btn btn-modal-buy" data-i18n="modal.consult" href="#" id="modalBuyBtn"
                             target="_blank">CONSULTAR / COMPRAR</a>
                     </div>
