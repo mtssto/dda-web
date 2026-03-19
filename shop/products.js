@@ -1,8 +1,24 @@
 window.products = [
     {
+        "id": "paisaje-con-angel-verde-fumando-dos-gatos-y-aliento-divino",
+        "title": "Paisaje con ángel verde fumando, dos gatos y aliento divino",
+        "description": "<strong>51 × 26 cm</strong> de <strong>marcadores y lápiz sobre papel</strong>. Un paisaje horizontal que despliega un universo completo: dos gatos — uno marrón grande con ojos de distintos colores a la izquierda, otro azul etéreo flotando en el centro —, un ángel verde fumando en el medio campo, una arquitectura gótica naranja, un arcoiris denso y matérico, una bailarina blanca y negra, y un pino verde al fondo derecho. Todo convive sin jerarquía, como si el papel fuera un territorio donde cualquier cosa puede existir junto a cualquier otra. El reverso de la obra también está intervenido: una nube con el título escrito a mano, dos ojos y un pequeño gato dormido — un segundo cuadro dentro del mismo soporte. <strong>Pieza única</strong>, con reverso intervenido. <strong>Certificado de autenticidad</strong> incluido.",
+        "price": "Consultar",
+        "dimensions": "51 x 26 cm",
+        "technique": "Marcadores y lápiz sobre papel",
+        "category": "paisaje",
+        "image": "/portfolio/sections/obras/paisaje-con-angel-verde-fumando-dos-gatos-y-aliento-divino-51x26.jpeg",
+        "images": [
+            "/portfolio/sections/obras/paisaje-con-angel-verde-fumando-dos-gatos-y-aliento-divino-51x26.jpeg",
+            "/portfolio/sections/obras/paisaje-con-angel-verde-fumando-dos-gatos-y-aliento-divino-51x26-reverso.jpeg"
+        ],
+        "sold": false,
+        "year": "2021"
+    },
+    {
         "id": "pax-aeterna",
         "title": "Pax æterna",
-        "description": "<strong>50 × 34 cm</strong> de <strong>marcadores sobre papel</strong>. Un papel que no tiene miedo al vacío: cada centímetro está habitado por alguna criatura, planta, símbolo o pequeño acontecimiento. Gnomo, cactus, diamante, gato alado, robot, casas, serpiente — todos conviven sin jerarquía y sin conflicto. Una obra de esas que cuanto más tiempo la mirás, más cosas encontrás. Ideal para un estudio, una habitación infantil o cualquier espacio que necesite energía y humor. <strong>Pieza única</strong>, firmada. <strong>Certificado de autenticidad</strong> incluido.",
+        "description": "<strong>50 × 36 cm</strong> de <strong>marcadores blancos sobre papel negro</strong> (<strong>2021</strong>). Fechada el 30 de diciembre de 2021, firmada DDA. Una figura central — mezcla de payaso, robot y ser ceremonial — proclama PAX desde un globo de diálogo. El fondo negro actúa como cielo nocturno o pizarrón: la línea blanca brilla con la misma energía que tiene un trazo hecho de una sola vez, sin correcciones. A su alrededor, símbolos personales del artista: una estrella de cinco puntas, un triángulo con ojo, signos que parecen jeroglíficos propios, una escalera. Una obra íntima y festiva al mismo tiempo — hecha en los últimos días del año, con la calma y la precisión que solo aparece cuando se está muy seguro de lo que se hace. <strong>Pieza única</strong>, firmada y fechada. <strong>Certificado de autenticidad</strong> incluido.",
         "price": "Consultar",
         "dimensions": "50 x 36 cm",
         "technique": "Marcadores sobre papel",

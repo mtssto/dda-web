@@ -555,16 +555,19 @@ body.lang-en .product-card.sold::after {
     border-radius: 2px;
 }
 
-/* Button always pinned at bottom */
+/* Button always pinned at bottom — desktop */
 .modal-btn-footer {
     flex-shrink: 0;
     padding-top: 16px;
+    padding-bottom: 56px;
 }
 
 .modal-btn-footer .btn-modal-buy {
+    display: block;
     width: 100%;
     box-sizing: border-box;
 }
+
 
 .modal-title {
     font-family: var(--font-heading);
