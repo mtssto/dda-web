@@ -1,5 +1,53 @@
 window.products = [
     {
+        "id": "convivencia-pacifica-marcadores",
+        "title": "Convivencia pacífica (marcadores)",
+        "description": "<strong>50 × 34 cm</strong> de <strong>marcadores sobre papel</strong>. Un papel que no tiene miedo al vacío: cada centímetro está habitado por alguna criatura, planta, símbolo o pequeño acontecimiento. Gnomo, cactus, diamante, gato alado, robot, casas, serpiente — todos conviven sin jerarquía y sin conflicto. Una obra de esas que cuanto más tiempo la mirás, más cosas encontrás. Ideal para un estudio, una habitación infantil o cualquier espacio que necesite energía y humor. <strong>Pieza única</strong>, firmada. <strong>Certificado de autenticidad</strong> incluido.",
+        "price": "Consultar",
+        "dimensions": "50 x 34 cm",
+        "technique": "Marcadores sobre papel",
+        "category": "ilustraciones",
+        "image": "/portfolio/sections/obras/convivencia-pacifica-marcadores-sobre-papel.png",
+        "sold": false,
+        "year": "2020"
+    },
+    {
+        "id": "naturaleza-artistica-con-lapiz-y-montana",
+        "title": "Naturaleza artística con lápiz y montaña",
+        "description": "<strong>50 × 34 cm</strong> de <strong>lápiz y marcadores sobre papel</strong>. En primer plano una montaña o criatura marrón enorme, sonriente, cubierta de flores — con un diamante morado en la cabeza. A su lado, una figura amarilla más delicada. Atrás, una cinta roja que recorre todo el plano, un ángel fumando, un fantasma, casas, árboles con cara. La mezcla de lápiz y marcador crea capas de densidad diferentes: lo construido a mano convive con lo gestual. Una obra de esas que tienen su propia lógica interna. <strong>Pieza única</strong>, firmada. <strong>Certificado de autenticidad</strong> incluido.",
+        "price": "Consultar",
+        "dimensions": "50 x 34 cm",
+        "technique": "Lápiz y marcadores sobre papel",
+        "category": "ilustraciones",
+        "image": "/portfolio/sections/obras/naturaleza-artistica-con-lapiz-y-montaña-lapiz-sobre-papel.png",
+        "sold": false,
+        "year": "2020"
+    },
+    {
+        "id": "paisaje-con-dialogo-misterioso",
+        "title": "Paisaje con diálogo misterioso",
+        "description": "<strong>50 × 34 cm</strong> de <strong>marcadores sobre papel</strong>. Un paisaje que mezcla lo doméstico con lo inexplicable: casas rosadas, un arcoiris, montañas verdes, olas azules — y en el medio, escrita a mano con flecha, la palabra <em>clarovidencia</em>. En el ángulo superior derecho, un objeto volador no identificado. El diálogo del título no está en ningún globo de texto — está entre los elementos, en la tensión entre lo cotidiano y lo extraño. <strong>Pieza única</strong>, firmada. <strong>Certificado de autenticidad</strong> incluido.",
+        "price": "Consultar",
+        "dimensions": "50 x 34 cm",
+        "technique": "Marcadores sobre papel",
+        "category": "ilustraciones",
+        "image": "/portfolio/sections/obras/paisaje-con-dialogo-misterioso-marcadores-sobre-papel.png",
+        "sold": false,
+        "year": "2020"
+    },
+    {
+        "id": "paisaje-regio-lapiz-marcadores",
+        "title": "Paisaje regio",
+        "description": "<strong>50 × 34 cm</strong> de <strong>lápiz y marcadores sobre papel</strong> (<strong>2020</strong>). Composición vertical, firmada DDA 2020. Un pájaro rojo grande con ojo ocupa el centro — mitad criatura, mitad forma abstracta. A la izquierda, un robot o marioneta dibujado en violeta con articulaciones visibles. Abajo, un pequeño pueblo volcánico y la inscripción 칸누 en coreano. Una obra que cruza culturas y registros sin esfuerzo, con la soltura que solo da años de dibujo. <strong>Pieza única</strong>, firmada. <strong>Certificado de autenticidad</strong> incluido.",
+        "price": "Consultar",
+        "dimensions": "50 x 34 cm",
+        "technique": "Lápiz y marcadores sobre papel",
+        "category": "ilustraciones",
+        "image": "/portfolio/sections/obras/paisaje-regio-lapiz-marcadores-sobre-papel.png",
+        "sold": false,
+        "year": "2020"
+    },
+    {
         "id": "autorretrato-con-moño",
         "title": "Autorretrato con moño",
         "description": "<strong>82 × 56 cm</strong> de <strong>pastel al óleo sobre madera</strong> (<strong>2025</strong>). El moño como gesto: un accesorio que en manos de Aduriz se convierte en declaración de identidad. Este autorretrato reciente continúa la serie de autorretratos del artista con una presencia directa y desafiante — la mirada al frente, el adorno como escudo y comme performance. El <strong>pastel al óleo sobre madera</strong> aporta una textura densa y luminosa que el lienzo no permitiría. <strong>Obra nueva</strong>, disponible con <strong>certificado de autenticidad</strong>.",
