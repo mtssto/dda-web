@@ -22,9 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
         'portfolio/sections/obras/Las naves escenografía.JPG',
         'Ilustrates/dibu24.jpg',
         'portfolio/sections/obras/Las naves escenografía (2).JPG',
-        'Ilustrates/collage_new_chars.jpg',
-        'Ilustrates/dibu10.jpg',
-        'Ilustrates/dibu12.jpg',
+        'Ilustrates/dibu19.jpg',
+        'Ilustrates/dibu29.png',
+        'Ilustrates/dibu30.png',
         'portfolio/sections/obras/las-nave-dibu (6).JPG',
         'portfolio/sections/obras/las-nave-dibu (7).JPG'
     ];
