@@ -1,5 +1,17 @@
 window.products = [
     {
+        "id": "A-E-I-O-U-Epsilon",
+        "title": "A-E-I-O-U Epsilon",
+        "description": "<strong>1,20 x 1,30 cm</strong> de <strong>marcadores y lápiz sobre papel</strong>. Un paisaje horizontal que despliega un universo completo: dos gatos — uno marrón grande con ojos de distintos colores a la izquierda, otro azul etéreo flotando en el centro —, un ángel verde fumando en el medio campo, una arquitectura gótica naranja, un arcoiris denso y matérico, una bailarina blanca y negra, y un pino verde al fondo derecho. Todo convive sin jerarquía, como si el papel fuera un territorio donde cualquier cosa puede existir junto a cualquier otra. El reverso de la obra también está intervenido: una nube con el título escrito a mano, dos ojos y un pequeño gato dormido — un segundo cuadro dentro del mismo soporte. <strong>Pieza única</strong>, con reverso intervenido. <strong>Certificado de autenticidad</strong> incluido.",
+        "price": "Consultar",
+        "dimensions": "1,20 x 1,30 cm",
+        "technique": "Pastel tiza sobre durlock",
+        "category": "pasteles",
+        "image": "/portfolio/sections/obras/A-E-I-O-U-Epsilon-1,20x1,30-2023.png",
+        "sold": false,
+        "year": "2023"
+    },
+    {
         "id": "paisaje-con-angel-verde-fumando-dos-gatos-y-aliento-divino",
         "title": "Paisaje con ángel verde fumando, dos gatos y aliento divino",
         "description": "<strong>51 × 26 cm</strong> de <strong>marcadores y lápiz sobre papel</strong>. Un paisaje horizontal que despliega un universo completo: dos gatos — uno marrón grande con ojos de distintos colores a la izquierda, otro azul etéreo flotando en el centro —, un ángel verde fumando en el medio campo, una arquitectura gótica naranja, un arcoiris denso y matérico, una bailarina blanca y negra, y un pino verde al fondo derecho. Todo convive sin jerarquía, como si el papel fuera un territorio donde cualquier cosa puede existir junto a cualquier otra. El reverso de la obra también está intervenido: una nube con el título escrito a mano, dos ojos y un pequeño gato dormido — un segundo cuadro dentro del mismo soporte. <strong>Pieza única</strong>, con reverso intervenido. <strong>Certificado de autenticidad</strong> incluido.",
@@ -476,7 +488,7 @@ window.products = [
         "title": "ESTE ES UN LUGAR SAGRADO",
         "description": "El título lo dice todo — y la imagen lo confirma. Una obra de <strong>técnica mixta</strong> que invoca la sacralidad del espacio pictórico. Para quienes buscan arte con intención y presencia.",
         "price": "Consultar",
-        "dimensions": "Consultar medidas",
+        "dimensions": "1,14 x 85 cm",
         "technique": "Técnica mixta",
         "category": "pasteles",
         "image": "/portfolio/sections/obras/IMG_0402+copia.jpg",

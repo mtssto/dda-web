@@ -29,8 +29,18 @@ document.addEventListener('DOMContentLoaded', () => {
         'portfolio/sections/obras/las-nave-dibu (7).JPG'
     ];
 
-    // Decide between Interactive Collage (50%) OR Single Clickable Background (50%)
-    const showSingleImage = Math.random() > 0.5;
+    // Decide between three modes (each ~33%):
+    //   0.00 - 0.33 → Single full-screen background
+    //   0.33 - 0.66 → Interactive collage (original)
+    //   0.66 - 1.00 → Las naves - espacialidad (full-screen grid)
+    const roll = Math.random();
+    const showSingleImage = roll < 0.33;
+    const showEspacialidad = roll >= 0.66;
+
+    if (showEspacialidad) {
+        showNavesEspacialidad(container, navWrapper);
+        return;
+    }
 
     if (showSingleImage) {
         let currentBgIndex = Math.floor(Math.random() * backgroundImages.length);
@@ -307,3 +317,69 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+
+// ═══════════════════════════════════════════════════════════
+// LAS NAVES – ESPACIALIDAD
+// Full-screen mosaic. Images fill 100% viewport, no gaps.
+// Add image paths to the array below after uploading.
+// ═══════════════════════════════════════════════════════════
+function showNavesEspacialidad(container, navWrapper) {
+
+    // ── Add your image paths here ────────────────────────────
+    const espacialidadImages = [
+        'portfolio/sections/Las Naves/12-bis.jpg',
+        'portfolio/sections/Las Naves/14.jpeg',
+        'portfolio/sections/Las Naves/16.jpeg',
+        'portfolio/sections/Las Naves/17.jpeg',
+        'portfolio/sections/Las Naves/18.jpeg',
+        'portfolio/sections/Las Naves/19.jpeg',
+        'portfolio/sections/Frieze Art Fair -London 2008/38.jpeg',
+        'portfolio/sections/Frieze Art Fair -London 2008/39.jpeg',
+        'portfolio/sections/muestra individual - appetite(2007)/Appetie (8).jpeg',
+        'portfolio/sections/belleza y felicidad - 2006/byf (12).jpg',
+        'portfolio/sections/BUOH/15.jpg'
+    ];
+
+    if (!espacialidadImages.length) return;
+
+    // Pick a random starting image
+    let currentIndex = Math.floor(Math.random() * espacialidadImages.length);
+    let isTransitioning = false;
+
+    // Full-screen cover background
+    container.style.transition = 'opacity 0.5s ease-in-out, filter 0.4s ease';
+    container.style.backgroundSize = 'cover';
+    container.style.backgroundPosition = 'center';
+    container.style.backgroundRepeat = 'no-repeat';
+    container.style.cursor = 'pointer';
+
+    const setBackground = (index) => {
+        container.style.backgroundImage = 'url("' + espacialidadImages[index] + '")';
+    };
+
+    setBackground(currentIndex);
+
+    // Click to cycle images with fade
+    container.addEventListener('click', () => {
+        if (isTransitioning) return;
+        isTransitioning = true;
+        container.style.opacity = '0';
+        setTimeout(() => {
+            currentIndex = (currentIndex + 1) % espacialidadImages.length;
+            setBackground(currentIndex);
+            container.style.opacity = '1';
+            setTimeout(() => { isTransitioning = false; }, 500);
+        }, 500);
+    });
+
+    // Nav hover blur — same as original
+    if (navWrapper) {
+        navWrapper.querySelectorAll('a').forEach(link => {
+            link.addEventListener('mouseenter', () => container.style.filter = 'blur(12px)');
+            link.addEventListener('mouseleave', () => container.style.filter = 'blur(0px)');
+            link.addEventListener('focus', () => container.style.filter = 'blur(12px)');
+            link.addEventListener('blur', () => container.style.filter = 'blur(0px)');
+        });
+    }
+}

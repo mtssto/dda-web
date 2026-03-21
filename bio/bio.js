@@ -4,7 +4,7 @@ window.pageTranslations = {
         'bio.p2': 'Publicó dos libros: el poemario “Hoy recordé algo que había olvidado” (Iván Rosado, 2017) y el diario “Un beso en la casa de los sueños” (Triana, 2021). Participó del Salón Nacional de Artes Visuales, el Premio de Pintura del Banco Central, el Premio Klemm y residencias como la Beca Kuitca y el Laboratorio de Acción, en el C. C. San Martín.',
         'bio.p3': 'Realizó muestras, performances y desfiles en galerías, museos y ferias de la Argentina, incluyendo el Museo de Arte Moderno de Buenos Aires (MAMBA); Museo de Arte Latinoamericano de Buenos Aires (MALBA); Palais de Glace; Arteba; BafWeek y museos de arte contemporáneo de Mendoza y de Salta.',
         'bio.p4': 'También en el exterior: en Londres (Frieze Art Fair); Nueva York (Consulado Argentino; Hogar Collection Gallery); Madrid (Semana Internacional de la Moda) y Brasilia (C. C. Renato Russo).',
-        'bio.contact_me': 'Contact Me'
+        'bio.contact_me': 'Contactame'
     },
     en: {
         'bio.p1': 'Diego De Aduriz was born in the city of Buenos Aires in 1977. He studied Fine Arts and Architecture. He works across multiple mediums: drawing, painting, collage, installations, performance, fashion design, fanzine editing, writing, and social media. In 2022, he celebrated 20 years in art with a major retrospective at the Buenos Aires Museum of Contemporary Art (MACBA).',
