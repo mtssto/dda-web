@@ -271,6 +271,21 @@
             </button>
         </div>
         <h1 class="catalog-title" data-i18n="catalog.title">Catálogo</h1>
+
+        <!-- Search bar -->
+        <div class="catalog-search-wrapper">
+            <div class="shop-search-bar">
+                <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="shopSearchInput" class="search-input" onkeydown="if(event.key==='Enter'){event.preventDefault();}"
+                    placeholder="Buscar obras, técnicas, dimensiones..." autocomplete="off" spellcheck="false">
+                <button type="button" class="search-clear" id="shopSearchClear" aria-label="Limpiar">×</button>
+            </div>
+            <div class="search-results-count" id="shopSearchCount"></div>
+        </div>
+
         <hr class="catalog-divider">
 
         <div class="catalog-layout">

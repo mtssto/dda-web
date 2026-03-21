@@ -337,8 +337,7 @@ function showNavesEspacialidad(container, navWrapper) {
         'portfolio/sections/Frieze Art Fair -London 2008/38.jpeg',
         'portfolio/sections/Frieze Art Fair -London 2008/39.jpeg',
         'portfolio/sections/muestra individual - appetite(2007)/Appetie (8).jpeg',
-        'portfolio/sections/belleza y felicidad - 2006/byf (12).jpg',
-        'portfolio/sections/BUOH/15.jpg'
+        'portfolio/sections/belleza y felicidad - 2006/byf (12).jpg'
     ];
 
     if (!espacialidadImages.length) return;

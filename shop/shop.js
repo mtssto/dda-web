@@ -101,7 +101,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Filter Logic
     const categoryFilter = document.getElementById('categoryFilter');
-    const sizeFilter = document.getElementById('sizeFilter');
+    const sizeFilter    = document.getElementById('sizeFilter');
+    const searchInput   = document.getElementById('shopSearchInput');
+    const searchClear   = document.getElementById('shopSearchClear');
+    const searchCount   = document.getElementById('shopSearchCount');
+    let   searchQuery   = '';
 
     // ── Size classification ────────────────────────────────
     // Returns 'small' (≤50cm), 'medium' (51-120cm), 'large' (>120cm), or 'consult'
@@ -130,27 +134,72 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function applyFilters() {
         const selectedCategory = categoryFilter ? categoryFilter.value : 'all';
-        const selectedSize = sizeFilter ? sizeFilter.value : 'all';
+        const selectedSize     = sizeFilter     ? sizeFilter.value     : 'all';
+        // Normalize: remove accents, special chars, lowercase
+        const normalize = str => str
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')  // strip accent marks
+            .replace(/[^a-z0-9 ]/g, ' ')        // non-alphanumeric → space
+            .replace(/\s+/g, ' ')               // collapse spaces
+            .trim();
+
+        const q            = normalize(searchQuery);
+        const qWords       = q.split(' ').filter(Boolean); // split into words
         const productCards = document.querySelectorAll('.product-card');
+        let   visibleCount = 0;
 
         productCards.forEach(card => {
-            const category = card.getAttribute('data-category') || '';
-            const dimsRaw = card.getAttribute('data-dimensions') || '';
+            const category   = card.getAttribute('data-category') || '';
+            const dimsRaw    = card.getAttribute('data-dimensions') || '';
             const sizeBucket = getSizeBucket(dimsRaw);
 
-            const categoryMatch = (selectedCategory === 'all' || category === selectedCategory);
-            const sizeMatch = (selectedSize === 'all' || sizeBucket === selectedSize);
+            const titleEl    = card.querySelector('.product-title');
+            const searchable = normalize([
+                titleEl ? titleEl.textContent : '',
+                card.getAttribute('data-technique') || '',
+                dimsRaw,
+                card.getAttribute('data-year') || '',
+                category
+            ].join(' '));
 
-            if (categoryMatch && sizeMatch) {
+            const categoryMatch = (selectedCategory === 'all' || category === selectedCategory);
+            const sizeMatch     = (selectedSize === 'all'     || sizeBucket === selectedSize);
+            // Every word in the query must appear somewhere in searchable
+            const searchMatch   = !q || qWords.every(word => searchable.includes(word));
+
+            if (categoryMatch && sizeMatch && searchMatch) {
                 card.style.display = '';
                 card.style.animation = 'none';
-                setTimeout(() => {
-                    card.style.animation = 'fadeIn 0.5s ease-in-out';
-                }, 10);
+                setTimeout(() => { card.style.animation = 'fadeIn 0.5s ease-in-out'; }, 10);
+                visibleCount++;
             } else {
                 card.style.display = 'none';
             }
         });
+
+        // Count label
+        if (searchCount) {
+            searchCount.textContent = q
+                ? (visibleCount === 1 ? '1 obra encontrada' : visibleCount + ' obras encontradas')
+                : '';
+        }
+
+        // No-results message
+        const grid = document.getElementById('productsGrid');
+        if (grid) {
+            let noRes = grid.querySelector('.search-no-results');
+            if (visibleCount === 0 && q) {
+                if (!noRes) {
+                    noRes = document.createElement('p');
+                    noRes.className = 'search-no-results';
+                    grid.appendChild(noRes);
+                }
+                noRes.textContent = 'No se encontraron obras para "' + searchQuery + '"';
+            } else if (noRes) {
+                noRes.remove();
+            }
+        }
     }
 
     if (categoryFilter) {
@@ -158,6 +207,55 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if (sizeFilter) {
         sizeFilter.addEventListener('change', applyFilters);
+    }
+
+
+
+    // ── Search input ──────────────────────────────────────
+    if (searchInput) {
+        const isCatalogPage = window.location.pathname.includes('catalog');
+
+        searchInput.addEventListener('input', () => {
+            searchQuery = searchInput.value;
+            if (searchClear) {
+                searchClear.classList.toggle('visible', searchQuery.length > 0);
+            }
+
+            // In shop (not catalog): redirect to catalog with query
+            if (!isCatalogPage && searchQuery.trim().length > 0) {
+                clearTimeout(searchInput._redirectTimer);
+                searchInput._redirectTimer = setTimeout(() => {
+                    const q = encodeURIComponent(searchInput.value.trim());
+                    window.location.href = 'catalog.html?q=' + q;
+                }, 600); // wait 600ms after user stops typing
+            } else {
+                clearTimeout(searchInput._redirectTimer);
+                applyFilters();
+            }
+        });
+
+        // Clear on X click
+        if (searchClear) {
+            searchClear.addEventListener('click', () => {
+                searchInput.value = '';
+                searchQuery = '';
+                searchClear.classList.remove('visible');
+                if (searchCount) searchCount.textContent = '';
+                applyFilters();
+                searchInput.focus();
+            });
+        }
+
+        // Clear on Escape
+        searchInput.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                searchInput.value = '';
+                searchQuery = '';
+                if (searchClear) searchClear.classList.remove('visible');
+                if (searchCount) searchCount.textContent = '';
+                applyFilters();
+            }
+        });
     }
 
     // ── Custom dropdown wiring ────────────────────────────
@@ -480,9 +578,22 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Check for "item" query param to auto-open modal (now that modal exists)
+    // Check for "item" and "q" query params
     const urlParams = new URLSearchParams(window.location.search);
     const itemParam = urlParams.get('item');
+    const urlQuery  = urlParams.get('q');
+
+    // Pre-fill search from ?q= (used when redirected from shop)
+    if (urlQuery && searchInput) {
+        searchInput.value = urlQuery;
+        searchQuery       = urlQuery;
+        if (searchClear) searchClear.classList.add('visible');
+        setTimeout(() => {
+            applyFilters();
+            const grid = document.getElementById('productsGrid');
+            if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
+    }
 
     if (itemParam) {
         const decodedItem = decodeURIComponent(itemParam);

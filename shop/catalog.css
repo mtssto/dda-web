@@ -286,3 +286,7 @@
 .cd-option.active .cd-hint {
     color: #999;
 }
+/* ── Catalog search bar (inherits from shop.css) ─── */
+.catalog-search-wrapper .shop-search-bar {
+    max-width: 100%;
+}
