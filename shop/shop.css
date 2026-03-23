@@ -1488,8 +1488,8 @@ footer p {
 /* Catalog Content Grid Override */
 .catalog-content .products-grid {
     padding-top: 0;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
 }
 
 /* ── Floating Catalog Banner (removed) ── */

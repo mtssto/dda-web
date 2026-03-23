@@ -1,15 +1,27 @@
 window.products = [
     {
-        "id": "A-E-I-O-U-Epsilon",
-        "title": "A-E-I-O-U Épsilon",
-        "description": "<strong>120 × 130 cm</strong> de <strong>pastel al óleo sobre tela</strong> (<strong>2023</strong>). Una de las obras más ambiciosas y narrativas de la producción reciente de Aduriz. Épsilon — la niña protagonista — habita un universo cromático denso y perfectamente construido: cielo turquesa, pasto verde eléctrico, un sol con expresión propia, un gato naranja con diálogo incluido. El artista despliega aquí toda su capacidad para crear mitología personal: cada elemento tiene nombre, voz y lugar. Las cinco vocales en el borde superior funcionan como un conjuro, un alfabeto de otro mundo. Para coleccionistas que buscan una pieza con narrativa propia, humor inteligente y una paleta que no se olvida. <strong>Pieza única</strong>, firmada DDA 23. <strong>Certificado de autenticidad</strong> incluido.",
+        "id": "escriturismo-para-los-dias-de-calor",
+        "title": "Escriturismo para los días de calor",
+        "description": "<strong>57 × 37 cm</strong> de <strong>óleo sobre puerta de madera</strong> (<strong>2024</strong>). Una pieza donde la palabra se vuelve imagen, ritmo y desvío. De Aduriz trabaja sobre una puerta intervenida como si fuera un umbral entre escritura, humor y pintura. Las asociaciones verbales y los cruces de sentido construyen una obra de fuerte identidad visual, entre la poesía gráfica y el objeto. <strong>Pieza única</strong>, firmada DDA 2024. <strong>Certificado de autenticidad</strong> incluido.",
         "price": "Consultar",
-        "dimensions": "120 x 130 cm",
-        "technique": "Pastel al óleo sobre tela",
+        "dimensions": "57 x 37 cm",
+        "technique": "Óleo sobre puerta de madera",
         "category": "pasteles",
-        "image": "/portfolio/sections/obras/A-E-I-O-U-Epsilon-1,20x1,30-2023.png",
+        "image": "/portfolio/sections/obras/escriturismo-para los-dias-de-calor-57x37-oleo-sobre-puerta-de-madera.jpg",
         "sold": false,
-        "year": "2023"
+        "year": "2020"
+    },
+    {
+        "id": "estiercol-en-grageas-por-si-las-moscas",
+        "title": "Estiércol en grageas (por si las moscas)",
+        "description": "<strong>57 × 37 cm</strong> de <strong>óleo sobre puerta de madera</strong>. En esta obra, De Aduriz vuelve a usar la palabra como materia visual y crítica. Sobre una puerta pintada en turquesa, despliega pares, equívocos y asociaciones que mezclan ironía, cultura popular y tensión conceptual. El resultado es una pieza singular, directa y cargada de humor. <strong>Pieza única</strong>, firmada. <strong>Certificado de autenticidad</strong> incluido.",
+        "price": "Consultar",
+        "dimensions": "57 x 37 cm",
+        "technique": "Óleo sobre puerta de madera",
+        "category": "pasteles",
+        "image": "/portfolio/sections/obras/estiercol-en-grageas-57x37-oleo-sobre-puerta-de-madera.jpg",
+        "sold": false,
+        "year": "2020"
     },
     {
         "id": "paisaje-con-angel-verde-fumando-dos-gatos-y-aliento-divino",
@@ -90,7 +102,7 @@ window.products = [
     {
         "id": "autorretrato-con-moño",
         "title": "Autorretrato con moño",
-        "description": "<strong>82 × 56 cm</strong> de <strong>pastel al óleo sobre madera</strong> (<strong>2025</strong>). El moño como gesto: un accesorio que en manos de Aduriz se convierte en declaración de identidad. Este autorretrato reciente continúa la serie de autorretratos del artista con una presencia directa y desafiante — la mirada al frente, el adorno como escudo y comme performance. El <strong>pastel al óleo sobre madera</strong> aporta una textura densa y luminosa que el lienzo no permitiría. <strong>Obra nueva</strong>, disponible con <strong>certificado de autenticidad</strong>.",
+        "description": "<strong>82 × 56 cm</strong> de <strong>pastel al óleo sobre madera</strong> (<strong>2025</strong>). El moño como gesto: un accesorio que en manos de De Aduriz se convierte en declaración de identidad. Este autorretrato reciente continúa la serie de autorretratos del artista con una presencia directa y desafiante — la mirada al frente, el adorno como escudo y comme performance. El <strong>pastel al óleo sobre madera</strong> aporta una textura densa y luminosa que el lienzo no permitiría. <strong>Obra nueva</strong>, disponible con <strong>certificado de autenticidad</strong>.",
         "price": "Consultar",
         "dimensions": "82 x 56 cm",
         "technique": "Pastel al óleo sobre madera",
@@ -150,7 +162,7 @@ window.products = [
     {
         "id": "pitufex",
         "title": "Pitufex",
-        "description": "<strong>46 × 36 cm</strong> de <strong>pastel al óleo sobre puerta de madera</strong> pequeña (<strong>2025</strong>). El nombre es un invento — mitad Pitufina, mitad Pyrex, mitad ninguna de las dos. Una figura que escapa a las categorías conocidas y habita su propio universo con total convicción. La puerta pequeña como soporte convierte esta obra en un objeto que es pintura y escultura al mismo tiempo: tiene frente, tiene cuerpo, tiene historia. Una de las piezas más singulares de la producción reciente de Aduriz. <strong>Certificado de autenticidad</strong> incluido.",
+        "description": "<strong>46 × 36 cm</strong> de <strong>pastel al óleo sobre puerta de madera</strong> pequeña (<strong>2025</strong>). El nombre es un invento — mitad Pitufina, mitad Pyrex, mitad ninguna de las dos. Una figura que escapa a las categorías conocidas y habita su propio universo con total convicción. La puerta pequeña como soporte convierte esta obra en un objeto que es pintura y escultura al mismo tiempo: tiene frente, tiene cuerpo, tiene historia. Una de las piezas más singulares de la producción reciente de De Aduriz. <strong>Certificado de autenticidad</strong> incluido.",
         "price": "Consultar",
         "dimensions": "46 x 36 cm",
         "technique": "Pastel al óleo sobre puerta de madera pequeña",
@@ -230,7 +242,7 @@ window.products = [
     {
         "id": "paisaje-sol-sonriente",
         "title": "Paisaje con sol sonriente",
-        "description": "Un paisaje que irradia calidez. El sol como protagonista con una expresividad propia del universo simbólico de Aduriz. Obra en <strong>pastel sobre papel</strong>, delicada y luminosa.",
+        "description": "Un paisaje que irradia calidez. El sol como protagonista con una expresividad propia del universo simbólico de De Aduriz. Obra en <strong>pastel sobre papel</strong>, delicada y luminosa.",
         "price": "Consultar",
         "dimensions": "80 x 60 cm",
         "technique": "Pastel sobre papel",
@@ -294,7 +306,7 @@ window.products = [
     {
         "id": "do-re-mi-fa",
         "title": "Do re mi fa sol la si",
-        "description": "La música traducida en imagen. Una obra que evoca ritmo y color a partir de las notas de la escala, trabajada en <strong>pastel sobre papel</strong> con la libertad gestual característica de Aduriz.",
+        "description": "La música traducida en imagen. Una obra que evoca ritmo y color a partir de las notas de la escala, trabajada en <strong>pastel sobre papel</strong> con la libertad gestual característica de De Aduriz.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Pastel sobre papel",
@@ -306,7 +318,7 @@ window.products = [
     {
         "id": "gato-arcoiris",
         "title": "Gato arcoiris",
-        "description": "<strong>100 x 65 cm</strong> de color puro. Un gato envuelto en el espectro del arcoiris, en <strong>pastel tiza sobre papel</strong>. Una de las obras más celebradas de la serie felina de Aduriz — festiva, luminosa e imposible de ignorar.",
+        "description": "<strong>100 x 65 cm</strong> de color puro. Un gato envuelto en el espectro del arcoiris, en <strong>pastel tiza sobre papel</strong>. Una de las obras más celebradas de la serie felina de De Aduriz — festiva, luminosa e imposible de ignorar.",
         "price": "Consultar",
         "dimensions": "100 x 65 cm",
         "technique": "Pastel tiza sobre papel",
@@ -342,7 +354,7 @@ window.products = [
     {
         "id": "Autorretrato",
         "title": "Autorretrato",
-        "description": "El artista frente a sí mismo. Trabajado en <strong>pastel tiza sobre madera</strong>, este autorretrato captura una mirada introspectiva y directa. <strong>Pieza única</strong> dentro de la serie de autorretratos de Aduriz.",
+        "description": "El artista frente a sí mismo. Trabajado en <strong>pastel tiza sobre madera</strong>, este autorretrato captura una mirada introspectiva y directa. <strong>Pieza única</strong> dentro de la serie de autorretratos de De Aduriz.",
         "price": "Consultar",
         "dimensions": "Consultar medidas",
         "technique": "Pastel tiza sobre madera",

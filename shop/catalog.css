@@ -5,7 +5,7 @@
 /* Asegura que el main use buen ancho y padding */
 .catalog-page .catalog-container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1476px;
     margin: 0 auto;
     padding-inline: clamp(16px, 4vw, 40px);
     overflow-x: hidden;
@@ -286,6 +286,7 @@
 .cd-option.active .cd-hint {
     color: #999;
 }
+
 /* ── Catalog search bar (inherits from shop.css) ─── */
 .catalog-search-wrapper .shop-search-bar {
     max-width: 100%;
