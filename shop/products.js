@@ -1,5 +1,53 @@
 window.products = [
     {
+        "id": "catastrofe-catarsis",
+        "title": "Catástrofe / Catarsis",
+        "description": "<strong>54 × 50 cm</strong> de <strong>acrílico sobre tela</strong>. Una obra donde De Aduriz organiza signos, palabras e imágenes en un sistema visual de gran intensidad simbólica. La composición, precisa y frontal, articula tensión entre caos y transformación, con una iconografía propia que mezcla escritura, emblema y visión. <strong>Pieza única</strong>, firmada. <strong>Certificado de autenticidad</strong> incluido.",
+        "price": "Consultar",
+        "dimensions": "54 x 50 cm",
+        "technique": "Acrílico sobre tela",
+        "category": "simbolico",
+        "image": "/portfolio/sections/obras/catastrofe-catarsis-54x50-pastel-tiza-sobre-telas.jpeg",
+        "sold": false,
+        "year": "a confirmar"
+    },
+    {
+        "id": "fama-fortuna-fake-news",
+        "title": "Fama / Fortuna / Fake News",
+        "description": "<strong>52 × 52 cm</strong>. En esta pieza, De Aduriz cruza lenguaje, símbolo y crítica contemporánea en una superficie de alto impacto visual. La obra combina humor, tensión gráfica y referencias al dinero, la circulación de imágenes y la distorsión de lo real. <strong>Pieza única</strong>, firmada DDA 2020. <strong>Certificado de autenticidad</strong> incluido.",
+        "price": "Consultar",
+        "dimensions": "52 x 52 cm",
+        "technique": "Acrílico sobre tela",
+        "category": "simbolico",
+        "image": "/portfolio/sections/obras/fama-fortuna-fake-news-52x52.jpeg",
+        "sold": false,
+        "year": "2020"
+    },
+    {
+        "id": "no-me-veras-llorar-siete-gotitas-negras",
+        "title": "No me verás llorar / Siete gotitas negras",
+        "description": "<strong>52 × 52 cm</strong>. Una obra de composición austera y gran potencia poética, donde texto y símbolo construyen una imagen directa, casi ritual. De Aduriz trabaja aquí con una economía formal que refuerza el clima de advertencia, ironía y condensación emocional. <strong>Pieza única</strong>, firmada y fechada 7-1-20. <strong>Certificado de autenticidad</strong> incluido.",
+        "price": "Consultar",
+        "dimensions": "52 x 52 cm",
+        "technique": "Acrílico sobre tela",
+        "category": "texto",
+        "image": "/portfolio/sections/obras/no-me-veras-llorar-siete-gotitas-negras-52x52.jpeg",
+        "sold": false,
+        "year": "2020"
+    },
+    {
+        "id": "supervision-superhabit",
+        "title": "Supervisión / Superhabit",
+        "description": "<strong>54 × 50 cm</strong> de <strong>acrílico sobre tela</strong> (<strong>2020</strong>). Una pieza donde escritura, diagrama y símbolo se integran en una estructura visual rigurosa y enigmática. Aduriz despliega un lenguaje propio, entre lo místico, lo gráfico y lo conceptual, con una presencia visual clara y singular. <strong>Pieza única</strong>, firmada DDA 2020. <strong>Certificado de autenticidad</strong> incluido.",
+        "price": "Consultar",
+        "dimensions": "54 x 50 cm",
+        "technique": "Acrílico sobre tela",
+        "category": "simbolico",
+        "image": "/portfolio/sections/obras/supervision-superhabit-54x50-pastel-tiza-sobre-telas.jpeg",
+        "sold": false,
+        "year": "2020"
+    },
+    {
         "id": "escriturismo-para-los-dias-de-calor",
         "title": "Escriturismo para los días de calor",
         "description": "<strong>57 × 37 cm</strong> de <strong>óleo sobre puerta de madera</strong> (<strong>2024</strong>). Una pieza donde la palabra se vuelve imagen, ritmo y desvío. De Aduriz trabaja sobre una puerta intervenida como si fuera un umbral entre escritura, humor y pintura. Las asociaciones verbales y los cruces de sentido construyen una obra de fuerte identidad visual, entre la poesía gráfica y el objeto. <strong>Pieza única</strong>, firmada DDA 2024. <strong>Certificado de autenticidad</strong> incluido.",
