@@ -2,8 +2,6 @@
 <html lang="es">
 
 <head>
-
-    <head>
         <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="192x192" href="../icon-192x192.png">
         <link rel="apple-touch-icon" href="../apple-touch-icon.png">
@@ -81,164 +79,6 @@
         <link rel="stylesheet" href="catalog.css">
         <link rel="stylesheet" href="../global-close.css">
 
-        <!-- ═══════════════════════════════════════════
-         UX ADDITIONS: Inquiry Modal + WhatsApp btn
-    ═══════════════════════════════════════════ -->
-        <style>
-            /* ── WhatsApp Floating Button ── */
-            .whatsapp-float {
-                position: fixed;
-                bottom: 28px;
-                right: 28px;
-                z-index: 9999;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                background: #25D366;
-                color: #fff;
-                font-family: 'Inter', sans-serif;
-                font-size: 13px;
-                font-weight: 500;
-                letter-spacing: 0.04em;
-                padding: 12px 20px 12px 16px;
-                border-radius: 50px;
-                text-decoration: none;
-                box-shadow: 0 4px 20px rgba(37, 211, 102, 0.38);
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
-                cursor: pointer;
-            }
-
-            .whatsapp-float:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 28px rgba(37, 211, 102, 0.5);
-                color: #fff;
-            }
-
-            .whatsapp-float svg {
-                flex-shrink: 0;
-            }
-
-            /* ── Inquiry Modal ── */
-            .inquiry-overlay {
-                display: none;
-                position: fixed;
-                inset: 0;
-                background: rgba(0, 0, 0, 0.72);
-                backdrop-filter: blur(4px);
-                z-index: 10000;
-                align-items: center;
-                justify-content: center;
-                padding: 20px;
-            }
-
-            .inquiry-overlay.active {
-                display: flex;
-            }
-
-            .inquiry-modal {
-                background: #0e0e0e;
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                border-radius: 4px;
-                padding: 40px 36px;
-                max-width: 480px;
-                width: 100%;
-                position: relative;
-                color: #fff;
-                font-family: 'Inter', sans-serif;
-                margin: auto;
-            }
-
-            .inquiry-modal h2 {
-                font-family: 'Playfair Display', serif;
-                font-size: 1.6rem;
-                font-weight: 400;
-                margin: 0 0 6px;
-            }
-
-            .inquiry-modal .inquiry-artwork-name {
-                font-size: 0.78rem;
-                letter-spacing: 0.12em;
-                text-transform: uppercase;
-                color: rgba(255, 255, 255, 0.45);
-                margin-bottom: 28px;
-            }
-
-            .inquiry-modal p {
-                font-size: 0.88rem;
-                color: rgba(255, 255, 255, 0.65);
-                line-height: 1.7;
-                margin-bottom: 28px;
-            }
-
-            .inquiry-options {
-                display: flex;
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .inquiry-btn {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                padding: 14px 18px;
-                border: 1px solid rgba(255, 255, 255, 0.15);
-                border-radius: 3px;
-                background: transparent;
-                color: #fff;
-                font-family: 'Inter', sans-serif;
-                font-size: 0.82rem;
-                font-weight: 500;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-                cursor: pointer;
-                text-decoration: none;
-                transition: background 0.18s, border-color 0.18s;
-            }
-
-            .inquiry-btn:hover {
-                background: rgba(255, 255, 255, 0.07);
-                border-color: rgba(255, 255, 255, 0.35);
-                color: #fff;
-            }
-
-            .inquiry-btn.primary {
-                background: #25D366;
-                border-color: #25D366;
-                color: #fff;
-            }
-
-            .inquiry-btn.primary:hover {
-                background: #20c55c;
-                border-color: #20c55c;
-            }
-
-            .inquiry-btn .btn-icon {
-                font-size: 1.1rem;
-            }
-
-            .inquiry-close {
-                position: absolute;
-                top: 16px;
-                right: 18px;
-                background: none;
-                border: none;
-                color: rgba(255, 255, 255, 0.4);
-                font-size: 1.4rem;
-                cursor: pointer;
-                line-height: 1;
-                padding: 4px;
-                transition: color 0.15s;
-            }
-
-            .inquiry-close:hover {
-                color: #fff;
-            }
-
-            /* ── Price normalisation: make "usd" uppercase ── */
-            .product-price {
-                text-transform: uppercase;
-            }
-        </style>
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-87SFZWVTQC"></script>
         <script>
@@ -248,7 +88,7 @@
 
             gtag('config', 'G-87SFZWVTQC');
         </script>
-    </head>
+</head>
 
 <body class="catalog-page">
 
@@ -438,11 +278,11 @@
 
 
     <!-- jsPDF libraries for PDF Generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-    <script src="../i18n.js"></script>
-    <script src="products.js"></script>
-    <script src="shop.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js" defer></script>
+    <script src="../i18n.js" defer></script>
+    <script src="products.js" defer></script>
+    <script src="shop.js" defer></script>
 
     <!-- ═══════════════════════════════════════════
          UX: Inquiry Modal Logic + GA4 Event Tracking

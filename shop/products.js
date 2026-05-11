@@ -980,3 +980,81 @@ window.products = [
         "year": "Consultar año"
     }
 ];
+
+/**
+ * Carousel sections configuration.
+ * Each section references products by their image path.
+ * This is the single source of truth for which products
+ * appear in each carousel on the shop landing page.
+ */
+window.carouselSections = [
+    {
+        id: "destacados",
+        labelKey: "hero.featured",
+        labelDefault: "Destacados",
+        images: [
+            "/portfolio/sections/obras/MG_0307.png",
+            "/portfolio/sections/obras/MG_0312_1.png",
+            "/portfolio/sections/obras/MG_0327.jpg.png",
+            "/portfolio/sections/obras/MG_1192.jpg"
+        ]
+    },
+    {
+        id: "novedades",
+        labelKey: "shop.novedades",
+        labelDefault: "Novedades",
+        images: [
+            "/portfolio/sections/obras/micuerpo.jpg",
+            "/portfolio/sections/obras/Diego+de+Aduriz+-+Autorretrato+-+110+x+150+cm+-+Marcadores+sobre+papel+-+2007.jpg",
+            "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+arcoiris+-+100+x+65+cm+-++pastel+sobre+papel+-+2020.png",
+            "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+con+flor+de+loto+-+Pastel+tiza+sobre+papel+-+25+x+18+cm+-+2018.png",
+            "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+cosmico+-+Pastel+tiza+-+80+x+110+cm+2013.jpeg",
+            "/portfolio/sections/obras/Diego+de+Aduriz+-+Mi+cuerpo+electrico+29+160+x+200+-+Pastel+y+acrilico+sobre+tela+-+2021.jpg",
+            "/portfolio/sections/obras/Diego+de+Aduriz+-+Paisaje+teorico+-+Tecnica+mixta+sobre+papel+-+24+x+34+cm+-+2009.png",
+            "/portfolio/sections/obras/Diego+de+Aduriz+-+Piasaje+con+monstruo+amistoso+-+Lapiz+sobre+papel+-+24+x+34+cm+-+2011.jpeg",
+            "/portfolio/sections/obras/Diego+de+Aduriz+-+Puerta+Azul+-+210+x+92+cm+-+Pintura+y+pastel+tiza+sobre+madera+-+2015_2017.jpeg",
+            "/portfolio/sections/obras/Diego+de+Aduriz+-+Sin+titulo+-+Tecnica+mixta+sobre+papel+-+34+x+24+cm+-+2012.png",
+            "/portfolio/sections/obras/luz_azul.jpg",
+            "/portfolio/sections/obras/IMG_0402+copia.jpg",
+            "/portfolio/sections/obras/MG_0329.png",
+            "/portfolio/sections/obras/mascara1.jpg"
+        ]
+    },
+    {
+        id: "gatos",
+        labelKey: null,
+        labelDefault: "Gatos",
+        images: [
+            "/portfolio/sections/obras/MG_0327.jpg.png",
+            "/portfolio/sections/obras/MG_0327.jpg",
+            "/portfolio/sections/obras/MG_1192.jpg",
+            "/portfolio/sections/obras/micuerpo.jpg",
+            "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+arcoiris+-+100+x+65+cm+-++pastel+sobre+papel+-+2020.png",
+            "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+con+flor+de+loto+-+Pastel+tiza+sobre+papel+-+25+x+18+cm+-+2018.png",
+            "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+cosmico+-+Pastel+tiza+-+80+x+110+cm+2013.jpeg"
+        ]
+    },
+    {
+        id: "autorretratos",
+        labelKey: null,
+        labelDefault: "Autorretratos",
+        images: [
+            "/portfolio/sections/obras/autorretrato.png",
+            "/portfolio/sections/obras/retrato-1.png",
+            "/portfolio/sections/obras/retrato-2.jpeg"
+        ]
+    },
+    {
+        id: "paisajes",
+        labelKey: null,
+        labelDefault: "Paisajes",
+        images: [
+            "/portfolio/sections/obras/MG_0307.png",
+            "/portfolio/sections/obras/MG_0312_1.png",
+            "/portfolio/sections/obras/mascara2.jpg",
+            "/portfolio/sections/obras/Diego+de+Aduriz+-+Mi+cuerpo+electrico+29+160+x+200+-+Pastel+y+acrilico+sobre+tela+-+2021.jpg",
+            "/portfolio/sections/obras/Diego+de+Aduriz+-+Piasaje+con+monstruo+amistoso+-+Lapiz+sobre+papel+-+24+x+34+cm+-+2011.jpeg",
+            "/portfolio/sections/obras/Diego+de+Aduriz+-+Paisaje+teorico+-+Tecnica+mixta+sobre+papel+-+24+x+34+cm+-+2009.png"
+        ]
+    }
+];
