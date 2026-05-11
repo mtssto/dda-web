@@ -663,6 +663,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
+function toWebP(src) {
+    return src.replace(/\.(png|jpe?g)$/i, '.webp');
+}
+
+function encodeSrcset(url) {
+    return url.replace(/ /g, '%20');
+}
+
+function pictureTag(src, alt, extra) {
+    var webpSrc = toWebP(src);
+    return '<picture>' +
+        '<source srcset="' + encodeSrcset(webpSrc) + '" type="image/webp">' +
+        '<img src="' + src + '" alt="' + alt + '"' + (extra || '') + '>' +
+    '</picture>';
+}
+
 function renderCarouselSections() {
     var container = document.getElementById('carouselSectionsContainer');
     if (!container || !window.carouselSections || !window.products) return;
@@ -721,7 +737,7 @@ function renderCarouselSections() {
 
             card.innerHTML =
                 '<div class="product-image">' +
-                    '<img src="' + product.image + '" alt="' + product.title + ' \u2014 Diego De Aduriz" loading="lazy">'  +
+                    pictureTag(product.image, product.title + ' \u2014 Diego De Aduriz', ' loading="lazy"') +
                 '</div>' +
                 '<div class="product-info">' +
                     '<h3 class="product-title">' + product.title + '</h3>' +
@@ -810,7 +826,10 @@ function renderGrid(items) {
 
         card.innerHTML = `
             <div class="product-image">
-                <img src="${product.image}" alt="${product.title}" loading="lazy">
+                <picture>
+                    <source srcset="${encodeSrcset(toWebP(product.image))}" type="image/webp">
+                    <img src="${product.image}" alt="${product.title}" loading="lazy">
+                </picture>
                 ${overlayHTML}
             </div>
             <div class="product-info">
