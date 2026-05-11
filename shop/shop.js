@@ -223,17 +223,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 searchClear.classList.toggle('visible', searchQuery.length > 0);
             }
 
-            // In shop (not catalog): redirect to catalog with query
-            if (!isCatalogPage && searchQuery.trim().length > 0) {
-                clearTimeout(searchInput._redirectTimer);
-                searchInput._redirectTimer = setTimeout(() => {
-                    const q = encodeURIComponent(searchInput.value.trim());
-                    window.location.href = 'catalog.html?q=' + q;
-                }, 600); // wait 600ms after user stops typing
-            } else {
-                clearTimeout(searchInput._redirectTimer);
+            if (isCatalogPage) {
                 applyFilters();
             }
+            // Shop page uses live dropdown (handled separately)
         });
 
         // Clear on X click
@@ -248,7 +241,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        // Clear on Escape
         searchInput.addEventListener('keydown', e => {
             if (e.key === 'Escape') {
                 searchInput.value = '';
@@ -256,6 +248,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (searchClear) searchClear.classList.remove('visible');
                 if (searchCount) searchCount.textContent = '';
                 applyFilters();
+            }
+            if (e.key === 'Enter' && !isCatalogPage && searchInput.value.trim()) {
+                window.location.href = 'catalog.html?q=' + encodeURIComponent(searchInput.value.trim());
             }
         });
     }
@@ -661,6 +656,164 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }, true); // Use capture phase to intercept before card's onclick
 
+    // ── Back-to-Top Button ──────────────────────────────
+    (function () {
+        var btn = document.createElement('button');
+        btn.className = 'back-to-top';
+        btn.setAttribute('aria-label', 'Volver arriba');
+        btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>';
+        document.body.appendChild(btn);
+        window.addEventListener('scroll', function () {
+            btn.classList.toggle('visible', window.scrollY > 400);
+        }, { passive: true });
+        btn.addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    })();
+
+    // ── Category Counts ─────────────────────────────────
+    (function () {
+        if (!window.products) return;
+        var counts = {};
+        window.products.forEach(function (p) {
+            var cat = p.category || 'other';
+            counts[cat] = (counts[cat] || 0) + 1;
+        });
+        document.querySelectorAll('.cd-option').forEach(function (opt) {
+            var val = opt.getAttribute('data-value');
+            if (!val || val === 'all') {
+                opt.innerHTML = opt.textContent.trim() + ' <span class="cd-count">(' + window.products.length + ')</span>';
+            } else if (counts[val]) {
+                opt.innerHTML = opt.textContent.trim() + ' <span class="cd-count">(' + counts[val] + ')</span>';
+            }
+        });
+    })();
+
+    // ── Sort Dropdown ───────────────────────────────────
+    (function () {
+        var isCatalog = window.location.pathname.includes('catalog');
+        if (!isCatalog || !window.products) return;
+        var sidebar = document.querySelector('.catalog-sidebar');
+        if (!sidebar) return;
+
+        var section = document.createElement('div');
+        section.className = 'sidebar-section';
+        section.innerHTML =
+            '<h3 class="sidebar-heading">ORDENAR</h3>' +
+            '<div class="sort-wrapper">' +
+                '<select class="sort-select" id="sortSelect">' +
+                    '<option value="default">Por defecto</option>' +
+                    '<option value="az">A — Z</option>' +
+                    '<option value="za">Z — A</option>' +
+                    '<option value="newest">Más reciente</option>' +
+                    '<option value="oldest">Más antiguo</option>' +
+                '</select>' +
+            '</div>';
+        sidebar.appendChild(section);
+
+        var sortSelect = document.getElementById('sortSelect');
+        sortSelect.addEventListener('change', function () {
+            var sorted = window.products.slice();
+            switch (this.value) {
+                case 'az':
+                    sorted.sort(function (a, b) { return a.title.localeCompare(b.title); });
+                    break;
+                case 'za':
+                    sorted.sort(function (a, b) { return b.title.localeCompare(a.title); });
+                    break;
+                case 'newest':
+                    sorted.sort(function (a, b) {
+                        var ya = parseInt(b.year) || 0, yb = parseInt(a.year) || 0;
+                        return ya - yb;
+                    });
+                    break;
+                case 'oldest':
+                    sorted.sort(function (a, b) {
+                        var ya = parseInt(a.year) || 9999, yb = parseInt(b.year) || 9999;
+                        return ya - yb;
+                    });
+                    break;
+            }
+            renderGrid(sorted);
+            if (typeof applyFilters === 'function') applyFilters();
+        });
+    })();
+
+    // ── Live Search Dropdown (shop.html) ────────────────
+    (function () {
+        var isShop = !window.location.pathname.includes('catalog');
+        if (!isShop || !window.products) return;
+        var searchBar = document.querySelector('.shop-search-bar');
+        var input = document.getElementById('shopSearchInput');
+        if (!searchBar || !input) return;
+
+        searchBar.style.position = 'relative';
+        var dropdown = document.createElement('div');
+        dropdown.className = 'search-dropdown';
+        searchBar.appendChild(dropdown);
+
+        var normalize = function (str) {
+            return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+        };
+
+        input.addEventListener('input', function () {
+            var q = normalize(input.value);
+            if (!q || q.length < 2) {
+                dropdown.classList.remove('open');
+                dropdown.innerHTML = '';
+                return;
+            }
+            var words = q.split(' ').filter(Boolean);
+            var matches = window.products.filter(function (p) {
+                var searchable = normalize([p.title, p.technique || '', p.dimensions || '', p.category || '', p.year || ''].join(' '));
+                return words.every(function (w) { return searchable.includes(w); });
+            }).slice(0, 5);
+
+            if (matches.length === 0) {
+                dropdown.classList.remove('open');
+                dropdown.innerHTML = '';
+                return;
+            }
+            dropdown.innerHTML = matches.map(function (p) {
+                var webpSrc = toWebP(p.image);
+                return '<div class="search-dropdown-item" data-id="' + p.id + '">' +
+                    '<img src="' + webpSrc + '" alt="' + p.title + '">' +
+                    '<div class="search-item-info">' +
+                        '<div class="search-item-title">' + p.title + '</div>' +
+                        '<div class="search-item-meta">' + (p.technique || '') + (p.year && p.year !== 'Consultar año' && p.year !== 'a confirmar' ? ' · ' + p.year : '') + '</div>' +
+                    '</div>' +
+                '</div>';
+            }).join('') +
+            '<div class="search-dropdown-footer">Ver catálogo completo →</div>';
+
+            dropdown.classList.add('open');
+        });
+
+        dropdown.addEventListener('click', function (e) {
+            var item = e.target.closest('.search-dropdown-item');
+            if (item) {
+                var pid = item.getAttribute('data-id');
+                var product = window.products.find(function (p) { return p.id === pid; });
+                if (product) {
+                    dropdown.classList.remove('open');
+                    input.value = '';
+                    openModal(product);
+                }
+                return;
+            }
+            var footer = e.target.closest('.search-dropdown-footer');
+            if (footer) {
+                window.location.href = 'catalog.html';
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!searchBar.contains(e.target)) {
+                dropdown.classList.remove('open');
+            }
+        });
+    })();
+
 });
 
 function toWebP(src) {
@@ -823,9 +976,14 @@ function renderGrid(items) {
                 </div>`;
 
         const priceHTML = isCatalog ? '' : `<p class="product-price">${product.price}</p>`;
+        const yearHTML = (product.year && product.year !== 'Consultar año' && product.year !== 'a confirmar') ? `<p class="product-year">${product.year}</p>` : '';
+        const wishlist = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
+        const isWished = wishlist.indexOf(product.id) !== -1;
+        const heartSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
 
         card.innerHTML = `
             <div class="product-image">
+                <button class="btn-wishlist${isWished ? ' active' : ''}" data-product-id="${product.id}" aria-label="Agregar a favoritos">${heartSvg}</button>
                 <picture>
                     <source srcset="${encodeSrcset(toWebP(product.image))}" type="image/webp">
                     <img src="${product.image}" alt="${product.title}" loading="lazy">
@@ -834,6 +992,7 @@ function renderGrid(items) {
             </div>
             <div class="product-info">
                 <h3 class="product-title">${product.title}</h3>
+                ${yearHTML}
                 ${priceHTML}
                 <div class="product-actions-grid">
                     <button class="btn-grid-action btn-grid-details">
@@ -885,6 +1044,23 @@ function renderGrid(items) {
                 } else {
                     buyProduct(product);
                 }
+            };
+        }
+
+        const btnWishlist = card.querySelector('.btn-wishlist');
+        if (btnWishlist) {
+            btnWishlist.onclick = (e) => {
+                e.stopPropagation();
+                let wl = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
+                const idx = wl.indexOf(product.id);
+                if (idx === -1) {
+                    wl.push(product.id);
+                    btnWishlist.classList.add('active');
+                } else {
+                    wl.splice(idx, 1);
+                    btnWishlist.classList.remove('active');
+                }
+                localStorage.setItem('dda_wishlist', JSON.stringify(wl));
             };
         }
 
