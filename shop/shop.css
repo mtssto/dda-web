@@ -2244,3 +2244,116 @@ footer p {
         width: 100%;
     }
 }
+
+/* ── Skeleton Loader ── */
+.skeleton-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.product-image.loading {
+    min-height: 200px;
+}
+
+.product-image.loading .skeleton-shimmer {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.product-image img.loaded + .skeleton-shimmer,
+.product-image.loaded .skeleton-shimmer {
+    display: none;
+}
+
+/* ── Staggered Card Animation ── */
+@keyframes cardReveal {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.product-card.stagger-in {
+    animation: cardReveal 0.4s ease-out both;
+}
+
+/* ── Recently Viewed Section ── */
+.recently-viewed-section {
+    padding: 40px 0 20px;
+    border-top: 1px solid #eee;
+    margin-top: 40px;
+}
+
+.recently-viewed-section h3 {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 20px;
+    padding: 0 20px;
+}
+
+.recently-viewed-track {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 0 20px 16px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.recently-viewed-track::-webkit-scrollbar {
+    height: 4px;
+}
+
+.recently-viewed-track::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 2px;
+}
+
+.recently-viewed-item {
+    flex: 0 0 140px;
+    scroll-snap-align: start;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.recently-viewed-item:hover {
+    transform: translateY(-3px);
+}
+
+.recently-viewed-item img {
+    width: 140px;
+    height: 140px;
+    object-fit: contain;
+    background: #f5f5f5;
+    display: block;
+}
+
+.recently-viewed-item .rv-title {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 0.8rem;
+    margin-top: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.recently-viewed-item .rv-year {
+    font-size: 0.7rem;
+    color: #999;
+}
