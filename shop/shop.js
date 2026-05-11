@@ -14,8 +14,8 @@ window.pageTranslations = {
         'filter.paisajes': 'Paisajes',
         'filter.Autorretratos': 'Autorretratos',
         'filter.ilustraciones': 'Ilustraciones',
-        'card.details': '👁 DETALLES',
-        'card.buy': '🛒 COMPRAR',
+        'card.details': 'DETALLES',
+        'card.buy': 'COMPRAR',
         'card.sold': 'VENDIDO',
         'modal.dimensions': 'Dimensiones',
         'modal.technique': 'Técnica',
@@ -46,8 +46,8 @@ window.pageTranslations = {
         'filter.paisajes': 'Landscapes',
         'filter.Autorretratos': 'Self-portraits',
         'filter.ilustraciones': 'Illustrations',
-        'card.details': '👁 DETAILS',
-        'card.buy': '🛒 BUY',
+        'card.details': 'DETAILS',
+        'card.buy': 'BUY',
         'card.sold': 'SOLD',
         'modal.dimensions': 'Dimensions',
         'modal.technique': 'Technique',
@@ -93,6 +93,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 : `${count} obras disponibles`;
         }
     }
+
+    renderCarouselSections();
 
     const gridParams = document.getElementById('productsGrid');
     if (gridParams) {
@@ -661,6 +663,121 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
+function renderCarouselSections() {
+    var container = document.getElementById('carouselSectionsContainer');
+    if (!container || !window.carouselSections || !window.products) return;
+
+    var productsByImage = {};
+    window.products.forEach(function (p) {
+        if (p.image) productsByImage[p.image] = p;
+    });
+
+    var eyeSvg = '<svg viewBox="0 0 24 24" class="icon-eye" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+
+    window.carouselSections.forEach(function (section, sIdx) {
+        var sectionEl = document.createElement('section');
+        sectionEl.className = 'shop-hero-vertical';
+        if (sIdx > 0) sectionEl.style.padding = '20px 0 60px';
+
+        var wrapper = document.createElement('div');
+        wrapper.className = 'hero-featured';
+        var carouselWrapper = document.createElement('div');
+        carouselWrapper.className = 'featured-carousel-wrapper';
+
+        var label = document.createElement('h2');
+        label.className = 'featured-label';
+        if (section.labelKey) label.setAttribute('data-i18n', section.labelKey);
+        label.textContent = section.labelDefault;
+        carouselWrapper.appendChild(label);
+
+        var miniContainer = document.createElement('div');
+        miniContainer.className = 'carousel-container-mini';
+
+        var prevBtn = document.createElement('button');
+        prevBtn.className = 'carousel-btn prev-btn';
+        prevBtn.setAttribute('aria-label', 'Previous');
+        prevBtn.innerHTML = '&#10094;';
+
+        var track = document.createElement('div');
+        track.className = 'carousel-track';
+
+        section.images.forEach(function (imgPath) {
+            var product = productsByImage[imgPath];
+            if (!product) return;
+
+            var card = document.createElement('div');
+            card.className = 'product-card carousel-card';
+            card.setAttribute('data-category', product.category || '');
+            card.setAttribute('data-dimensions', product.dimensions || '');
+            card.setAttribute('data-technique', product.technique || '');
+            if (product.sold) card.classList.add('sold');
+
+            var soldBtnHtml;
+            if (product.sold) {
+                soldBtnHtml = '<button class="btn-grid-action btn-grid-sold" disabled aria-disabled="true" style="opacity:0.4;cursor:not-allowed">\u2717 <span data-i18n="card.sold">VENDIDO</span></button>';
+            } else {
+                soldBtnHtml = '<button class="btn-grid-action btn-grid-buy"><span class="btn-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></span> <span data-i18n="card.buy">COMPRAR</span></button>';
+            }
+
+            card.innerHTML =
+                '<div class="product-image">' +
+                    '<img src="' + product.image + '" alt="' + product.title + ' \u2014 Diego De Aduriz">' +
+                '</div>' +
+                '<div class="product-info">' +
+                    '<h3 class="product-title">' + product.title + '</h3>' +
+                    '<p class="product-price">' + product.price + '</p>' +
+                    '<div class="product-actions-grid">' +
+                        '<button class="btn-grid-action btn-grid-details">' +
+                            '<span class="btn-icon" aria-hidden="true">' + eyeSvg + '</span>' +
+                            ' <span data-i18n="card.details">DETALLES</span>' +
+                        '</button>' +
+                        soldBtnHtml +
+                    '</div>' +
+                '</div>';
+
+            card.addEventListener('click', function (e) {
+                if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+                openModal(product);
+            });
+
+            var detailsBtn = card.querySelector('.btn-grid-details');
+            if (detailsBtn) {
+                detailsBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    openModal(product);
+                });
+            }
+
+            var buyBtn = card.querySelector('.btn-grid-buy');
+            if (buyBtn) {
+                buyBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    if (typeof openInquiry === 'function') {
+                        openInquiry(product.title, product.price);
+                    }
+                });
+            }
+
+            track.appendChild(card);
+        });
+
+        var nextBtn = document.createElement('button');
+        nextBtn.className = 'carousel-btn next-btn';
+        nextBtn.setAttribute('aria-label', 'Next');
+        nextBtn.innerHTML = '&#10095;';
+
+        miniContainer.appendChild(prevBtn);
+        miniContainer.appendChild(track);
+        miniContainer.appendChild(nextBtn);
+        carouselWrapper.appendChild(miniContainer);
+        wrapper.appendChild(carouselWrapper);
+        sectionEl.appendChild(wrapper);
+        container.appendChild(sectionEl);
+    });
+
+    if (window.updatePageTranslations) window.updatePageTranslations();
+}
+
 function renderGrid(items) {
     const grid = document.getElementById('productsGrid');
     if (!grid) return;
@@ -700,16 +817,16 @@ function renderGrid(items) {
                 <h3 class="product-title">${product.title}</h3>
                 ${priceHTML}
                 <div class="product-actions-grid">
-                    <button class="btn-grid-action btn-grid-details" data-i18n="card.details">
+                    <button class="btn-grid-action btn-grid-details">
                         <span class="btn-icon" aria-hidden="true">
                             <svg viewBox="0 0 24 24" class="icon-eye" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
                                 <circle cx="12" cy="12" r="3"/>
                             </svg>
                         </span>
-                        <span>DETALLES</span>
+                        <span data-i18n="card.details">DETALLES</span>
                     </button>
-                    ${product.sold ? `<button class="btn-grid-action btn-grid-sold" data-i18n="card.sold" disabled aria-disabled="true" style="opacity:0.4;cursor:not-allowed">✗ VENDIDO</button>` : `<button class="btn-grid-action btn-grid-buy" data-i18n="card.buy">🛒 COMPRAR</button>`}
+                    ${product.sold ? `<button class="btn-grid-action btn-grid-sold" disabled aria-disabled="true" style="opacity:0.4;cursor:not-allowed">\u2717 <span data-i18n="card.sold">VENDIDO</span></button>` : `<button class="btn-grid-action btn-grid-buy"><span class="btn-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></span> <span data-i18n="card.buy">COMPRAR</span></button>`}
                 </div>
             </div>
         `;

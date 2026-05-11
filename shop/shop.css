@@ -384,6 +384,7 @@ body.lang-en .product-card.sold::after {
     font-weight: 500;
     margin-top: 10px;
     margin-bottom: 20px;
+    text-transform: uppercase;
 }
 
 /* Shop Info Section */
@@ -1792,4 +1793,214 @@ footer p {
     font-size: 0.85rem;
     color: #999;
     letter-spacing: 0.05em;
+}
+
+/* ── Floating Catalog Banner ── */
+.catalog-float {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #111;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 13px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.catalog-float.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+
+.catalog-float:hover {
+    background: #333;
+    color: #fff;
+}
+
+.catalog-float-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.catalog-float-count {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+}
+
+.catalog-float-arrow {
+    font-size: 1rem;
+    opacity: 0.7;
+    transition: transform 0.2s;
+}
+
+.catalog-float:hover .catalog-float-arrow {
+    transform: translateX(3px);
+    opacity: 1;
+}
+
+/* ── WhatsApp Floating Button ── */
+.whatsapp-float {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #25D366;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: 12px 20px 12px 16px;
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.38);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.whatsapp-float:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(37, 211, 102, 0.5);
+    color: #fff;
+}
+
+.whatsapp-float svg {
+    flex-shrink: 0;
+}
+
+/* ── Inquiry Modal ── */
+.inquiry-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.inquiry-overlay.active {
+    display: flex;
+}
+
+.inquiry-modal {
+    background: #0e0e0e;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    padding: 40px 36px;
+    max-width: 480px;
+    width: 100%;
+    position: relative;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    margin: auto;
+}
+
+.inquiry-modal h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    margin: 0 0 6px;
+}
+
+.inquiry-modal .inquiry-artwork-name {
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+    margin-bottom: 28px;
+}
+
+.inquiry-modal p {
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.7;
+    margin-bottom: 28px;
+}
+
+.inquiry-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.inquiry-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+    background: transparent;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.18s, border-color 0.18s;
+}
+
+.inquiry-btn:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.35);
+    color: #fff;
+}
+
+.inquiry-btn.primary {
+    background: #25D366;
+    border-color: #25D366;
+    color: #fff;
+}
+
+.inquiry-btn.primary:hover {
+    background: #20c55c;
+    border-color: #20c55c;
+}
+
+.inquiry-btn .btn-icon {
+    font-size: 1.1rem;
+}
+
+.inquiry-close {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+    transition: color 0.15s;
+}
+
+.inquiry-close:hover {
+    color: #fff;
 }
