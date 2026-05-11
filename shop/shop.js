@@ -568,6 +568,40 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // ── Swipe Gestures for Modals ────────────────────────
+    function addSwipeGesture(element, onSwipeLeft, onSwipeRight) {
+        if (!element) return;
+        var startX = 0, startY = 0, distX = 0;
+        element.addEventListener('touchstart', function (e) {
+            var t = e.changedTouches[0];
+            startX = t.pageX;
+            startY = t.pageY;
+            distX = 0;
+        }, { passive: true });
+        element.addEventListener('touchmove', function (e) {
+            distX = e.changedTouches[0].pageX - startX;
+        }, { passive: true });
+        element.addEventListener('touchend', function () {
+            if (Math.abs(distX) > 50) {
+                if (distX < 0) onSwipeLeft();
+                else onSwipeRight();
+            }
+        }, { passive: true });
+    }
+
+    // Swipe on info modal image
+    var modalImageWrapper = document.querySelector('.modal-image-wrapper');
+    addSwipeGesture(modalImageWrapper,
+        function () { var btn = document.getElementById('modalNext'); if (btn) btn.click(); },
+        function () { var btn = document.getElementById('modalPrev'); if (btn) btn.click(); }
+    );
+
+    // Swipe on lightbox
+    addSwipeGesture(lightBoxModal,
+        function () { var btn = document.getElementById('lightBoxNext'); if (btn) btn.click(); },
+        function () { var btn = document.getElementById('lightBoxPrev'); if (btn) btn.click(); }
+    );
+
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
             if (modal && modal.classList.contains('active')) closeModal();
@@ -632,7 +666,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        function startAuto() { autoTimer = setInterval(autoAdvance, 5000); }
+        var autoInterval = window.innerWidth <= 768 ? 6000 : 5000;
+        function startAuto() { autoTimer = setInterval(autoAdvance, autoInterval); }
         function stopAuto() { clearInterval(autoTimer); }
 
         startAuto();
@@ -642,7 +677,7 @@ document.addEventListener('DOMContentLoaded', function () {
         container.addEventListener('touchstart', () => { paused = true; stopAuto(); }, { passive: true });
         container.addEventListener('touchend', () => {
             paused = false;
-            setTimeout(startAuto, 2000); // resume after 2s of inactivity
+            setTimeout(startAuto, 3000);
         }, { passive: true });
     });
 
