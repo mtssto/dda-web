@@ -316,12 +316,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // Modal Injection Logic (as raw string to avoid CORS on file:/// protocol)
     const modalHTML = `
         <!-- Modal for Info View -->
-        <div id="imageModal" class="image-modal">
-            <span class="modal-close">&times;</span>
+        <div id="imageModal" class="image-modal" role="dialog" aria-modal="true" aria-label="Detalle de obra">
+            <button class="modal-close" aria-label="Cerrar modal">&times;</button>
             <div class="modal-container">
                 <div class="modal-image-wrapper">
-                    <span class="modal-prev" id="modalPrev">&#10094;</span>
-                    <span class="modal-next" id="modalNext">&#10095;</span>
+                    <button class="modal-prev" id="modalPrev" aria-label="Imagen anterior">&#10094;</button>
+                    <button class="modal-next" id="modalNext" aria-label="Imagen siguiente">&#10095;</button>
                     <img class="modal-image" id="modalImage" alt="Artwork">
                 </div>
                 <div class="modal-info-wrapper">
@@ -341,10 +341,10 @@ document.addEventListener('DOMContentLoaded', function () {
         </div>
 
         <!-- Modal for pure Image Zoom -->
-        <div id="lightBoxModal" class="lightbox-modal">
-            <span class="lightbox-close">&times;</span>
-            <span class="lightbox-prev" id="lightBoxPrev">&#10094;</span>
-            <span class="lightbox-next" id="lightBoxNext">&#10095;</span>
+        <div id="lightBoxModal" class="lightbox-modal" role="dialog" aria-modal="true" aria-label="Zoom de imagen">
+            <button class="lightbox-close" aria-label="Cerrar zoom">&times;</button>
+            <button class="lightbox-prev" id="lightBoxPrev" aria-label="Imagen anterior">&#10094;</button>
+            <button class="lightbox-next" id="lightBoxNext" aria-label="Imagen siguiente">&#10095;</button>
             <img class="lightbox-image" id="lightBoxImage" alt="Artwork Zoom">
         </div>
     `;
@@ -609,6 +609,19 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.key === 'Escape') {
             if (modal && modal.classList.contains('active')) closeModal();
             if (lightBoxModal && lightBoxModal.classList.contains('active')) closeLightBox();
+        }
+        // Arrow key navigation for modals
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            var dir = e.key === 'ArrowLeft' ? 'Prev' : 'Next';
+            if (lightBoxModal && lightBoxModal.classList.contains('active')) {
+                e.preventDefault();
+                var lbBtn = document.getElementById('lightBox' + dir);
+                if (lbBtn) lbBtn.click();
+            } else if (modal && modal.classList.contains('active')) {
+                e.preventDefault();
+                var mBtn = document.getElementById('modal' + dir);
+                if (mBtn) mBtn.click();
+            }
         }
     });
 
@@ -882,6 +895,42 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     })();
 
+    // ── Dynamic JSON-LD Structured Data ─────────────────
+    (function () {
+        if (!window.products || !window.products.length) return;
+        var baseUrl = 'https://diegodeaduriz.art';
+        var artworks = window.products.map(function (p) {
+            var item = {
+                '@type': 'VisualArtwork',
+                'name': p.title,
+                'creator': { '@id': baseUrl + '/#artist' },
+                'image': baseUrl + '/shop/' + p.image
+            };
+            if (p.technique) item.artMedium = p.technique;
+            if (p.dimensions) item.description = (p.technique || '') + ', ' + p.dimensions + (p.year ? ', ' + p.year : '');
+            if (p.year && p.year !== 'Consultar año' && p.year !== 'a confirmar') item.dateCreated = p.year;
+            item.offers = {
+                '@type': 'Offer',
+                'availability': p.sold ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
+                'seller': { '@id': baseUrl + '/#artist' }
+            };
+            return item;
+        });
+        var ld = {
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            'name': 'Obras de Diego De Aduriz',
+            'numberOfItems': artworks.length,
+            'itemListElement': artworks.map(function (a, i) {
+                return { '@type': 'ListItem', 'position': i + 1, 'item': a };
+            })
+        };
+        var script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.textContent = JSON.stringify(ld);
+        document.head.appendChild(script);
+    })();
+
 });
 
 function toWebP(src) {
@@ -956,9 +1005,14 @@ function renderCarouselSections() {
                 soldBtnHtml = '<button class="btn-grid-action btn-grid-buy"><span class="btn-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></span> <span data-i18n="card.buy">COMPRAR</span></button>';
             }
 
+            var carouselAltParts = [product.title];
+            if (product.technique) carouselAltParts.push(product.technique);
+            if (product.dimensions) carouselAltParts.push(product.dimensions);
+            var carouselAlt = carouselAltParts.join(' — ') + ' — Diego De Aduriz';
+
             card.innerHTML =
                 '<div class="product-image">' +
-                    pictureTag(product.image, product.title + ' \u2014 Diego De Aduriz', ' loading="lazy"') +
+                    pictureTag(product.image, carouselAlt, ' loading="lazy"') +
                 '</div>' +
                 '<div class="product-info">' +
                     '<h3 class="product-title">' + product.title + '</h3>' +
@@ -1049,13 +1103,19 @@ function renderGrid(items) {
         const isWished = wishlist.indexOf(product.id) !== -1;
         const heartSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
 
+        const altParts = [product.title];
+        if (product.technique) altParts.push(product.technique);
+        if (product.dimensions) altParts.push(product.dimensions);
+        if (product.year && product.year !== 'Consultar año' && product.year !== 'a confirmar') altParts.push(product.year);
+        const richAlt = altParts.join(' — ');
+
         card.innerHTML = `
             <div class="product-image loading">
                 <div class="skeleton-shimmer"></div>
                 <button class="btn-wishlist${isWished ? ' active' : ''}" data-product-id="${product.id}" aria-label="Agregar a favoritos">${heartSvg}</button>
                 <picture>
                     <source srcset="${encodeSrcset(toWebP(product.image))}" type="image/webp">
-                    <img src="${product.image}" alt="${product.title}" loading="lazy">
+                    <img src="${product.image}" alt="${richAlt}" loading="lazy">
                 </picture>
                 ${overlayHTML}
             </div>
