@@ -1300,8 +1300,14 @@ footer p {
     }
 
     .modal-btn-footer {
+        position: sticky;
+        bottom: 0;
         flex-shrink: 0;
-        padding: 12px 0 4px;
+        padding: 12px 20px;
+        background: #fff;
+        border-top: 1px solid #eee;
+        margin: 0 -20px;
+        z-index: 5;
     }
 
     .modal-title {
