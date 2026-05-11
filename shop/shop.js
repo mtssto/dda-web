@@ -721,7 +721,7 @@ function renderCarouselSections() {
 
             card.innerHTML =
                 '<div class="product-image">' +
-                    '<img src="' + product.image + '" alt="' + product.title + ' \u2014 Diego De Aduriz">' +
+                    '<img src="' + product.image + '" alt="' + product.title + ' \u2014 Diego De Aduriz" loading="lazy">'  +
                 '</div>' +
                 '<div class="product-info">' +
                     '<h3 class="product-title">' + product.title + '</h3>' +
@@ -810,7 +810,7 @@ function renderGrid(items) {
 
         card.innerHTML = `
             <div class="product-image">
-                <img src="${product.image}" alt="${product.title}">
+                <img src="${product.image}" alt="${product.title}" loading="lazy">
                 ${overlayHTML}
             </div>
             <div class="product-info">
