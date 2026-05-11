@@ -172,11 +172,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (categoryMatch && sizeMatch && searchMatch) {
                 card.style.display = '';
-                card.style.animation = 'none';
-                setTimeout(() => { card.style.animation = 'fadeIn 0.5s ease-in-out'; }, 10);
+                card.classList.remove('stagger-in');
+                card.style.animationDelay = (visibleCount * 0.04) + 's';
+                void card.offsetWidth;
+                card.classList.add('stagger-in');
                 visibleCount++;
             } else {
                 card.style.display = 'none';
+                card.classList.remove('stagger-in');
             }
         });
 
@@ -849,6 +852,36 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     })();
 
+    // ── Recently Viewed Section ──────────────────────────
+    (function () {
+        var rv = JSON.parse(localStorage.getItem('dda_recently_viewed') || '[]');
+        if (!rv.length) return;
+
+        var grid = document.getElementById('productsGrid');
+        var target = grid ? grid.parentElement : document.querySelector('.shop-content') || document.querySelector('main');
+        if (!target) return;
+
+        var section = document.createElement('div');
+        section.className = 'recently-viewed-section';
+        section.innerHTML = '<h3>Vistos recientemente</h3><div class="recently-viewed-track"></div>';
+        target.appendChild(section);
+
+        var track = section.querySelector('.recently-viewed-track');
+        rv.forEach(function (item) {
+            var el = document.createElement('div');
+            el.className = 'recently-viewed-item';
+            el.innerHTML = pictureTag(item.image, item.title, ' loading="lazy" width="140" height="140"') +
+                '<div class="rv-title">' + item.title + '</div>' +
+                (item.year ? '<div class="rv-year">' + item.year + '</div>' : '');
+            el.addEventListener('click', function () {
+                if (!window.products) return;
+                var p = window.products.find(function (pr) { return (pr.id || pr.title) === item.id; });
+                if (p) openModal(p);
+            });
+            track.appendChild(el);
+        });
+    })();
+
 });
 
 function toWebP(src) {
@@ -1017,7 +1050,8 @@ function renderGrid(items) {
         const heartSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
 
         card.innerHTML = `
-            <div class="product-image">
+            <div class="product-image loading">
+                <div class="skeleton-shimmer"></div>
                 <button class="btn-wishlist${isWished ? ' active' : ''}" data-product-id="${product.id}" aria-label="Agregar a favoritos">${heartSvg}</button>
                 <picture>
                     <source srcset="${encodeSrcset(toWebP(product.image))}" type="image/webp">
@@ -1099,6 +1133,14 @@ function renderGrid(items) {
             };
         }
 
+        // Skeleton loader: hide shimmer when image loads
+        const imgEl = card.querySelector('.product-image img');
+        const imageDiv = card.querySelector('.product-image');
+        if (imgEl && imageDiv) {
+            imgEl.addEventListener('load', () => { imageDiv.classList.remove('loading'); });
+            if (imgEl.complete) imageDiv.classList.remove('loading');
+        }
+
         grid.appendChild(card);
     });
 
@@ -1161,6 +1203,17 @@ function openModal(productOrElement) {
         if (!product.images) {
             product.images = [product.image];
         }
+    }
+
+    // Track recently viewed
+    if (product.id || product.title) {
+        var rvKey = 'dda_recently_viewed';
+        var rv = JSON.parse(localStorage.getItem(rvKey) || '[]');
+        var rvId = product.id || product.title;
+        rv = rv.filter(function (item) { return item.id !== rvId; });
+        rv.unshift({ id: rvId, title: product.title, image: product.image, year: product.year || '' });
+        if (rv.length > 8) rv = rv.slice(0, 8);
+        localStorage.setItem(rvKey, JSON.stringify(rv));
     }
 
     const modalImg = document.getElementById('modalImage');
