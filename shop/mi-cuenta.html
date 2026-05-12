@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../icon-192x192.png">
+    <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Diego De Aduriz | Mi Cuenta</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="mi-cuenta.css">
+</head>
+
+<body>
+    <!-- Top Bar -->
+    <header class="account-topbar">
+        <div class="topbar-left">
+            <a href="shop.html" class="topbar-back">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+                </svg>
+                Volver a la tienda
+            </a>
+        </div>
+        <div class="topbar-right">
+            <span class="topbar-user" id="accountUsername"></span>
+            <button class="topbar-logout" id="logoutBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Cerrar Sesión
+            </button>
+        </div>
+    </header>
+
+    <main class="account-main">
+        <h1 class="account-title">Mi Cuenta</h1>
+
+        <!-- Tab Navigation -->
+        <div class="account-tabs">
+            <button class="account-tab active" data-tab="profile">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                </svg>
+                Perfil
+            </button>
+            <button class="account-tab" data-tab="wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+                Favoritos
+                <span class="tab-count" id="wishlistCount">0</span>
+            </button>
+            <button class="account-tab" data-tab="recent">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+                Vistos Recientemente
+            </button>
+        </div>
+
+        <!-- Profile Tab -->
+        <section class="tab-content active" id="tab-profile">
+            <div class="profile-card">
+                <div class="profile-avatar" id="profileAvatar">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </div>
+                <div class="profile-info">
+                    <h2 class="profile-name" id="profileName"></h2>
+                    <p class="profile-role" id="profileRole"></p>
+                </div>
+            </div>
+
+            <div class="profile-details">
+                <div class="detail-row">
+                    <span class="detail-label">Usuario</span>
+                    <span class="detail-value" id="detailUsername"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Rol</span>
+                    <span class="detail-value" id="detailRole"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Obras en Favoritos</span>
+                    <span class="detail-value" id="detailWishlistCount">0</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Vistas Recientes</span>
+                    <span class="detail-value" id="detailRecentCount">0</span>
+                </div>
+            </div>
+
+            <div class="profile-actions" id="adminLink" hidden>
+                <a href="admin.html" class="btn-profile-action">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    Ir al Panel de Administración
+                </a>
+            </div>
+        </section>
+
+        <!-- Wishlist Tab -->
+        <section class="tab-content" id="tab-wishlist">
+            <div class="wishlist-grid" id="wishlistGrid">
+                <p class="empty-state" id="wishlistEmpty">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                    No tenés obras en favoritos todavía.<br>
+                    <a href="catalog.html">Explorá el catálogo</a> y hacé click en el corazón para guardar obras.
+                </p>
+            </div>
+        </section>
+
+        <!-- Recently Viewed Tab -->
+        <section class="tab-content" id="tab-recent">
+            <div class="wishlist-grid" id="recentGrid">
+                <p class="empty-state" id="recentEmpty">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    No visitaste ninguna obra todavía.<br>
+                    <a href="catalog.html">Explorá el catálogo</a> para comenzar.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <script src="products.js" defer></script>
+    <script src="config.js"></script>
+    <script src="auth.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // ── Auth check ───────────────────────────
+            if (!DDAAuth.isAuthenticated()) {
+                window.location.href = 'user-login.html';
+                return;
+            }
+
+            var user = DDAAuth.getUser();
+
+            // ── Populate profile ─────────────────────
+            document.getElementById('accountUsername').textContent = user ? user.username : '';
+            document.getElementById('profileName').textContent = user ? user.username : '';
+            document.getElementById('profileRole').textContent = user && user.role === 'ADMIN' ? 'Administrador' : 'Usuario';
+            document.getElementById('profileAvatar').textContent = user ? user.username.charAt(0).toUpperCase() : '?';
+            document.getElementById('detailUsername').textContent = user ? user.username : '';
+            document.getElementById('detailRole').textContent = user && user.role === 'ADMIN' ? 'Administrador' : 'Usuario';
+
+            // Show admin link for admins
+            if (user && user.role === 'ADMIN') {
+                document.getElementById('adminLink').hidden = false;
+            }
+
+            // ── Logout ───────────────────────────────
+            document.getElementById('logoutBtn').addEventListener('click', function () {
+                DDAAuth.logout();
+            });
+
+            // ── Tab switching ────────────────────────
+            document.querySelectorAll('.account-tab').forEach(function (tab) {
+                tab.addEventListener('click', function () {
+                    document.querySelectorAll('.account-tab').forEach(function (t) { t.classList.remove('active'); });
+                    document.querySelectorAll('.tab-content').forEach(function (c) { c.classList.remove('active'); });
+                    tab.classList.add('active');
+                    document.getElementById('tab-' + tab.getAttribute('data-tab')).classList.add('active');
+                });
+            });
+
+            // ── Load wishlist ────────────────────────
+            var wishlist = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
+            var recentlyViewed = JSON.parse(localStorage.getItem('dda_recently_viewed') || '[]');
+
+            var products = window.products || [];
+
+            // Filter wishlist to only valid product IDs
+            var validWishlist = wishlist.filter(function (pid) {
+                return products.some(function (p) { return p.id === pid; });
+            });
+            // Clean up localStorage if stale IDs were found
+            if (validWishlist.length !== wishlist.length) {
+                localStorage.setItem('dda_wishlist', JSON.stringify(validWishlist));
+            }
+
+            document.getElementById('wishlistCount').textContent = validWishlist.length;
+            document.getElementById('detailWishlistCount').textContent = validWishlist.length;
+            document.getElementById('detailRecentCount').textContent = recentlyViewed.length;
+
+            // Render wishlist
+            if (validWishlist.length > 0) {
+                document.getElementById('wishlistEmpty').hidden = true;
+                var grid = document.getElementById('wishlistGrid');
+                validWishlist.forEach(function (pid) {
+                    var product = products.find(function (p) { return p.id === pid; });
+                    if (product) grid.appendChild(createProductCard(product, 'wishlist'));
+                });
+            }
+
+            // Render recently viewed
+            if (recentlyViewed.length > 0 && products.length > 0) {
+                document.getElementById('recentEmpty').hidden = true;
+                var recentGrid = document.getElementById('recentGrid');
+                recentlyViewed.forEach(function (item) {
+                    var id = typeof item === 'string' ? item : item.id;
+                    var product = products.find(function (p) { return (p.id || p.title) === id; });
+                    if (product) recentGrid.appendChild(createProductCard(product, 'recent'));
+                });
+            }
+
+            function createProductCard(product, type) {
+                var card = document.createElement('div');
+                card.className = 'account-card';
+
+                var imgSrc = product.image || '';
+                var webpSrc = imgSrc.replace(/\.(jpe?g|png)$/i, '.webp');
+
+                card.innerHTML =
+                    '<div class="account-card-img">' +
+                        '<picture>' +
+                            '<source srcset="' + webpSrc + '" type="image/webp">' +
+                            '<img src="' + imgSrc + '" alt="' + escapeHtml(product.title) + '" loading="lazy">' +
+                        '</picture>' +
+                    '</div>' +
+                    '<div class="account-card-info">' +
+                        '<h3>' + escapeHtml(product.title) + '</h3>' +
+                        (product.technique ? '<p class="card-meta">' + escapeHtml(product.technique) + '</p>' : '') +
+                        (product.dimensions ? '<p class="card-meta">' + escapeHtml(product.dimensions) + '</p>' : '') +
+                        '<p class="card-price">' + escapeHtml(product.price || 'Consultar') + '</p>' +
+                    '</div>' +
+                    (type === 'wishlist' ?
+                        '<button class="remove-btn" data-id="' + escapeHtml(product.id) + '" title="Quitar de favoritos">' +
+                            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                            '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+                        '</button>'
+                        : '');
+
+                // Remove from wishlist
+                var removeBtn = card.querySelector('.remove-btn');
+                if (removeBtn) {
+                    removeBtn.addEventListener('click', function () {
+                        var wl = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
+                        var idx = wl.indexOf(product.id);
+                        if (idx !== -1) wl.splice(idx, 1);
+                        localStorage.setItem('dda_wishlist', JSON.stringify(wl));
+                        card.remove();
+                        document.getElementById('wishlistCount').textContent = wl.length;
+                        document.getElementById('detailWishlistCount').textContent = wl.length;
+                        if (wl.length === 0) document.getElementById('wishlistEmpty').hidden = false;
+                    });
+                }
+
+                // Click card to go to catalog
+                card.addEventListener('click', function (e) {
+                    if (e.target.closest('.remove-btn')) return;
+                    window.location.href = 'catalog.html';
+                });
+
+                return card;
+            }
+
+            function escapeHtml(str) {
+                if (!str) return '';
+                var div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+        });
+    </script>
+</body>
+
+</html>

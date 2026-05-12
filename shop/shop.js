@@ -76,29 +76,61 @@ document.addEventListener('DOMContentLoaded', function () {
         window.changeLanguage(savedLang);
     }
 
-    // Dynamic product count on hero + "See All" button
-    const btnSeeAll = document.getElementById('btnSeeAll');
-    const heroCount = document.getElementById('heroObraCount');
-    if (window.products && window.products.length > 0) {
-        const count = window.products.length;
-        const lang = localStorage.getItem('preferredLanguage') || 'es';
-        if (btnSeeAll) {
-            btnSeeAll.textContent = lang === 'en'
-                ? `VIEW ALL ${count} WORKS`
-                : `VER LAS ${count} OBRAS DEL CATÁLOGO`;
+    function initShopContent() {
+        // Dynamic product count on hero + "See All" button
+        const btnSeeAll = document.getElementById('btnSeeAll');
+        const heroCount = document.getElementById('heroObraCount');
+        if (window.products && window.products.length > 0) {
+            const count = window.products.length;
+            const lang = localStorage.getItem('preferredLanguage') || 'es';
+            if (btnSeeAll) {
+                btnSeeAll.textContent = lang === 'en'
+                    ? `VIEW ALL ${count} WORKS`
+                    : `VER LAS ${count} OBRAS DEL CATÁLOGO`;
+            }
+            if (heroCount) {
+                heroCount.textContent = lang === 'en'
+                    ? `${count} works available`
+                    : `${count} obras disponibles`;
+            }
         }
-        if (heroCount) {
-            heroCount.textContent = lang === 'en'
-                ? `${count} works available`
-                : `${count} obras disponibles`;
+
+        renderCarouselSections();
+
+        const gridParams = document.getElementById('productsGrid');
+        if (gridParams) {
+            renderGrid(window.products || []);
         }
     }
 
-    renderCarouselSections();
+    // Try loading from the backend API; fall back to static products.js
+    if (typeof DDAApi !== 'undefined') {
+        DDAApi.loadProducts().then(function () { initShopContent(); });
+    } else {
+        initShopContent();
+    }
 
-    const gridParams = document.getElementById('productsGrid');
-    if (gridParams) {
-        renderGrid(window.products || []);
+    // Update auth header buttons based on login state
+    var authBtns = document.getElementById('authHeaderBtns');
+    if (authBtns && typeof DDAAuth !== 'undefined') {
+        if (DDAAuth.isAuthenticated()) {
+            var user = DDAAuth.getUser();
+            var isAdmin = user && user.role === 'ADMIN';
+            authBtns.innerHTML =
+                '<a href="mi-cuenta.html" class="auth-header-link">' +
+                    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> ' +
+                    (user ? user.username.toUpperCase() : 'MI CUENTA') +
+                '</a>' +
+                (isAdmin ? '<a href="admin.html" class="auth-header-link">ADMIN</a>' : '') +
+                '<a href="#" class="auth-header-link" id="headerLogout">SALIR</a>';
+            var logoutLink = document.getElementById('headerLogout');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    DDAAuth.logout();
+                });
+            }
+        }
     }
 
     // Filter Logic
@@ -865,35 +897,35 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     })();
 
-    // ── Recently Viewed Section ──────────────────────────
-    (function () {
-        var rv = JSON.parse(localStorage.getItem('dda_recently_viewed') || '[]');
-        if (!rv.length) return;
-
-        var grid = document.getElementById('productsGrid');
-        var target = grid ? grid.parentElement : document.querySelector('.shop-content') || document.querySelector('main');
-        if (!target) return;
-
-        var section = document.createElement('div');
-        section.className = 'recently-viewed-section';
-        section.innerHTML = '<h3>Vistos recientemente</h3><div class="recently-viewed-track"></div>';
-        target.appendChild(section);
-
-        var track = section.querySelector('.recently-viewed-track');
-        rv.forEach(function (item) {
-            var el = document.createElement('div');
-            el.className = 'recently-viewed-item';
-            el.innerHTML = pictureTag(item.image, item.title, ' loading="lazy" width="140" height="140"') +
-                '<div class="rv-title">' + item.title + '</div>' +
-                (item.year ? '<div class="rv-year">' + item.year + '</div>' : '');
-            el.addEventListener('click', function () {
-                if (!window.products) return;
-                var p = window.products.find(function (pr) { return (pr.id || pr.title) === item.id; });
-                if (p) openModal(p);
-            });
-            track.appendChild(el);
-        });
-    })();
+    // ── Recently Viewed Section (disabled — only shown in mi-cuenta.html) ──
+    // (function () {
+    //     var rv = JSON.parse(localStorage.getItem('dda_recently_viewed') || '[]');
+    //     if (!rv.length) return;
+    //     var target = document.getElementById('recentlyViewedContainer');
+    //     if (!target) {
+    //         var grid = document.getElementById('productsGrid');
+    //         target = grid ? grid.parentElement : document.querySelector('.shop-content') || document.querySelector('main');
+    //     }
+    //     if (!target) return;
+    //     var section = document.createElement('div');
+    //     section.className = 'recently-viewed-section';
+    //     section.innerHTML = '<h3>Vistos recientemente</h3><div class="recently-viewed-track"></div>';
+    //     target.appendChild(section);
+    //     var track = section.querySelector('.recently-viewed-track');
+    //     rv.forEach(function (item) {
+    //         var el = document.createElement('div');
+    //         el.className = 'recently-viewed-item';
+    //         el.innerHTML = pictureTag(item.image, item.title, ' loading="lazy" width="140" height="140"') +
+    //             '<div class="rv-title">' + item.title + '</div>' +
+    //             (item.year ? '<div class="rv-year">' + item.year + '</div>' : '');
+    //         el.addEventListener('click', function () {
+    //             if (!window.products) return;
+    //             var p = window.products.find(function (pr) { return (pr.id || pr.title) === item.id; });
+    //             if (p) openModal(p);
+    //         });
+    //         track.appendChild(el);
+    //     });
+    // })();
 
     // ── Dynamic JSON-LD Structured Data ─────────────────
     (function () {
@@ -959,6 +991,7 @@ function renderCarouselSections() {
     });
 
     var eyeSvg = '<svg viewBox="0 0 24 24" class="icon-eye" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+    var heartSvgCarousel = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
 
     window.carouselSections.forEach(function (section, sIdx) {
         var sectionEl = document.createElement('section');
@@ -1010,8 +1043,12 @@ function renderCarouselSections() {
             if (product.dimensions) carouselAltParts.push(product.dimensions);
             var carouselAlt = carouselAltParts.join(' — ') + ' — Diego De Aduriz';
 
+            var carouselWl = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
+            var carouselIsWished = carouselWl.indexOf(product.id) !== -1;
+
             card.innerHTML =
                 '<div class="product-image">' +
+                    '<button class="btn-wishlist' + (carouselIsWished ? ' active' : '') + '" data-product-id="' + product.id + '" aria-label="Agregar a favoritos">' + heartSvgCarousel + '</button>' +
                     pictureTag(product.image, carouselAlt, ' loading="lazy"') +
                 '</div>' +
                 '<div class="product-info">' +
@@ -1046,6 +1083,23 @@ function renderCarouselSections() {
                     if (typeof openInquiry === 'function') {
                         openInquiry(product.title, product.price);
                     }
+                });
+            }
+
+            var wishBtn = card.querySelector('.btn-wishlist');
+            if (wishBtn) {
+                wishBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    var wl = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
+                    var idx = wl.indexOf(product.id);
+                    if (idx === -1) {
+                        wl.push(product.id);
+                        this.classList.add('active');
+                    } else {
+                        wl.splice(idx, 1);
+                        this.classList.remove('active');
+                    }
+                    localStorage.setItem('dda_wishlist', JSON.stringify(wl));
                 });
             }
 

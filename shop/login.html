@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../icon-192x192.png">
+    <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diego De Aduriz | Admin Login</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="login.css">
+</head>
+
+<body>
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div class="login-header">
+                <h1 class="login-title">Diego De Aduriz</h1>
+                <p class="login-subtitle">Panel de Administración</p>
+            </div>
+
+
+
+            <!-- Login Form -->
+            <form id="loginForm" class="login-form" novalidate>
+                <div class="form-group">
+                    <label for="loginUsername">Usuario</label>
+                    <input type="text" id="loginUsername" name="username" autocomplete="username" required
+                        placeholder="Ingresá tu usuario">
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Contraseña</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="loginPassword" name="password" autocomplete="current-password" required
+                            placeholder="Ingresá tu contraseña">
+                        <button type="button" class="toggle-password" aria-label="Mostrar contraseña">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="loginError" class="login-error" role="alert" hidden>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                    <span id="loginErrorText"></span>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <span class="btn-text">Iniciar Sesión</span>
+                    <span class="btn-loader" hidden>
+                        <svg width="20" height="20" viewBox="0 0 24 24" class="spinner">
+                            <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="31.4" stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                </button>
+            </form>
+
+
+
+            <div class="login-footer">
+                <a href="shop.html" class="back-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+                    </svg>
+                    Volver a la tienda
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        var loginForm = document.getElementById('loginForm');
+
+        // ── Toggle password visibility ───────────────
+        document.querySelectorAll('.toggle-password').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var input = this.previousElementSibling;
+                var isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                this.setAttribute('aria-label', isPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
+            });
+        });
+
+        // ── Redirect if already admin ─────────────────
+        if (DDAAuth.isAdmin()) {
+            window.location.href = 'admin.html';
+        }
+
+        // ── Login submit ─────────────────────────────
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var errorBox = document.getElementById('loginError');
+            var errorText = document.getElementById('loginErrorText');
+            var btn = document.getElementById('loginBtn');
+            var btnText = btn.querySelector('.btn-text');
+            var btnLoader = btn.querySelector('.btn-loader');
+            errorBox.hidden = true;
+
+            var username = document.getElementById('loginUsername').value.trim();
+            var password = document.getElementById('loginPassword').value;
+
+            if (!username || !password) {
+                errorText.textContent = 'Completá todos los campos';
+                errorBox.hidden = false;
+                return;
+            }
+
+            btnText.hidden = true;
+            btnLoader.hidden = false;
+            btn.disabled = true;
+
+            DDAAuth.login(username, password)
+                .then(function (data) {
+                    if (data.role !== 'ADMIN') {
+                        DDAAuth.logout();
+                        errorText.textContent = 'No tenés permisos de administrador';
+                        errorBox.hidden = false;
+                        btnText.hidden = false;
+                        btnLoader.hidden = true;
+                        btn.disabled = false;
+                        return;
+                    }
+                    window.location.href = 'admin.html';
+                })
+                .catch(function (err) {
+                    errorText.textContent = err.message || 'Usuario o contraseña incorrectos';
+                    errorBox.hidden = false;
+                    btnText.hidden = false;
+                    btnLoader.hidden = true;
+                    btn.disabled = false;
+                });
+        });
+
+
+    </script>
+</body>
+
+</html>

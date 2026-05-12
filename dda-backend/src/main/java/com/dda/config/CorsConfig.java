@@ -16,6 +16,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
                 "https://diegodeaduriz.art",
+                "https://www.diegodeaduriz.art",
                 "http://localhost:8080",
                 "http://localhost:3000"
         ));
