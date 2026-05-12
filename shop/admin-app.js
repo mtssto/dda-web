@@ -51,6 +51,7 @@
 
     loadCategories();
     loadArtworks();
+    loadStats();
 
     // ── Event listeners ──────────────────────────
     var searchTimer;
@@ -114,7 +115,6 @@
             .then(function (cats) {
                 state.categories = cats;
                 renderCategoryOptions();
-                updateStats();
             })
             .catch(function () { /* silently fail */ });
     }
@@ -139,7 +139,6 @@
                 state.totalElements = data.totalElements || 0;
                 renderTable();
                 renderPagination();
-                updateStats();
             })
             .catch(function (err) {
                 tableBody.innerHTML = '<tr class="table-loading"><td colspan="8">Error al cargar obras</td></tr>';
@@ -188,6 +187,7 @@
             closeModal();
             loadArtworks();
             loadCategories();
+            loadStats();
         })
         .catch(function (err) {
             formError.textContent = err.message || 'Error al guardar la obra';
@@ -207,6 +207,7 @@
                 closeDeleteModal();
                 loadArtworks();
                 loadCategories();
+                loadStats();
             })
             .catch(function (err) {
                 alert(err.message || 'Error al eliminar la obra');
@@ -220,7 +221,7 @@
                 if (!res.ok) throw new Error('Error');
                 return res.json();
             })
-            .then(function () { loadArtworks(); })
+            .then(function () { loadArtworks(); loadStats(); })
             .catch(function () { /* silently fail */ });
     }
 
@@ -320,21 +321,20 @@
         }
     }
 
-    function updateStats() {
-        var totalEl = document.getElementById('statTotal');
-        var availEl = document.getElementById('statAvailable');
-        var soldEl = document.getElementById('statSold');
-        var catEl = document.getElementById('statCategories');
-
-        if (totalEl) totalEl.textContent = state.totalElements || 0;
-        if (catEl) catEl.textContent = state.categories.length || 0;
-
-        // Compute available/sold from categories if we have total
-        var soldCount = 0;
-        state.artworks.forEach(function (a) { if (a.sold) soldCount++; });
-        // For accurate totals we'd need a separate endpoint; approximate from what we have
-        if (availEl) availEl.textContent = state.totalElements - soldCount;
-        if (soldEl) soldEl.textContent = soldCount;
+    function loadStats() {
+        DDAAuth.apiFetch('/artworks?page=0&size=200&sort=createdAt,desc')
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                var all = data.content || [];
+                var soldCount = 0;
+                all.forEach(function (a) { if (a.sold) soldCount++; });
+                var total = data.totalElements || all.length;
+                document.getElementById('statTotal').textContent = total;
+                document.getElementById('statAvailable').textContent = total - soldCount;
+                document.getElementById('statSold').textContent = soldCount;
+                document.getElementById('statCategories').textContent = state.categories.length || 0;
+            })
+            .catch(function () { /* silently fail */ });
     }
 
     // ── Modal operations ─────────────────────────
