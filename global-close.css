@@ -14,6 +14,11 @@
     pointer-events: auto;
 }
 
+/* When auth buttons are present, space between CLOSE and auth links */
+.close-container:has(.auth-header-btns) {
+    justify-content: space-between;
+}
+
 /* Hide behind modal when modal is open */
 body.modal-open .close-container {
     z-index: 1 !important;
@@ -34,4 +39,71 @@ body.modal-open .close-container {
 
 .close-btn:hover {
     color: #888;
+}
+
+/* ── Auth header buttons (shop pages) ────── */
+.auth-header-btns {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.auth-header-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    color: #111;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    transition: color 0.3s ease;
+}
+
+.auth-header-link:hover {
+    color: #888;
+}
+
+.auth-header-link svg {
+    flex-shrink: 0;
+}
+
+/* When user is logged in, show user menu instead */
+.auth-header-user {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #111;
+}
+
+.auth-header-user .auth-header-link {
+    margin-left: 8px;
+}
+
+@media (max-width: 600px) {
+    .auth-header-btns {
+        gap: 14px;
+    }
+
+    .auth-header-link {
+        font-size: 0.65rem;
+        letter-spacing: 1px;
+        gap: 4px;
+    }
+
+    .auth-header-link svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .close-container {
+        padding: 20px 16px;
+    }
 }

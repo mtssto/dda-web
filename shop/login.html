@@ -183,6 +183,11 @@
             window.location.href = 'admin.html';
         }
 
+        // ── Auto-switch to register tab if #register hash ──
+        if (window.location.hash === '#register') {
+            tabRegister.click();
+        }
+
         // ── Login submit ─────────────────────────────
         loginForm.addEventListener('submit', function (e) {
             e.preventDefault();

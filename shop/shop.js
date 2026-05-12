@@ -110,6 +110,28 @@ document.addEventListener('DOMContentLoaded', function () {
         initShopContent();
     }
 
+    // Update auth header buttons based on login state
+    var authBtns = document.getElementById('authHeaderBtns');
+    if (authBtns && typeof DDAAuth !== 'undefined') {
+        if (DDAAuth.isAuthenticated()) {
+            var user = DDAAuth.getUser();
+            authBtns.innerHTML =
+                '<span class="auth-header-user">' +
+                    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> ' +
+                    (user ? user.username.toUpperCase() : '') +
+                '</span>' +
+                '<a href="admin.html" class="auth-header-link">ADMIN</a>' +
+                '<a href="#" class="auth-header-link" id="headerLogout">SALIR</a>';
+            var logoutLink = document.getElementById('headerLogout');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    DDAAuth.logout();
+                });
+            }
+        }
+    }
+
     // Filter Logic
     const categoryFilter = document.getElementById('categoryFilter');
     const sizeFilter    = document.getElementById('sizeFilter');
