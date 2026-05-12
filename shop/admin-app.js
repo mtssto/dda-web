@@ -339,6 +339,7 @@
 
     // ── Modal operations ─────────────────────────
     function openModal(artwork) {
+        closeDeleteModal();
         state.editingId = artwork ? artwork.id : null;
         modalTitle.textContent = artwork ? 'Editar Obra' : 'Nueva Obra';
         formError.hidden = true;
@@ -384,6 +385,7 @@
     };
 
     window.adminDeleteArtwork = function (id, title) {
+        closeModal();
         pendingDeleteId = id;
         deleteNameEl.textContent = title;
         deleteModal.hidden = false;
