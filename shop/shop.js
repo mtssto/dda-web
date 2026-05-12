@@ -991,6 +991,7 @@ function renderCarouselSections() {
     });
 
     var eyeSvg = '<svg viewBox="0 0 24 24" class="icon-eye" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+    var heartSvgCarousel = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
 
     window.carouselSections.forEach(function (section, sIdx) {
         var sectionEl = document.createElement('section');
@@ -1042,8 +1043,12 @@ function renderCarouselSections() {
             if (product.dimensions) carouselAltParts.push(product.dimensions);
             var carouselAlt = carouselAltParts.join(' — ') + ' — Diego De Aduriz';
 
+            var carouselWl = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
+            var carouselIsWished = carouselWl.indexOf(product.id) !== -1;
+
             card.innerHTML =
                 '<div class="product-image">' +
+                    '<button class="btn-wishlist' + (carouselIsWished ? ' active' : '') + '" data-product-id="' + product.id + '" aria-label="Agregar a favoritos">' + heartSvgCarousel + '</button>' +
                     pictureTag(product.image, carouselAlt, ' loading="lazy"') +
                 '</div>' +
                 '<div class="product-info">' +
@@ -1078,6 +1083,23 @@ function renderCarouselSections() {
                     if (typeof openInquiry === 'function') {
                         openInquiry(product.title, product.price);
                     }
+                });
+            }
+
+            var wishBtn = card.querySelector('.btn-wishlist');
+            if (wishBtn) {
+                wishBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    var wl = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
+                    var idx = wl.indexOf(product.id);
+                    if (idx === -1) {
+                        wl.push(product.id);
+                        this.classList.add('active');
+                    } else {
+                        wl.splice(idx, 1);
+                        this.classList.remove('active');
+                    }
+                    localStorage.setItem('dda_wishlist', JSON.stringify(wl));
                 });
             }
 
