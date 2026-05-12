@@ -5,7 +5,7 @@
 (function () {
     'use strict';
 
-    if (!DDAAuth.requireAuth()) return;
+    if (!DDAAuth.requireAdmin()) return;
 
     // ── State ────────────────────────────────────
     var state = {

@@ -86,8 +86,9 @@ var DDAAuth = (function () {
     }
 
     function logout() {
+        var wasAdmin = isAdmin();
         clearAuth();
-        window.location.href = 'login.html';
+        window.location.href = wasAdmin ? 'login.html' : 'user-login.html';
     }
 
     function authHeaders() {
@@ -103,7 +104,7 @@ var DDAAuth = (function () {
         return fetch(API_BASE + path, options).then(function (res) {
             if (res.status === 401 || res.status === 403) {
                 clearAuth();
-                window.location.href = 'login.html';
+                window.location.href = 'user-login.html';
                 throw new Error('Sesión expirada');
             }
             return res;
@@ -112,6 +113,14 @@ var DDAAuth = (function () {
 
     function requireAuth() {
         if (!isAuthenticated()) {
+            window.location.href = 'user-login.html';
+            return false;
+        }
+        return true;
+    }
+
+    function requireAdmin() {
+        if (!isAdmin()) {
             window.location.href = 'login.html';
             return false;
         }
@@ -128,6 +137,7 @@ var DDAAuth = (function () {
         isAdmin: isAdmin,
         apiFetch: apiFetch,
         authHeaders: authHeaders,
-        requireAuth: requireAuth
+        requireAuth: requireAuth,
+        requireAdmin: requireAdmin
     };
 })();

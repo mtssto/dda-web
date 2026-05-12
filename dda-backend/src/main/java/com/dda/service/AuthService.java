@@ -40,11 +40,13 @@ public class AuthService {
             throw new IllegalArgumentException("Email already registered");
         }
 
+        boolean isFirstUser = userRepository.count() == 0;
+
         User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(User.Role.ADMIN)
+                .role(isFirstUser ? User.Role.ADMIN : User.Role.USER)
                 .build();
 
         userRepository.save(user);
