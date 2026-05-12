@@ -23,17 +23,24 @@
                 <p class="login-subtitle">Panel de Administración</p>
             </div>
 
+            <!-- Tab switcher -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tabLogin">Iniciar Sesión</button>
+                <button class="auth-tab" id="tabRegister">Crear Cuenta</button>
+            </div>
+
+            <!-- Login Form -->
             <form id="loginForm" class="login-form" novalidate>
                 <div class="form-group">
-                    <label for="username">Usuario</label>
-                    <input type="text" id="username" name="username" autocomplete="username" required
+                    <label for="loginUsername">Usuario</label>
+                    <input type="text" id="loginUsername" name="username" autocomplete="username" required
                         placeholder="Ingresá tu usuario">
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Contraseña</label>
+                    <label for="loginPassword">Contraseña</label>
                     <div class="password-wrapper">
-                        <input type="password" id="password" name="password" autocomplete="current-password" required
+                        <input type="password" id="loginPassword" name="password" autocomplete="current-password" required
                             placeholder="Ingresá tu contraseña">
                         <button type="button" class="toggle-password" aria-label="Mostrar contraseña">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -61,6 +68,72 @@
                 </button>
             </form>
 
+            <!-- Register Form -->
+            <form id="registerForm" class="login-form" hidden novalidate>
+                <div class="form-group">
+                    <label for="regUsername">Usuario</label>
+                    <input type="text" id="regUsername" name="username" autocomplete="username" required
+                        placeholder="Elegí un nombre de usuario">
+                </div>
+
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" name="email" autocomplete="email" required
+                        placeholder="tu@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="regPassword">Contraseña</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="regPassword" name="password" autocomplete="new-password" required
+                            placeholder="Mínimo 6 caracteres" minlength="6">
+                        <button type="button" class="toggle-password" aria-label="Mostrar contraseña">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="regPasswordConfirm">Confirmar Contraseña</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="regPasswordConfirm" name="password_confirm" autocomplete="new-password" required
+                            placeholder="Repetí tu contraseña">
+                        <button type="button" class="toggle-password" aria-label="Mostrar contraseña">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="registerError" class="login-error" role="alert" hidden>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                    <span id="registerErrorText"></span>
+                </div>
+
+                <div id="registerSuccess" class="login-success" role="status" hidden>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    <span>Cuenta creada correctamente</span>
+                </div>
+
+                <button type="submit" class="login-btn" id="registerBtn">
+                    <span class="btn-text">Crear Cuenta</span>
+                    <span class="btn-loader" hidden>
+                        <svg width="20" height="20" viewBox="0 0 24 24" class="spinner">
+                            <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="31.4" stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                </button>
+            </form>
+
             <div class="login-footer">
                 <a href="shop.html" class="back-link">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -74,32 +147,54 @@
 
     <script src="auth.js"></script>
     <script>
-        var form = document.getElementById('loginForm');
-        var errorBox = document.getElementById('loginError');
-        var errorText = document.getElementById('loginErrorText');
-        var btn = document.getElementById('loginBtn');
-        var btnText = btn.querySelector('.btn-text');
-        var btnLoader = btn.querySelector('.btn-loader');
+        // ── DOM refs ─────────────────────────────────
+        var tabLogin = document.getElementById('tabLogin');
+        var tabRegister = document.getElementById('tabRegister');
+        var loginForm = document.getElementById('loginForm');
+        var registerForm = document.getElementById('registerForm');
 
-        // Toggle password visibility
-        document.querySelector('.toggle-password').addEventListener('click', function () {
-            var input = document.getElementById('password');
-            var isPassword = input.type === 'password';
-            input.type = isPassword ? 'text' : 'password';
-            this.setAttribute('aria-label', isPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
+        // ── Tab switching ────────────────────────────
+        tabLogin.addEventListener('click', function () {
+            tabLogin.classList.add('active');
+            tabRegister.classList.remove('active');
+            loginForm.hidden = false;
+            registerForm.hidden = true;
         });
 
-        // Redirect if already logged in
+        tabRegister.addEventListener('click', function () {
+            tabRegister.classList.add('active');
+            tabLogin.classList.remove('active');
+            registerForm.hidden = false;
+            loginForm.hidden = true;
+        });
+
+        // ── Toggle password visibility ───────────────
+        document.querySelectorAll('.toggle-password').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var input = this.previousElementSibling;
+                var isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                this.setAttribute('aria-label', isPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
+            });
+        });
+
+        // ── Redirect if already logged in ────────────
         if (DDAAuth.isAuthenticated()) {
             window.location.href = 'admin.html';
         }
 
-        form.addEventListener('submit', function (e) {
+        // ── Login submit ─────────────────────────────
+        loginForm.addEventListener('submit', function (e) {
             e.preventDefault();
+            var errorBox = document.getElementById('loginError');
+            var errorText = document.getElementById('loginErrorText');
+            var btn = document.getElementById('loginBtn');
+            var btnText = btn.querySelector('.btn-text');
+            var btnLoader = btn.querySelector('.btn-loader');
             errorBox.hidden = true;
 
-            var username = document.getElementById('username').value.trim();
-            var password = document.getElementById('password').value;
+            var username = document.getElementById('loginUsername').value.trim();
+            var password = document.getElementById('loginPassword').value;
 
             if (!username || !password) {
                 errorText.textContent = 'Completá todos los campos';
@@ -107,7 +202,6 @@
                 return;
             }
 
-            // Show loading state
             btnText.hidden = true;
             btnLoader.hidden = false;
             btn.disabled = true;
@@ -118,6 +212,61 @@
                 })
                 .catch(function (err) {
                     errorText.textContent = err.message || 'Usuario o contraseña incorrectos';
+                    errorBox.hidden = false;
+                    btnText.hidden = false;
+                    btnLoader.hidden = true;
+                    btn.disabled = false;
+                });
+        });
+
+        // ── Register submit ──────────────────────────
+        registerForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var errorBox = document.getElementById('registerError');
+            var errorText = document.getElementById('registerErrorText');
+            var successBox = document.getElementById('registerSuccess');
+            var btn = document.getElementById('registerBtn');
+            var btnText = btn.querySelector('.btn-text');
+            var btnLoader = btn.querySelector('.btn-loader');
+            errorBox.hidden = true;
+            successBox.hidden = true;
+
+            var username = document.getElementById('regUsername').value.trim();
+            var email = document.getElementById('regEmail').value.trim();
+            var password = document.getElementById('regPassword').value;
+            var passwordConfirm = document.getElementById('regPasswordConfirm').value;
+
+            if (!username || !email || !password || !passwordConfirm) {
+                errorText.textContent = 'Completá todos los campos';
+                errorBox.hidden = false;
+                return;
+            }
+
+            if (password.length < 6) {
+                errorText.textContent = 'La contraseña debe tener al menos 6 caracteres';
+                errorBox.hidden = false;
+                return;
+            }
+
+            if (password !== passwordConfirm) {
+                errorText.textContent = 'Las contraseñas no coinciden';
+                errorBox.hidden = false;
+                return;
+            }
+
+            btnText.hidden = true;
+            btnLoader.hidden = false;
+            btn.disabled = true;
+
+            DDAAuth.register(username, email, password)
+                .then(function () {
+                    successBox.hidden = false;
+                    setTimeout(function () {
+                        window.location.href = 'admin.html';
+                    }, 1000);
+                })
+                .catch(function (err) {
+                    errorText.textContent = err.message || 'Error al crear la cuenta';
                     errorBox.hidden = false;
                     btnText.hidden = false;
                     btnLoader.hidden = true;

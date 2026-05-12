@@ -65,6 +65,52 @@ body {
     letter-spacing: 0.1em;
 }
 
+/* ── Auth Tabs ──────────────────────────── */
+.auth-tabs {
+    display: flex;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 28px;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: var(--font-body);
+    background: var(--color-light-bg);
+    border: none;
+    cursor: pointer;
+    color: var(--color-subtext);
+    transition: all 0.2s ease;
+    letter-spacing: 0.01em;
+}
+
+.auth-tab.active {
+    background: var(--color-accent);
+    color: var(--color-bg);
+}
+
+.auth-tab:not(.active):hover {
+    background: #eee;
+}
+
+/* ── Success message ───────────────────── */
+.login-success {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    color: #166534;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
 .form-group {
     margin-bottom: 20px;
 }
