@@ -902,8 +902,11 @@ document.addEventListener('DOMContentLoaded', function () {
         var rv = JSON.parse(localStorage.getItem('dda_recently_viewed') || '[]');
         if (!rv.length) return;
 
-        var grid = document.getElementById('productsGrid');
-        var target = grid ? grid.parentElement : document.querySelector('.shop-content') || document.querySelector('main');
+        var target = document.getElementById('recentlyViewedContainer');
+        if (!target) {
+            var grid = document.getElementById('productsGrid');
+            target = grid ? grid.parentElement : document.querySelector('.shop-content') || document.querySelector('main');
+        }
         if (!target) return;
 
         var section = document.createElement('div');
