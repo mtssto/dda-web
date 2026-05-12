@@ -897,38 +897,35 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     })();
 
-    // ── Recently Viewed Section ──────────────────────────
-    (function () {
-        var rv = JSON.parse(localStorage.getItem('dda_recently_viewed') || '[]');
-        if (!rv.length) return;
-
-        var target = document.getElementById('recentlyViewedContainer');
-        if (!target) {
-            var grid = document.getElementById('productsGrid');
-            target = grid ? grid.parentElement : document.querySelector('.shop-content') || document.querySelector('main');
-        }
-        if (!target) return;
-
-        var section = document.createElement('div');
-        section.className = 'recently-viewed-section';
-        section.innerHTML = '<h3>Vistos recientemente</h3><div class="recently-viewed-track"></div>';
-        target.appendChild(section);
-
-        var track = section.querySelector('.recently-viewed-track');
-        rv.forEach(function (item) {
-            var el = document.createElement('div');
-            el.className = 'recently-viewed-item';
-            el.innerHTML = pictureTag(item.image, item.title, ' loading="lazy" width="140" height="140"') +
-                '<div class="rv-title">' + item.title + '</div>' +
-                (item.year ? '<div class="rv-year">' + item.year + '</div>' : '');
-            el.addEventListener('click', function () {
-                if (!window.products) return;
-                var p = window.products.find(function (pr) { return (pr.id || pr.title) === item.id; });
-                if (p) openModal(p);
-            });
-            track.appendChild(el);
-        });
-    })();
+    // ── Recently Viewed Section (disabled — only shown in mi-cuenta.html) ──
+    // (function () {
+    //     var rv = JSON.parse(localStorage.getItem('dda_recently_viewed') || '[]');
+    //     if (!rv.length) return;
+    //     var target = document.getElementById('recentlyViewedContainer');
+    //     if (!target) {
+    //         var grid = document.getElementById('productsGrid');
+    //         target = grid ? grid.parentElement : document.querySelector('.shop-content') || document.querySelector('main');
+    //     }
+    //     if (!target) return;
+    //     var section = document.createElement('div');
+    //     section.className = 'recently-viewed-section';
+    //     section.innerHTML = '<h3>Vistos recientemente</h3><div class="recently-viewed-track"></div>';
+    //     target.appendChild(section);
+    //     var track = section.querySelector('.recently-viewed-track');
+    //     rv.forEach(function (item) {
+    //         var el = document.createElement('div');
+    //         el.className = 'recently-viewed-item';
+    //         el.innerHTML = pictureTag(item.image, item.title, ' loading="lazy" width="140" height="140"') +
+    //             '<div class="rv-title">' + item.title + '</div>' +
+    //             (item.year ? '<div class="rv-year">' + item.year + '</div>' : '');
+    //         el.addEventListener('click', function () {
+    //             if (!window.products) return;
+    //             var p = window.products.find(function (pr) { return (pr.id || pr.title) === item.id; });
+    //             if (p) openModal(p);
+    //         });
+    //         track.appendChild(el);
+    //     });
+    // })();
 
     // ── Dynamic JSON-LD Structured Data ─────────────────
     (function () {
