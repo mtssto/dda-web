@@ -1,0 +1,377 @@
+:root {
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+    --color-text: #1a1a1a;
+    --color-subtext: #666;
+    --color-accent: #000;
+    --color-bg: #fff;
+    --color-light-bg: #f7f7f8;
+    --color-border: #e5e5e5;
+    --color-error: #d32f2f;
+    --transition: all 0.2s ease;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: var(--font-body);
+    background: var(--color-light-bg);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+}
+
+/* ── Top Bar ──────────────────────────────── */
+.account-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    height: 56px;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.topbar-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    color: var(--color-subtext);
+    font-size: 13px;
+    transition: color 0.2s;
+}
+
+.topbar-back:hover { color: var(--color-text); }
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.topbar-user {
+    font-size: 13px;
+    color: var(--color-subtext);
+}
+
+.topbar-logout {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-family: var(--font-body);
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--color-subtext);
+    transition: var(--transition);
+}
+
+.topbar-logout:hover {
+    color: var(--color-error);
+    border-color: var(--color-error);
+}
+
+/* ── Main ──────────────────────────────── */
+.account-main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 24px;
+}
+
+.account-title {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+}
+
+/* ── Tabs ──────────────────────────────── */
+.account-tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 28px;
+}
+
+.account-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 400;
+    font-family: var(--font-body);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    color: var(--color-subtext);
+    transition: var(--transition);
+}
+
+.account-tab:hover { color: var(--color-text); }
+
+.account-tab.active {
+    color: var(--color-text);
+    font-weight: 500;
+    border-bottom-color: var(--color-accent);
+}
+
+.tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--color-light-bg);
+    border-radius: 10px;
+    color: var(--color-subtext);
+}
+
+.account-tab.active .tab-count {
+    background: var(--color-accent);
+    color: var(--color-bg);
+}
+
+/* ── Tab Content ──────────────────────────── */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── Profile ──────────────────────────────── */
+.profile-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.profile-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: var(--color-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: 600;
+    font-family: var(--font-heading);
+    flex-shrink: 0;
+}
+
+.profile-avatar svg { stroke: var(--color-bg); }
+
+.profile-name {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.profile-role {
+    font-size: 13px;
+    color: var(--color-subtext);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.profile-details {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.detail-row:last-child { border-bottom: none; }
+
+.detail-label {
+    font-size: 14px;
+    color: var(--color-subtext);
+}
+
+.detail-value {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.profile-actions {
+    margin-top: 4px;
+}
+
+.btn-profile-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: var(--font-body);
+    background: var(--color-accent);
+    color: var(--color-bg);
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.btn-profile-action:hover { opacity: 0.85; }
+
+/* ── Wishlist / Recent Grid ───────────────── */
+.wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--color-subtext);
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.empty-state svg {
+    display: block;
+    margin: 0 auto 16px;
+    opacity: 0.3;
+}
+
+.empty-state a {
+    color: var(--color-accent);
+    font-weight: 500;
+}
+
+.account-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+}
+
+.account-card:hover {
+    border-color: #ccc;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.account-card-img {
+    width: 72px;
+    height: 72px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--color-light-bg);
+}
+
+.account-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.account-card-info h3 {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.card-meta {
+    font-size: 12px;
+    color: var(--color-subtext);
+}
+
+.card-price {
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+.remove-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-bg);
+    cursor: pointer;
+    color: var(--color-subtext);
+    transition: var(--transition);
+}
+
+.remove-btn:hover {
+    color: var(--color-error);
+    border-color: var(--color-error);
+}
+
+/* ── Responsive ──────────────────────────── */
+@media (max-width: 600px) {
+    .account-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .account-tab {
+        padding: 10px 14px;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .account-tab svg { display: none; }
+
+    .profile-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .wishlist-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .account-title { font-size: 24px; }
+    .account-main { padding: 20px 16px; }
+}
