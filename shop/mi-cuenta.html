@@ -181,17 +181,26 @@
             var wishlist = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
             var recentlyViewed = JSON.parse(localStorage.getItem('dda_recently_viewed') || '[]');
 
-            document.getElementById('wishlistCount').textContent = wishlist.length;
-            document.getElementById('detailWishlistCount').textContent = wishlist.length;
-            document.getElementById('detailRecentCount').textContent = recentlyViewed.length;
-
             var products = window.products || [];
 
+            // Filter wishlist to only valid product IDs
+            var validWishlist = wishlist.filter(function (pid) {
+                return products.some(function (p) { return p.id === pid; });
+            });
+            // Clean up localStorage if stale IDs were found
+            if (validWishlist.length !== wishlist.length) {
+                localStorage.setItem('dda_wishlist', JSON.stringify(validWishlist));
+            }
+
+            document.getElementById('wishlistCount').textContent = validWishlist.length;
+            document.getElementById('detailWishlistCount').textContent = validWishlist.length;
+            document.getElementById('detailRecentCount').textContent = recentlyViewed.length;
+
             // Render wishlist
-            if (wishlist.length > 0 && products.length > 0) {
+            if (validWishlist.length > 0) {
                 document.getElementById('wishlistEmpty').hidden = true;
                 var grid = document.getElementById('wishlistGrid');
-                wishlist.forEach(function (pid) {
+                validWishlist.forEach(function (pid) {
                     var product = products.find(function (p) { return p.id === pid; });
                     if (product) grid.appendChild(createProductCard(product, 'wishlist'));
                 });
