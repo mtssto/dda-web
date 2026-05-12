@@ -76,29 +76,38 @@ document.addEventListener('DOMContentLoaded', function () {
         window.changeLanguage(savedLang);
     }
 
-    // Dynamic product count on hero + "See All" button
-    const btnSeeAll = document.getElementById('btnSeeAll');
-    const heroCount = document.getElementById('heroObraCount');
-    if (window.products && window.products.length > 0) {
-        const count = window.products.length;
-        const lang = localStorage.getItem('preferredLanguage') || 'es';
-        if (btnSeeAll) {
-            btnSeeAll.textContent = lang === 'en'
-                ? `VIEW ALL ${count} WORKS`
-                : `VER LAS ${count} OBRAS DEL CATÁLOGO`;
+    function initShopContent() {
+        // Dynamic product count on hero + "See All" button
+        const btnSeeAll = document.getElementById('btnSeeAll');
+        const heroCount = document.getElementById('heroObraCount');
+        if (window.products && window.products.length > 0) {
+            const count = window.products.length;
+            const lang = localStorage.getItem('preferredLanguage') || 'es';
+            if (btnSeeAll) {
+                btnSeeAll.textContent = lang === 'en'
+                    ? `VIEW ALL ${count} WORKS`
+                    : `VER LAS ${count} OBRAS DEL CATÁLOGO`;
+            }
+            if (heroCount) {
+                heroCount.textContent = lang === 'en'
+                    ? `${count} works available`
+                    : `${count} obras disponibles`;
+            }
         }
-        if (heroCount) {
-            heroCount.textContent = lang === 'en'
-                ? `${count} works available`
-                : `${count} obras disponibles`;
+
+        renderCarouselSections();
+
+        const gridParams = document.getElementById('productsGrid');
+        if (gridParams) {
+            renderGrid(window.products || []);
         }
     }
 
-    renderCarouselSections();
-
-    const gridParams = document.getElementById('productsGrid');
-    if (gridParams) {
-        renderGrid(window.products || []);
+    // Try loading from the backend API; fall back to static products.js
+    if (typeof DDAApi !== 'undefined') {
+        DDAApi.loadProducts().then(function () { initShopContent(); });
+    } else {
+        initShopContent();
     }
 
     // Filter Logic
