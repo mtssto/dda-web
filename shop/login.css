@@ -97,6 +97,10 @@ body {
     background: #eee;
 }
 
+/* ── Hidden attribute override ────────── */
+.login-success[hidden],
+.login-error[hidden] { display: none !important; }
+
 /* ── Success message ───────────────────── */
 .login-success {
     display: flex;
