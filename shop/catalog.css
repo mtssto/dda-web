@@ -1,172 +1,70 @@
 /* =========================
-   CATALOG.CSS (OVERRIDES)
+   CATALOG.CSS
+   Safe overrides for catalog.html
+   Depends on shop.css for card/grid/modal visuals.
    ========================= */
 
-/* Asegura que el main use buen ancho y padding */
+/* Page shell: keep catalog inside viewport without changing card visuals */
 .catalog-page .catalog-container {
     width: 100%;
     max-width: 1476px;
     margin: 0 auto;
     padding-inline: clamp(16px, 4vw, 40px);
-    overflow-x: hidden;
     box-sizing: border-box;
+    overflow-x: hidden;
 }
 
-/* Layout general del catálogo (si shop.css mete algo raro) */
-.catalog-page .catalog-layout {
+.catalog-page .catalog-layout,
+.catalog-page .catalog-content {
     width: 100%;
+    min-width: 0;
 }
 
-/* Mobile: sidebar arriba y grid abajo + padding correcto */
-@media (max-width: 768px) {
-    .catalog-page .catalog-container {
-        max-width: none;
-        margin: 0;
-        padding-inline: 16px;
-    }
-
-    .catalog-page .catalog-layout {
-        display: block !important;
-    }
-
-    .catalog-page .catalog-sidebar {
-        width: 100% !important;
-        margin-bottom: 24px;
-    }
-
-    .catalog-page .catalog-sidebar .sidebar-section {
-        width: 100%;
-    }
-
-    .catalog-page .filter-dropdown {
-        width: 100%;
-    }
-}
-
-/* =========================
-   FIX DETALLES / COMPRAR
-   ========================= */
-
-/* contenedor de acciones: 2 columnas */
-.catalog-page .product-actions-grid,
-.catalog-page .product-card__actions,
-.catalog-page .card-actions {
-    display: flex !important;
-}
-
-/* cada acción: icono + texto en una sola línea */
-.catalog-page .product-actions-grid a,
-.catalog-page .product-actions-grid button,
-.catalog-page .product-card__actions a,
-.catalog-page .product-card__actions button,
-.catalog-page .card-actions a,
-.catalog-page .card-actions button {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important;
-    white-space: nowrap !important;
-    line-height: 1 !important;
-}
-
-/* iconos: forzar inline-flex para que no salten arriba */
-.catalog-page .product-actions-grid i,
-.catalog-page .product-actions-grid svg,
-.catalog-page .product-actions-grid img,
-.catalog-page .product-actions-grid .icon,
-.catalog-page .product-actions-grid .fa,
-.catalog-page .product-actions-grid .material-icons,
-.catalog-page .product-actions-grid .material-symbols-outlined,
-.catalog-page .product-card__actions i,
-.catalog-page .product-card__actions svg,
-.catalog-page .product-card__actions img,
-.catalog-page .product-card__actions .icon,
-.catalog-page .product-card__actions .fa,
-.catalog-page .product-card__actions .material-icons,
-.catalog-page .product-card__actions .material-symbols-outlined,
-.catalog-page .card-actions i,
-.catalog-page .card-actions svg,
-.catalog-page .card-actions img,
-.catalog-page .card-actions .icon,
-.catalog-page .card-actions .fa,
-.catalog-page .card-actions .material-icons,
-.catalog-page .card-actions .material-symbols-outlined {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    line-height: 1 !important;
-    vertical-align: middle !important;
-}
-
-/* Si el icono viene por pseudo-elemento (muy común) */
-.catalog-page .product-actions-grid a::before,
-.catalog-page .product-card__actions a::before,
-.catalog-page .card-actions a::before {
-    vertical-align: middle !important;
-}
-
-/* Button Icon Styles */
-.btn-grid-action {
-    display: inline-flex;
+/* Header action alignment */
+.catalog-page .catalog-header-actions {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-.btn-grid-action .btn-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.icon-eye {
-    width: 16px;
-    height: 16px;
-    opacity: 0.85;
+    gap: 16px;
 }
 
 /* Download Catalog Button */
-.btn-download-catalog {
+.catalog-page .btn-download-catalog {
     display: inline-flex;
     align-items: center;
-    background-color: var(--primary-color, #1a1a1a);
+    justify-content: center;
+    gap: 6px;
+    background-color: var(--primary-color, var(--color-accent, #1a1a1a));
     color: var(--bg-color, #ffffff);
     padding: 8px 16px;
+    border: 1px solid var(--primary-color, var(--color-accent, #1a1a1a));
     border-radius: 4px;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body, 'Inter', sans-serif);
     font-size: 0.85rem;
     font-weight: 500;
+    line-height: 1;
     text-decoration: none;
-    transition: background-color 0.2s ease, transform 0.2s ease;
-    border: 1px solid var(--primary-color, #1a1a1a);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
-.btn-download-catalog:hover {
+.catalog-page .btn-download-catalog:hover {
     background-color: transparent;
-    color: var(--primary-color, #1a1a1a);
+    color: var(--primary-color, var(--color-accent, #1a1a1a));
     transform: translateY(-2px);
 }
 
-/* ── Size filter ── */
-#sizeFilter {
-    width: 100%;
-    margin-top: 4px;
+.catalog-page .btn-download-catalog svg {
+    flex-shrink: 0;
 }
 
-/* Active filter indicator — shows a dot when size filter is not "all" */
-.sidebar-section:has(#sizeFilter:not([value="all"])) .sidebar-heading::after {
-    font-size: 0.5rem;
-    color: #000;
-    vertical-align: super;
-}
-
-/* ── Sidebar section spacing ─────────────────────────── */
-.sidebar-section {
+/* Sidebar spacing */
+.catalog-page .sidebar-section {
     margin-bottom: 32px;
 }
 
-.sidebar-heading {
-    font-family: 'Inter', sans-serif;
+.catalog-page .sidebar-heading {
+    font-family: var(--font-body, 'Inter', sans-serif);
     font-size: 0.62rem;
     font-weight: 400;
     letter-spacing: 2.5px;
@@ -175,25 +73,41 @@
     margin-bottom: 14px;
 }
 
-/* ── Custom dropdown ─────────────────────────────────── */
-.custom-dropdown {
+/* Optional class you can toggle from JS when a filter is active */
+.catalog-page .sidebar-section.is-active .sidebar-heading::after {
+    content: '•';
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 0.65rem;
+    color: #111;
+    vertical-align: middle;
+}
+
+/* Hidden native selects remain available to JS */
+.catalog-page #categoryFilter,
+.catalog-page #sizeFilter {
+    width: 100%;
+}
+
+/* Custom dropdown */
+.catalog-page .custom-dropdown {
     position: relative;
     width: 100%;
     user-select: none;
 }
 
-/* Trigger button */
-.cd-trigger {
+.catalog-page .cd-trigger {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 8px;
     padding: 10px 0;
     background: transparent;
-    border: none;
+    border: 0;
     border-bottom: 1px solid #ddd;
     border-radius: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body, 'Inter', sans-serif);
     font-size: 0.72rem;
     font-weight: 300;
     letter-spacing: 2px;
@@ -202,92 +116,196 @@
     cursor: pointer;
     text-align: left;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s ease;
 }
 
-.cd-trigger:hover,
-.custom-dropdown.open .cd-trigger {
+.catalog-page .cd-trigger:hover,
+.catalog-page .custom-dropdown.open .cd-trigger {
     border-bottom-color: #111;
 }
 
-.cd-arrow {
+.catalog-page .cd-arrow {
     flex-shrink: 0;
     color: #111;
     transition: transform 0.2s ease;
-    margin-left: 8px;
 }
 
-.custom-dropdown.open .cd-arrow {
+.catalog-page .custom-dropdown.open .cd-arrow {
     transform: rotate(180deg);
 }
 
-/* Dropdown list */
-.cd-list {
+.catalog-page .cd-list {
     display: none;
     position: absolute;
     top: calc(100% + 2px);
     left: 0;
     width: 100%;
-    background: #fff;
-    border: 1px solid #e8e8e8;
-    border-top: none;
+    z-index: 200;
     list-style: none;
     margin: 0;
     padding: 4px 0;
-    z-index: 200;
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-top: 0;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
 }
 
-.custom-dropdown.open .cd-list {
+.catalog-page .custom-dropdown.open .cd-list {
     display: block;
 }
 
-/* Options */
-.cd-option {
+.catalog-page .cd-option {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
     padding: 10px 16px;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body, 'Inter', sans-serif);
     font-size: 0.78rem;
     font-weight: 300;
     letter-spacing: 0.5px;
     color: #555;
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
+    transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.cd-option:hover {
+.catalog-page .cd-option:hover {
     background: #f8f8f8;
     color: #111;
 }
 
-.cd-option.active {
+.catalog-page .cd-option.active {
     color: #111;
     font-weight: 500;
 }
 
-.cd-option.active::before {
+.catalog-page .cd-option.active::before {
     content: '—';
+    margin-right: 2px;
     font-size: 0.6rem;
     opacity: 0.5;
-    margin-right: 2px;
 }
 
-/* Hint text inside option (e.g. "hasta 50 cm") */
-.cd-hint {
+.catalog-page .cd-hint {
     font-size: 0.68rem;
     color: #bbb;
     font-weight: 300;
     letter-spacing: 0;
 }
 
-/* Active option hint stays visible */
-.cd-option.active .cd-hint {
+.catalog-page .cd-option.active .cd-hint {
     color: #999;
 }
 
-/* ── Catalog search bar (inherits from shop.css) ─── */
-.catalog-search-wrapper .shop-search-bar {
+/* Search bar width only; visual styling lives in shop.css */
+.catalog-page .catalog-search-wrapper .shop-search-bar {
     max-width: 100%;
+}
+
+/* Button icon alignment only; base button visuals live in shop.css */
+.catalog-page .btn-grid-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.catalog-page .btn-grid-action .btn-icon,
+.catalog-page .btn-grid-action svg,
+.catalog-page .btn-grid-action img {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.catalog-page .icon-eye {
+    width: 16px;
+    height: 16px;
+    opacity: 0.85;
+}
+
+/* Infinite scroll states only; does not modify product-card/image visuals */
+.catalog-page .catalog-loader,
+.catalog-page .catalog-empty-state {
+    text-align: center;
+    padding: 32px 0;
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #999;
+}
+
+.catalog-page .catalog-sentinel {
+    width: 100%;
+    height: 1px;
+}
+
+/* Responsive catalog wrapper only */
+@media (max-width: 900px) {
+    .catalog-page .catalog-container {
+        max-width: none;
+        margin: 0;
+        padding-inline: 16px;
+    }
+
+    .catalog-page .catalog-header-actions {
+        align-items: flex-start;
+    }
+
+    .catalog-page .btn-download-catalog {
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 768px) {
+    .catalog-page .catalog-layout {
+        display: block;
+    }
+
+    .catalog-page .catalog-sidebar {
+        width: 100%;
+        margin-bottom: 24px;
+    }
+
+    .catalog-page .catalog-sidebar .sidebar-section,
+    .catalog-page .filter-dropdown {
+        width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .catalog-page .catalog-header-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .catalog-page .btn-download-catalog {
+        width: 100%;
+    }
+}
+
+.catalog-content .product-title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.catalog-content .product-title a:hover {
+    color: inherit;
+    text-decoration: none;
+}
+
+.catalog-content .btn-grid-action:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+/* API catalog cards: keep price in DOM for modal/PDF, but preserve the old catalog visual rhythm. */
+.catalog-page .catalog-card-price {
+    display: none;
+}
+
+.catalog-page .btn-grid-sold {
+    opacity: 0.45;
+    cursor: not-allowed;
 }
