@@ -56,6 +56,18 @@
         return getApiBaseUrl().replace(/\/api$/, '');
     }
 
+    function getFrontendBaseUrl() {
+        return window.location.origin;
+    }
+
+    function hasImageExtension(path) {
+        return /\.(png|jpe?g|webp|gif|avif|svg)$/i.test(path.split('?')[0]);
+    }
+
+    function joinUrl(base, path) {
+        return `${base.replace(/\/$/, '')}/${String(path || '').replace(/^\/+/, '')}`;
+    }
+
     function buildCatalogUrl() {
         const baseUrl = getApiBaseUrl();
 
@@ -433,43 +445,62 @@
     function normalizeImageUrl(image) {
         if (!image) return '';
 
-        if (typeof image === 'string') {
-            if (image.startsWith('http://') || image.startsWith('https://')) {
-                return image;
-            }
-
-            if (image.startsWith('/')) {
-                return `${getBackendBaseUrl()}${image}`;
-            }
-
-            if (image.startsWith('uploads/') || image.startsWith('upload/')) {
-                return `${getBackendBaseUrl()}/${image}`;
-            }
-
-            return image;
-        }
-
-        const rawPath =
-            image.filePath ||
-            image.url ||
-            image.imageUrl ||
-            '';
+        const rawPath = typeof image === 'string'
+            ? image
+            : (
+                image.filePath ||
+                image.url ||
+                image.imageUrl ||
+                ''
+            );
 
         if (!rawPath) return '';
 
-        if (rawPath.startsWith('http://') || rawPath.startsWith('https://')) {
-            return rawPath;
+        const path = String(rawPath).trim();
+        if (!path) return '';
+
+        if (path.startsWith('http://') || path.startsWith('https://')) {
+            return path;
         }
 
-        if (rawPath.startsWith('/')) {
-            return `${getBackendBaseUrl()}${rawPath}`;
+        // Images uploaded through the Spring/Railway backend.
+        // Example: /uploads/uuid.jpg or uploads/uuid.jpg
+        if (
+            path.startsWith('/uploads/') ||
+            path.startsWith('uploads/') ||
+            path.startsWith('/upload/') ||
+            path.startsWith('upload/')
+        ) {
+            return joinUrl(getBackendBaseUrl(), path);
         }
 
-        if (rawPath.startsWith('uploads/') || rawPath.startsWith('upload/')) {
-            return `${getBackendBaseUrl()}/${rawPath}`;
+        // Static portfolio/shop assets live with the frontend on GitHub Pages.
+        // Example: /portfolio/sections/obras/dibu9.jpg
+        if (
+            path.startsWith('/portfolio/') ||
+            path.startsWith('portfolio/') ||
+            path.startsWith('../portfolio/') ||
+            path.startsWith('/shop/') ||
+            path.startsWith('shop/') ||
+            path.startsWith('../shop/')
+        ) {
+            return new URL(path, getFrontendBaseUrl() + '/shop/catalog.html').href;
         }
 
-        return rawPath;
+        // Root-relative static files should also resolve to the frontend domain,
+        // not to Railway. This avoids 403s for GitHub Pages-hosted assets.
+        if (path.startsWith('/')) {
+            return joinUrl(getFrontendBaseUrl(), path);
+        }
+
+        // If the API only returns a filename, most of your legacy artwork files
+        // are stored in /portfolio/sections/obras on the frontend.
+        if (!path.includes('/') && hasImageExtension(path)) {
+            return joinUrl(getFrontendBaseUrl(), `/portfolio/sections/obras/${path}`);
+        }
+
+        // Final fallback: resolve relative to catalog.html on the frontend.
+        return new URL(path, getFrontendBaseUrl() + '/shop/catalog.html').href;
     }
 
     function getCategoryValue(artwork) {
