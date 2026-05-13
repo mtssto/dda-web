@@ -1,6 +1,11 @@
 // Filter functionality
 // Products are loaded from products.js into window.products
 
+// Performance constants used by global carousel renderer.
+// Keep these outside DOMContentLoaded because renderCarouselSections() is global.
+const SHOP_CAROUSEL_INITIAL_ITEMS = 6;
+const SHOP_DEFER_SECTION_RENDER_MS = 120;
+
 // Language Configuration (Shop Specific)
 window.pageTranslations = {
     es: {
@@ -72,6 +77,8 @@ window.pageTranslations = {
 document.addEventListener('DOMContentLoaded', function () {
     // Re-apply translations on load to catch page-specific ones
     const savedLang = localStorage.getItem('preferredLanguage') || 'es';
+    const isCatalogPage = document.body.classList.contains('catalog-page') || window.location.pathname.includes('catalog');
+
     if (window.changeLanguage) {
         window.changeLanguage(savedLang);
     }
@@ -95,6 +102,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
+        // catalog.html is rendered by catalog-api.js. Keep shop.js loaded there only
+        // for shared behavior: modal, lightbox, auth header, PDF, etc.
+        if (isCatalogPage) {
+            return;
+        }
+
         renderCarouselSections();
 
         const gridParams = document.getElementById('productsGrid');
@@ -103,12 +116,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Try loading from the backend API; fall back to static products.js
-    if (typeof DDAApi !== 'undefined') {
-        DDAApi.loadProducts().then(function () { initShopContent(); });
-    } else {
-        initShopContent();
-    }
+    // catalog.html uses catalog-api.js for paginated backend loading.
+    // shop.html should render immediately from products.js and should not wait for DDAApi.
+    initShopContent();
 
     // Update auth header buttons based on login state
     var authBtns = document.getElementById('authHeaderBtns');
@@ -239,18 +249,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    if (categoryFilter) {
+    if (!isCatalogPage && categoryFilter) {
         categoryFilter.addEventListener('change', applyFilters);
     }
-    if (sizeFilter) {
+    if (!isCatalogPage && sizeFilter) {
         sizeFilter.addEventListener('change', applyFilters);
     }
 
 
 
     // ── Search input ──────────────────────────────────────
-    if (searchInput) {
-        const isCatalogPage = window.location.pathname.includes('catalog');
+    if (searchInput && !isCatalogPage) {
+        const isCatalogSearchPage = window.location.pathname.includes('catalog');
 
         searchInput.addEventListener('input', () => {
             searchQuery = searchInput.value;
@@ -258,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 searchClear.classList.toggle('visible', searchQuery.length > 0);
             }
 
-            if (isCatalogPage) {
+            if (isCatalogSearchPage) {
                 applyFilters();
             }
             // Shop page uses live dropdown (handled separately)
@@ -284,7 +294,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (searchCount) searchCount.textContent = '';
                 applyFilters();
             }
-            if (e.key === 'Enter' && !isCatalogPage && searchInput.value.trim()) {
+            if (e.key === 'Enter' && !isCatalogSearchPage && searchInput.value.trim()) {
                 window.location.href = 'catalog.html?q=' + encodeURIComponent(searchInput.value.trim());
             }
         });
@@ -343,7 +353,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    initCustomDropdowns();
+    if (!isCatalogPage) {
+        initCustomDropdowns();
+    }
 
     // Modal Injection Logic (as raw string to avoid CORS on file:/// protocol)
     const modalHTML = `
@@ -663,7 +675,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const urlQuery  = urlParams.get('q');
 
     // Pre-fill search from ?q= (used when redirected from shop)
-    if (urlQuery && searchInput) {
+    if (urlQuery && searchInput && !isCatalogPage) {
         searchInput.value = urlQuery;
         searchQuery       = urlQuery;
         if (searchClear) searchClear.classList.add('visible');
@@ -674,7 +686,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 300);
     }
 
-    if (itemParam) {
+    if (itemParam && !isCatalogPage) {
         const decodedItem = decodeURIComponent(itemParam);
         // Find product in data source logic
         const foundProduct = (window.products || []).find(p => p.image.includes(decodedItem));
@@ -683,51 +695,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Carousel Logic — manual buttons + auto-scroll
-    const carouselContainers = document.querySelectorAll('.carousel-container-mini');
-    carouselContainers.forEach(container => {
-        const track = container.querySelector('.carousel-track');
-        const prevBtn = container.querySelector('.prev-btn');
-        const nextBtn = container.querySelector('.next-btn');
-
-        if (!track) return;
-
-        const cardWidth = () => {
-            const card = track.querySelector('.carousel-card');
-            return card ? card.offsetWidth + 20 : 320;
-        };
-
-        if (prevBtn) prevBtn.addEventListener('click', () => { track.scrollBy({ left: -cardWidth(), behavior: 'smooth' }); });
-        if (nextBtn) nextBtn.addEventListener('click', () => { track.scrollBy({ left: cardWidth(), behavior: 'smooth' }); });
-
-        // Auto-scroll: advance one card every 3.5s, pause on hover/touch
-        let autoTimer = null;
-        let paused = false;
-
-        function autoAdvance() {
-            if (paused) return;
-            const maxScroll = track.scrollWidth - track.clientWidth;
-            if (track.scrollLeft >= maxScroll - 4) {
-                track.scrollTo({ left: 0, behavior: 'smooth' });
-            } else {
-                track.scrollBy({ left: cardWidth(), behavior: 'smooth' });
-            }
-        }
-
-        var autoInterval = window.innerWidth <= 768 ? 6000 : 5000;
-        function startAuto() { autoTimer = setInterval(autoAdvance, autoInterval); }
-        function stopAuto() { clearInterval(autoTimer); }
-
-        startAuto();
-
-        container.addEventListener('mouseenter', () => { paused = true; stopAuto(); });
-        container.addEventListener('mouseleave', () => { paused = false; startAuto(); });
-        container.addEventListener('touchstart', () => { paused = true; stopAuto(); }, { passive: true });
-        container.addEventListener('touchend', () => {
-            paused = false;
-            setTimeout(startAuto, 3000);
-        }, { passive: true });
-    });
+    // Carousel controls are bound when each section is rendered.
 
     // Global Event Delegation for LightBox (catches all .product-image img clicks including static carousels)
     document.addEventListener('click', function (e) {
@@ -756,7 +724,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ── Category Counts ─────────────────────────────────
     (function () {
-        if (!window.products) return;
+        if (isCatalogPage || !window.products) return;
         var counts = {};
         window.products.forEach(function (p) {
             var cat = p.category || 'other';
@@ -775,7 +743,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // ── Sort Dropdown ───────────────────────────────────
     (function () {
         var isCatalog = window.location.pathname.includes('catalog');
-        if (!isCatalog || !window.products) return;
+        if (isCatalog || !window.products) return;
         var sidebar = document.querySelector('.catalog-sidebar');
         if (!sidebar) return;
 
@@ -974,16 +942,27 @@ function encodeSrcset(url) {
 }
 
 function pictureTag(src, alt, extra) {
-    var webpSrc = toWebP(src);
+    var webpSrc = toWebP(src || '');
+    var attrs = extra || '';
+
+    if (!/loading=/.test(attrs)) attrs += ' loading="lazy"';
+    if (!/decoding=/.test(attrs)) attrs += ' decoding="async"';
+    if (!/fetchpriority=/.test(attrs)) attrs += ' fetchpriority="low"';
+
     return '<picture>' +
         '<source srcset="' + encodeSrcset(webpSrc) + '" type="image/webp">' +
-        '<img src="' + src + '" alt="' + alt + '"' + (extra || '') + '>' +
+        '<img src="' + encodeSrcset(src || '') + '" alt="' + String(alt || '').replace(/"/g, '&quot;') + '"' + attrs + '>' +
     '</picture>';
 }
 
 function renderCarouselSections() {
     var container = document.getElementById('carouselSectionsContainer');
     if (!container || !window.carouselSections || !window.products) return;
+
+    // Prevent duplicate rendering if shop.js is initialized more than once.
+    if (container.dataset.rendered === 'true') return;
+    container.dataset.rendered = 'true';
+    container.innerHTML = '';
 
     var productsByImage = {};
     window.products.forEach(function (p) {
@@ -993,9 +972,9 @@ function renderCarouselSections() {
     var eyeSvg = '<svg viewBox="0 0 24 24" class="icon-eye" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
     var heartSvgCarousel = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
 
-    window.carouselSections.forEach(function (section, sIdx) {
+    function renderOneSection(section, sIdx) {
         var sectionEl = document.createElement('section');
-        sectionEl.className = 'shop-hero-vertical';
+        sectionEl.className = 'shop-hero-vertical shop-carousel-section';
         if (sIdx > 0) sectionEl.style.padding = '20px 0 60px';
 
         var wrapper = document.createElement('div');
@@ -1020,7 +999,9 @@ function renderCarouselSections() {
         var track = document.createElement('div');
         track.className = 'carousel-track';
 
-        section.images.forEach(function (imgPath) {
+        var imageList = (section.images || []).slice(0, SHOP_CAROUSEL_INITIAL_ITEMS);
+
+        imageList.forEach(function (imgPath, imgIdx) {
             var product = productsByImage[imgPath];
             if (!product) return;
 
@@ -1046,10 +1027,16 @@ function renderCarouselSections() {
             var carouselWl = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
             var carouselIsWished = carouselWl.indexOf(product.id) !== -1;
 
+            var imageAttrs = ' class="carousel-img"';
+            // Let the first card of the first carousel load a bit sooner; keep everything else lazy/low priority.
+            if (sIdx === 0 && imgIdx === 0) {
+                imageAttrs += ' loading="eager" fetchpriority="high" decoding="async"';
+            }
+
             card.innerHTML =
                 '<div class="product-image">' +
                     '<button class="btn-wishlist' + (carouselIsWished ? ' active' : '') + '" data-product-id="' + product.id + '" aria-label="Agregar a favoritos">' + heartSvgCarousel + '</button>' +
-                    pictureTag(product.image, carouselAlt, ' loading="lazy"') +
+                    pictureTag(product.image, carouselAlt, imageAttrs) +
                 '</div>' +
                 '<div class="product-info">' +
                     '<h3 class="product-title">' + product.title + '</h3>' +
@@ -1106,6 +1093,8 @@ function renderCarouselSections() {
             track.appendChild(card);
         });
 
+        if (!track.children.length) return;
+
         var nextBtn = document.createElement('button');
         nextBtn.className = 'carousel-btn next-btn';
         nextBtn.setAttribute('aria-label', 'Next');
@@ -1118,9 +1107,86 @@ function renderCarouselSections() {
         wrapper.appendChild(carouselWrapper);
         sectionEl.appendChild(wrapper);
         container.appendChild(sectionEl);
-    });
 
-    if (window.updatePageTranslations) window.updatePageTranslations();
+        bindMiniCarouselControls(miniContainer);
+
+        if (window.updatePageTranslations) window.updatePageTranslations();
+    }
+
+    window.carouselSections.forEach(function (section, sIdx) {
+        if (sIdx === 0) {
+            renderOneSection(section, sIdx);
+            return;
+        }
+
+        var renderLater = function () { renderOneSection(section, sIdx); };
+
+        if ('requestIdleCallback' in window) {
+            window.requestIdleCallback(renderLater, { timeout: 900 + (sIdx * 250) });
+        } else {
+            window.setTimeout(renderLater, SHOP_DEFER_SECTION_RENDER_MS * sIdx);
+        }
+    });
+}
+
+function bindMiniCarouselControls(container) {
+    var track = container.querySelector('.carousel-track');
+    var prevBtn = container.querySelector('.prev-btn');
+    var nextBtn = container.querySelector('.next-btn');
+
+    if (!track) return;
+
+    var cardWidth = function () {
+        var card = track.querySelector('.carousel-card');
+        return card ? card.offsetWidth + 20 : 320;
+    };
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function () {
+            track.scrollBy({ left: -cardWidth(), behavior: 'smooth' });
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function () {
+            track.scrollBy({ left: cardWidth(), behavior: 'smooth' });
+        });
+    }
+
+    var autoTimer = null;
+    var paused = false;
+    var autoInterval = window.innerWidth <= 768 ? 6000 : 5000;
+
+    function autoAdvance() {
+        if (paused || document.hidden) return;
+        var maxScroll = track.scrollWidth - track.clientWidth;
+        if (track.scrollLeft >= maxScroll - 4) {
+            track.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+            track.scrollBy({ left: cardWidth(), behavior: 'smooth' });
+        }
+    }
+
+    function startAuto() {
+        if (autoTimer || track.children.length < 2) return;
+        autoTimer = setInterval(autoAdvance, autoInterval);
+    }
+
+    function stopAuto() {
+        clearInterval(autoTimer);
+        autoTimer = null;
+    }
+
+    // Start after the page has settled, not during the critical load path.
+    window.setTimeout(startAuto, 2500);
+
+    container.addEventListener('mouseenter', function () { paused = true; stopAuto(); });
+    container.addEventListener('mouseleave', function () { paused = false; startAuto(); });
+    container.addEventListener('touchstart', function () { paused = true; stopAuto(); }, { passive: true });
+    container.addEventListener('touchend', function () {
+        paused = false;
+        window.setTimeout(startAuto, 3000);
+    }, { passive: true });
 }
 
 function renderGrid(items) {
@@ -1169,7 +1235,7 @@ function renderGrid(items) {
                 <button class="btn-wishlist${isWished ? ' active' : ''}" data-product-id="${product.id}" aria-label="Agregar a favoritos">${heartSvg}</button>
                 <picture>
                     <source srcset="${encodeSrcset(toWebP(product.image))}" type="image/webp">
-                    <img src="${product.image}" alt="${richAlt}" loading="lazy">
+                    <img src="${product.image}" alt="${richAlt}" loading="lazy" decoding="async">
                 </picture>
                 ${overlayHTML}
             </div>

@@ -2367,3 +2367,21 @@ footer p {
     font-size: 0.7rem;
     color: #999;
 }
+
+
+/* ── Shop performance helpers ───────────────────────────
+   These do not change the visual design. They reduce offscreen work
+   for the generated carousel cards/sections. */
+.shop-carousel-section {
+    content-visibility: auto;
+    contain-intrinsic-size: 760px;
+}
+
+.carousel-container-mini .carousel-card {
+    content-visibility: auto;
+    contain-intrinsic-size: 450px 430px;
+}
+
+.carousel-container-mini .product-image {
+    contain: content;
+}

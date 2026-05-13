@@ -200,6 +200,19 @@
                     </div>
                 </div>
 
+                <div class="sidebar-section">
+                    <h3 class="sidebar-heading">ORDENAR</h3>
+                    <div class="sort-wrapper">
+                        <select class="sort-select" id="sortSelect">
+                            <option value="id,desc">Más recientes</option>
+                            <option value="title,asc">Título A — Z</option>
+                            <option value="title,desc">Título Z — A</option>
+                            <option value="year,desc">Año: nuevo a antiguo</option>
+                            <option value="year,asc">Año: antiguo a nuevo</option>
+                        </select>
+                    </div>
+                </div>
+
             </aside>
 
             <div class="catalog-content">
@@ -207,10 +220,19 @@
 
 
 
-                <!-- Products Grid -->
-                <section class="products-grid" id="productsGrid">
-                    <!-- PASTELES -->
+                <section class="products-grid" id="productsGrid" aria-live="polite">
+                    <!-- Artworks loaded from API -->
                 </section>
+
+                <div id="catalogEmptyState" class="catalog-empty-state" hidden>
+                    No se encontraron obras.
+                </div>
+
+                <div id="catalogLoader" class="catalog-loader" hidden>
+                    Cargando más obras...
+                </div>
+
+                <div id="catalogSentinel" class="catalog-sentinel" aria-hidden="true"></div>
 
             </div>
         </div>
@@ -291,11 +313,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js" defer></script>
     <script src="../i18n.js" defer></script>
-    <script src="products.js" defer></script>
-    <script src="api-client.js" defer></script>
     <script src="config.js"></script>
+    <script src="api-client.js" defer></script>
     <script src="auth.js" defer></script>
+
+    <!-- shop.js injects the detail modal and image lightbox; catalog-api.js renders paginated cards -->
     <script src="shop.js" defer></script>
+    <script src="catalog-api.js" defer></script>
 
     <!-- ═══════════════════════════════════════════
          UX: Inquiry Modal Logic + GA4 Event Tracking
