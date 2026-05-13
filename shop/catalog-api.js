@@ -23,15 +23,37 @@
     });
 
     function getApiBaseUrl() {
-        if (typeof API_BASE_URL !== 'undefined') {
-            return API_BASE_URL;
+        if (window.DDA_API_BASE) {
+            return normalizeApiBase(window.DDA_API_BASE);
         }
 
         if (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) {
-            return window.APP_CONFIG.API_BASE_URL;
+            return normalizeApiBase(window.APP_CONFIG.API_BASE_URL);
         }
 
-        return '';
+        if (window.API_BASE_URL) {
+            return normalizeApiBase(window.API_BASE_URL);
+        }
+
+        if (typeof API_BASE_URL !== 'undefined' && API_BASE_URL) {
+            return normalizeApiBase(API_BASE_URL);
+        }
+
+        console.warn('API base URL is not configured. Falling back to /api.');
+        return '/api';
+    }
+
+    function normalizeApiBase(value) {
+        const clean = String(value || '').replace(/\/$/, '');
+
+        if (!clean) return '/api';
+        if (clean.endsWith('/api')) return clean;
+
+        return `${clean}/api`;
+    }
+
+    function getBackendBaseUrl() {
+        return getApiBaseUrl().replace(/\/api$/, '');
     }
 
     function buildCatalogUrl() {
@@ -44,11 +66,11 @@
         let endpoint;
 
         if (query) {
-            endpoint = `${baseUrl}/api/artworks/search`;
+            endpoint = `${baseUrl}/artworks/search`;
         } else if (category && category !== 'all') {
-            endpoint = `${baseUrl}/api/artworks/category/${encodeURIComponent(category)}`;
+            endpoint = `${baseUrl}/artworks/category/${encodeURIComponent(category)}`;
         } else {
-            endpoint = `${baseUrl}/api/artworks`;
+            endpoint = `${baseUrl}/artworks`;
         }
 
         const params = new URLSearchParams({
@@ -417,7 +439,11 @@
             }
 
             if (image.startsWith('/')) {
-                return `${getApiBaseUrl()}${image}`;
+                return `${getBackendBaseUrl()}${image}`;
+            }
+
+            if (image.startsWith('uploads/') || image.startsWith('upload/')) {
+                return `${getBackendBaseUrl()}/${image}`;
             }
 
             return image;
@@ -436,7 +462,11 @@
         }
 
         if (rawPath.startsWith('/')) {
-            return `${getApiBaseUrl()}${rawPath}`;
+            return `${getBackendBaseUrl()}${rawPath}`;
+        }
+
+        if (rawPath.startsWith('uploads/') || rawPath.startsWith('upload/')) {
+            return `${getBackendBaseUrl()}/${rawPath}`;
         }
 
         return rawPath;
