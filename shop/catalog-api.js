@@ -60,6 +60,18 @@
         return window.location.origin;
     }
 
+    // Resolves static assets (images, portfolio files).
+    // Defaults to the page origin but can be overridden by setting
+    // window.DDA_STATIC_BASE to the domain that actually hosts the files
+    // (e.g. 'https://whitewidow.github.io' when the catalog is served
+    // from a different domain like Railway).
+    function getStaticBaseUrl() {
+        if (window.DDA_STATIC_BASE) {
+            return String(window.DDA_STATIC_BASE).replace(/\/$/, '');
+        }
+        return window.location.origin;
+    }
+
     function hasImageExtension(path) {
         return /\.(png|jpe?g|webp|gif|avif|svg)$/i.test(path.split('?')[0]);
     }
@@ -484,23 +496,23 @@
             path.startsWith('shop/') ||
             path.startsWith('../shop/')
         ) {
-            return new URL(path, getFrontendBaseUrl() + '/shop/catalog.html').href;
+            return new URL(path, getStaticBaseUrl() + '/shop/catalog.html').href;
         }
 
         // Root-relative static files should also resolve to the frontend domain,
         // not to Railway. This avoids 403s for GitHub Pages-hosted assets.
         if (path.startsWith('/')) {
-            return joinUrl(getFrontendBaseUrl(), path);
+            return joinUrl(getStaticBaseUrl(), path);
         }
 
         // If the API only returns a filename, most of your legacy artwork files
         // are stored in /portfolio/sections/obras on the frontend.
         if (!path.includes('/') && hasImageExtension(path)) {
-            return joinUrl(getFrontendBaseUrl(), `/portfolio/sections/obras/${path}`);
+            return joinUrl(getStaticBaseUrl(), `/portfolio/sections/obras/${path}`);
         }
 
         // Final fallback: resolve relative to catalog.html on the frontend.
-        return new URL(path, getFrontendBaseUrl() + '/shop/catalog.html').href;
+        return new URL(path, getStaticBaseUrl() + '/shop/catalog.html').href;
     }
 
     function getCategoryValue(artwork) {
