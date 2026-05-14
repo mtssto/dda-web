@@ -235,7 +235,7 @@
             }
 
             const cardsHtml = artworks
-                .map(createArtworkCard)
+                .map((artwork, index) => createArtworkCard(artwork, index))
                 .join('');
 
             grid.insertAdjacentHTML('beforeend', cardsHtml);
@@ -261,7 +261,7 @@
         }
     }
 
-    function createArtworkCard(artwork) {
+    function createArtworkCard(artwork, indexInPage = 0) {
         const modalArtwork = normalizeArtworkForModal(artwork);
 
         const key = modalArtwork.id
@@ -278,7 +278,12 @@
         const year = modalArtwork.year || '';
         const price = modalArtwork.price || 'Consultar';
         const sold = modalArtwork.sold === true;
-        const imageUrl = modalArtwork.image;
+        const fullImageUrl = modalArtwork.image;
+        const cardImageUrl = getCatalogCardImageUrl(fullImageUrl);
+        const cardSrcset = getCatalogCardSrcset(fullImageUrl);
+        const isInitialPriorityImage = currentPage === 0 && indexInPage < 4;
+        const imageLoading = isInitialPriorityImage ? 'eager' : 'lazy';
+        const imageFetchPriority = isInitialPriorityImage ? 'high' : 'auto';
         const wishlist = readWishlist();
         const wishlistId = getWishlistId(modalArtwork);
         const isWished = wishlist.includes(wishlistId);
@@ -340,10 +345,14 @@
                     </button>
 
                     <img
-                        src="${escapeAttribute(imageUrl)}"
+                        src="${escapeAttribute(cardImageUrl)}"
+                        ${cardSrcset ? `srcset="${escapeAttribute(cardSrcset)}"` : ''}
+                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 420px"
+                        data-full-src="${escapeAttribute(fullImageUrl)}"
                         alt="${escapeAttribute(title)}"
-                        loading="lazy"
+                        loading="${imageLoading}"
                         decoding="async"
+                        fetchpriority="${imageFetchPriority}"
                         onload="this.closest('.product-image')?.classList.remove('loading')"
                     >
 
@@ -458,8 +467,11 @@
                 event.preventDefault();
                 event.stopPropagation();
 
+                const clickedImage = imageArea.querySelector('img');
+                const fullSrc = clickedImage?.dataset?.fullSrc || artwork.image;
+
                 if (typeof openLightBox === 'function') {
-                    openLightBox(artwork.image);
+                    openLightBox(fullSrc);
                 }
 
                 return;
@@ -517,6 +529,42 @@
             category: getCategoryValue(artwork),
             sold: artwork.sold === true
         };
+    }
+
+
+    function isCloudinaryImageUrl(url) {
+        return typeof url === 'string' &&
+            url.includes('res.cloudinary.com') &&
+            url.includes('/upload/');
+    }
+
+    function getCloudinaryTransformedUrl(url, width) {
+        if (!isCloudinaryImageUrl(url)) {
+            return url;
+        }
+
+        // Avoid stacking transformations if the backend already returns a transformed Cloudinary URL.
+        if (/\/upload\/[^/]*(f_auto|q_auto|w_\d+|c_limit|c_fill)[^/]*\//.test(url)) {
+            return url;
+        }
+
+        return url.replace('/upload/', `/upload/f_auto,q_auto,w_${width},c_limit/`);
+    }
+
+    function getCatalogCardImageUrl(url) {
+        return getCloudinaryTransformedUrl(url, 700);
+    }
+
+    function getCatalogCardSrcset(url) {
+        if (!isCloudinaryImageUrl(url)) {
+            return '';
+        }
+
+        return [
+            `${getCloudinaryTransformedUrl(url, 450)} 450w`,
+            `${getCloudinaryTransformedUrl(url, 700)} 700w`,
+            `${getCloudinaryTransformedUrl(url, 950)} 950w`
+        ].join(', ');
     }
 
     function normalizeImageUrl(image) {
