@@ -8,10 +8,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,15 +24,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ImageMigrationService {
 
-    private final Cloudinary             cloudinary;
+    private final Cloudinary cloudinary;
     private final ArtworkImageRepository artworkImageRepository;
 
     @Value("${app.static.base-url:https://diegodeaduriz.art}")
     private String staticBaseUrl;
 
-    // -------------------------------------------------------------------------
-    // Result summary returned to the caller
-    // -------------------------------------------------------------------------
+    private final HttpClient httpClient = HttpClient.newBuilder()
+            .followRedirects(HttpClient.Redirect.NORMAL)
+            .connectTimeout(Duration.ofSeconds(20))
+            .build();
 
     public record MigrationResult(
             int total,
@@ -39,18 +43,12 @@ public class ImageMigrationService {
             List<String> errors
     ) {}
 
-    // -------------------------------------------------------------------------
-    // Main migration method
-    // -------------------------------------------------------------------------
-
-    @Transactional
     public MigrationResult migrateAll() {
-        // Only process images that haven't been migrated yet
         List<ArtworkImage> pending = artworkImageRepository.findByCloudinaryPublicIdIsNull();
 
         int migrated = 0;
-        int skipped  = 0;
-        int failed   = 0;
+        int skipped = 0;
+        int failed = 0;
         List<String> errors = new ArrayList<>();
 
         log.info("Starting Cloudinary migration — {} images pending", pending.size());
@@ -65,25 +63,24 @@ public class ImageMigrationService {
             }
 
             try {
-                // Download from current location
                 byte[] bytes = downloadImage(fullUrl);
 
-                // Upload to Cloudinary under dda/artworks/<artworkId>/
                 Map<?, ?> result = cloudinary.uploader().upload(
                         bytes,
                         ObjectUtils.asMap(
-                                "folder",        "dda/artworks/" + image.getArtwork().getId(),
+                                "folder", "dda/artworks/" + image.getArtwork().getId(),
                                 "resource_type", "image",
-                                "overwrite",     false
+                                "public_id", "artwork-" + image.getArtwork().getId() + "-image-" + image.getId(),
+                                "overwrite", true
                         )
                 );
 
-                String publicId  = (String) result.get("public_id");
+                String publicId = (String) result.get("public_id");
                 String secureUrl = (String) result.get("secure_url");
 
-                // Update the record in place — no data loss, just updating pointers
                 image.setCloudinaryPublicId(publicId);
                 image.setFilePath(secureUrl);
+
                 artworkImageRepository.save(image);
 
                 log.info("Migrated image id={} → {}", image.getId(), publicId);
@@ -98,28 +95,133 @@ public class ImageMigrationService {
         }
 
         log.info("Migration complete — migrated={} skipped={} failed={}", migrated, skipped, failed);
-        return new MigrationResult(pending.size(), migrated, skipped, failed, errors);
+
+        return new MigrationResult(
+                pending.size(),
+                migrated,
+                skipped,
+                failed,
+                errors
+        );
     }
 
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
-
-    /**
-     * Turns the stored filePath into a downloadable URL.
-     * - Already absolute (https://...) → used as-is
-     * - Root-relative (/portfolio/...) → prepend staticBaseUrl
-     */
     private String resolveUrl(String filePath) {
-        if (filePath == null || filePath.isBlank()) return null;
-        if (filePath.startsWith("http://") || filePath.startsWith("https://")) return filePath;
+        if (filePath == null || filePath.isBlank()) {
+            return null;
+        }
+
+        String cleanPath = filePath.trim();
+
+        if (cleanPath.startsWith("http://") || cleanPath.startsWith("https://")) {
+            return cleanPath;
+        }
+
         String base = staticBaseUrl.replaceAll("/+$", "");
-        return base + (filePath.startsWith("/") ? filePath : "/" + filePath);
+
+        return base + (cleanPath.startsWith("/") ? cleanPath : "/" + cleanPath);
     }
 
-    private byte[] downloadImage(String url) throws Exception {
-        try (InputStream in = URI.create(url).toURL().openStream()) {
-            return in.readAllBytes();
+    private byte[] downloadImage(String rawUrl) throws Exception {
+        URI uri = toSafeImageUri(rawUrl);
+
+        HttpRequest request = HttpRequest.newBuilder(uri)
+                .timeout(Duration.ofSeconds(45))
+                .header("User-Agent", "Mozilla/5.0")
+                .header("Accept", "image/avif,image/webp,image/apng,image/png,image/jpeg,image/*,*/*;q=0.8")
+                .GET()
+                .build();
+
+        HttpResponse<byte[]> response = httpClient.send(
+                request,
+                HttpResponse.BodyHandlers.ofByteArray()
+        );
+
+        int status = response.statusCode();
+        byte[] body = response.body();
+
+        String contentType = response.headers()
+                .firstValue("content-type")
+                .orElse("");
+
+        if (status < 200 || status >= 300) {
+            throw new RuntimeException(
+                    "Image download failed with HTTP " + status +
+                            ", contentType=" + contentType +
+                            ", url=" + uri
+            );
         }
+
+        if (body == null || body.length == 0) {
+            throw new RuntimeException("Image download returned empty body: " + uri);
+        }
+
+        if (!looksLikeImage(body)) {
+            throw new RuntimeException(
+                    "Downloaded file is not a valid image. " +
+                            "contentType=" + contentType +
+                            ", bytes=" + body.length +
+                            ", url=" + uri
+            );
+        }
+
+        return body;
+    }
+
+    private URI toSafeImageUri(String rawUrl) {
+        try {
+            String cleaned = rawUrl == null ? "" : rawUrl.trim();
+
+            URL url = new URL(cleaned);
+
+            return new URI(
+                    url.getProtocol(),
+                    url.getUserInfo(),
+                    url.getHost(),
+                    url.getPort(),
+                    url.getPath(),
+                    url.getQuery(),
+                    url.getRef()
+            );
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid image URL: " + rawUrl, e);
+        }
+    }
+
+    private boolean looksLikeImage(byte[] bytes) {
+        if (bytes == null || bytes.length < 12) {
+            return false;
+        }
+
+        // JPEG
+        if ((bytes[0] & 0xFF) == 0xFF &&
+                (bytes[1] & 0xFF) == 0xD8 &&
+                (bytes[2] & 0xFF) == 0xFF) {
+            return true;
+        }
+
+        // PNG
+        if ((bytes[0] & 0xFF) == 0x89 &&
+                bytes[1] == 0x50 &&
+                bytes[2] == 0x4E &&
+                bytes[3] == 0x47) {
+            return true;
+        }
+
+        // GIF
+        if (bytes[0] == 'G' &&
+                bytes[1] == 'I' &&
+                bytes[2] == 'F') {
+            return true;
+        }
+
+        // WEBP
+        return bytes[0] == 'R' &&
+                bytes[1] == 'I' &&
+                bytes[2] == 'F' &&
+                bytes[3] == 'F' &&
+                bytes[8] == 'W' &&
+                bytes[9] == 'E' &&
+                bytes[10] == 'B' &&
+                bytes[11] == 'P';
     }
 }
