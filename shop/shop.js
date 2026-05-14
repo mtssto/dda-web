@@ -6,6 +6,123 @@
 const SHOP_CAROUSEL_INITIAL_ITEMS = 6;
 const SHOP_DEFER_SECTION_RENDER_MS = 120;
 
+
+// Wishlist keys must be stable across the old static shop data and the new backend catalog data.
+// Static products.js IDs may not match database IDs, so shop.html stores title/slug first.
+function getShopWishlistId(product) {
+    if (!product) return '';
+    return String(product.slug || product.title || product.id || product.image || '').trim();
+}
+
+function readDdaWishlist() {
+    try {
+        var parsed = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
+        return Array.isArray(parsed) ? parsed.map(String) : [];
+    } catch (error) {
+        console.warn('Could not read wishlist:', error);
+        return [];
+    }
+}
+
+function saveDdaWishlist(wishlist) {
+    var normalized = [];
+    (wishlist || []).forEach(function (item) {
+        var value = String(item || '').trim();
+        if (value && normalized.indexOf(value) === -1) normalized.push(value);
+    });
+    localStorage.setItem('dda_wishlist', JSON.stringify(normalized));
+}
+
+
+function readDdaWishlistItems() {
+    try {
+        var parsed = JSON.parse(localStorage.getItem('dda_wishlist_items') || '{}');
+        return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+    } catch (error) {
+        console.warn('Could not read wishlist item cache:', error);
+        return {};
+    }
+}
+
+function saveDdaWishlistItems(items) {
+    localStorage.setItem('dda_wishlist_items', JSON.stringify(items || {}));
+}
+
+function getShopFavoriteSnapshot(product) {
+    var id = getShopWishlistId(product);
+    var images = [];
+
+    if (Array.isArray(product && product.images)) {
+        images = product.images;
+    } else if (product && product.image) {
+        images = [product.image];
+    }
+
+    return {
+        id: id,
+        backendId: product && product.backendId ? product.backendId : null,
+        slug: product && product.slug ? product.slug : '',
+        title: product && product.title ? product.title : 'Obra sin título',
+        image: product && product.image ? product.image : '',
+        images: images,
+        price: product && product.price ? product.price : 'Consultar',
+        technique: product && product.technique ? product.technique : '',
+        dimensions: product && product.dimensions ? product.dimensions : '',
+        year: product && product.year ? product.year : '',
+        category: product && product.category ? product.category : '',
+        sold: product && product.sold === true,
+        cachedAt: new Date().toISOString(),
+        source: 'shop'
+    };
+}
+
+function isShopProductWished(product) {
+    var id = getShopWishlistId(product);
+    return id && readDdaWishlist().indexOf(id) !== -1;
+}
+
+function toggleShopWishlist(product, button) {
+    var id = getShopWishlistId(product);
+    if (!id) return;
+
+    var wishlist = readDdaWishlist();
+    var wishlistItems = readDdaWishlistItems();
+    var index = wishlist.indexOf(id);
+
+    if (index === -1) {
+        wishlist.push(id);
+        wishlistItems[id] = getShopFavoriteSnapshot(product);
+        if (button) button.classList.add('active');
+    } else {
+        wishlist.splice(index, 1);
+        delete wishlistItems[id];
+        if (button) button.classList.remove('active');
+    }
+
+    saveDdaWishlist(wishlist);
+    saveDdaWishlistItems(wishlistItems);
+
+    // Keep duplicated carousel cards visually synced.
+    document.querySelectorAll('.btn-wishlist[data-product-id="' + cssEscapeSafe(id) + '"]').forEach(function (btn) {
+        btn.classList.toggle('active', wishlist.indexOf(id) !== -1);
+    });
+}
+
+function escapeAttributeValue(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+function cssEscapeSafe(value) {
+    if (window.CSS && typeof window.CSS.escape === 'function') {
+        return window.CSS.escape(String(value));
+    }
+    return String(value).replace(/"/g, '\\"');
+}
+
 // Language Configuration (Shop Specific)
 window.pageTranslations = {
     es: {
@@ -1024,8 +1141,8 @@ function renderCarouselSections() {
             if (product.dimensions) carouselAltParts.push(product.dimensions);
             var carouselAlt = carouselAltParts.join(' — ') + ' — Diego De Aduriz';
 
-            var carouselWl = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
-            var carouselIsWished = carouselWl.indexOf(product.id) !== -1;
+            var carouselWishlistId = getShopWishlistId(product);
+            var carouselIsWished = isShopProductWished(product);
 
             var imageAttrs = ' class="carousel-img"';
             // Let the first card of the first carousel load a bit sooner; keep everything else lazy/low priority.
@@ -1035,7 +1152,7 @@ function renderCarouselSections() {
 
             card.innerHTML =
                 '<div class="product-image">' +
-                    '<button class="btn-wishlist' + (carouselIsWished ? ' active' : '') + '" data-product-id="' + product.id + '" aria-label="Agregar a favoritos">' + heartSvgCarousel + '</button>' +
+                    '<button class="btn-wishlist' + (carouselIsWished ? ' active' : '') + '" data-product-id="' + escapeAttributeValue(carouselWishlistId) + '" aria-label="Agregar a favoritos">' + heartSvgCarousel + '</button>' +
                     pictureTag(product.image, carouselAlt, imageAttrs) +
                 '</div>' +
                 '<div class="product-info">' +
@@ -1077,16 +1194,7 @@ function renderCarouselSections() {
             if (wishBtn) {
                 wishBtn.addEventListener('click', function (e) {
                     e.stopPropagation();
-                    var wl = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
-                    var idx = wl.indexOf(product.id);
-                    if (idx === -1) {
-                        wl.push(product.id);
-                        this.classList.add('active');
-                    } else {
-                        wl.splice(idx, 1);
-                        this.classList.remove('active');
-                    }
-                    localStorage.setItem('dda_wishlist', JSON.stringify(wl));
+                    toggleShopWishlist(product, this);
                 });
             }
 
@@ -1219,8 +1327,8 @@ function renderGrid(items) {
 
         const priceHTML = isCatalog ? '' : `<p class="product-price">${product.price}</p>`;
         const yearHTML = (product.year && product.year !== 'Consultar año' && product.year !== 'a confirmar') ? `<p class="product-year">${product.year}</p>` : '';
-        const wishlist = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
-        const isWished = wishlist.indexOf(product.id) !== -1;
+        const productWishlistId = getShopWishlistId(product);
+        const isWished = isShopProductWished(product);
         const heartSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
 
         const altParts = [product.title];
@@ -1232,7 +1340,7 @@ function renderGrid(items) {
         card.innerHTML = `
             <div class="product-image loading">
                 <div class="skeleton-shimmer"></div>
-                <button class="btn-wishlist${isWished ? ' active' : ''}" data-product-id="${product.id}" aria-label="Agregar a favoritos">${heartSvg}</button>
+                <button class="btn-wishlist${isWished ? ' active' : ''}" data-product-id="${escapeAttributeValue(productWishlistId)}" aria-label="Agregar a favoritos">${heartSvg}</button>
                 <picture>
                     <source srcset="${encodeSrcset(toWebP(product.image))}" type="image/webp">
                     <img src="${product.image}" alt="${richAlt}" loading="lazy" decoding="async">
@@ -1300,16 +1408,7 @@ function renderGrid(items) {
         if (btnWishlist) {
             btnWishlist.onclick = (e) => {
                 e.stopPropagation();
-                let wl = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
-                const idx = wl.indexOf(product.id);
-                if (idx === -1) {
-                    wl.push(product.id);
-                    btnWishlist.classList.add('active');
-                } else {
-                    wl.splice(idx, 1);
-                    btnWishlist.classList.remove('active');
-                }
-                localStorage.setItem('dda_wishlist', JSON.stringify(wl));
+                toggleShopWishlist(product, btnWishlist);
             };
         }
 
@@ -1389,8 +1488,8 @@ function openModal(productOrElement) {
     if (product.id || product.title) {
         var rvKey = 'dda_recently_viewed';
         var rv = JSON.parse(localStorage.getItem(rvKey) || '[]');
-        var rvId = product.id || product.title;
-        rv = rv.filter(function (item) { return item.id !== rvId; });
+        var rvId = getShopWishlistId(product);
+        rv = rv.filter(function (item) { return String(item.id) !== rvId; });
         rv.unshift({ id: rvId, title: product.title, image: product.image, year: product.year || '' });
         if (rv.length > 8) rv = rv.slice(0, 8);
         localStorage.setItem(rvKey, JSON.stringify(rv));
