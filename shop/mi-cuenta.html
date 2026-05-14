@@ -137,11 +137,10 @@
         </section>
     </main>
 
-    <script src="products.js" defer></script>
     <script src="config.js"></script>
     <script src="auth.js" defer></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', async function () {
             // ── Auth check ───────────────────────────
             if (!DDAAuth.isAuthenticated()) {
                 window.location.href = 'user-login.html';
@@ -158,17 +157,14 @@
             document.getElementById('detailUsername').textContent = user ? user.username : '';
             document.getElementById('detailRole').textContent = user && user.role === 'ADMIN' ? 'Administrador' : 'Usuario';
 
-            // Show admin link for admins
             if (user && user.role === 'ADMIN') {
                 document.getElementById('adminLink').hidden = false;
             }
 
-            // ── Logout ───────────────────────────────
             document.getElementById('logoutBtn').addEventListener('click', function () {
                 DDAAuth.logout();
             });
 
-            // ── Tab switching ────────────────────────
             document.querySelectorAll('.account-tab').forEach(function (tab) {
                 tab.addEventListener('click', function () {
                     document.querySelectorAll('.account-tab').forEach(function (t) { t.classList.remove('active'); });
@@ -178,58 +174,317 @@
                 });
             });
 
-            // ── Load wishlist ────────────────────────
-            var wishlist = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
-            var recentlyViewed = JSON.parse(localStorage.getItem('dda_recently_viewed') || '[]');
+            var wishlist = readWishlist();
+            var recentlyViewed = readRecentlyViewed();
+            var wishlistItems = readWishlistItems();
 
-            var products = window.products || [];
+            // First paint: show counts and cached favorite cards immediately.
+            updateCounts(wishlist.length, recentlyViewed.length);
 
-            // Filter wishlist to only valid product IDs
-            var validWishlist = wishlist.filter(function (pid) {
-                return products.some(function (p) { return p.id === pid; });
-            });
-            // Clean up localStorage if stale IDs were found
-            if (validWishlist.length !== wishlist.length) {
-                localStorage.setItem('dda_wishlist', JSON.stringify(validWishlist));
+            var cachedFavorites = wishlist
+                .map(function (id) { return normalizeCachedProduct(wishlistItems[id]); })
+                .filter(Boolean);
+
+            renderWishlist(cachedFavorites, wishlist.length > 0 && cachedFavorites.length === 0);
+            renderRecentFromCache(recentlyViewed);
+
+            // Background refresh: load backend data to keep favorite metadata current.
+            try {
+                var products = await fetchAllArtworks();
+                var validWishlist = products.length > 0
+                    ? wishlist.filter(function (pid) {
+                        return products.some(function (p) { return productMatchesWishlistId(p, pid); }) || wishlistItems[pid];
+                    })
+                    : wishlist;
+
+                if (products.length > 0 && validWishlist.length !== wishlist.length) {
+                    wishlist = validWishlist;
+                    saveWishlist(validWishlist);
+                }
+
+                var refreshedFavorites = validWishlist.map(function (pid) {
+                    return products.find(function (p) { return productMatchesWishlistId(p, pid); }) || normalizeCachedProduct(wishlistItems[pid]);
+                }).filter(Boolean);
+
+                updateWishlistItemCache(refreshedFavorites, validWishlist);
+                updateCounts(validWishlist.length, recentlyViewed.length);
+                renderWishlist(refreshedFavorites, false);
+                renderRecentFromBackend(recentlyViewed, products);
+            } catch (error) {
+                console.error('Could not refresh artworks for account page:', error);
             }
 
-            document.getElementById('wishlistCount').textContent = validWishlist.length;
-            document.getElementById('detailWishlistCount').textContent = validWishlist.length;
-            document.getElementById('detailRecentCount').textContent = recentlyViewed.length;
+            async function fetchAllArtworks() {
+                var apiBase = getApiBaseUrl();
+                var page = 0;
+                var size = 100;
+                var all = [];
+                var hasMore = true;
 
-            // Render wishlist
-            if (validWishlist.length > 0) {
-                document.getElementById('wishlistEmpty').hidden = true;
+                while (hasMore) {
+                    var response = await fetch(apiBase + '/artworks?page=' + page + '&size=' + size + '&sort=id,desc', {
+                        headers: { 'Accept': 'application/json' }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Could not load artworks. Status: ' + response.status);
+                    }
+
+                    var result = await response.json();
+                    var content = Array.isArray(result.content) ? result.content : [];
+                    all = all.concat(content);
+                    hasMore = result.last === false && content.length > 0;
+                    page++;
+                }
+
+                return all;
+            }
+
+            function getApiBaseUrl() {
+                if (window.DDA_API_BASE) return normalizeApiBase(window.DDA_API_BASE);
+                if (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) return normalizeApiBase(window.APP_CONFIG.API_BASE_URL);
+                if (window.API_BASE_URL) return normalizeApiBase(window.API_BASE_URL);
+                return '/api';
+            }
+
+            function normalizeApiBase(value) {
+                var clean = String(value || '').replace(/\/$/, '');
+                if (!clean) return '/api';
+                return clean.endsWith('/api') ? clean : clean + '/api';
+            }
+
+            function getProductId(product) {
+                return getProductKeys(product)[0] || '';
+            }
+
+            function getProductKeys(product) {
+                if (!product) return [];
+                var keys = [];
+                [product.id, product.backendId, product.slug, product.title].forEach(function (value) {
+                    if (value !== null && value !== undefined && String(value).trim()) {
+                        var key = String(value).trim();
+                        if (keys.indexOf(key) === -1) keys.push(key);
+                    }
+                });
+                return keys;
+            }
+
+            function productMatchesWishlistId(product, wishlistId) {
+                return getProductKeys(product).indexOf(String(wishlistId)) !== -1;
+            }
+
+            function readWishlist() {
+                try {
+                    var parsed = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
+                    return Array.isArray(parsed) ? parsed.map(String) : [];
+                } catch (error) {
+                    console.warn('Could not read wishlist:', error);
+                    return [];
+                }
+            }
+
+            function saveWishlist(wishlist) {
+                var normalized = [];
+                (wishlist || []).forEach(function (item) {
+                    var value = String(item || '').trim();
+                    if (value && normalized.indexOf(value) === -1) normalized.push(value);
+                });
+                localStorage.setItem('dda_wishlist', JSON.stringify(normalized));
+            }
+
+            function readWishlistItems() {
+                try {
+                    var parsed = JSON.parse(localStorage.getItem('dda_wishlist_items') || '{}');
+                    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+                } catch (error) {
+                    console.warn('Could not read wishlist item cache:', error);
+                    return {};
+                }
+            }
+
+            function saveWishlistItems(items) {
+                localStorage.setItem('dda_wishlist_items', JSON.stringify(items || {}));
+            }
+
+            function readRecentlyViewed() {
+                try {
+                    var parsed = JSON.parse(localStorage.getItem('dda_recently_viewed') || '[]');
+                    return Array.isArray(parsed) ? parsed : [];
+                } catch (error) {
+                    console.warn('Could not read recently viewed:', error);
+                    return [];
+                }
+            }
+
+            function updateCounts(wishlistCount, recentCount) {
+                document.getElementById('wishlistCount').textContent = wishlistCount;
+                document.getElementById('detailWishlistCount').textContent = wishlistCount;
+                document.getElementById('detailRecentCount').textContent = recentCount;
+            }
+
+            function renderWishlist(products, showLoadingFallback) {
                 var grid = document.getElementById('wishlistGrid');
-                validWishlist.forEach(function (pid) {
-                    var product = products.find(function (p) { return p.id === pid; });
-                    if (product) grid.appendChild(createProductCard(product, 'wishlist'));
+                var empty = document.getElementById('wishlistEmpty');
+                clearCards(grid);
+
+                if (products.length > 0) {
+                    empty.hidden = true;
+                    products.forEach(function (product) {
+                        grid.appendChild(createProductCard(product, 'wishlist'));
+                    });
+                    return;
+                }
+
+                empty.hidden = false;
+                if (showLoadingFallback) {
+                    empty.innerHTML = 'Cargando tus favoritos...';
+                }
+            }
+
+            function renderRecentFromCache(recentlyViewed) {
+                var cached = recentlyViewed
+                    .map(function (item) { return typeof item === 'string' ? { id: item } : item; })
+                    .filter(function (item) { return item && (item.title || item.image); });
+
+                if (cached.length > 0) {
+                    renderRecentProducts(cached);
+                }
+            }
+
+            function renderRecentFromBackend(recentlyViewed, products) {
+                var resolved = recentlyViewed.map(function (item) {
+                    var id = typeof item === 'string' ? item : item.id;
+                    return products.find(function (p) { return productMatchesWishlistId(p, id); }) || (typeof item === 'object' ? item : null);
+                }).filter(Boolean);
+
+                renderRecentProducts(resolved);
+            }
+
+            function renderRecentProducts(products) {
+                var recentGrid = document.getElementById('recentGrid');
+                var empty = document.getElementById('recentEmpty');
+                clearCards(recentGrid);
+
+                if (products.length > 0) {
+                    empty.hidden = true;
+                    products.forEach(function (product) {
+                        recentGrid.appendChild(createProductCard(product, 'recent'));
+                    });
+                }
+            }
+
+            function clearCards(grid) {
+                Array.from(grid.querySelectorAll('.account-card')).forEach(function (card) {
+                    card.remove();
                 });
             }
 
-            // Render recently viewed
-            if (recentlyViewed.length > 0 && products.length > 0) {
-                document.getElementById('recentEmpty').hidden = true;
-                var recentGrid = document.getElementById('recentGrid');
-                recentlyViewed.forEach(function (item) {
-                    var id = typeof item === 'string' ? item : item.id;
-                    var product = products.find(function (p) { return (p.id || p.title) === id; });
-                    if (product) recentGrid.appendChild(createProductCard(product, 'recent'));
+            function updateWishlistItemCache(products, wishlistIds) {
+                var cache = readWishlistItems();
+
+                products.forEach(function (product, index) {
+                    var id = wishlistIds[index] || getProductId(product);
+                    if (!id) return;
+                    cache[id] = getProductSnapshot(product, id);
                 });
+
+                saveWishlistItems(cache);
+            }
+
+            function getProductSnapshot(product, fallbackId) {
+                return {
+                    id: String(fallbackId || getProductId(product)),
+                    backendId: product.id || product.backendId || null,
+                    slug: product.slug || '',
+                    title: product.title || 'Obra sin título',
+                    image: getPrimaryImageUrl(product),
+                    images: Array.isArray(product.images) ? product.images : (getPrimaryImageUrl(product) ? [getPrimaryImageUrl(product)] : []),
+                    price: product.price || 'Consultar',
+                    technique: product.technique || '',
+                    dimensions: product.dimensions || '',
+                    year: product.year || '',
+                    category: product.category || '',
+                    sold: product.sold === true,
+                    cachedAt: new Date().toISOString()
+                };
+            }
+
+            function normalizeCachedProduct(product) {
+                if (!product) return null;
+                return {
+                    id: product.id || product.backendId || product.slug || product.title || '',
+                    backendId: product.backendId || null,
+                    slug: product.slug || '',
+                    title: product.title || 'Obra sin título',
+                    image: product.image || '',
+                    images: Array.isArray(product.images) ? product.images : (product.image ? [product.image] : []),
+                    price: product.price || 'Consultar',
+                    technique: product.technique || '',
+                    dimensions: product.dimensions || '',
+                    year: product.year || '',
+                    category: product.category || '',
+                    sold: product.sold === true
+                };
+            }
+
+            function getPrimaryImageUrl(product) {
+                var images = Array.isArray(product.images) ? product.images : [];
+                var primaryImage = images.find(function (img) { return img && (img.isPrimary || img.primary); }) || images[0];
+
+                return normalizeImageUrl(
+                    product.image ||
+                    product.imageUrl ||
+                    primaryImage ||
+                    ''
+                );
+            }
+
+            function normalizeImageUrl(image) {
+                var rawPath = typeof image === 'string'
+                    ? image
+                    : image && (image.filePath || image.url || image.imageUrl || '');
+
+                if (!rawPath) return '';
+
+                var path = String(rawPath).trim();
+                if (!path) return '';
+
+                if (path.startsWith('http://') || path.startsWith('https://')) {
+                    return path;
+                }
+
+                if (path.startsWith('/uploads/') || path.startsWith('uploads/')) {
+                    return joinUrl(getApiBaseUrl().replace(/\/api$/, ''), path);
+                }
+
+                if (!path.includes('/') && /\.(png|jpe?g|webp|gif|avif|svg)$/i.test(path)) {
+                    return joinUrl(getStaticBaseUrl(), '/portfolio/sections/obras/' + path);
+                }
+
+                return new URL(path, getStaticBaseUrl() + '/shop/mi-cuenta.html').href;
+            }
+
+            function getStaticBaseUrl() {
+                return (window.DDA_STATIC_BASE || window.location.origin).replace(/\/$/, '');
+            }
+
+            function joinUrl(base, path) {
+                return String(base || '').replace(/\/$/, '') + '/' + String(path || '').replace(/^\/+/g, '');
             }
 
             function createProductCard(product, type) {
                 var card = document.createElement('div');
                 card.className = 'account-card';
 
-                var imgSrc = product.image || '';
+                var productId = getProductId(product);
+                var imgSrc = getPrimaryImageUrl(product);
                 var webpSrc = imgSrc.replace(/\.(jpe?g|png)$/i, '.webp');
 
                 card.innerHTML =
                     '<div class="account-card-img">' +
                         '<picture>' +
-                            '<source srcset="' + webpSrc + '" type="image/webp">' +
-                            '<img src="' + imgSrc + '" alt="' + escapeHtml(product.title) + '" loading="lazy">' +
+                            '<source srcset="' + escapeAttribute(webpSrc) + '" type="image/webp">' +
+                            '<img src="' + escapeAttribute(imgSrc) + '" alt="' + escapeAttribute(product.title) + '" loading="lazy">' +
                         '</picture>' +
                     '</div>' +
                     '<div class="account-card-info">' +
@@ -239,28 +494,28 @@
                         '<p class="card-price">' + escapeHtml(product.price || 'Consultar') + '</p>' +
                     '</div>' +
                     (type === 'wishlist' ?
-                        '<button class="remove-btn" data-id="' + escapeHtml(product.id) + '" title="Quitar de favoritos">' +
+                        '<button class="remove-btn" data-id="' + escapeAttribute(productId) + '" title="Quitar de favoritos">' +
                             '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
                             '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
                         '</button>'
                         : '');
 
-                // Remove from wishlist
                 var removeBtn = card.querySelector('.remove-btn');
                 if (removeBtn) {
                     removeBtn.addEventListener('click', function () {
-                        var wl = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
-                        var idx = wl.indexOf(product.id);
+                        var wl = readWishlist();
+                        var cache = readWishlistItems();
+                        var idx = wl.indexOf(productId);
                         if (idx !== -1) wl.splice(idx, 1);
-                        localStorage.setItem('dda_wishlist', JSON.stringify(wl));
+                        delete cache[productId];
+                        saveWishlist(wl);
+                        saveWishlistItems(cache);
                         card.remove();
-                        document.getElementById('wishlistCount').textContent = wl.length;
-                        document.getElementById('detailWishlistCount').textContent = wl.length;
+                        updateCounts(wl.length, readRecentlyViewed().length);
                         if (wl.length === 0) document.getElementById('wishlistEmpty').hidden = false;
                     });
                 }
 
-                // Click card to go to catalog
                 card.addEventListener('click', function (e) {
                     if (e.target.closest('.remove-btn')) return;
                     window.location.href = 'catalog.html';
@@ -270,10 +525,14 @@
             }
 
             function escapeHtml(str) {
-                if (!str) return '';
+                if (str === null || str === undefined) return '';
                 var div = document.createElement('div');
-                div.textContent = str;
+                div.textContent = String(str);
                 return div.innerHTML;
+            }
+
+            function escapeAttribute(str) {
+                return escapeHtml(str).replace(/"/g, '&quot;');
             }
         });
     </script>

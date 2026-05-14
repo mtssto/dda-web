@@ -10,6 +10,67 @@
 
     const artworkByKey = new Map();
 
+
+    function getWishlistId(artwork) {
+        if (!artwork) return '';
+        return String(artwork.id ?? artwork.slug ?? artwork.title ?? '').trim();
+    }
+
+    function readWishlist() {
+        try {
+            const parsed = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
+            return Array.isArray(parsed) ? parsed.map(String) : [];
+        } catch (error) {
+            console.warn('Could not read wishlist:', error);
+            return [];
+        }
+    }
+
+    function saveWishlist(wishlist) {
+        const normalized = [];
+        (wishlist || []).forEach(item => {
+            const value = String(item || '').trim();
+            if (value && !normalized.includes(value)) normalized.push(value);
+        });
+        localStorage.setItem('dda_wishlist', JSON.stringify(normalized));
+    }
+
+
+    function readWishlistItems() {
+        try {
+            const parsed = JSON.parse(localStorage.getItem('dda_wishlist_items') || '{}');
+            return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+        } catch (error) {
+            console.warn('Could not read wishlist item cache:', error);
+            return {};
+        }
+    }
+
+    function saveWishlistItems(items) {
+        localStorage.setItem('dda_wishlist_items', JSON.stringify(items || {}));
+    }
+
+    function getFavoriteSnapshot(artwork) {
+        const id = getWishlistId(artwork);
+
+        return {
+            id: id,
+            backendId: artwork.id ?? null,
+            slug: artwork.slug || '',
+            title: artwork.title || 'Obra sin título',
+            image: artwork.image || '',
+            images: Array.isArray(artwork.images) ? artwork.images : (artwork.image ? [artwork.image] : []),
+            price: artwork.price || 'Consultar',
+            technique: artwork.technique || '',
+            dimensions: artwork.dimensions || '',
+            year: artwork.year || '',
+            category: artwork.category || '',
+            sold: artwork.sold === true,
+            cachedAt: new Date().toISOString(),
+            source: 'catalog'
+        };
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         if (!document.body.classList.contains('catalog-page')) return;
 
@@ -218,8 +279,8 @@
         const price = modalArtwork.price || 'Consultar';
         const sold = modalArtwork.sold === true;
         const imageUrl = modalArtwork.image;
-        const wishlist = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
-        const wishlistId = modalArtwork.id || modalArtwork.slug || modalArtwork.title;
+        const wishlist = readWishlist();
+        const wishlistId = getWishlistId(modalArtwork);
         const isWished = wishlist.includes(wishlistId);
 
         const yearHtml = year
@@ -346,19 +407,23 @@
                 event.preventDefault();
                 event.stopPropagation();
 
-                const id = artwork.id || artwork.slug || artwork.title;
-                let wishlist = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
+                const id = getWishlistId(artwork);
+                let wishlist = readWishlist();
+                let wishlistItems = readWishlistItems();
                 const index = wishlist.indexOf(id);
 
                 if (index === -1) {
                     wishlist.push(id);
+                    wishlistItems[id] = getFavoriteSnapshot(artwork);
                     wishlistBtn.classList.add('active');
                 } else {
                     wishlist.splice(index, 1);
+                    delete wishlistItems[id];
                     wishlistBtn.classList.remove('active');
                 }
 
-                localStorage.setItem('dda_wishlist', JSON.stringify(wishlist));
+                saveWishlist(wishlist);
+                saveWishlistItems(wishlistItems);
                 return;
             }
 
