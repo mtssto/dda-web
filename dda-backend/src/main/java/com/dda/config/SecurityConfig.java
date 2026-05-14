@@ -33,18 +33,33 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
+
+                        // Public API reads
                         .requestMatchers(HttpMethod.GET, "/api/artworks/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+
+                        // Public static files, if served by Spring/Railway
+                        .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/portfolio/**").permitAll()
+
+                        // Admin API
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // Protected artwork/category/image mutations
                         .requestMatchers(HttpMethod.POST, "/api/artworks/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/artworks/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/artworks/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/artworks/**").hasRole("ADMIN")
+
                         .requestMatchers(HttpMethod.POST, "/api/categories/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasRole("ADMIN")
+
                         .requestMatchers(HttpMethod.POST, "/api/images/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/images/**").hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
