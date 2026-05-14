@@ -37,6 +37,12 @@ app:
 
 ---
 spring:
+
+  cache:
+    type: caffeine
+    cache-names: artworks, artworkBySlug
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=600s
   config:
     activate:
       on-profile: dev
@@ -79,3 +85,5 @@ cloudinary:
   cloud-name: ${CLOUDINARY_CLOUD_NAME}
   api-key: ${CLOUDINARY_API_KEY}
   api-secret: ${CLOUDINARY_API_SECRET}
+
+

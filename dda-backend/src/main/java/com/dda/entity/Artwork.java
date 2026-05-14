@@ -2,6 +2,7 @@ package com.dda.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +43,12 @@ public class Artwork {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
+    @BatchSize(size = 20)
     private Category category;
 
     @OneToMany(mappedBy = "artwork", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
+    @BatchSize(size = 20)
     private List<ArtworkImage> images = new ArrayList<>();
 
     @Column(name = "created_at", updatable = false)
