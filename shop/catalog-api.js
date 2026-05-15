@@ -163,9 +163,7 @@
             size: String(PAGE_SIZE)
         });
 
-        if (sortValue) {
-            params.set('sort', sortValue);
-        }
+        appendStableSort(params, sortValue);
 
         if (query) {
             params.set('q', query);
@@ -174,27 +172,45 @@
         return `${endpoint}?${params.toString()}`;
     }
 
+    function appendStableSort(params, sortValue) {
+        const value = sortValue || 'id,desc';
+        const [field, direction = 'asc'] = value.split(',');
+
+        params.delete('sort');
+
+        // Primary sort selected by the user.
+        params.append('sort', `${field},${direction}`);
+
+        // Stable tie-breaker for paginated results.
+        // Without this, non-unique fields like year/title can repeat rows between pages.
+        if (field !== 'id') {
+            params.append('sort', `id,${direction}`);
+        }
+    }
+
     async function loadArtworkPage({ reset = false } = {}) {
         const grid = document.getElementById('productsGrid');
         const loader = document.getElementById('catalogLoader');
         const emptyState = document.getElementById('catalogEmptyState');
 
         if (!grid) return;
-        if (isLoading) return;
-        if (!hasMore && !reset) return;
 
         if (reset) {
+            if (activeRequestController) {
+                activeRequestController.abort();
+            }
+
+            isLoading = false;
             currentPage = 0;
             hasMore = true;
             grid.innerHTML = '';
             artworkByKey.clear();
 
             if (emptyState) emptyState.hidden = true;
-
-            if (activeRequestController) {
-                activeRequestController.abort();
-            }
         }
+
+        if (isLoading) return;
+        if (!hasMore && !reset) return;
 
         isLoading = true;
         activeRequestController = new AbortController();
