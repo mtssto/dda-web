@@ -5,13 +5,19 @@ spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
 
+  cache:
+    type: caffeine
+    cache-names: artworks,artworkBySlug,categories,users
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=10m
+
   jpa:
     hibernate:
       ddl-auto: validate
     open-in-view: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
+        default_batch_fetch_size: 20
 
   flyway:
     enabled: true
@@ -33,16 +39,18 @@ app:
     dir: ${UPLOAD_DIR:uploads}
     allowed-types: image/jpeg,image/png,image/webp,image/gif
   static:
-    base-url: ${STATIC_BASE_URL:https://whitewidow.github.io}
+    base-url: ${STATIC_BASE_URL:https://diegodeaduriz.art}
+
+# Base values for local/dev so CloudinaryConfig can start.
+# For real uploads, set these environment variables locally.
+# In prod, the prod profile below requires the real env vars.
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:}
+  api-key: ${CLOUDINARY_API_KEY:}
+  api-secret: ${CLOUDINARY_API_SECRET:}
 
 ---
 spring:
-
-  cache:
-    type: caffeine
-    cache-names: artworks, artworkBySlug
-    caffeine:
-      spec: maximumSize=500,expireAfterWrite=600s
   config:
     activate:
       on-profile: dev
@@ -57,11 +65,6 @@ spring:
     console:
       enabled: true
       path: /h2-console
-
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
 
   flyway:
     locations: classpath:db/migration
@@ -80,10 +83,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
 
 cloudinary:
   cloud-name: ${CLOUDINARY_CLOUD_NAME}
   api-key: ${CLOUDINARY_API_KEY}
   api-secret: ${CLOUDINARY_API_SECRET}
-
-
