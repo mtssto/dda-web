@@ -30,7 +30,10 @@ public class ArtworkService {
     @Value("${app.static.base-url:}")
     private String staticBaseUrl;
 
-    @Cacheable(value = "artworks", key = "'page:' + #pageable.pageNumber + ':' + #pageable.pageSize + ':' + #pageable.sort")
+    @Cacheable(
+            value = "artworks",
+            key = "'category:' + #categoryName + ':' + #pageable.pageNumber + ':' + #pageable.pageSize + ':' + #pageable.sort"
+    )
     @Transactional(readOnly = true)
     public Page<ArtworkDTO> findAll(Pageable pageable) {
         return artworkRepository.findAll(pageable).map(a -> ArtworkDTO.fromEntity(a, staticBaseUrl));
@@ -44,7 +47,10 @@ public class ArtworkService {
         return ArtworkDTO.fromEntity(artwork, staticBaseUrl);
     }
 
-    @Cacheable(value = "artworks", key = "'category:' + #categoryName + ':' + #pageable.pageNumber + ':' + #pageable.pageSize")
+    @Cacheable(
+            value = "artworks",
+            key = "'category:' + #categoryName + ':' + #pageable.pageNumber + ':' + #pageable.pageSize + ':' + #pageable.sort"
+    )
     @Transactional(readOnly = true)
     public Page<ArtworkDTO> findByCategory(String categoryName, Pageable pageable) {
         return artworkRepository.findByCategoryName(categoryName, pageable).map(a -> ArtworkDTO.fromEntity(a, staticBaseUrl));
