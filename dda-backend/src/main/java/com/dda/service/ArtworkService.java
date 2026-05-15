@@ -32,7 +32,7 @@ public class ArtworkService {
 
     @Cacheable(
             value = "artworks",
-            key = "'category:' + #categoryName + ':' + #pageable.pageNumber + ':' + #pageable.pageSize + ':' + #pageable.sort"
+            key = "'page:' + #pageable.pageNumber + ':' + #pageable.pageSize + ':' + #pageable.sort"
     )
     @Transactional(readOnly = true)
     public Page<ArtworkDTO> findAll(Pageable pageable) {
