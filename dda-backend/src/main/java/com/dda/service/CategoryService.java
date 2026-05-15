@@ -5,6 +5,8 @@ import com.dda.entity.Category;
 import com.dda.exception.ResourceNotFoundException;
 import com.dda.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,7 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
+    @Cacheable(value = "categories", key = "'all'")
     @Transactional(readOnly = true)
     public List<CategoryDTO> findAll() {
         return categoryRepository.findAllWithArtworkCount().stream()
@@ -23,6 +26,7 @@ public class CategoryService {
                 .toList();
     }
 
+    @CacheEvict(value = "categories", allEntries = true)
     @Transactional
     public CategoryDTO create(String name, String displayName) {
         if (categoryRepository.findByName(name).isPresent()) {
