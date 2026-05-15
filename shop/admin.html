@@ -165,6 +165,21 @@
                         Vendida
                     </label>
                 </div>
+
+                <div class="form-group">
+                    <label for="artImages">Imágenes</label>
+                    <input
+                        type="file"
+                        id="artImages"
+                        class="image-upload-input"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
+                        multiple
+                    >
+                    <p class="form-hint">En una obra nueva, la primera imagen seleccionada será la principal. En edición, las imágenes seleccionadas se agregan a la obra.</p>
+                    <div class="image-preview-grid" id="artImagesPreview" aria-live="polite"></div>
+                    <div class="image-upload-status" id="imageUploadStatus" hidden></div>
+                </div>
+
                 <div id="formError" class="form-error" hidden></div>
                 <div class="modal-actions">
                     <button type="button" class="btn-secondary" id="modalCancel">Cancelar</button>

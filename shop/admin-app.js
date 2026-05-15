@@ -36,6 +36,9 @@
     var artworkForm = document.getElementById('artworkForm');
     var formError = document.getElementById('formError');
     var modalSave = document.getElementById('modalSave');
+    var imageInput = document.getElementById('artImages');
+    var imagePreview = document.getElementById('artImagesPreview');
+    var imageUploadStatus = document.getElementById('imageUploadStatus');
 
     // Delete modal
     var deleteModal = document.getElementById('deleteModal');
@@ -100,6 +103,12 @@
         saveArtwork();
     });
 
+    if (imageInput) {
+        imageInput.addEventListener('change', function () {
+            renderImagePreview(null, getSelectedImageFiles());
+        });
+    }
+
     // Escape key
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
@@ -126,7 +135,7 @@
         } else if (state.category) {
             path = '/artworks/category/' + encodeURIComponent(state.category) + '?page=' + state.page + '&size=20';
         } else {
-            path = '/artworks?page=' + state.page + '&size=20&sort=createdAt,desc';
+            path = '/artworks?page=' + state.page + '&size=20&sort=id,desc';
         }
 
         tableBody.innerHTML = '<tr class="table-loading"><td colspan="8">Cargando obras...</td></tr>';
@@ -164,12 +173,15 @@
             sold: document.getElementById('artSold').checked
         };
 
+        var selectedImages = getSelectedImageFiles();
+
         var btnText = modalSave.querySelector('.btn-text');
         var btnLoader = modalSave.querySelector('.btn-loader');
         btnText.hidden = true;
         btnLoader.hidden = false;
         modalSave.disabled = true;
         formError.hidden = true;
+        setUploadStatus('', null, true);
 
         var isEdit = state.editingId !== null;
         var method = isEdit ? 'PUT' : 'POST';
@@ -183,7 +195,17 @@
             if (!res.ok) return res.json().then(function (d) { throw new Error(d.message || 'Error al guardar'); });
             return res.json();
         })
+        .then(function (savedArtwork) {
+            if (!selectedImages.length) return savedArtwork;
+
+            setUploadStatus('Subiendo ' + selectedImages.length + ' imagen(es) a Cloudinary...', null, false);
+
+            return uploadArtworkImages(savedArtwork.id, selectedImages).then(function () {
+                return savedArtwork;
+            });
+        })
         .then(function () {
+            setUploadStatus('Obra guardada correctamente.', 'success', false);
             closeModal();
             loadArtworks();
             loadCategories();
@@ -192,12 +214,82 @@
         .catch(function (err) {
             formError.textContent = err.message || 'Error al guardar la obra';
             formError.hidden = false;
+            setUploadStatus(err.message || 'Error al subir imágenes', 'error', false);
         })
         .finally(function () {
             btnText.hidden = false;
             btnLoader.hidden = true;
             modalSave.disabled = false;
         });
+    }
+
+    function getSelectedImageFiles() {
+        return imageInput ? Array.from(imageInput.files || []) : [];
+    }
+
+    function uploadArtworkImages(artworkId, files) {
+        var chain = Promise.resolve();
+
+        files.forEach(function (file, index) {
+            chain = chain.then(function () {
+                setUploadStatus('Subiendo imagen ' + (index + 1) + ' de ' + files.length + ': ' + file.name, null, false);
+
+                var formData = new FormData();
+                formData.append('file', file);
+                formData.append('isPrimary', String(index === 0 && state.editingId === null));
+
+                return fetch(getApiBaseUrl() + '/artworks/' + artworkId + '/images', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+                    body: formData
+                }).then(function (res) {
+                    if (!res.ok) {
+                        return res.text().then(function (message) {
+                            throw new Error(message || ('Error al subir ' + file.name));
+                        });
+                    }
+                    return res.json();
+                });
+            });
+        });
+
+        return chain;
+    }
+
+    function getAuthToken() {
+        if (typeof DDAAuth !== 'undefined' && typeof DDAAuth.getToken === 'function') {
+            return DDAAuth.getToken();
+        }
+
+        return localStorage.getItem('dda_token') ||
+            localStorage.getItem('token') ||
+            localStorage.getItem('authToken') ||
+            localStorage.getItem('dda_auth_token') ||
+            '';
+    }
+
+    function getApiBaseUrl() {
+        if (window.DDA_API_BASE) return normalizeApiBase(window.DDA_API_BASE);
+        if (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) return normalizeApiBase(window.APP_CONFIG.API_BASE_URL);
+        if (window.API_BASE_URL) return normalizeApiBase(window.API_BASE_URL);
+        return '/api';
+    }
+
+    function normalizeApiBase(value) {
+        var clean = String(value || '').replace(/\/$/, '');
+        if (!clean) return '/api';
+        return clean.endsWith('/api') ? clean : clean + '/api';
+    }
+
+    function setUploadStatus(message, type, hidden) {
+        if (!imageUploadStatus) return;
+
+        imageUploadStatus.hidden = !!hidden || !message;
+        imageUploadStatus.textContent = message || '';
+        imageUploadStatus.classList.remove('is-success', 'is-error');
+
+        if (type === 'success') imageUploadStatus.classList.add('is-success');
+        if (type === 'error') imageUploadStatus.classList.add('is-error');
     }
 
     function deleteArtwork(id) {
@@ -241,11 +333,9 @@
         }
 
         tableBody.innerHTML = filtered.map(function (art) {
-            var imgSrc = art.images && art.images.length > 0
-                ? art.images[0].filePath
-                : '';
+            var imgSrc = getArtworkThumbnailUrl(art);
             var imgTag = imgSrc
-                ? '<img src="' + imgSrc + '" alt="' + escapeHtml(art.title) + '" class="table-thumb" loading="lazy">'
+                ? '<img src="' + escapeHtml(imgSrc) + '" alt="' + escapeHtml(art.title) + '" class="table-thumb" loading="lazy" decoding="async">'
                 : '<div class="table-thumb" style="background:#eee"></div>';
 
             return '<tr>' +
@@ -322,7 +412,7 @@
     }
 
     function loadStats() {
-        DDAAuth.apiFetch('/artworks?page=0&size=200&sort=createdAt,desc')
+        DDAAuth.apiFetch('/artworks?page=0&size=200&sort=id,desc')
             .then(function (res) { return res.json(); })
             .then(function (data) {
                 var all = data.content || [];
@@ -354,6 +444,10 @@
         document.getElementById('artDescription').value = artwork ? (artwork.description || '') : '';
         document.getElementById('artSold').checked = artwork ? artwork.sold : false;
 
+        if (imageInput) imageInput.value = '';
+        setUploadStatus('', null, true);
+        renderImagePreview(artwork, []);
+
         modal.hidden = false;
         document.body.style.overflow = 'hidden';
         document.getElementById('artTitle').focus();
@@ -364,6 +458,9 @@
         document.body.style.overflow = '';
         state.editingId = null;
         artworkForm.reset();
+        if (imageInput) imageInput.value = '';
+        if (imagePreview) imagePreview.innerHTML = '';
+        setUploadStatus('', null, true);
     }
 
     function closeDeleteModal() {
@@ -404,6 +501,65 @@
     };
 
     // ── Helpers ──────────────────────────────────
+    function renderImagePreview(artwork, selectedFiles) {
+        if (!imagePreview) return;
+
+        var html = '';
+
+        if (artwork && Array.isArray(artwork.images) && artwork.images.length > 0) {
+            html += artwork.images.map(function (img, index) {
+                var src = getImageUrl(img);
+                if (!src) return '';
+
+                return '<div class="image-preview-card is-existing">' +
+                    '<img src="' + escapeHtml(toCloudinaryThumb(src, 240)) + '" alt="Imagen actual ' + (index + 1) + '">' +
+                    '<span class="preview-label">' + (img.isPrimary || img.primary ? 'Actual · Principal' : 'Actual') + '</span>' +
+                '</div>';
+            }).join('');
+        }
+
+        if (selectedFiles && selectedFiles.length > 0) {
+            html += selectedFiles.map(function (file, index) {
+                var url = URL.createObjectURL(file);
+
+                return '<div class="image-preview-card">' +
+                    '<img src="' + url + '" alt="' + escapeHtml(file.name) + '">' +
+                    '<span class="preview-label">' + (index === 0 && state.editingId === null ? 'Nueva · Principal' : 'Nueva') + '</span>' +
+                    '<span class="preview-filename">' + escapeHtml(file.name) + '</span>' +
+                '</div>';
+            }).join('');
+        }
+
+        imagePreview.innerHTML = html || '<p class="form-hint">No hay imágenes seleccionadas.</p>';
+    }
+
+    function getArtworkThumbnailUrl(artwork) {
+        if (!artwork || !Array.isArray(artwork.images) || artwork.images.length === 0) return '';
+
+        var primary = artwork.images.find(function (img) { return img && (img.isPrimary || img.primary); }) || artwork.images[0];
+        return toCloudinaryThumb(getImageUrl(primary), 160);
+    }
+
+    function getImageUrl(image) {
+        if (!image) return '';
+        if (typeof image === 'string') return image;
+
+        return image.thumbnailUrl ||
+            image.previewUrl ||
+            image.filePath ||
+            image.url ||
+            image.imageUrl ||
+            '';
+    }
+
+    function toCloudinaryThumb(url, width) {
+        if (!url || url.indexOf('res.cloudinary.com') === -1 || url.indexOf('/upload/') === -1) return url || '';
+
+        if (/\/upload\/[^/]*(f_auto|q_auto|w_\d+|c_limit|c_fill)[^/]*\//.test(url)) return url;
+
+        return url.replace('/upload/', '/upload/f_auto,q_auto,w_' + width + ',c_limit/');
+    }
+
     function escapeHtml(str) {
         if (!str) return '';
         var div = document.createElement('div');
