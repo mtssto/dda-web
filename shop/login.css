@@ -9,6 +9,8 @@
     --color-border: #e0e0e0;
     --color-error: #d32f2f;
     --color-error-bg: #fef2f2;
+    --color-success: #166534;
+    --color-success-bg: #f0fdf4;
     --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -35,18 +37,51 @@ body {
 }
 
 .login-card {
+    position: relative;
     background: var(--color-bg);
     border: 1px solid var(--color-border);
     border-radius: 12px;
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
     padding: 48px 40px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* ── Close button ────────────────────── */
+.login-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    color: var(--color-subtext);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    z-index: 10;
+}
+
+.login-close-btn:hover {
+    background: var(--color-light-bg);
+    color: var(--color-text);
+    border-color: var(--color-text);
+}
+
+.login-close-btn:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
 }
 
 .login-header {
     text-align: center;
-    margin-bottom: 36px;
+    margin-bottom: 32px;
 }
 
 .login-title {
@@ -88,6 +123,11 @@ body {
     letter-spacing: 0.01em;
 }
 
+.auth-tab:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+}
+
 .auth-tab.active {
     background: var(--color-accent);
     color: var(--color-bg);
@@ -107,10 +147,10 @@ body {
     align-items: center;
     gap: 8px;
     padding: 12px 16px;
-    background: #f0fdf4;
+    background: var(--color-success-bg);
     border: 1px solid #bbf7d0;
     border-radius: 8px;
-    color: #166534;
+    color: var(--color-success);
     font-size: 13px;
     margin-bottom: 20px;
 }
@@ -146,8 +186,77 @@ body {
     box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
 }
 
+.form-group input.input-error {
+    border-color: var(--color-error);
+}
+
+.form-group input.input-error:focus {
+    box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+}
+
 .form-group input::placeholder {
     color: #bbb;
+}
+
+/* ── Inline field hints ──────────────── */
+.field-hint {
+    display: block;
+    font-size: 12px;
+    margin-top: 4px;
+    min-height: 16px;
+}
+
+.field-hint.hint-error {
+    color: var(--color-error);
+}
+
+.field-hint.hint-ok {
+    color: var(--color-success);
+}
+
+/* ── Password requirements ───────────── */
+.password-requirements {
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    background: var(--color-light-bg);
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+}
+
+.password-requirements .req-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-subtext);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.password-requirements .req-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 12px;
+}
+
+.password-requirements .req-list li {
+    font-size: 12px;
+    color: var(--color-subtext);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+}
+
+.password-requirements .req-list li .req-icon {
+    font-size: 8px;
+    flex-shrink: 0;
+}
+
+.password-requirements .req-list li.valid {
+    color: var(--color-success);
 }
 
 .password-wrapper {
@@ -175,6 +284,12 @@ body {
 
 .toggle-password:hover {
     color: var(--color-text);
+}
+
+.toggle-password:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
 }
 
 .login-error {
@@ -228,6 +343,11 @@ body {
     cursor: not-allowed;
 }
 
+.login-btn:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
 .spinner {
     animation: spin 0.8s linear infinite;
 }
@@ -255,16 +375,32 @@ body {
     color: var(--color-text);
 }
 
+.back-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
 @media (max-width: 480px) {
     .login-card {
-        padding: 36px 24px;
+        padding: 36px 20px;
         border-radius: 0;
         border: none;
         box-shadow: none;
         max-width: 100%;
+        max-height: 100vh;
+    }
+
+    .login-close-btn {
+        top: 12px;
+        right: 12px;
     }
 
     .login-title {
         font-size: 24px;
+    }
+
+    .password-requirements .req-list {
+        grid-template-columns: 1fr;
     }
 }

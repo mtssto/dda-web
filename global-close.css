@@ -87,6 +87,29 @@ body.modal-open .close-container {
     margin-left: 8px;
 }
 
+/* ── Cart badge ─────────────────────────── */
+.cart-header-link {
+    position: relative;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background: #000;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    line-height: 1;
+}
+
 @media (max-width: 600px) {
     .auth-header-btns {
         gap: 14px;
