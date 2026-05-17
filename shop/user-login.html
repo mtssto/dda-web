@@ -257,8 +257,30 @@
                 }
             }
 
+            var passwordReqBox = document.getElementById('passwordRequirements');
+            var passwordHasError = false;
+
             regPassword.addEventListener('input', function () {
                 checkPasswordStrength(this.value);
+                if (this.value.length > 0) {
+                    passwordReqBox.classList.add('visible');
+                }
+            });
+
+            regPassword.addEventListener('focus', function () {
+                if (this.value.length > 0 || passwordHasError) {
+                    passwordReqBox.classList.add('visible');
+                }
+            });
+
+            regPassword.addEventListener('blur', function () {
+                var allValid = checkPasswordStrength(this.value);
+                if (this.value.length === 0 || allValid) {
+                    passwordReqBox.classList.remove('visible');
+                    passwordHasError = false;
+                } else {
+                    passwordHasError = true;
+                }
             });
 
             // ── Inline validation helpers ────────────────

@@ -221,6 +221,19 @@ body {
     background: var(--color-light-bg);
     border-radius: 8px;
     border: 1px solid var(--color-border);
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    padding: 0 16px;
+    margin-bottom: 0;
+    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+}
+
+.password-requirements.visible {
+    max-height: 200px;
+    opacity: 1;
+    padding: 12px 16px;
+    margin-bottom: 20px;
 }
 
 .password-requirements .req-title {

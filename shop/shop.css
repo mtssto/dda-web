@@ -2040,6 +2040,24 @@ footer p {
     font-size: 1.1rem;
 }
 
+.inquiry-btn.cart-add {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
+    cursor: pointer;
+    font-family: var(--font-body);
+}
+
+.inquiry-btn.cart-add:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.inquiry-btn.cart-add:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .inquiry-close {
     position: absolute;
     top: 16px;

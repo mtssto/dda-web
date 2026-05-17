@@ -240,10 +240,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // Update auth header buttons based on login state
     var authBtns = document.getElementById('authHeaderBtns');
     if (authBtns && typeof DDAAuth !== 'undefined') {
+        var cartBtnHtml = '<a href="cart.html" class="auth-header-link cart-header-link" aria-label="Carrito">' +
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>' +
+            '<span class="cart-badge" style="display:none">0</span></a>';
         if (DDAAuth.isAuthenticated()) {
             var user = DDAAuth.getUser();
             var isAdmin = user && user.role === 'ADMIN';
-            authBtns.innerHTML =
+            authBtns.innerHTML = cartBtnHtml +
                 '<a href="mi-cuenta.html" class="auth-header-link">' +
                     '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> ' +
                     (user ? user.username.toUpperCase() : 'MI CUENTA') +
@@ -258,6 +261,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
         }
+        if (typeof DDACart !== 'undefined') DDACart.updateBadge();
     }
 
     // Filter Logic
@@ -1617,12 +1621,13 @@ function showCartToast(msg) {
 }
 
 function buyProduct(product) {
+    if (typeof openInquiry === 'function') {
+        openInquiry(product, product.price);
+        return;
+    }
     if (typeof DDACart !== 'undefined') {
         addToCartWithFeedback(product);
         return;
-    }
-    if (typeof openInquiry === 'function') {
-        openInquiry(product.title, product.price);
     } else {
         const waNumber = '5491160139563';
         const message = `Hola, me interesa comprar: ${product.title}`;

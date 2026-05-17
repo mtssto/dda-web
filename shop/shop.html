@@ -277,6 +277,12 @@
             <p class="inquiry-artwork-name" id="inquiry-artwork-name">—</p>
             <p>Para adquirir esta obra o consultar disponibilidad, precio y envío, contactá a Diego directamente:</p>
             <div class="inquiry-options">
+                <button class="inquiry-btn cart-add" id="inquiry-add-cart">
+                    <span class="btn-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    </span>
+                    Agregar al carrito
+                </button>
                 <a class="inquiry-btn primary" id="inquiry-whatsapp" href="#" target="_blank" rel="noopener noreferrer"
                     onclick="trackEvent('click', 'Contact', 'WhatsApp Inquiry — ' + document.getElementById('inquiry-artwork-name').textContent)">
                     <span class="btn-icon">
@@ -315,11 +321,23 @@
         const CONTACT_EMAIL = 'dondiegodeaduriz@gmail.com'; // replace with real email
 
         // ── Inquiry Modal ────────────────────────────
-        function openInquiry(artworkName, price) {
+        var _inquiryProduct = null;
+
+        function openInquiry(artworkNameOrProduct, price) {
             const overlay = document.getElementById('inquiryOverlay');
             const nameEl = document.getElementById('inquiry-artwork-name');
             const waBtn = document.getElementById('inquiry-whatsapp');
             const emBtn = document.getElementById('inquiry-email');
+            const cartBtn = document.getElementById('inquiry-add-cart');
+
+            var artworkName = artworkNameOrProduct;
+            if (typeof artworkNameOrProduct === 'object' && artworkNameOrProduct !== null) {
+                _inquiryProduct = artworkNameOrProduct;
+                artworkName = artworkNameOrProduct.title;
+                price = artworkNameOrProduct.price;
+            } else {
+                _inquiryProduct = null;
+            }
 
             const label = price && price !== 'Consultar'
                 ? `${artworkName} — ${price}`
@@ -338,12 +356,28 @@
             );
             emBtn.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
 
+            if (cartBtn) {
+                var inCart = _inquiryProduct && typeof DDACart !== 'undefined' && DDACart.isInCart(_inquiryProduct.id);
+                cartBtn.textContent = inCart ? 'Ya está en el carrito' : 'Agregar al carrito';
+                cartBtn.disabled = inCart;
+            }
+
             overlay.classList.add('active');
             document.body.style.overflow = 'hidden';
 
-            // GA4: track inquiry opened
             trackEvent('view_item', 'Ecommerce', artworkName);
         }
+
+        // Inquiry cart button handler
+        document.getElementById('inquiry-add-cart').addEventListener('click', function () {
+            if (!_inquiryProduct || typeof DDACart === 'undefined') return;
+            var added = DDACart.addItem(_inquiryProduct);
+            this.textContent = 'Ya está en el carrito';
+            this.disabled = true;
+            if (added && typeof showCartToast === 'function') {
+                showCartToast('Agregado a tu selección');
+            }
+        });
 
         function closeInquiry(event) {
             if (event && event.target !== document.getElementById('inquiryOverlay')) return;
