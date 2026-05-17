@@ -33,13 +33,13 @@ spring:
     port: ${MAIL_PORT:587}
     username: ${MAIL_USERNAME:}
     password: ${MAIL_PASSWORD:}
+
     properties:
       mail:
         smtp:
           auth: true
           starttls:
-            enabled: true
-
+            enable: true
 server:
   port: ${PORT:8081}
 
