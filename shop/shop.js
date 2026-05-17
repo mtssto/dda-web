@@ -240,10 +240,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // Update auth header buttons based on login state
     var authBtns = document.getElementById('authHeaderBtns');
     if (authBtns && typeof DDAAuth !== 'undefined') {
+        var cartBtnHtml = '<a href="cart.html" class="auth-header-link cart-header-link" aria-label="Carrito">' +
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>' +
+            '<span class="cart-badge" style="display:none">0</span></a>';
         if (DDAAuth.isAuthenticated()) {
             var user = DDAAuth.getUser();
             var isAdmin = user && user.role === 'ADMIN';
-            authBtns.innerHTML =
+            authBtns.innerHTML = cartBtnHtml +
                 '<a href="mi-cuenta.html" class="auth-header-link">' +
                     '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> ' +
                     (user ? user.username.toUpperCase() : 'MI CUENTA') +
@@ -258,6 +261,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
         }
+        if (typeof DDACart !== 'undefined') DDACart.updateBadge();
     }
 
     // Filter Logic
@@ -1396,11 +1400,7 @@ function renderGrid(items) {
         if (btnBuy) {
             btnBuy.onclick = (e) => {
                 e.stopPropagation();
-                if (typeof openInquiry === 'function') {
-                    openInquiry(product.title, product.price);
-                } else {
-                    buyProduct(product);
-                }
+                buyProduct(product);
             };
         }
 
@@ -1412,11 +1412,15 @@ function renderGrid(items) {
             };
         }
 
-        // Skeleton loader: hide shimmer when image loads
+        // Skeleton loader: hide shimmer when image loads; fallback on error
         const imgEl = card.querySelector('.product-image img');
         const imageDiv = card.querySelector('.product-image');
         if (imgEl && imageDiv) {
             imgEl.addEventListener('load', () => { imageDiv.classList.remove('loading'); });
+            imgEl.addEventListener('error', () => {
+                imgEl.src = '/portfolio/sections/obras/MG_1192.jpg';
+                imageDiv.classList.remove('loading');
+            });
             if (imgEl.complete) imageDiv.classList.remove('loading');
         }
 
@@ -1595,9 +1599,35 @@ function openModal(productOrElement) {
     document.documentElement.classList.add('no-scroll');
 }
 
+function addToCartWithFeedback(product) {
+    if (typeof DDACart !== 'undefined') {
+        var added = DDACart.addItem(product);
+        showCartToast(added ? 'Agregado a tu selección' : 'Ya está en tu selección');
+    }
+}
+
+function showCartToast(msg) {
+    var existing = document.querySelector('.cart-toast');
+    if (existing) existing.remove();
+    var toast = document.createElement('div');
+    toast.className = 'cart-toast';
+    toast.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> ' + msg;
+    document.body.appendChild(toast);
+    requestAnimationFrame(function () { toast.classList.add('show'); });
+    setTimeout(function () {
+        toast.classList.remove('show');
+        setTimeout(function () { toast.remove(); }, 300);
+    }, 2000);
+}
+
 function buyProduct(product) {
     if (typeof openInquiry === 'function') {
-        openInquiry(product.title, product.price);
+        openInquiry(product, product.price);
+        return;
+    }
+    if (typeof DDACart !== 'undefined') {
+        addToCartWithFeedback(product);
+        return;
     } else {
         const waNumber = '5491160139563';
         const message = `Hola, me interesa comprar: ${product.title}`;

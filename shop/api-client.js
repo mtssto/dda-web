@@ -7,6 +7,7 @@ var DDAApi = (function () {
     'use strict';
 
     var API_BASE = window.DDA_API_BASE || '/api';
+    var FALLBACK_IMAGE = '/portfolio/sections/obras/MG_1192.jpg';
 
     function mapArtworkToProduct(artwork) {
         var imagePath = '';
@@ -14,14 +15,14 @@ var DDAApi = (function () {
             imagePath = artwork.images[0].filePath || '';
         }
         return {
-            id: artwork.slug || artwork.id,
+            id: artwork.slug || String(artwork.id),
             title: artwork.title,
             description: artwork.description || '',
             price: artwork.price || 'Consultar',
             dimensions: artwork.dimensions || '',
             technique: artwork.technique || '',
             category: (artwork.category || '').toLowerCase(),
-            image: imagePath,
+            image: imagePath || FALLBACK_IMAGE,
             sold: artwork.sold || false,
             year: artwork.year || ''
         };
@@ -39,20 +40,43 @@ var DDAApi = (function () {
             });
     }
 
+    function fetchCategories() {
+        return fetch(API_BASE + '/categories')
+            .then(function (res) {
+                if (!res.ok) throw new Error('API unavailable');
+                return res.json();
+            });
+    }
+
+    function searchArtworks(query) {
+        return fetch(API_BASE + '/artworks/search?q=' + encodeURIComponent(query) + '&page=0&size=20')
+            .then(function (res) {
+                if (!res.ok) throw new Error('Search failed');
+                return res.json();
+            })
+            .then(function (data) {
+                var artworks = data.content || [];
+                return artworks.map(mapArtworkToProduct);
+            });
+    }
+
     function loadProducts() {
         return fetchAllArtworks()
             .then(function (products) {
-                window.products = products;
-                return products;
+                if (products.length > 0) {
+                    window.products = products;
+                }
+                return window.products || [];
             })
             .catch(function () {
-                // API unreachable — use existing products.js data
                 return window.products || [];
             });
     }
 
     return {
         loadProducts: loadProducts,
-        fetchAllArtworks: fetchAllArtworks
+        fetchAllArtworks: fetchAllArtworks,
+        fetchCategories: fetchCategories,
+        searchArtworks: searchArtworks
     };
 })();

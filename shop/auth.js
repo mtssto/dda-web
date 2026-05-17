@@ -75,7 +75,9 @@ var DDAAuth = (function () {
         }).then(function (res) {
             if (!res.ok) {
                 return res.json().then(function (data) {
-                    throw new Error(data.message || 'Error al registrar');
+                    var err = new Error(data.message || 'Error al registrar');
+                    if (data.errors) err.errors = data.errors;
+                    throw err;
                 });
             }
             return res.json();

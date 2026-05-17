@@ -18,6 +18,11 @@
 <body>
     <div class="login-wrapper">
         <div class="login-card">
+            <button class="login-close-btn" id="loginCloseBtn" aria-label="Cerrar" title="Cerrar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
             <div class="login-header">
                 <h1 class="login-title">Diego De Aduriz</h1>
                 <p class="login-subtitle">Mi Cuenta</p>
@@ -73,20 +78,22 @@
                 <div class="form-group">
                     <label for="regUsername">Usuario</label>
                     <input type="text" id="regUsername" name="username" autocomplete="username" required
-                        placeholder="Elegí un nombre de usuario">
+                        placeholder="Elegí un nombre de usuario" minlength="3" maxlength="50">
+                    <span class="field-hint" id="regUsernameHint"></span>
                 </div>
 
                 <div class="form-group">
                     <label for="regEmail">Email</label>
                     <input type="email" id="regEmail" name="email" autocomplete="email" required
                         placeholder="tu@email.com">
+                    <span class="field-hint" id="regEmailHint"></span>
                 </div>
 
                 <div class="form-group">
                     <label for="regPassword">Contraseña</label>
                     <div class="password-wrapper">
                         <input type="password" id="regPassword" name="password" autocomplete="new-password" required
-                            placeholder="Mínimo 6 caracteres" minlength="6">
+                            placeholder="Mínimo 8 caracteres" minlength="8">
                         <button type="button" class="toggle-password" aria-label="Mostrar contraseña">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -94,6 +101,18 @@
                             </svg>
                         </button>
                     </div>
+                </div>
+
+                <!-- Password strength indicator -->
+                <div class="password-requirements" id="passwordRequirements">
+                    <p class="req-title">La contraseña debe tener:</p>
+                    <ul class="req-list">
+                        <li id="reqLength"><span class="req-icon">○</span> Al menos 8 caracteres</li>
+                        <li id="reqUpper"><span class="req-icon">○</span> Una letra mayúscula</li>
+                        <li id="reqLower"><span class="req-icon">○</span> Una letra minúscula</li>
+                        <li id="reqNumber"><span class="req-icon">○</span> Un número</li>
+                        <li id="reqSpecial"><span class="req-icon">○</span> Un carácter especial (!@#$...)</li>
+                    </ul>
                 </div>
 
                 <div class="form-group">
@@ -121,7 +140,7 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
                     </svg>
-                    <span>Cuenta creada correctamente</span>
+                    <span id="registerSuccessText">Cuenta creada correctamente</span>
                 </div>
 
                 <button type="submit" class="login-btn" id="registerBtn">
@@ -148,137 +167,284 @@
     <script src="config.js"></script>
     <script src="auth.js"></script>
     <script>
-        // ── DOM refs ─────────────────────────────────
-        var tabLogin = document.getElementById('tabLogin');
-        var tabRegister = document.getElementById('tabRegister');
-        var loginForm = document.getElementById('loginForm');
-        var registerForm = document.getElementById('registerForm');
+        (function () {
+            'use strict';
 
-        // ── Tab switching ────────────────────────────
-        tabLogin.addEventListener('click', function () {
-            tabLogin.classList.add('active');
-            tabRegister.classList.remove('active');
-            loginForm.hidden = false;
-            registerForm.hidden = true;
-        });
+            // ── DOM refs ─────────────────────────────────
+            var tabLogin = document.getElementById('tabLogin');
+            var tabRegister = document.getElementById('tabRegister');
+            var loginForm = document.getElementById('loginForm');
+            var registerForm = document.getElementById('registerForm');
+            var closeBtn = document.getElementById('loginCloseBtn');
+            var submitting = false;
 
-        tabRegister.addEventListener('click', function () {
-            tabRegister.classList.add('active');
-            tabLogin.classList.remove('active');
-            registerForm.hidden = false;
-            loginForm.hidden = true;
-        });
-
-        // ── Toggle password visibility ───────────────
-        document.querySelectorAll('.toggle-password').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var input = this.previousElementSibling;
-                var isPassword = input.type === 'password';
-                input.type = isPassword ? 'text' : 'password';
-                this.setAttribute('aria-label', isPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
+            // ── Close button ─────────────────────────────
+            closeBtn.addEventListener('click', function () {
+                window.location.href = 'shop.html';
             });
-        });
 
-        // ── Redirect if already logged in ────────────
-        if (DDAAuth.isAuthenticated()) {
-            window.location.href = 'mi-cuenta.html';
-        }
+            // ── Tab switching ────────────────────────────
+            tabLogin.addEventListener('click', function () {
+                tabLogin.classList.add('active');
+                tabRegister.classList.remove('active');
+                loginForm.hidden = false;
+                registerForm.hidden = true;
+            });
 
-        // ── Auto-switch to register tab if #register hash ──
-        if (window.location.hash === '#register') {
-            tabRegister.click();
-        }
+            tabRegister.addEventListener('click', function () {
+                tabRegister.classList.add('active');
+                tabLogin.classList.remove('active');
+                registerForm.hidden = false;
+                loginForm.hidden = true;
+            });
 
-        // ── Login submit ─────────────────────────────
-        loginForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            var errorBox = document.getElementById('loginError');
-            var errorText = document.getElementById('loginErrorText');
-            var btn = document.getElementById('loginBtn');
-            var btnText = btn.querySelector('.btn-text');
-            var btnLoader = btn.querySelector('.btn-loader');
-            errorBox.hidden = true;
-
-            var username = document.getElementById('loginUsername').value.trim();
-            var password = document.getElementById('loginPassword').value;
-
-            if (!username || !password) {
-                errorText.textContent = 'Completá todos los campos';
-                errorBox.hidden = false;
-                return;
-            }
-
-            btnText.hidden = true;
-            btnLoader.hidden = false;
-            btn.disabled = true;
-
-            DDAAuth.login(username, password)
-                .then(function () {
-                    window.location.href = 'mi-cuenta.html';
-                })
-                .catch(function (err) {
-                    errorText.textContent = err.message || 'Usuario o contraseña incorrectos';
-                    errorBox.hidden = false;
-                    btnText.hidden = false;
-                    btnLoader.hidden = true;
-                    btn.disabled = false;
+            // ── Toggle password visibility ───────────────
+            document.querySelectorAll('.toggle-password').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var input = this.previousElementSibling;
+                    var isPassword = input.type === 'password';
+                    input.type = isPassword ? 'text' : 'password';
+                    this.setAttribute('aria-label', isPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
                 });
-        });
+            });
 
-        // ── Register submit ──────────────────────────
-        registerForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            var errorBox = document.getElementById('registerError');
-            var errorText = document.getElementById('registerErrorText');
-            var successBox = document.getElementById('registerSuccess');
-            var btn = document.getElementById('registerBtn');
-            var btnText = btn.querySelector('.btn-text');
-            var btnLoader = btn.querySelector('.btn-loader');
-            errorBox.hidden = true;
-            successBox.hidden = true;
-
-            var username = document.getElementById('regUsername').value.trim();
-            var email = document.getElementById('regEmail').value.trim();
-            var password = document.getElementById('regPassword').value;
-            var passwordConfirm = document.getElementById('regPasswordConfirm').value;
-
-            if (!username || !email || !password || !passwordConfirm) {
-                errorText.textContent = 'Completá todos los campos';
-                errorBox.hidden = false;
-                return;
+            // ── Redirect if already logged in ────────────
+            if (DDAAuth.isAuthenticated()) {
+                window.location.href = 'mi-cuenta.html';
             }
 
-            if (password.length < 6) {
-                errorText.textContent = 'La contraseña debe tener al menos 6 caracteres';
-                errorBox.hidden = false;
-                return;
+            // ── Auto-switch to register tab if #register hash ──
+            if (window.location.hash === '#register') {
+                tabRegister.click();
             }
 
-            if (password !== passwordConfirm) {
-                errorText.textContent = 'Las contraseñas no coinciden';
-                errorBox.hidden = false;
-                return;
+            // ── Keyboard: Escape closes ──────────────────
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') window.location.href = 'shop.html';
+            });
+
+            // ── Password strength validation ─────────────
+            var regPassword = document.getElementById('regPassword');
+            var reqLength = document.getElementById('reqLength');
+            var reqUpper = document.getElementById('reqUpper');
+            var reqLower = document.getElementById('reqLower');
+            var reqNumber = document.getElementById('reqNumber');
+            var reqSpecial = document.getElementById('reqSpecial');
+
+            function checkPasswordStrength(pw) {
+                var rules = {
+                    length: pw.length >= 8,
+                    upper: /[A-Z]/.test(pw),
+                    lower: /[a-z]/.test(pw),
+                    number: /[0-9]/.test(pw),
+                    special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pw)
+                };
+                updateReq(reqLength, rules.length);
+                updateReq(reqUpper, rules.upper);
+                updateReq(reqLower, rules.lower);
+                updateReq(reqNumber, rules.number);
+                updateReq(reqSpecial, rules.special);
+                return rules.length && rules.upper && rules.lower && rules.number && rules.special;
             }
 
-            btnText.hidden = true;
-            btnLoader.hidden = false;
-            btn.disabled = true;
+            function updateReq(el, valid) {
+                if (valid) {
+                    el.classList.add('valid');
+                    el.querySelector('.req-icon').textContent = '●';
+                } else {
+                    el.classList.remove('valid');
+                    el.querySelector('.req-icon').textContent = '○';
+                }
+            }
 
-            DDAAuth.register(username, email, password)
-                .then(function () {
-                    successBox.hidden = false;
-                    setTimeout(function () {
+            var passwordReqBox = document.getElementById('passwordRequirements');
+            var passwordHasError = false;
+
+            regPassword.addEventListener('input', function () {
+                checkPasswordStrength(this.value);
+                if (this.value.length > 0) {
+                    passwordReqBox.classList.add('visible');
+                }
+            });
+
+            regPassword.addEventListener('focus', function () {
+                if (this.value.length > 0 || passwordHasError) {
+                    passwordReqBox.classList.add('visible');
+                }
+            });
+
+            regPassword.addEventListener('blur', function () {
+                var allValid = checkPasswordStrength(this.value);
+                if (this.value.length === 0 || allValid) {
+                    passwordReqBox.classList.remove('visible');
+                    passwordHasError = false;
+                } else {
+                    passwordHasError = true;
+                }
+            });
+
+            // ── Inline validation helpers ────────────────
+            function setHint(id, msg, isError) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                el.textContent = msg;
+                el.className = 'field-hint' + (isError ? ' hint-error' : ' hint-ok');
+            }
+
+            function clearHint(id) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                el.textContent = '';
+                el.className = 'field-hint';
+            }
+
+            function isValidEmail(email) {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            }
+
+            // ── Inline validation on blur ────────────────
+            document.getElementById('regUsername').addEventListener('blur', function () {
+                var val = this.value.trim();
+                if (val && val.length < 3) {
+                    setHint('regUsernameHint', 'Mínimo 3 caracteres', true);
+                    this.classList.add('input-error');
+                } else if (val && val.length > 50) {
+                    setHint('regUsernameHint', 'Máximo 50 caracteres', true);
+                    this.classList.add('input-error');
+                } else {
+                    clearHint('regUsernameHint');
+                    this.classList.remove('input-error');
+                }
+            });
+
+            document.getElementById('regEmail').addEventListener('blur', function () {
+                var val = this.value.trim();
+                if (val && !isValidEmail(val)) {
+                    setHint('regEmailHint', 'Formato de email inválido', true);
+                    this.classList.add('input-error');
+                } else {
+                    clearHint('regEmailHint');
+                    this.classList.remove('input-error');
+                }
+            });
+
+            // ── Login submit ─────────────────────────────
+            loginForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                if (submitting) return;
+                var errorBox = document.getElementById('loginError');
+                var errorText = document.getElementById('loginErrorText');
+                var btn = document.getElementById('loginBtn');
+                var btnText = btn.querySelector('.btn-text');
+                var btnLoader = btn.querySelector('.btn-loader');
+                errorBox.hidden = true;
+
+                var username = document.getElementById('loginUsername').value.trim();
+                var password = document.getElementById('loginPassword').value;
+
+                if (!username || !password) {
+                    errorText.textContent = 'Completá todos los campos';
+                    errorBox.hidden = false;
+                    return;
+                }
+
+                submitting = true;
+                btnText.hidden = true;
+                btnLoader.hidden = false;
+                btn.disabled = true;
+
+                DDAAuth.login(username, password)
+                    .then(function () {
                         window.location.href = 'mi-cuenta.html';
-                    }, 1000);
-                })
-                .catch(function (err) {
-                    errorText.textContent = err.message || 'Error al crear la cuenta';
+                    })
+                    .catch(function (err) {
+                        errorText.textContent = err.message || 'Usuario o contraseña incorrectos';
+                        errorBox.hidden = false;
+                        btnText.hidden = false;
+                        btnLoader.hidden = true;
+                        btn.disabled = false;
+                        submitting = false;
+                    });
+            });
+
+            // ── Register submit ──────────────────────────
+            registerForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                if (submitting) return;
+                var errorBox = document.getElementById('registerError');
+                var errorText = document.getElementById('registerErrorText');
+                var successBox = document.getElementById('registerSuccess');
+                var btn = document.getElementById('registerBtn');
+                var btnText = btn.querySelector('.btn-text');
+                var btnLoader = btn.querySelector('.btn-loader');
+                errorBox.hidden = true;
+                successBox.hidden = true;
+
+                var username = document.getElementById('regUsername').value.trim();
+                var email = document.getElementById('regEmail').value.trim();
+                var password = document.getElementById('regPassword').value;
+                var passwordConfirm = document.getElementById('regPasswordConfirm').value;
+
+                if (!username || !email || !password || !passwordConfirm) {
+                    errorText.textContent = 'Completá todos los campos';
                     errorBox.hidden = false;
-                    btnText.hidden = false;
-                    btnLoader.hidden = true;
-                    btn.disabled = false;
-                });
-        });
+                    return;
+                }
+
+                if (username.length < 3 || username.length > 50) {
+                    errorText.textContent = 'El usuario debe tener entre 3 y 50 caracteres';
+                    errorBox.hidden = false;
+                    return;
+                }
+
+                if (!isValidEmail(email)) {
+                    errorText.textContent = 'Ingresá un email válido';
+                    errorBox.hidden = false;
+                    return;
+                }
+
+                if (!checkPasswordStrength(password)) {
+                    errorText.textContent = 'La contraseña no cumple los requisitos de seguridad';
+                    errorBox.hidden = false;
+                    return;
+                }
+
+                if (password !== passwordConfirm) {
+                    errorText.textContent = 'Las contraseñas no coinciden';
+                    errorBox.hidden = false;
+                    return;
+                }
+
+                submitting = true;
+                btnText.hidden = true;
+                btnLoader.hidden = false;
+                btn.disabled = true;
+
+                DDAAuth.register(username, email, password)
+                    .then(function () {
+                        successBox.hidden = false;
+                        setTimeout(function () {
+                            window.location.href = 'mi-cuenta.html';
+                        }, 1000);
+                    })
+                    .catch(function (err) {
+                        var msg = err.message || 'Error al crear la cuenta';
+                        if (err.errors) {
+                            var msgs = [];
+                            for (var field in err.errors) {
+                                msgs.push(err.errors[field]);
+                            }
+                            msg = msgs.join('. ');
+                        }
+                        errorText.textContent = msg;
+                        errorBox.hidden = false;
+                        btnText.hidden = false;
+                        btnLoader.hidden = true;
+                        btn.disabled = false;
+                        submitting = false;
+                    });
+            });
+        })();
     </script>
 </body>
 

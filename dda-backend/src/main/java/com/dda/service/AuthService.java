@@ -21,6 +21,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider tokenProvider;
+    private final EmailService emailService;
 
     public AuthResponse login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
@@ -34,10 +35,10 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new IllegalArgumentException("Username already taken");
+            throw new IllegalArgumentException("El nombre de usuario ya está en uso");
         }
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email already registered");
+            throw new IllegalArgumentException("El email ya está registrado");
         }
 
         boolean isFirstUser = userRepository.count() == 0;
@@ -50,6 +51,8 @@ public class AuthService {
                 .build();
 
         userRepository.save(user);
+
+        emailService.sendWelcomeEmail(request.getEmail(), request.getUsername());
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
