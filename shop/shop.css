@@ -1510,6 +1510,7 @@ footer p {
 }
 
 .catalog-content .product-image {
+    aspect-ratio: auto;
     background: #f5f5f5;
     overflow: hidden;
 }
