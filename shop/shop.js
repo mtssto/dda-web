@@ -240,7 +240,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         renderCarouselSections();
-        buildFilterChips();
 
         const gridParams = document.getElementById('productsGrid');
         if (gridParams) {
@@ -1064,95 +1063,6 @@ function pictureTag(src, alt, extra) {
         '<source srcset="' + encodeSrcset(webpSrc) + '" type="image/webp">' +
         '<img src="' + encodeSrcset(src || '') + '" alt="' + String(alt || '').replace(/"/g, '&quot;') + '"' + attrs + '>' +
     '</picture>';
-}
-
-function buildFilterChips() {
-    var chipsContainer = document.getElementById('filterChips');
-    if (!chipsContainer || !window.products) return;
-
-    var categoryLabels = {
-        'simbolico': 'Simbólico',
-        'texto': 'Texto',
-        'paisaje': 'Paisaje',
-        'retrato': 'Retrato',
-        'abstracto': 'Abstracto',
-        'figurativo': 'Figurativo',
-        'gatos': 'Gatos',
-        'ilustracion': 'Ilustración',
-        'pasteles': 'Pasteles',
-        'digital': 'Arte Digital',
-        'paisajes': 'Paisajes',
-        'Autorretratos': 'Autorretratos',
-        'ilustraciones': 'Ilustraciones'
-    };
-
-    var categories = [];
-    window.products.forEach(function (p) {
-        var cat = (p.category || '').toLowerCase();
-        if (cat && categories.indexOf(cat) === -1) categories.push(cat);
-    });
-
-    categories.sort();
-    categories.forEach(function (cat) {
-        var chip = document.createElement('button');
-        chip.className = 'filter-chip';
-        chip.setAttribute('data-filter', cat);
-        chip.textContent = categoryLabels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1);
-        chipsContainer.appendChild(chip);
-    });
-
-    chipsContainer.addEventListener('click', function (e) {
-        var chip = e.target.closest('.filter-chip');
-        if (!chip) return;
-        chipsContainer.querySelectorAll('.filter-chip').forEach(function (c) { c.classList.remove('active'); });
-        chip.classList.add('active');
-        var categoryFilter = document.getElementById('categoryFilter');
-        if (categoryFilter) {
-            categoryFilter.value = chip.getAttribute('data-filter');
-        }
-        applyShopFilters();
-    });
-
-    var sizeSelect = document.getElementById('sizeFilter');
-    if (sizeSelect) {
-        sizeSelect.addEventListener('change', function () { applyShopFilters(); });
-    }
-
-    var sortSelect = document.getElementById('sortFilter');
-    if (sortSelect) {
-        sortSelect.addEventListener('change', function () { applyShopFilters(); });
-    }
-}
-
-function applyShopFilters() {
-    var activeChip = document.querySelector('.filter-chip.active');
-    var selectedCategory = activeChip ? activeChip.getAttribute('data-filter') : 'all';
-    var sizeSelect = document.getElementById('sizeFilter');
-    var selectedSize = sizeSelect ? sizeSelect.value : 'all';
-
-    var carouselSections = document.querySelectorAll('.shop-carousel-section');
-    carouselSections.forEach(function (section) {
-        var cards = section.querySelectorAll('.product-card');
-        var anyVisible = false;
-
-        cards.forEach(function (card) {
-            var cat = (card.getAttribute('data-category') || '').toLowerCase();
-            var dims = card.getAttribute('data-dimensions') || '';
-            var sizeBucket = getSizeBucket(dims);
-
-            var catMatch = selectedCategory === 'all' || cat === selectedCategory;
-            var sizeMatch = selectedSize === 'all' || sizeBucket === selectedSize;
-
-            if (catMatch && sizeMatch) {
-                card.style.display = '';
-                anyVisible = true;
-            } else {
-                card.style.display = 'none';
-            }
-        });
-
-        section.style.display = anyVisible ? '' : 'none';
-    });
 }
 
 function renderCarouselSections() {
