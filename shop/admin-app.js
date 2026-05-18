@@ -170,8 +170,9 @@
             .then(function (res) { return res.json(); })
             .then(function (data) {
                 state.artworks = data.content || [];
-                state.totalPages = data.totalPages || 0;
-                state.totalElements = data.totalElements || 0;
+                var pm = data.page || data;
+                state.totalPages = pm.totalPages || 0;
+                state.totalElements = pm.totalElements || 0;
                 renderTable();
                 renderPagination();
             })
@@ -444,7 +445,8 @@
                 var all = data.content || [];
                 var soldCount = 0;
                 all.forEach(function (a) { if (a.sold) soldCount++; });
-                var total = data.totalElements || all.length;
+                var pm2 = data.page || data;
+                var total = pm2.totalElements || all.length;
                 document.getElementById('statTotal').textContent = total;
                 document.getElementById('statAvailable').textContent = total - soldCount;
                 document.getElementById('statSold').textContent = soldCount;

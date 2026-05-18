@@ -3,7 +3,6 @@ package com.dda.controller;
 import com.dda.dto.ArtworkDTO;
 import com.dda.dto.ArtworkRequest;
 import com.dda.service.ArtworkService;
-import com.dda.service.ImageStorageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,12 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/artworks")
@@ -24,7 +19,6 @@ import java.io.IOException;
 public class ArtworkController {
 
     private final ArtworkService artworkService;
-    private final ImageStorageService imageStorageService;
 
     @GetMapping
     public ResponseEntity<Page<ArtworkDTO>> findAll(
@@ -72,16 +66,4 @@ public class ArtworkController {
         return ResponseEntity.ok(artworkService.toggleSold(id));
     }
 
-    @PostMapping(
-            value = "/{artworkId}/images",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-    )
-    public ResponseEntity<ArtworkDTO.ImageDTO> uploadImage(
-            @PathVariable Long artworkId,
-            @RequestParam("file") MultipartFile file,
-            @RequestParam(defaultValue = "false") boolean isPrimary
-    ) throws IOException {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(imageStorageService.uploadImage(artworkId, file, isPrimary));
-    }
 }

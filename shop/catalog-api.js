@@ -261,17 +261,20 @@
             }
 
             currentPage += 1;
-            hasMore = page.last === false;
+            var pageMeta = page.page || page;
+            if (typeof pageMeta.last === 'boolean') {
+                hasMore = pageMeta.last === false;
+            } else {
+                var num = typeof pageMeta.number === 'number' ? pageMeta.number : currentPage - 1;
+                var tp = typeof pageMeta.totalPages === 'number' ? pageMeta.totalPages : 1;
+                hasMore = num + 1 < tp;
+            }
 
             updateSearchCount(page);
         } catch (error) {
             if (error.name !== 'AbortError') {
                 console.error('Catalog load error:', error);
 
-                if (reset && grid.children.length === 0 && window.products && window.products.length > 0) {
-                    console.log('Falling back to products.js data');
-                    renderFallbackProducts(grid);
-                }
             }
         } finally {
             isLoading = false;
@@ -280,46 +283,6 @@
                 loader.hidden = !hasMore;
             }
         }
-    }
-
-    function renderFallbackProducts(grid) {
-        var searchInput = document.getElementById('catalogSearch');
-        var categoryFilter = document.getElementById('categoryFilter');
-        var q = searchInput ? searchInput.value.trim().toLowerCase() : '';
-        var cat = categoryFilter ? categoryFilter.value : '';
-
-        var filtered = window.products.filter(function (p) {
-            if (q && p.title.toLowerCase().indexOf(q) === -1 && (p.technique || '').toLowerCase().indexOf(q) === -1) return false;
-            if (cat && (p.category || '').toLowerCase() !== cat.toLowerCase()) return false;
-            return true;
-        });
-
-        hasMore = false;
-
-        if (filtered.length === 0) {
-            var emptyState = document.getElementById('catalogEmptyState');
-            if (emptyState) emptyState.hidden = false;
-            return;
-        }
-
-        var html = filtered.map(function (p, i) {
-            var fallbackArtwork = {
-                id: p.id,
-                slug: p.id,
-                title: p.title,
-                description: p.description || '',
-                price: p.price || 'Consultar',
-                dimensions: p.dimensions || '',
-                technique: p.technique || '',
-                category: p.category || '',
-                sold: p.sold || false,
-                year: p.year || '',
-                images: p.image ? [{ filePath: p.image }] : []
-            };
-            return createArtworkCard(fallbackArtwork, i);
-        }).join('');
-
-        grid.insertAdjacentHTML('beforeend', html);
     }
 
     function createArtworkCard(artwork, indexInPage = 0) {
@@ -762,8 +725,9 @@
 
         if (!countEl || !page) return;
 
-        const total = typeof page.totalElements === 'number'
-            ? page.totalElements
+        var pageMeta = page.page || page;
+        const total = typeof pageMeta.totalElements === 'number'
+            ? pageMeta.totalElements
             : null;
 
         if (total === null) {
