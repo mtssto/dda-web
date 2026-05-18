@@ -457,10 +457,11 @@
                 event.preventDefault();
                 event.stopPropagation();
 
-                if (typeof openModal === 'function') {
+                var detailId = artwork.slug || artwork.id;
+                if (detailId) {
+                    window.location.href = 'obra.html?id=' + encodeURIComponent(detailId);
+                } else if (typeof openModal === 'function') {
                     openModal(artwork);
-                } else {
-                    console.error('openModal is not available. Check that shop.js loads before catalog-api.js.');
                 }
 
                 return;
@@ -472,7 +473,7 @@
                 event.stopPropagation();
 
                 if (typeof openInquiry === 'function') {
-                    openInquiry(artwork.title, artwork.price);
+                    openInquiry(artwork, artwork.price);
                 }
 
                 return;

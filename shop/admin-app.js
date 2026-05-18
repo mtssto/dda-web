@@ -109,6 +109,32 @@
         });
     }
 
+    if (imagePreview) {
+        imagePreview.addEventListener('click', function (e) {
+            var deleteBtn = e.target.closest('[data-delete-image]');
+            if (!deleteBtn) return;
+            var imageId = deleteBtn.getAttribute('data-delete-image');
+            if (!imageId || !confirm('¿Eliminar esta imagen?')) return;
+
+            deleteBtn.disabled = true;
+            deleteBtn.textContent = '…';
+
+            fetch(getApiBaseUrl() + '/images/' + imageId, {
+                method: 'DELETE',
+                headers: { 'Authorization': 'Bearer ' + getAuthToken() }
+            }).then(function (res) {
+                if (!res.ok) throw new Error('No se pudo eliminar');
+                var card = deleteBtn.closest('.image-preview-card');
+                if (card) card.remove();
+                loadArtworks();
+            }).catch(function (err) {
+                alert(err.message || 'Error al eliminar imagen');
+                deleteBtn.disabled = false;
+                deleteBtn.textContent = '×';
+            });
+        });
+    }
+
     // Escape key
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
@@ -236,7 +262,7 @@
 
                 var formData = new FormData();
                 formData.append('file', file);
-                formData.append('isPrimary', String(index === 0 && state.editingId === null));
+                formData.append('primary', String(index === 0 && state.editingId === null));
 
                 return fetch(getApiBaseUrl() + '/artworks/' + artworkId + '/images', {
                     method: 'POST',
@@ -510,10 +536,12 @@
             html += artwork.images.map(function (img, index) {
                 var src = getImageUrl(img);
                 if (!src) return '';
+                var imgId = img.id || '';
 
-                return '<div class="image-preview-card is-existing">' +
+                return '<div class="image-preview-card is-existing" data-image-id="' + imgId + '">' +
                     '<img src="' + escapeHtml(toCloudinaryThumb(src, 240)) + '" alt="Imagen actual ' + (index + 1) + '">' +
                     '<span class="preview-label">' + (img.isPrimary || img.primary ? 'Actual · Principal' : 'Actual') + '</span>' +
+                    (imgId ? '<button type="button" class="preview-delete-btn" data-delete-image="' + imgId + '" title="Eliminar imagen">×</button>' : '') +
                 '</div>';
             }).join('');
         }

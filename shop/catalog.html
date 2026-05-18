@@ -263,6 +263,19 @@
         </div>
     </section>
 
+    <!-- Newsletter -->
+    <section class="newsletter-section" id="newsletterSection">
+        <div class="newsletter-inner">
+            <h2 class="newsletter-title">Mantenete al día</h2>
+            <p class="newsletter-desc">Recibí novedades sobre nuevas obras, exposiciones y ediciones limitadas.</p>
+            <form class="newsletter-form" id="newsletterForm">
+                <input type="email" id="newsletterEmail" class="newsletter-input" placeholder="Tu email" required>
+                <button type="submit" class="newsletter-btn" id="newsletterBtn">Suscribirme</button>
+            </form>
+            <p class="newsletter-msg" id="newsletterMsg"></p>
+        </div>
+    </section>
+
     <!-- ═══════════════════════════════════════════
          UX: WhatsApp Floating Button
     ═══════════════════════════════════════════ -->
@@ -331,6 +344,7 @@
     <!-- shop.js injects the detail modal and image lightbox; catalog-api.js renders paginated cards -->
     <script src="shop.js" defer></script>
     <script src="catalog-api.js" defer></script>
+    <script src="newsletter.js" defer></script>
 
     <!-- ═══════════════════════════════════════════
          UX: Inquiry Modal Logic + GA4 Event Tracking
