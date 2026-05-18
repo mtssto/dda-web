@@ -15,6 +15,40 @@
         }) || null;
     }
 
+    function fetchFromApi(slug) {
+        var apiBase = window.DDA_API_BASE || '/api';
+        return fetch(apiBase + '/artworks/' + encodeURIComponent(slug), {
+            headers: { 'Accept': 'application/json' }
+        })
+        .then(function (res) {
+            if (!res.ok) throw new Error('Not found');
+            return res.json();
+        })
+        .then(function (artwork) {
+            var imagePath = '';
+            if (artwork.images && artwork.images.length > 0) {
+                imagePath = artwork.images[0].filePath || artwork.images[0].url || '';
+            }
+            var allImages = (artwork.images || []).map(function (img) {
+                return img.filePath || img.url || '';
+            }).filter(Boolean);
+
+            return {
+                id: artwork.slug || String(artwork.id),
+                title: artwork.title,
+                description: artwork.description || '',
+                price: artwork.price || 'Consultar',
+                dimensions: artwork.dimensions || '',
+                technique: artwork.technique || '',
+                category: (artwork.category || '').toLowerCase(),
+                image: imagePath || '/portfolio/sections/obras/MG_1192.jpg',
+                images: allImages.length > 0 ? allImages : [imagePath || '/portfolio/sections/obras/MG_1192.jpg'],
+                sold: artwork.sold || false,
+                year: artwork.year || ''
+            };
+        });
+    }
+
     function getCategoryLabel(cat) {
         var labels = {
             'simbolico': 'Simbólico',
@@ -289,6 +323,17 @@
             });
         }
 
+        var shareIG = document.getElementById('shareInstagram');
+        if (shareIG) {
+            shareIG.addEventListener('click', function () {
+                navigator.clipboard.writeText(url).then(function () {
+                    showToast('Enlace copiado — pegalo en tu historia de Instagram');
+                }).catch(function () {
+                    showToast('Enlace copiado');
+                });
+            });
+        }
+
         var shareCopy = document.getElementById('shareCopy');
         if (shareCopy) {
             shareCopy.addEventListener('click', function () {
@@ -389,14 +434,20 @@
         if (typeof DDACart !== 'undefined') DDACart.updateBadge();
     }
 
+    function showNotFound() {
+        var loading = document.getElementById('obraLoading');
+        var notFound = document.getElementById('obraNotFound');
+        if (loading) loading.style.display = 'none';
+        if (notFound) notFound.style.display = 'block';
+    }
+
     // Init
     function init() {
         renderAuthHeader();
 
         var id = getProductId();
         if (!id) {
-            document.getElementById('obraLoading').style.display = 'none';
-            document.getElementById('obraNotFound').style.display = 'block';
+            showNotFound();
             return;
         }
 
@@ -404,8 +455,13 @@
         if (product) {
             renderProduct(product);
         } else {
-            document.getElementById('obraLoading').style.display = 'none';
-            document.getElementById('obraNotFound').style.display = 'block';
+            fetchFromApi(id)
+                .then(function (apiProduct) {
+                    renderProduct(apiProduct);
+                })
+                .catch(function () {
+                    showNotFound();
+                });
         }
     }
 

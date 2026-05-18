@@ -55,6 +55,8 @@
     loadCategories();
     loadArtworks();
     loadStats();
+    loadNewsletterCount();
+    initNewsletter();
 
     // ── Event listeners ──────────────────────────
     var searchTimer;
@@ -595,5 +597,71 @@
         var div = document.createElement('div');
         div.textContent = str;
         return div.innerHTML;
+    }
+
+    // ── Newsletter ──────────────────────────────
+    function loadNewsletterCount() {
+        DDAAuth.apiFetch('/newsletter/subscribers')
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                var countEl = document.getElementById('newsletterCount');
+                if (countEl) {
+                    var n = data.count || 0;
+                    countEl.textContent = n + ' suscriptor' + (n !== 1 ? 'es' : '');
+                }
+            })
+            .catch(function () { /* silently fail */ });
+    }
+
+    function initNewsletter() {
+        var form = document.getElementById('newsletterForm');
+        if (!form) return;
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            var subjectInput = document.getElementById('nlSubject');
+            var bodyInput = document.getElementById('nlBody');
+            var errorEl = document.getElementById('nlError');
+            var successEl = document.getElementById('nlSuccess');
+            var sendBtn = document.getElementById('nlSendBtn');
+
+            var subject = subjectInput.value.trim();
+            var body = bodyInput.value.trim();
+
+            errorEl.hidden = true;
+            successEl.hidden = true;
+
+            if (!subject || !body) {
+                errorEl.textContent = 'Completá el asunto y el contenido.';
+                errorEl.hidden = false;
+                return;
+            }
+
+            if (!confirm('¿Enviar newsletter a todos los suscriptores?')) return;
+
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'Enviando...';
+
+            DDAAuth.apiFetch('/newsletter/send', {
+                method: 'POST',
+                body: JSON.stringify({ subject: subject, body: body })
+            })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                successEl.textContent = data.message || 'Newsletter enviado.';
+                successEl.hidden = false;
+                subjectInput.value = '';
+                bodyInput.value = '';
+            })
+            .catch(function (err) {
+                errorEl.textContent = err.message || 'Error al enviar el newsletter.';
+                errorEl.hidden = false;
+            })
+            .finally(function () {
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Enviar newsletter';
+            });
+        });
     }
 })();
