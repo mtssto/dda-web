@@ -3,6 +3,20 @@
 
     var WA_NUMBER = '5491160139563';
 
+    const closeBtn = document.getElementById("closeBtn");
+
+    if (closeBtn) {
+        closeBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "../index.html";
+            }
+        });
+    }
+
     function getProductId() {
         var params = new URLSearchParams(window.location.search);
         return params.get('id');
