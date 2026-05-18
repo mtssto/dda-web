@@ -1188,9 +1188,7 @@ function renderCarouselSections() {
             if (buyBtn) {
                 buyBtn.addEventListener('click', function (e) {
                     e.stopPropagation();
-                    if (typeof openInquiry === 'function') {
-                        openInquiry(product.title, product.price);
-                    }
+                    buyProduct(product);
                 });
             }
 
