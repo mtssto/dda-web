@@ -28,20 +28,6 @@ spring:
       max-file-size: 10MB
       max-request-size: 20MB
 
-  mail:
-    host: ${MAIL_HOST:smtp.gmail.com}
-    port: ${MAIL_PORT:465}
-    username: ${MAIL_USERNAME:}
-    password: ${MAIL_PASSWORD:}
-    protocol: smtps
-    properties:
-      mail:
-        smtps:
-          auth: true
-          ssl:
-            enable: true
-          timeout: 10000
-          connectiontimeout: 10000
 server:
   port: ${PORT:8081}
 
@@ -58,6 +44,8 @@ app:
 dda:
   mail:
     enabled: ${DDA_MAIL_ENABLED:false}
+    resend-api-key: ${RESEND_API_KEY:}
+    from: ${DDA_MAIL_FROM:DDA <onboarding@resend.dev>}
 
 # Base values for local/dev so CloudinaryConfig can start.
 # For real uploads, set these environment variables locally.
