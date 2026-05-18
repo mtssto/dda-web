@@ -368,14 +368,19 @@
             trackEvent('view_item', 'Ecommerce', artworkName);
         }
 
-        // Inquiry cart button handler
-        document.getElementById('inquiry-add-cart').addEventListener('click', function () {
-            if (!_inquiryProduct || typeof DDACart === 'undefined') return;
-            var added = DDACart.addItem(_inquiryProduct);
-            this.textContent = 'Ya está en el carrito';
-            this.disabled = true;
-            if (added && typeof showCartToast === 'function') {
-                showCartToast('Agregado a tu selección');
+        // Inquiry cart button handler (wait for DOM + deferred scripts)
+        document.addEventListener('DOMContentLoaded', function () {
+            var cartBtn = document.getElementById('inquiry-add-cart');
+            if (cartBtn) {
+                cartBtn.addEventListener('click', function () {
+                    if (!_inquiryProduct || typeof DDACart === 'undefined') return;
+                    var added = DDACart.addItem(_inquiryProduct);
+                    this.textContent = 'Ya está en el carrito';
+                    this.disabled = true;
+                    if (added && typeof showCartToast === 'function') {
+                        showCartToast('Agregado a tu selección');
+                    }
+                });
             }
         });
 
