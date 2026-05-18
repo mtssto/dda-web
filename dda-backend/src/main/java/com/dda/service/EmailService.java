@@ -111,6 +111,49 @@ public class EmailService {
             "</body></html>";
     }
 
+    public void sendNewsletter(String toEmail, String subject, String htmlContent) {
+        if (!mailEnabled) {
+            log.info("Email disabled — skipping newsletter to {}", toEmail);
+            return;
+        }
+
+        if (resendApiKey == null || resendApiKey.isBlank()) {
+            log.warn("Resend API key not configured — skipping newsletter to {}", toEmail);
+            return;
+        }
+
+        String jsonBody = String.format(
+                "{\"from\":\"%s\",\"to\":[\"%s\"],\"subject\":\"%s\",\"html\":%s}",
+                escapeJson(fromEmail),
+                escapeJson(toEmail),
+                escapeJson(subject),
+                toJsonString(htmlContent)
+        );
+
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://api.resend.com/emails"))
+                    .header("Authorization", "Bearer " + resendApiKey)
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                    .timeout(Duration.ofSeconds(15))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                log.info("Newsletter sent to {} via Resend", toEmail);
+            } else {
+                log.error("Resend API error sending newsletter to {} ({}): {}", toEmail, response.statusCode(), response.body());
+            }
+        } catch (IOException | InterruptedException e) {
+            log.error("Failed to send newsletter to {}: {}", toEmail, e.getMessage());
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
     private String escapeHtml(String input) {
         if (input == null) return "";
         return input.replace("&", "&amp;")

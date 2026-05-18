@@ -6,6 +6,20 @@
 const SHOP_CAROUSEL_INITIAL_ITEMS = 6;
 const SHOP_DEFER_SECTION_RENDER_MS = 120;
 
+function getSizeBucket(dimensionsStr) {
+    if (!dimensionsStr || dimensionsStr === 'Consultar medidas' ||
+        dimensionsStr === 'undefined' || dimensionsStr.trim() === '') {
+        return 'consult';
+    }
+    var nums = dimensionsStr.replace(/,/g, '.').match(/[\d.]+/g);
+    if (!nums || nums.length < 2) return 'consult';
+    var parse = function (v) { var n = parseFloat(v); return n < 10 ? n * 100 : n; };
+    var max = Math.max(parse(nums[0]), parse(nums[1]));
+    if (max <= 50) return 'small';
+    if (max <= 120) return 'medium';
+    return 'large';
+}
+
 
 // Wishlist keys must be stable across the old static shop data and the new backend catalog data.
 // Static products.js IDs may not match database IDs, so shop.html stores title/slug first.
@@ -271,31 +285,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchClear   = document.getElementById('shopSearchClear');
     const searchCount   = document.getElementById('shopSearchCount');
     let   searchQuery   = '';
-
-    // ── Size classification ────────────────────────────────
-    // Returns 'small' (≤50cm), 'medium' (51-120cm), 'large' (>120cm), or 'consult'
-    function getSizeBucket(dimensionsStr) {
-        if (!dimensionsStr || dimensionsStr === 'Consultar medidas' ||
-            dimensionsStr === 'undefined' || dimensionsStr.trim() === '') {
-            return 'consult';
-        }
-        // Parse first two numbers from strings like "140 x 125 cm" or "1,70 x 50 cm"
-        const nums = dimensionsStr
-            .replace(/,/g, '.')           // "1,70" → "1.70"
-            .match(/[\d.]+/g);
-        if (!nums || nums.length < 2) return 'consult';
-
-        // Convert values < 10 to cm (* 100) — handles "1.70 x 50" → 170 x 50
-        const parse = v => {
-            const n = parseFloat(v);
-            return n < 10 ? n * 100 : n;
-        };
-        const max = Math.max(parse(nums[0]), parse(nums[1]));
-
-        if (max <= 50) return 'small';
-        if (max <= 120) return 'medium';
-        return 'large';
-    }
 
     function applyFilters() {
         const selectedCategory = categoryFilter ? categoryFilter.value : 'all';
@@ -1180,7 +1169,12 @@ function renderCarouselSections() {
             if (detailsBtn) {
                 detailsBtn.addEventListener('click', function (e) {
                     e.stopPropagation();
-                    openModal(product);
+                    var detailId = product.slug || product.id;
+                    if (detailId) {
+                        window.location.href = 'obra.html?id=' + encodeURIComponent(detailId);
+                    } else {
+                        openModal(product);
+                    }
                 });
             }
 
@@ -1384,14 +1378,24 @@ function renderGrid(items) {
         if (btnDetails) {
             btnDetails.onclick = (e) => {
                 e.stopPropagation();
-                openModal(product);
+                var detailId = product.slug || product.id;
+                if (detailId) {
+                    window.location.href = 'obra.html?id=' + encodeURIComponent(detailId);
+                } else {
+                    openModal(product);
+                }
             };
         }
 
         if (btnDetailsOverlay) {
             btnDetailsOverlay.onclick = (e) => {
                 e.stopPropagation();
-                openModal(product);
+                var detailId = product.slug || product.id;
+                if (detailId) {
+                    window.location.href = 'obra.html?id=' + encodeURIComponent(detailId);
+                } else {
+                    openModal(product);
+                }
             };
         }
 

@@ -55,6 +55,8 @@
     loadCategories();
     loadArtworks();
     loadStats();
+    loadNewsletterCount();
+    initNewsletter();
 
     // ── Event listeners ──────────────────────────
     var searchTimer;
@@ -109,6 +111,32 @@
         });
     }
 
+    if (imagePreview) {
+        imagePreview.addEventListener('click', function (e) {
+            var deleteBtn = e.target.closest('[data-delete-image]');
+            if (!deleteBtn) return;
+            var imageId = deleteBtn.getAttribute('data-delete-image');
+            if (!imageId || !confirm('¿Eliminar esta imagen?')) return;
+
+            deleteBtn.disabled = true;
+            deleteBtn.textContent = '…';
+
+            fetch(getApiBaseUrl() + '/images/' + imageId, {
+                method: 'DELETE',
+                headers: { 'Authorization': 'Bearer ' + getAuthToken() }
+            }).then(function (res) {
+                if (!res.ok) throw new Error('No se pudo eliminar');
+                var card = deleteBtn.closest('.image-preview-card');
+                if (card) card.remove();
+                loadArtworks();
+            }).catch(function (err) {
+                alert(err.message || 'Error al eliminar imagen');
+                deleteBtn.disabled = false;
+                deleteBtn.textContent = '×';
+            });
+        });
+    }
+
     // Escape key
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
@@ -144,8 +172,9 @@
             .then(function (res) { return res.json(); })
             .then(function (data) {
                 state.artworks = data.content || [];
-                state.totalPages = data.totalPages || 0;
-                state.totalElements = data.totalElements || 0;
+                var pm = data.page || data;
+                state.totalPages = pm.totalPages || 0;
+                state.totalElements = pm.totalElements || 0;
                 renderTable();
                 renderPagination();
             })
@@ -236,7 +265,7 @@
 
                 var formData = new FormData();
                 formData.append('file', file);
-                formData.append('isPrimary', String(index === 0 && state.editingId === null));
+                formData.append('primary', String(index === 0 && state.editingId === null));
 
                 return fetch(getApiBaseUrl() + '/artworks/' + artworkId + '/images', {
                     method: 'POST',
@@ -418,7 +447,8 @@
                 var all = data.content || [];
                 var soldCount = 0;
                 all.forEach(function (a) { if (a.sold) soldCount++; });
-                var total = data.totalElements || all.length;
+                var pm2 = data.page || data;
+                var total = pm2.totalElements || all.length;
                 document.getElementById('statTotal').textContent = total;
                 document.getElementById('statAvailable').textContent = total - soldCount;
                 document.getElementById('statSold').textContent = soldCount;
@@ -510,10 +540,12 @@
             html += artwork.images.map(function (img, index) {
                 var src = getImageUrl(img);
                 if (!src) return '';
+                var imgId = img.id || '';
 
-                return '<div class="image-preview-card is-existing">' +
+                return '<div class="image-preview-card is-existing" data-image-id="' + imgId + '">' +
                     '<img src="' + escapeHtml(toCloudinaryThumb(src, 240)) + '" alt="Imagen actual ' + (index + 1) + '">' +
                     '<span class="preview-label">' + (img.isPrimary || img.primary ? 'Actual · Principal' : 'Actual') + '</span>' +
+                    (imgId ? '<button type="button" class="preview-delete-btn" data-delete-image="' + imgId + '" title="Eliminar imagen">×</button>' : '') +
                 '</div>';
             }).join('');
         }
@@ -565,5 +597,71 @@
         var div = document.createElement('div');
         div.textContent = str;
         return div.innerHTML;
+    }
+
+    // ── Newsletter ──────────────────────────────
+    function loadNewsletterCount() {
+        DDAAuth.apiFetch('/newsletter/subscribers')
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                var countEl = document.getElementById('newsletterCount');
+                if (countEl) {
+                    var n = data.count || 0;
+                    countEl.textContent = n + ' suscriptor' + (n !== 1 ? 'es' : '');
+                }
+            })
+            .catch(function () { /* silently fail */ });
+    }
+
+    function initNewsletter() {
+        var form = document.getElementById('newsletterForm');
+        if (!form) return;
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            var subjectInput = document.getElementById('nlSubject');
+            var bodyInput = document.getElementById('nlBody');
+            var errorEl = document.getElementById('nlError');
+            var successEl = document.getElementById('nlSuccess');
+            var sendBtn = document.getElementById('nlSendBtn');
+
+            var subject = subjectInput.value.trim();
+            var body = bodyInput.value.trim();
+
+            errorEl.hidden = true;
+            successEl.hidden = true;
+
+            if (!subject || !body) {
+                errorEl.textContent = 'Completá el asunto y el contenido.';
+                errorEl.hidden = false;
+                return;
+            }
+
+            if (!confirm('¿Enviar newsletter a todos los suscriptores?')) return;
+
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'Enviando...';
+
+            DDAAuth.apiFetch('/newsletter/send', {
+                method: 'POST',
+                body: JSON.stringify({ subject: subject, body: body })
+            })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                successEl.textContent = data.message || 'Newsletter enviado.';
+                successEl.hidden = false;
+                subjectInput.value = '';
+                bodyInput.value = '';
+            })
+            .catch(function (err) {
+                errorEl.textContent = err.message || 'Error al enviar el newsletter.';
+                errorEl.hidden = false;
+            })
+            .finally(function () {
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Enviar newsletter';
+            });
+        });
     }
 })();

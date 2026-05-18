@@ -194,6 +194,8 @@
                     <div class="search-results-count" id="shopSearchCount"></div>
                 </div>
 
+
+
                 <div class="hero-actions">
                     <a href="catalog.html" class="hero-catalog-btn" id="heroCatalogBtn"
                         onclick="trackEvent('click', 'Navigation', 'Hero — Ver Catálogo')">
@@ -234,6 +236,19 @@
                 <p data-i18n="shop.service_desc">Contacto directo con el artista por WhatsApp para consultas y
                     presupuestos.</p>
             </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="newsletter-section" id="newsletterSection">
+        <div class="newsletter-inner">
+            <h2 class="newsletter-title">Mantenete al día</h2>
+            <p class="newsletter-desc">Recibí novedades sobre nuevas obras, exposiciones y ediciones limitadas.</p>
+            <form class="newsletter-form" id="newsletterForm">
+                <input type="email" id="newsletterEmail" class="newsletter-input" placeholder="Tu email" required>
+                <button type="submit" class="newsletter-btn" id="newsletterBtn">Suscribirme</button>
+            </form>
+            <p class="newsletter-msg" id="newsletterMsg"></p>
         </div>
     </section>
 
@@ -309,6 +324,7 @@
     <script src="auth.js" defer></script>
     <script src="cart.js" defer></script>
     <script src="shop.js" defer></script>
+    <script src="newsletter.js" defer></script>
 
     <!-- ═══════════════════════════════════════════
          UX: Inquiry Modal Logic + GA4 Event Tracking

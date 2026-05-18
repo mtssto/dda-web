@@ -261,12 +261,20 @@
             }
 
             currentPage += 1;
-            hasMore = page.last === false;
+            var pageMeta = page.page || page;
+            if (typeof pageMeta.last === 'boolean') {
+                hasMore = pageMeta.last === false;
+            } else {
+                var num = typeof pageMeta.number === 'number' ? pageMeta.number : currentPage - 1;
+                var tp = typeof pageMeta.totalPages === 'number' ? pageMeta.totalPages : 1;
+                hasMore = num + 1 < tp;
+            }
 
             updateSearchCount(page);
         } catch (error) {
             if (error.name !== 'AbortError') {
                 console.error('Catalog load error:', error);
+
             }
         } finally {
             isLoading = false;
@@ -457,10 +465,11 @@
                 event.preventDefault();
                 event.stopPropagation();
 
-                if (typeof openModal === 'function') {
+                var detailId = artwork.slug || artwork.id;
+                if (detailId) {
+                    window.location.href = 'obra.html?id=' + encodeURIComponent(detailId);
+                } else if (typeof openModal === 'function') {
                     openModal(artwork);
-                } else {
-                    console.error('openModal is not available. Check that shop.js loads before catalog-api.js.');
                 }
 
                 return;
@@ -472,7 +481,7 @@
                 event.stopPropagation();
 
                 if (typeof openInquiry === 'function') {
-                    openInquiry(artwork.title, artwork.price);
+                    openInquiry(artwork, artwork.price);
                 }
 
                 return;
@@ -716,8 +725,9 @@
 
         if (!countEl || !page) return;
 
-        const total = typeof page.totalElements === 'number'
-            ? page.totalElements
+        var pageMeta = page.page || page;
+        const total = typeof pageMeta.totalElements === 'number'
+            ? pageMeta.totalElements
             : null;
 
         if (total === null) {
