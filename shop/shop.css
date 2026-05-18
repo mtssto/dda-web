@@ -2436,11 +2436,10 @@ footer p {
 /* ── Shop Filter Bar ─────────────────────────────────── */
 .shop-filter-bar {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
     gap: 16px;
-    margin-top: 20px;
+    margin-top: 24px;
     padding: 0 20px;
 }
 
@@ -2452,21 +2451,23 @@ footer p {
 }
 
 .filter-chip {
-    padding: 6px 16px;
+    padding: 7px 18px;
     border: 1px solid #ddd;
     border-radius: 20px;
     background: transparent;
     color: var(--color-subtext);
     font-family: var(--font-body);
-    font-size: 0.82rem;
-    font-weight: 500;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    transition: var(--transition);
     white-space: nowrap;
 }
 
 .filter-chip:hover {
-    border-color: #999;
+    border-color: var(--color-text);
     color: var(--color-text);
 }
 
@@ -2478,29 +2479,30 @@ footer p {
 
 .filter-toggles {
     display: flex;
-    gap: 10px;
+    gap: 12px;
 }
 
 .filter-select {
-    padding: 6px 12px;
+    appearance: none;
+    background: #fff url("data:image/svg+xml,%3Csvg width='9' height='5' viewBox='0 0 9 5' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l4.5 5L9 0z' fill='%23999'/%3E%3C/svg%3E") no-repeat right 12px center;
     border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #fff;
-    color: var(--color-text);
+    border-radius: 6px;
+    padding: 8px 32px 8px 14px;
     font-family: var(--font-body);
-    font-size: 0.82rem;
+    font-size: 0.8rem;
+    color: var(--color-text);
     cursor: pointer;
     outline: none;
     transition: border-color 0.2s;
+    min-width: 150px;
 }
 
 .filter-select:focus {
-    border-color: var(--color-text);
+    border-color: #000;
 }
 
 @media (max-width: 600px) {
     .shop-filter-bar {
-        flex-direction: column;
         gap: 12px;
     }
 
@@ -2511,6 +2513,7 @@ footer p {
 
     .filter-select {
         flex: 1;
+        min-width: 0;
     }
 }
 
@@ -2531,6 +2534,7 @@ footer p {
     font-family: var(--font-heading);
     font-size: 1.6rem;
     font-weight: 400;
+    font-style: italic;
     margin: 0 0 10px;
     letter-spacing: -0.02em;
 }
