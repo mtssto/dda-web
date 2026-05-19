@@ -314,19 +314,12 @@
 
     function setupShare(product, url, imgUrl) {
         var title = product.title + ' — Diego De Aduriz';
+        var text = product.title + ' · ' + (product.dimensions || '') + ' · ' + (product.technique || '');
 
-        // WhatsApp: share via Vercel function so the crawler sees correct OG image server-side.
-        // Replace VERCEL_URL with your actual Vercel project URL (e.g. tu-proyecto.vercel.app)
-        var VERCEL_URL = 'https://VERCEL_URL';
         var shareWA = document.getElementById('shareWhatsApp');
         if (shareWA) {
             shareWA.addEventListener('click', function () {
-                var shareUrl = VERCEL_URL + '/api/share'
-                    + '?id='    + encodeURIComponent(product.id)
-                    + '&img='   + encodeURIComponent(imgUrl)
-                    + '&title=' + encodeURIComponent(product.title)
-                    + '&desc='  + encodeURIComponent((product.dimensions || '') + ' · ' + (product.technique || ''));
-                window.open('https://wa.me/?text=' + encodeURIComponent(title + '\n' + shareUrl), '_blank');
+                window.open('https://wa.me/?text=' + encodeURIComponent(title + '\n' + url), '_blank');
             });
         }
 
@@ -344,13 +337,12 @@
             });
         }
 
-        // Pinterest: supports passing the image directly via the `media` param
         var sharePIN = document.getElementById('sharePinterest');
         if (sharePIN) {
             sharePIN.addEventListener('click', function () {
                 var pinUrl = 'https://pinterest.com/pin/create/button/'
-                    + '?url=' + encodeURIComponent(url)
-                    + '&media=' + encodeURIComponent(imgUrl)
+                    + '?url='         + encodeURIComponent(url)
+                    + '&media='       + encodeURIComponent(imgUrl)
                     + '&description=' + encodeURIComponent(title);
                 window.open(pinUrl, '_blank', 'width=750,height=550');
             });
