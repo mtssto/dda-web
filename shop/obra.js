@@ -314,12 +314,14 @@
 
     function setupShare(product, url, imgUrl) {
         var title = product.title + ' — Diego De Aduriz';
-        var text = product.title + ' · ' + (product.dimensions || '') + ' · ' + (product.technique || '');
 
+        // WhatsApp: include image URL in the message so the artwork is visible
+        // (OG tag preview requires server-side rendering; this is the static-site workaround)
         var shareWA = document.getElementById('shareWhatsApp');
         if (shareWA) {
             shareWA.addEventListener('click', function () {
-                window.open('https://wa.me/?text=' + encodeURIComponent(title + '\n' + url), '_blank');
+                var waText = title + '\n' + url + '\n' + imgUrl;
+                window.open('https://wa.me/?text=' + encodeURIComponent(waText), '_blank');
             });
         }
 
@@ -334,6 +336,18 @@
         if (shareFB) {
             shareFB.addEventListener('click', function () {
                 window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url), '_blank');
+            });
+        }
+
+        // Pinterest: supports passing the image directly via the `media` param
+        var sharePIN = document.getElementById('sharePinterest');
+        if (sharePIN) {
+            sharePIN.addEventListener('click', function () {
+                var pinUrl = 'https://pinterest.com/pin/create/button/'
+                    + '?url=' + encodeURIComponent(url)
+                    + '&media=' + encodeURIComponent(imgUrl)
+                    + '&description=' + encodeURIComponent(title);
+                window.open(pinUrl, '_blank', 'width=750,height=550');
             });
         }
 
