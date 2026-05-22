@@ -45,8 +45,9 @@ public class SecurityConfig {
                         // Public API reads
                         .requestMatchers(HttpMethod.GET, "/api/artworks/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/journal/posts").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/journal/posts/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/journal/posts/*/comments").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/journal/posts/*/comments").permitAll()
 
                         // Public static files, if served by Spring/Railway
                         .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()

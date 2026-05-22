@@ -18,13 +18,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../shop/platform-header.css">
+    <link rel="stylesheet" href="../global-close.css">
     <link rel="stylesheet" href="journal.css">
 </head>
 
-<body class="journal-page platform-dark" data-platform-header data-close-href="../index.html" data-platform-theme="dark">
+<body class="journal-page">
 
-    <div data-platform-header></div>
+    <div class="close-container">
+        <a href="../index.html" class="close-btn">CLOSE</a>
+    </div>
 
     <main>
         <header class="journal-hero">
@@ -51,16 +53,14 @@
         </section>
     </main>
 
-    <footer style="text-align:center;padding:40px 20px;font-size:0.7rem;color:var(--platform-muted);letter-spacing:0.1em;">
+    <footer class="journal-footer">
         &copy; 2026 Diego De Aduriz. <span data-i18n="footer.rights">Todos los derechos reservados.</span>
     </footer>
 
     <script src="../i18n/platform-translations.js"></script>
     <script src="../i18n.js" defer></script>
     <script src="../shop/config.js"></script>
-    <script src="../shop/auth.js" defer></script>
     <script src="../shop/newsletter.js" defer></script>
-    <script src="../shop/platform-header.js" defer></script>
     <script src="journal-api.js" defer></script>
     <script src="journal-app.js" defer></script>
     <script src="index.js" defer></script>

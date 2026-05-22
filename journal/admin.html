@@ -10,41 +10,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../shop/platform-header.css">
+    <link rel="stylesheet" href="../global-close.css">
     <link rel="stylesheet" href="journal.css">
-    <style>
-        .admin-panel { max-width: 1100px; margin: 0 auto; padding: 24px 20px 80px; }
-        .admin-tabs { display: flex; gap: 8px; margin-bottom: 32px; flex-wrap: wrap; }
-        .admin-tab { background: transparent; border: 1px solid var(--platform-border); color: var(--platform-muted); padding: 10px 18px; font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; }
-        .admin-tab.is-active { background: var(--platform-text); color: var(--platform-bg); }
-        .admin-card { border: 1px solid var(--platform-border); padding: 24px; margin-bottom: 20px; background: var(--platform-surface); }
-        .admin-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; margin-bottom: 24px; }
-        .admin-stat { text-align: center; padding: 20px; border: 1px solid var(--platform-border); }
-        .admin-stat strong { display: block; font-size: 1.8rem; font-family: var(--platform-font-display); font-style: italic; }
-        .admin-stat span { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--platform-muted); }
-        .admin-form label { display: block; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--platform-muted); margin: 12px 0 6px; }
-        .admin-form input, .admin-form textarea, .admin-form select { width: 100%; background: transparent; border: 1px solid var(--platform-border); color: var(--platform-text); padding: 10px; font-family: inherit; }
-        .admin-form textarea { min-height: 120px; }
-        .admin-btn { background: var(--platform-accent); color: var(--platform-bg); border: none; padding: 12px 24px; font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; margin-top: 16px; margin-right: 8px; }
-        .admin-btn--ghost { background: transparent; color: var(--platform-text); border: 1px solid var(--platform-border); }
-        .admin-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        .admin-table th, .admin-table td { text-align: left; padding: 12px; border-bottom: 1px solid var(--platform-border); }
-        .admin-preview { border: 1px dashed var(--platform-border); padding: 24px; margin-top: 16px; }
-        [hidden] { display: none !important; }
-    </style>
 </head>
 
-<body class="platform-dark" data-platform-auto="false">
+<body class="journal-page journal-admin-page">
 
-    <header class="platform-header" style="position:relative;">
-        <div class="platform-header__main">
-            <span class="platform-header__brand">DDA · Cuaderno</span>
-            <div class="platform-header__actions">
-                <a href="../shop/admin.html" class="auth-header-link">Obras Admin</a>
-                <a href="#" class="auth-header-link" id="adminLogout">Salir</a>
-            </div>
+    <div class="close-container">
+        <a href="../shop/admin.html" class="close-btn">← ADMIN</a>
+        <div class="auth-header-btns">
+            <a href="#" class="auth-header-link" id="adminLogout">SALIR</a>
         </div>
-    </header>
+    </div>
 
     <main class="admin-panel">
         <div class="admin-tabs" role="tablist">
@@ -61,7 +38,7 @@
             </div>
 
             <div class="admin-card admin-form">
-                <h3 style="font-family:var(--platform-font-display);font-style:italic;font-weight:400;margin-bottom:16px;">Nueva entrada</h3>
+                <h3 class="admin-card__title">Nueva entrada</h3>
                 <label>Título (ES)</label>
                 <input type="text" id="postTitleEs">
                 <label>Título (EN)</label>
@@ -107,7 +84,7 @@
                 <div class="admin-stat"><strong id="statClicks">-</strong><span data-i18n="admin.clicks">Clics</span></div>
             </div>
             <div class="admin-card">
-                <p style="color:var(--platform-muted);margin-bottom:16px;" data-i18n="admin.analytics">Analíticas de campañas y envíos automáticos al publicar entradas.</p>
+                <p class="admin-card__desc" data-i18n="admin.analytics">Analíticas de campañas y envíos automáticos al publicar entradas.</p>
                 <table class="admin-table" id="campaignsTable">
                     <thead><tr><th>Campaña</th><th>Enviados</th><th>Aperturas</th><th>Clics</th><th>Fecha</th></tr></thead>
                     <tbody></tbody>
