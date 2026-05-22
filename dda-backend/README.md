@@ -25,6 +25,33 @@ The API will be available at **http://localhost:8081**
 
 The H2 database console is at **http://localhost:8081/h2-console** (JDBC URL: `jdbc:h2:mem:ddadb`, user: `sa`, no password).
 
+### Dev admin account (auto-created on every startup)
+
+The `dev` profile seeds an admin user because the in-memory H2 database is wiped on each restart:
+
+| Field | Default |
+|-------|---------|
+| Username | `admin` |
+| Password | `admin123` |
+| Email | `admin@localhost` |
+
+Log in at `/shop/user-login.html` or register is not required for this account.
+
+Override in `application.yml` under `app.admin` or with env vars: `DDA_ADMIN_USERNAME`, `DDA_ADMIN_PASSWORD`, `DDA_ADMIN_EMAIL`.
+
+### Production bootstrap admin (optional)
+
+On Railway (or any `prod` deploy), set these **only when** you need to create or recover an admin on an empty database:
+
+```bash
+DDA_ADMIN_SEED_ENABLED=true
+DDA_ADMIN_USERNAME=admin
+DDA_ADMIN_PASSWORD=your_secure_password
+DDA_ADMIN_EMAIL=you@diegodeaduriz.art
+```
+
+Seeding runs only if no `ADMIN` user exists yet, or to promote the configured username to `ADMIN`. Remove `DDA_ADMIN_SEED_ENABLED` after the first successful deploy.
+
 ---
 
 ## Quick Start (Production with MySQL)
