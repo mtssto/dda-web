@@ -186,7 +186,7 @@ class DevSiteHandler(SimpleHTTPRequestHandler):
     def do_GET(self) -> None:
         if self.path == "/shop/config.js" or self.path.startswith("/shop/config.js?"):
             self._send_local_config()
-        elif self.path.startswith("/api"):
+        elif self.path.startswith("/api") or self.path.startswith("/uploads"):
             self._proxy_to_backend()
         else:
             super().do_GET()

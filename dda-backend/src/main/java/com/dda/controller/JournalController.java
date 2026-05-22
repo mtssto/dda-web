@@ -2,17 +2,22 @@ package com.dda.controller;
 
 import com.dda.dto.JournalPostDTO;
 import com.dda.dto.JournalPostRequest;
+import com.dda.dto.MediaUploadResponse;
 import com.dda.entity.JournalComment;
+import com.dda.service.ImageStorageService;
 import com.dda.service.JournalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +27,7 @@ import java.util.Map;
 public class JournalController {
 
     private final JournalService journalService;
+    private final ImageStorageService imageStorageService;
 
     @GetMapping("/posts")
     public Page<JournalPostDTO> listPublished(
@@ -49,6 +55,14 @@ public class JournalController {
         String content = body.get("content");
         String username = user != null ? user.getUsername() : "Guest";
         return journalService.addComment(id, content, username);
+    }
+
+    @PostMapping("/admin/upload")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<MediaUploadResponse> uploadImage(@RequestParam("file") MultipartFile file)
+            throws IOException {
+        String url = imageStorageService.uploadJournalImage(file);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new MediaUploadResponse(url));
     }
 
     @GetMapping("/admin/posts")

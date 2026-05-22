@@ -599,8 +599,72 @@
     box-sizing: border-box;
 }
 
-.journal-admin-page .admin-form textarea {
+.journal-admin-page .admin-form textarea,
+.journal-admin-page .admin-textarea {
     min-height: 120px;
+}
+
+.journal-admin-page .admin-form__intro {
+    color: var(--journal-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0 0 24px;
+}
+
+.journal-admin-page .field-hint {
+    font-size: 0.75rem;
+    color: var(--journal-muted);
+    margin: -8px 0 16px;
+    line-height: 1.5;
+}
+
+.journal-admin-page .field-hint code {
+    font-size: 0.7rem;
+    background: var(--journal-surface);
+    padding: 2px 6px;
+}
+
+.journal-admin-page .cover-upload,
+.journal-admin-page .inline-image-upload {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.journal-admin-page .cover-preview {
+    margin-bottom: 20px;
+}
+
+.journal-admin-page .cover-preview img {
+    display: block;
+    max-width: 280px;
+    max-height: 200px;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 1px solid var(--journal-border);
+}
+
+.journal-admin-page .upload-status {
+    font-size: 0.75rem;
+    color: var(--journal-muted);
+}
+
+.journal-admin-page .upload-status.is-error {
+    color: #8b2e2e;
+}
+
+.journal-admin-page .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    margin-top: 8px;
+}
+
+.journal-admin-page .checkbox-row input {
+    width: auto;
 }
 
 .journal-admin-page .admin-btn {

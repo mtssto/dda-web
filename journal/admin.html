@@ -39,29 +39,56 @@
 
             <div class="admin-card admin-form">
                 <h3 class="admin-card__title" id="postFormTitle">Nueva entrada</h3>
-                <label>Título (ES)</label>
-                <input type="text" id="postTitleEs">
-                <label>Título (EN)</label>
-                <input type="text" id="postTitleEn">
-                <label>Slug</label>
-                <input type="text" id="postSlug">
-                <label>Extracto (ES)</label>
-                <textarea id="postExcerptEs"></textarea>
-                <label>Contenido HTML (ES)</label>
-                <textarea id="postContentEs" style="min-height:200px;"></textarea>
-                <label>Etiquetas (coma)</label>
-                <input type="text" id="postTags" placeholder="proceso, taller">
-                <label>Imagen portada URL</label>
-                <input type="text" id="postCover">
-                <label>Estado</label>
+                <p class="admin-form__intro">Escribí como en un documento. Las imágenes se suben con un clic. No hace falta saber código.</p>
+
+                <label for="postTitleEs">Título (español) *</label>
+                <input type="text" id="postTitleEs" placeholder="Ej: Notas desde el taller" autocomplete="off">
+
+                <label for="postTitleEn">Título (inglés, opcional)</label>
+                <input type="text" id="postTitleEn" placeholder="Ej: Notes from the studio">
+
+                <label for="postSlug">Enlace de la entrada</label>
+                <input type="text" id="postSlug" placeholder="notas-desde-el-taller">
+                <p class="field-hint">Se arma solo desde el título. Solo letras, números y guiones. Aparece en la URL: <code>/journal/post.html?slug=…</code></p>
+
+                <label for="postExcerptEs">Resumen corto (opcional)</label>
+                <textarea id="postExcerptEs" rows="3" placeholder="Una o dos frases para la lista de entradas…"></textarea>
+
+                <label for="postCoverFile">Imagen principal</label>
+                <div class="cover-upload">
+                    <input type="file" id="postCoverFile" accept="image/jpeg,image/png,image/webp,image/gif">
+                    <button type="button" class="admin-btn admin-btn--ghost" id="btnUploadCover">Subir imagen</button>
+                    <span class="upload-status" id="coverUploadStatus" hidden></span>
+                </div>
+                <div class="cover-preview" id="coverPreview" hidden>
+                    <img id="coverPreviewImg" alt="">
+                    <button type="button" class="admin-btn admin-btn--ghost" id="btnRemoveCover">Quitar imagen</button>
+                </div>
+                <input type="hidden" id="postCover">
+
+                <label for="postContentEs">Texto de la entrada *</label>
+                <p class="field-hint">Escribí con párrafos (Enter dos veces entre párrafos). Podés pegar texto normal; no hace falta HTML.</p>
+                <textarea id="postContentEs" class="admin-textarea" rows="12" placeholder="Contá tu proceso, la muestra, el taller…"></textarea>
+                <div class="inline-image-upload">
+                    <input type="file" id="postInlineImage" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+                    <button type="button" class="admin-btn admin-btn--ghost" id="btnInsertImage">+ Insertar imagen en el texto</button>
+                    <span class="upload-status" id="inlineUploadStatus" hidden></span>
+                </div>
+
+                <label for="postTags">Etiquetas (opcional)</label>
+                <input type="text" id="postTags" placeholder="proceso, taller, exposición">
+
+                <label for="postStatus">Estado</label>
                 <select id="postStatus">
-                    <option value="DRAFT">Borrador</option>
-                    <option value="SCHEDULED">Programado</option>
-                    <option value="PUBLISHED">Publicado</option>
+                    <option value="DRAFT">Borrador — solo vos la ves</option>
+                    <option value="SCHEDULED">Programada</option>
+                    <option value="PUBLISHED">Publicada — visible en el cuaderno</option>
                 </select>
-                <label>Publicar / programar</label>
+
+                <label for="postSchedule">Fecha de publicación (si programás)</label>
                 <input type="datetime-local" id="postSchedule">
-                <label><input type="checkbox" id="postSendNewsletter"> Enviar boletín al publicar</label>
+
+                <label class="checkbox-row"><input type="checkbox" id="postSendNewsletter"> Enviar boletín por email al publicar</label>
                 <div class="admin-form__actions">
                     <button type="button" class="admin-btn" id="btnPreview" data-i18n="admin.draft_preview">Vista previa</button>
                     <button type="button" class="admin-btn" id="btnSavePost">Guardar</button>

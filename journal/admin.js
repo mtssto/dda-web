@@ -10,6 +10,152 @@
     var LOCAL_POSTS = 'dda_journal_admin_posts';
     var LOCAL_CAMPAIGNS = 'dda_journal_campaigns';
     var editingId = null;
+    var slugEditedManually = false;
+
+    function slugify(text) {
+        return String(text || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .slice(0, 80);
+    }
+
+    function htmlToPlain(html) {
+        if (!html) return '';
+        var div = document.createElement('div');
+        div.innerHTML = html;
+        return (div.textContent || div.innerText || '').trim();
+    }
+
+    function formatContent(text) {
+        var raw = String(text || '').trim();
+        if (!raw) return '';
+        if (/<[a-z][\s\S]*>/i.test(raw)) return raw;
+        return raw.split(/\n\s*\n/).map(function (block) {
+            var line = escapeHtml(block.trim()).replace(/\n/g, '<br>');
+            return line ? '<p>' + line + '</p>' : '';
+        }).filter(Boolean).join('');
+    }
+
+    function resolveMediaUrl(url) {
+        if (!url) return '';
+        if (url.indexOf('http://') === 0 || url.indexOf('https://') === 0) return url;
+        if (url.indexOf('/uploads/') === 0) return url;
+        return url;
+    }
+
+    function showCoverPreview(url) {
+        var wrap = document.getElementById('coverPreview');
+        var img = document.getElementById('coverPreviewImg');
+        if (!url) {
+            wrap.hidden = true;
+            return;
+        }
+        img.src = resolveMediaUrl(url);
+        wrap.hidden = false;
+    }
+
+    function setUploadStatus(el, message, isError) {
+        if (!el) return;
+        el.hidden = !message;
+        el.textContent = message || '';
+        el.classList.toggle('is-error', !!isError);
+    }
+
+    function uploadImageFile(file) {
+        var formData = new FormData();
+        formData.append('file', file);
+        var token = DDAAuth.getToken && DDAAuth.getToken();
+        var headers = {};
+        if (token) headers.Authorization = 'Bearer ' + token;
+
+        return fetch(API + '/journal/admin/upload', {
+            method: 'POST',
+            headers: headers,
+            body: formData
+        }).then(function (res) {
+            if (res.status === 401 || res.status === 403) {
+                window.location.href = '../shop/user-login.html';
+                throw new Error('Sesión expirada');
+            }
+            if (!res.ok) {
+                return res.text().then(function (t) {
+                    throw new Error(t || 'No se pudo subir la imagen');
+                });
+            }
+            return res.json();
+        });
+    }
+
+    function insertAtCursor(textarea, snippet) {
+        var start = textarea.selectionStart;
+        var end = textarea.selectionEnd;
+        var before = textarea.value.substring(0, start);
+        var after = textarea.value.substring(end);
+        textarea.value = before + snippet + after;
+        textarea.selectionStart = textarea.selectionEnd = start + snippet.length;
+        textarea.focus();
+    }
+
+    document.getElementById('postTitleEs').addEventListener('input', function () {
+        if (!slugEditedManually) {
+            document.getElementById('postSlug').value = slugify(this.value);
+        }
+    });
+
+    document.getElementById('postSlug').addEventListener('input', function () {
+        slugEditedManually = this.value.trim().length > 0;
+    });
+
+    document.getElementById('btnUploadCover').addEventListener('click', function () {
+        var input = document.getElementById('postCoverFile');
+        var status = document.getElementById('coverUploadStatus');
+        if (!input.files || !input.files[0]) {
+            setUploadStatus(status, 'Elegí una imagen primero.', true);
+            return;
+        }
+        setUploadStatus(status, 'Subiendo…', false);
+        uploadImageFile(input.files[0])
+            .then(function (data) {
+                document.getElementById('postCover').value = data.url;
+                showCoverPreview(data.url);
+                setUploadStatus(status, 'Imagen lista.', false);
+            })
+            .catch(function (err) {
+                setUploadStatus(status, err.message || 'Error al subir.', true);
+            });
+    });
+
+    document.getElementById('btnRemoveCover').addEventListener('click', function () {
+        document.getElementById('postCover').value = '';
+        document.getElementById('postCoverFile').value = '';
+        showCoverPreview('');
+    });
+
+    document.getElementById('btnInsertImage').addEventListener('click', function () {
+        document.getElementById('postInlineImage').click();
+    });
+
+    document.getElementById('postInlineImage').addEventListener('change', function () {
+        var file = this.files && this.files[0];
+        var status = document.getElementById('inlineUploadStatus');
+        if (!file) return;
+        setUploadStatus(status, 'Subiendo…', false);
+        uploadImageFile(file)
+            .then(function (data) {
+                var url = resolveMediaUrl(data.url);
+                var alt = document.getElementById('postTitleEs').value.trim() || 'Imagen';
+                var block = '\n\n<figure class="journal-figure"><img src="' + url + '" alt="' + escapeHtml(alt) + '" loading="lazy"><figcaption>' + escapeHtml(alt) + '</figcaption></figure>\n\n';
+                insertAtCursor(document.getElementById('postContentEs'), block);
+                setUploadStatus(status, 'Imagen insertada en el texto.', false);
+                this.value = '';
+            }.bind(this))
+            .catch(function (err) {
+                setUploadStatus(status, err.message || 'Error al subir.', true);
+            });
+    });
 
     document.getElementById('adminLogout').addEventListener('click', function (e) {
         e.preventDefault();
@@ -104,13 +250,15 @@
         document.getElementById('btnCancelEdit').hidden = false;
         document.getElementById('btnDeletePost').hidden = false;
 
+        slugEditedManually = true;
         document.getElementById('postSlug').value = post.slug || '';
         document.getElementById('postTitleEs').value = (post.title && post.title.es) || post.title || '';
         document.getElementById('postTitleEn').value = (post.title && post.title.en) || '';
-        document.getElementById('postExcerptEs').value = (post.excerpt && post.excerpt.es) || '';
-        document.getElementById('postContentEs').value = (post.content && post.content.es) || '';
+        document.getElementById('postExcerptEs').value = htmlToPlain((post.excerpt && post.excerpt.es) || '');
+        document.getElementById('postContentEs').value = htmlToPlain((post.content && post.content.es) || '');
         document.getElementById('postTags').value = (post.tags || []).join(', ');
         document.getElementById('postCover').value = post.coverImage || '';
+        showCoverPreview(post.coverImage || '');
         document.getElementById('postStatus').value = post.status || 'DRAFT';
         document.getElementById('postSendNewsletter').checked = !!post.sendNewsletter;
 
@@ -134,6 +282,7 @@
         document.getElementById('btnSavePost').textContent = 'Guardar';
         document.getElementById('btnCancelEdit').hidden = true;
         document.getElementById('btnDeletePost').hidden = true;
+        slugEditedManually = false;
         document.getElementById('postSlug').value = '';
         document.getElementById('postTitleEs').value = '';
         document.getElementById('postTitleEn').value = '';
@@ -141,6 +290,10 @@
         document.getElementById('postContentEs').value = '';
         document.getElementById('postTags').value = '';
         document.getElementById('postCover').value = '';
+        document.getElementById('postCoverFile').value = '';
+        showCoverPreview('');
+        setUploadStatus(document.getElementById('coverUploadStatus'), '', false);
+        setUploadStatus(document.getElementById('inlineUploadStatus'), '', false);
         document.getElementById('postStatus').value = 'DRAFT';
         document.getElementById('postSchedule').value = '';
         document.getElementById('postSendNewsletter').checked = false;
@@ -148,14 +301,19 @@
     }
 
     function buildPayload() {
+        var titleEs = document.getElementById('postTitleEs').value.trim();
+        var slug = document.getElementById('postSlug').value.trim() || slugify(titleEs);
+        var excerptRaw = document.getElementById('postExcerptEs').value.trim();
+        var contentRaw = document.getElementById('postContentEs').value.trim();
+
         return {
-            slug: document.getElementById('postSlug').value.trim(),
+            slug: slug,
             title: {
-                es: document.getElementById('postTitleEs').value,
-                en: document.getElementById('postTitleEn').value
+                es: titleEs,
+                en: document.getElementById('postTitleEn').value.trim()
             },
-            excerpt: { es: document.getElementById('postExcerptEs').value },
-            content: { es: document.getElementById('postContentEs').value },
+            excerpt: { es: excerptRaw ? formatContent(excerptRaw) : '' },
+            content: { es: formatContent(contentRaw) },
             tags: document.getElementById('postTags').value.split(',').map(function (t) {
                 return t.trim();
             }).filter(Boolean),
@@ -267,7 +425,7 @@
     document.getElementById('btnPreview').addEventListener('click', function () {
         var preview = document.getElementById('postPreview');
         preview.hidden = false;
-        preview.innerHTML = document.getElementById('postContentEs').value || '<p>(vacío)</p>';
+        preview.innerHTML = formatContent(document.getElementById('postContentEs').value) || '<p>(vacío)</p>';
     });
 
     document.getElementById('btnCancelEdit').addEventListener('click', resetPostForm);
@@ -282,8 +440,12 @@
 
     document.getElementById('btnSavePost').addEventListener('click', function () {
         var payload = buildPayload();
-        if (!payload.slug || !payload.title.es) {
-            alert('Completá al menos título (ES) y slug.');
+        if (!payload.title.es) {
+            alert('Escribí al menos el título en español.');
+            return;
+        }
+        if (!payload.content.es) {
+            alert('Escribí el texto de la entrada.');
             return;
         }
 
