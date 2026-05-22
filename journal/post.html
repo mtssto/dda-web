@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diego De Aduriz | Cuaderno</title>
+    <meta name="description" content="Entrada del cuaderno del artista Diego De Aduriz.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://diegodeaduriz.art/journal/post.html">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shop/platform-header.css">
+    <link rel="stylesheet" href="journal.css">
+</head>
+
+<body class="journal-page platform-dark" data-platform-header data-close-href="index.html" data-platform-theme="dark">
+
+    <div data-platform-header></div>
+
+    <article class="journal-article" id="journalArticle">
+        <header class="journal-article__header">
+            <p class="journal-card__meta" id="postMeta"></p>
+            <h1 class="journal-hero__title" id="postTitle"></h1>
+            <div class="journal-card__tags" id="postTags"></div>
+        </header>
+        <img class="journal-article__cover" id="postCover" alt="" loading="eager" decoding="async">
+        <div class="journal-article__content" id="postContent"></div>
+
+        <div class="journal-actions">
+            <button type="button" class="journal-action-btn" id="btnLike" aria-pressed="false">
+                <span aria-hidden="true">♥</span> <span data-i18n="journal.like">Me gusta</span> <span id="likeCount"></span>
+            </button>
+            <button type="button" class="journal-action-btn" id="btnSave" aria-pressed="false">
+                <span aria-hidden="true">◇</span> <span id="saveLabel" data-i18n="journal.save">Guardar</span>
+            </button>
+        </div>
+    </article>
+
+    <section class="journal-comments" aria-labelledby="comments-heading">
+        <h2 id="comments-heading" data-i18n="journal.comments">Comentarios</h2>
+        <form class="journal-comment-form" id="commentForm">
+            <textarea id="commentText" rows="4" data-i18n-placeholder="journal.comment_placeholder" placeholder="Compartí tu reflexión…" required></textarea>
+            <p class="journal-card__meta" id="commentHint" data-i18n="journal.comment_pending" hidden></p>
+            <button type="submit" data-i18n="journal.comment_submit">Publicar comentario</button>
+        </form>
+        <ul class="journal-comment-list" id="commentList"></ul>
+    </section>
+
+    <footer style="text-align:center;padding:40px 20px;font-size:0.7rem;color:var(--platform-muted);">
+        <a href="index.html" style="color:var(--platform-accent);text-decoration:none;letter-spacing:0.12em;text-transform:uppercase;font-size:0.65rem;" data-i18n="journal.all">Todas las entradas</a>
+    </footer>
+
+    <script src="../i18n/platform-translations.js"></script>
+    <script src="../i18n.js" defer></script>
+    <script src="../shop/config.js"></script>
+    <script src="../shop/auth.js" defer></script>
+    <script src="../shop/platform-header.js" defer></script>
+    <script src="journal-api.js" defer></script>
+    <script src="journal-app.js" defer></script>
+    <script src="post.js" defer></script>
+</body>
+
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Diego De Aduriz | Cuaderno Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shop/platform-header.css">
+    <link rel="stylesheet" href="journal.css">
+    <style>
+        .admin-panel { max-width: 1100px; margin: 0 auto; padding: 24px 20px 80px; }
+        .admin-tabs { display: flex; gap: 8px; margin-bottom: 32px; flex-wrap: wrap; }
+        .admin-tab { background: transparent; border: 1px solid var(--platform-border); color: var(--platform-muted); padding: 10px 18px; font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; }
+        .admin-tab.is-active { background: var(--platform-text); color: var(--platform-bg); }
+        .admin-card { border: 1px solid var(--platform-border); padding: 24px; margin-bottom: 20px; background: var(--platform-surface); }
+        .admin-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .admin-stat { text-align: center; padding: 20px; border: 1px solid var(--platform-border); }
+        .admin-stat strong { display: block; font-size: 1.8rem; font-family: var(--platform-font-display); font-style: italic; }
+        .admin-stat span { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--platform-muted); }
+        .admin-form label { display: block; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--platform-muted); margin: 12px 0 6px; }
+        .admin-form input, .admin-form textarea, .admin-form select { width: 100%; background: transparent; border: 1px solid var(--platform-border); color: var(--platform-text); padding: 10px; font-family: inherit; }
+        .admin-form textarea { min-height: 120px; }
+        .admin-btn { background: var(--platform-accent); color: var(--platform-bg); border: none; padding: 12px 24px; font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; margin-top: 16px; margin-right: 8px; }
+        .admin-btn--ghost { background: transparent; color: var(--platform-text); border: 1px solid var(--platform-border); }
+        .admin-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .admin-table th, .admin-table td { text-align: left; padding: 12px; border-bottom: 1px solid var(--platform-border); }
+        .admin-preview { border: 1px dashed var(--platform-border); padding: 24px; margin-top: 16px; }
+        [hidden] { display: none !important; }
+    </style>
+</head>
+
+<body class="platform-dark" data-platform-auto="false">
+
+    <header class="platform-header" style="position:relative;">
+        <div class="platform-header__main">
+            <span class="platform-header__brand">DDA · Cuaderno</span>
+            <div class="platform-header__actions">
+                <a href="../shop/admin.html" class="auth-header-link">Obras Admin</a>
+                <a href="#" class="auth-header-link" id="adminLogout">Salir</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="admin-panel">
+        <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab is-active" data-panel="posts" data-i18n="admin.journal">Cuaderno</button>
+            <button type="button" class="admin-tab" data-panel="newsletter" data-i18n="admin.newsletter">Boletín</button>
+            <button type="button" class="admin-tab" data-panel="comments" data-i18n="journal.comments">Comentarios</button>
+        </div>
+
+        <section id="panelPosts">
+            <div class="admin-stats" id="journalStats">
+                <div class="admin-stat"><strong id="statPublished">-</strong><span data-i18n="admin.publish">Publicadas</span></div>
+                <div class="admin-stat"><strong id="statDraft">-</strong><span>Borradores</span></div>
+                <div class="admin-stat"><strong id="statScheduled">-</strong><span data-i18n="admin.schedule">Programadas</span></div>
+            </div>
+
+            <div class="admin-card admin-form">
+                <h3 style="font-family:var(--platform-font-display);font-style:italic;font-weight:400;margin-bottom:16px;">Nueva entrada</h3>
+                <label>Título (ES)</label>
+                <input type="text" id="postTitleEs">
+                <label>Título (EN)</label>
+                <input type="text" id="postTitleEn">
+                <label>Slug</label>
+                <input type="text" id="postSlug">
+                <label>Extracto (ES)</label>
+                <textarea id="postExcerptEs"></textarea>
+                <label>Contenido HTML (ES)</label>
+                <textarea id="postContentEs" style="min-height:200px;"></textarea>
+                <label>Etiquetas (coma)</label>
+                <input type="text" id="postTags" placeholder="proceso, taller">
+                <label>Imagen portada URL</label>
+                <input type="text" id="postCover">
+                <label>Estado</label>
+                <select id="postStatus">
+                    <option value="DRAFT">Borrador</option>
+                    <option value="SCHEDULED">Programado</option>
+                    <option value="PUBLISHED">Publicado</option>
+                </select>
+                <label>Publicar / programar</label>
+                <input type="datetime-local" id="postSchedule">
+                <label><input type="checkbox" id="postSendNewsletter"> Enviar boletín al publicar</label>
+                <div>
+                    <button type="button" class="admin-btn" id="btnPreview" data-i18n="admin.draft_preview">Vista previa</button>
+                    <button type="button" class="admin-btn" id="btnSavePost" data-i18n="admin.publish">Guardar</button>
+                </div>
+                <div class="admin-preview" id="postPreview" hidden></div>
+            </div>
+
+            <div class="admin-card">
+                <table class="admin-table" id="postsTable">
+                    <thead><tr><th>Título</th><th>Estado</th><th>Fecha</th><th></th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="panelNewsletter" hidden>
+            <div class="admin-stats">
+                <div class="admin-stat"><strong id="statSubscribers">-</strong><span data-i18n="admin.subscribers">Suscriptores</span></div>
+                <div class="admin-stat"><strong id="statOpens">-</strong><span data-i18n="admin.opens">Aperturas</span></div>
+                <div class="admin-stat"><strong id="statClicks">-</strong><span data-i18n="admin.clicks">Clics</span></div>
+            </div>
+            <div class="admin-card">
+                <p style="color:var(--platform-muted);margin-bottom:16px;" data-i18n="admin.analytics">Analíticas de campañas y envíos automáticos al publicar entradas.</p>
+                <table class="admin-table" id="campaignsTable">
+                    <thead><tr><th>Campaña</th><th>Enviados</th><th>Aperturas</th><th>Clics</th><th>Fecha</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="panelComments" hidden>
+            <div class="admin-card">
+                <table class="admin-table" id="commentsModTable">
+                    <thead><tr><th>Autor</th><th>Comentario</th><th>Estado</th><th></th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="../i18n/platform-translations.js"></script>
+    <script src="../i18n.js"></script>
+    <script src="../shop/config.js"></script>
+    <script src="../shop/auth.js"></script>
+    <script src="journal-api.js"></script>
+    <script src="admin.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Diego De Aduriz | Perfil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shop/platform-header.css">
+    <link rel="stylesheet" href="journal.css">
+</head>
+
+<body class="platform-dark" data-platform-header data-close-href="../shop/shop.html" data-platform-theme="dark">
+
+    <div data-platform-header></div>
+
+    <main class="profile-page">
+        <header class="profile-header">
+            <div class="profile-avatar" id="profileAvatar" aria-hidden="true"></div>
+            <div>
+                <h1 class="profile-name" id="profileName" data-i18n="profile.title">Perfil</h1>
+                <p class="profile-meta" id="profileMeta"></p>
+            </div>
+        </header>
+
+        <section>
+            <h2 style="font-family:var(--platform-font-display);font-style:italic;font-weight:400;margin-bottom:20px;" data-i18n="profile.saved_posts">Entradas guardadas</h2>
+            <div class="journal-grid" id="savedPostsGrid"></div>
+            <p class="journal-empty" id="savedEmpty" hidden>No hay entradas guardadas.</p>
+        </section>
+    </main>
+
+    <script src="../i18n/platform-translations.js"></script>
+    <script src="../i18n.js" defer></script>
+    <script src="../shop/config.js"></script>
+    <script src="../shop/auth.js" defer></script>
+    <script src="../shop/platform-header.js" defer></script>
+    <script src="journal-api.js" defer></script>
+    <script src="journal-app.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof DDAAuth === 'undefined' || !DDAAuth.isAuthenticated()) {
+                window.location.href = '../shop/user-login.html';
+                return;
+            }
+            var user = DDAAuth.getUser();
+            var nameEl = document.getElementById('profileName');
+            var metaEl = document.getElementById('profileMeta');
+            var avatar = document.getElementById('profileAvatar');
+
+            if (nameEl) nameEl.textContent = user.username;
+            if (avatar) avatar.textContent = user.username.charAt(0).toUpperCase();
+            if (metaEl) {
+                metaEl.textContent = JournalApp.t('profile.member_since') + ' · ' + new Date().getFullYear();
+            }
+
+            var savedIds = DDAJournal.getSavedPostIds();
+            DDAJournal.fetchPosts().then(function (posts) {
+                var saved = posts.filter(function (p) {
+                    return savedIds.indexOf(String(p.id)) !== -1;
+                });
+                var grid = document.getElementById('savedPostsGrid');
+                var empty = document.getElementById('savedEmpty');
+                if (!saved.length) {
+                    if (empty) empty.hidden = false;
+                    return;
+                }
+                grid.innerHTML = saved.map(function (post) {
+                    return (
+                        '<a class="journal-card" href="post.html?slug=' + encodeURIComponent(post.slug) + '">' +
+                            '<div class="journal-card__media"><img src="' + JournalApp.escapeHtml(post.coverImage) + '" alt="" loading="lazy"></div>' +
+                            '<div class="journal-card__body"><h2 class="journal-card__title">' + JournalApp.escapeHtml(post.title) + '</h2></div>' +
+                        '</a>'
+                    );
+                }).join('');
+            });
+        });
+    </script>
+</body>
+
+</html>

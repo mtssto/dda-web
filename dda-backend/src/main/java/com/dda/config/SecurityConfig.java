@@ -39,11 +39,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/newsletter/unsubscribe").permitAll()
                         .requestMatchers("/api/newsletter/subscribers").hasRole("ADMIN")
                         .requestMatchers("/api/newsletter/send").hasRole("ADMIN")
+                        .requestMatchers("/api/newsletter/admin/**").hasRole("ADMIN")
                         .requestMatchers("/h2-console/**").permitAll()
 
                         // Public API reads
                         .requestMatchers(HttpMethod.GET, "/api/artworks/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/journal/posts/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/journal/posts/*/comments").permitAll()
 
                         // Public static files, if served by Spring/Railway
                         .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()

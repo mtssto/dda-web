@@ -2539,3 +2539,47 @@ footer p {
         padding: 48px 20px;
     }
 }
+
+/* ── Editorial dark theme (shop + catalog) ───────────── */
+body.platform-dark.shop-page,
+body.platform-dark.catalog-page,
+body.platform-dark:not(.platform-shop-light) {
+    --color-text: #f2f0eb;
+    --color-subtext: rgba(242, 240, 235, 0.55);
+    --color-accent: #c9a962;
+    --color-bg: #0a0a0b;
+    --color-light-bg: #121214;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+}
+
+body.platform-dark .shop-title,
+body.platform-dark .product-title,
+body.platform-dark h1, body.platform-dark h2, body.platform-dark h3 {
+    color: var(--color-text);
+}
+
+body.platform-dark .product-card,
+body.platform-dark .shop-search-bar,
+body.platform-dark .inquiry-modal,
+body.platform-dark .catalog-float {
+    background: var(--color-light-bg);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.platform-dark .search-input,
+body.platform-dark .shop-search-bar input {
+    color: var(--color-text);
+    background: transparent;
+}
+
+body.platform-dark .btn-grid-action,
+body.platform-dark .hero-catalog-btn {
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+body.platform-dark .btn-grid-action:hover,
+body.platform-dark .hero-catalog-btn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
