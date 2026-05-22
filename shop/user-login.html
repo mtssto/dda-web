@@ -115,6 +115,13 @@
                     </ul>
                 </div>
 
+                <div class="form-group newsletter-optin">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="regNewsletter" name="newsletter">
+                        <span data-i18n="register.newsletter_optin">Suscribirme a novedades del artista y entradas del cuaderno.</span>
+                    </label>
+                </div>
+
                 <div class="form-group">
                     <label for="regPasswordConfirm">Confirmar Contraseña</label>
                     <div class="password-wrapper">
@@ -164,7 +171,10 @@
         </div>
     </div>
 
+    <script src="../i18n/platform-translations.js"></script>
+    <script src="../i18n.js" defer></script>
     <script src="config.js"></script>
+    <script src="newsletter.js"></script>
     <script src="auth.js"></script>
     <script>
         (function () {
@@ -420,7 +430,9 @@
                 btnLoader.hidden = false;
                 btn.disabled = true;
 
-                DDAAuth.register(username, email, password)
+                var newsletterOptIn = document.getElementById('regNewsletter') && document.getElementById('regNewsletter').checked;
+
+                DDAAuth.register(username, email, password, newsletterOptIn)
                     .then(function () {
                         successBox.hidden = false;
                         setTimeout(function () {

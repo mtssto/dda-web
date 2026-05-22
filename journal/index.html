@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diego De Aduriz | Cuaderno del artista</title>
+    <meta name="description" content="Cuaderno del artista: proceso creativo, exposiciones, bocetos y notas de Diego De Aduriz.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://diegodeaduriz.art/journal/index.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Cuaderno del artista — Diego De Aduriz">
+    <meta property="og:url" content="https://diegodeaduriz.art/journal/index.html">
+    <meta property="og:locale" content="es_AR">
+    <meta property="og:locale:alternate" content="en_US">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shop/platform-header.css">
+    <link rel="stylesheet" href="journal.css">
+</head>
+
+<body class="journal-page platform-dark" data-platform-header data-close-href="../index.html" data-platform-theme="dark">
+
+    <div data-platform-header></div>
+
+    <main>
+        <header class="journal-hero">
+            <span class="journal-hero__eyebrow" data-i18n="nav.journal">CUADERNO</span>
+            <h1 class="journal-hero__title" data-i18n="journal.title">Cuaderno del artista</h1>
+            <p class="journal-hero__subtitle" data-i18n="journal.subtitle">Proceso, inspiración y archivo vivo</p>
+        </header>
+
+        <div class="journal-filters" id="journalFilters" role="tablist" aria-label="Filter by tag">
+            <button type="button" class="journal-filter-btn is-active" data-tag="" data-i18n="journal.filter_all">Todo</button>
+        </div>
+
+        <div class="journal-grid" id="journalGrid" aria-live="polite"></div>
+        <p class="journal-empty" id="journalEmpty" hidden data-i18n="journal.empty">Aún no hay entradas publicadas.</p>
+
+        <section class="journal-newsletter-block" aria-labelledby="newsletter-title">
+            <h3 id="newsletter-title" data-i18n="journal.newsletter_title">Boletín del estudio</h3>
+            <p data-i18n="journal.newsletter_desc">Arte, proceso y notas del taller. Sin spam.</p>
+            <form class="journal-newsletter-form" id="journalNewsletterForm">
+                <input type="email" name="email" required placeholder="tu@email.com" autocomplete="email" aria-label="Email">
+                <button type="submit" data-i18n="journal.newsletter_btn">Suscribirme</button>
+            </form>
+            <p class="newsletter-msg" hidden role="status"></p>
+        </section>
+    </main>
+
+    <footer style="text-align:center;padding:40px 20px;font-size:0.7rem;color:var(--platform-muted);letter-spacing:0.1em;">
+        &copy; 2026 Diego De Aduriz. <span data-i18n="footer.rights">Todos los derechos reservados.</span>
+    </footer>
+
+    <script src="../i18n/platform-translations.js"></script>
+    <script src="../i18n.js" defer></script>
+    <script src="../shop/config.js"></script>
+    <script src="../shop/auth.js" defer></script>
+    <script src="../shop/newsletter.js" defer></script>
+    <script src="../shop/platform-header.js" defer></script>
+    <script src="journal-api.js" defer></script>
+    <script src="journal-app.js" defer></script>
+    <script src="index.js" defer></script>
+</body>
+
+</html>
