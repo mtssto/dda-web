@@ -38,7 +38,7 @@
             </div>
 
             <div class="admin-card admin-form">
-                <h3 class="admin-card__title">Nueva entrada</h3>
+                <h3 class="admin-card__title" id="postFormTitle">Nueva entrada</h3>
                 <label>Título (ES)</label>
                 <input type="text" id="postTitleEs">
                 <label>Título (EN)</label>
@@ -62,16 +62,18 @@
                 <label>Publicar / programar</label>
                 <input type="datetime-local" id="postSchedule">
                 <label><input type="checkbox" id="postSendNewsletter"> Enviar boletín al publicar</label>
-                <div>
+                <div class="admin-form__actions">
                     <button type="button" class="admin-btn" id="btnPreview" data-i18n="admin.draft_preview">Vista previa</button>
-                    <button type="button" class="admin-btn" id="btnSavePost" data-i18n="admin.publish">Guardar</button>
+                    <button type="button" class="admin-btn" id="btnSavePost">Guardar</button>
+                    <button type="button" class="admin-btn admin-btn--ghost" id="btnCancelEdit" hidden>Cancelar edición</button>
+                    <button type="button" class="admin-btn admin-btn--danger" id="btnDeletePost" hidden>Eliminar entrada</button>
                 </div>
                 <div class="admin-preview" id="postPreview" hidden></div>
             </div>
 
             <div class="admin-card">
                 <table class="admin-table" id="postsTable">
-                    <thead><tr><th>Título</th><th>Estado</th><th>Fecha</th><th></th></tr></thead>
+                    <thead><tr><th>Título</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>

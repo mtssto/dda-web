@@ -622,6 +622,32 @@
     border: 1px solid var(--journal-border);
 }
 
+.journal-admin-page .admin-btn--danger {
+    background: #8b2e2e;
+    color: #fff;
+}
+
+.journal-admin-page .admin-form__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.journal-admin-page .admin-table__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.journal-admin-page .admin-table__actions a {
+    color: var(--journal-text);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
 .journal-admin-page .admin-table {
     width: 100%;
     border-collapse: collapse;

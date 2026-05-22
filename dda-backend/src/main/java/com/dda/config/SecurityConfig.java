@@ -49,6 +49,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/journal/posts/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/journal/posts/*/comments").permitAll()
 
+                        .requestMatchers("/api/journal/admin/**").hasRole("ADMIN")
+
                         // Public static files, if served by Spring/Railway
                         .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/portfolio/**").permitAll()

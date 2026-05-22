@@ -68,6 +68,21 @@ public class JournalController {
         return journalService.create(request, authorId);
     }
 
+    @PutMapping("/admin/posts/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public JournalPostDTO update(
+            @PathVariable Long id,
+            @RequestBody JournalPostRequest request) {
+        return journalService.update(id, request);
+    }
+
+    @DeleteMapping("/admin/posts/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        journalService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/admin/comments")
     @PreAuthorize("hasRole('ADMIN')")
     public List<JournalComment> pendingComments(@RequestParam(defaultValue = "PENDING") String status) {

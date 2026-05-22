@@ -74,6 +74,79 @@ public class JournalService {
         return toDto(post);
     }
 
+    @Transactional
+    public JournalPostDTO update(Long id, JournalPostRequest request) {
+        JournalPost post = postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+
+        String slug = request.getSlug() != null ? request.getSlug().trim() : post.getSlug();
+        if (postRepository.existsBySlugAndIdNot(slug, id)) {
+            throw new IllegalArgumentException("El slug ya está en uso");
+        }
+
+        if (request.getTitle() != null) {
+            if (request.getTitle().get("es") != null) {
+                post.setTitleEs(request.getTitle().get("es"));
+            }
+            if (request.getTitle().get("en") != null) {
+                post.setTitleEn(request.getTitle().get("en"));
+            }
+        }
+        if (request.getExcerpt() != null) {
+            if (request.getExcerpt().get("es") != null) {
+                post.setExcerptEs(request.getExcerpt().get("es"));
+            }
+            if (request.getExcerpt().get("en") != null) {
+                post.setExcerptEn(request.getExcerpt().get("en"));
+            }
+        }
+        if (request.getContent() != null) {
+            if (request.getContent().get("es") != null) {
+                post.setContentEs(request.getContent().get("es"));
+            }
+            if (request.getContent().get("en") != null) {
+                post.setContentEn(request.getContent().get("en"));
+            }
+        }
+
+        post.setSlug(slug);
+        if (request.getCoverImage() != null) {
+            post.setCoverImage(request.getCoverImage());
+        }
+        if (request.getTags() != null) {
+            post.setTags(String.join(",", request.getTags()));
+        }
+        JournalPost.Status previousStatus = post.getStatus();
+        if (request.getStatus() != null) {
+            post.setStatus(JournalPost.Status.valueOf(request.getStatus()));
+        }
+        if (request.getScheduledAt() != null) {
+            post.setScheduledAt(request.getScheduledAt());
+        }
+        if (request.getSendNewsletter() != null) {
+            post.setSendNewsletterOnPublish(request.getSendNewsletter());
+        }
+
+        applyPublishRules(post);
+        post = postRepository.save(post);
+
+        if (previousStatus != JournalPost.Status.PUBLISHED
+                && post.getStatus() == JournalPost.Status.PUBLISHED
+                && Boolean.TRUE.equals(post.getSendNewsletterOnPublish())) {
+            newsletterService.sendJournalCampaign(post);
+        }
+
+        return toDto(post);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        if (!postRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Post", "id", id);
+        }
+        postRepository.deleteById(id);
+    }
+
     private void applyPublishRules(JournalPost post) {
         if (post.getStatus() == JournalPost.Status.PUBLISHED) {
             post.setPublishedAt(LocalDateTime.now());

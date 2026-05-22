@@ -51,6 +51,11 @@ body {
     gap: 16px;
 }
 
+.admin-topbar .admin-journal-link {
+    text-decoration: none;
+    white-space: nowrap;
+}
+
 .topbar-user {
     font-size: 13px;
     color: var(--color-subtext);

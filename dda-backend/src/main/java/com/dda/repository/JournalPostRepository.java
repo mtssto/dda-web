@@ -8,6 +8,9 @@ import java.util.Optional;
 
 public interface JournalPostRepository extends JpaRepository<JournalPost, Long> {
     Optional<JournalPost> findBySlug(String slug);
+
+    boolean existsBySlugAndIdNot(String slug, Long id);
+
     Page<JournalPost> findByStatus(JournalPost.Status status, Pageable pageable);
     long countByStatus(JournalPost.Status status);
 }
