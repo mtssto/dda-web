@@ -20,40 +20,50 @@ var DDAJournal = (function () {
         return obj[lang] || obj.es || obj.en || '';
     }
 
-    function fetchPosts() {
-        return fetch(API_BASE + '/journal/posts?status=PUBLISHED&size=50')
-            .then(function (res) {
-                if (!res.ok) throw new Error('API unavailable');
-                return res.json();
+    function loadStaticPosts() {
+        return fetch(STATIC_DATA)
+            .then(function (r) {
+                if (!r.ok) throw new Error('Static data unavailable');
+                return r.json();
             })
             .then(function (data) {
-                return (data.content || data.posts || data).map(normalizePost);
-            })
-            .catch(function () {
-                return fetch(STATIC_DATA)
-                    .then(function (r) { return r.json(); })
-                    .then(function (data) {
-                        return (data.posts || []).filter(function (p) {
-                            return p.status === 'PUBLISHED';
-                        }).map(normalizePost);
-                    });
+                return (data.posts || []).filter(function (p) {
+                    return p.status === 'PUBLISHED';
+                }).map(normalizePost);
             });
     }
 
-    function fetchPostBySlug(slug) {
-        return fetch(API_BASE + '/journal/posts/slug/' + encodeURIComponent(slug))
-            .then(function (res) {
-                if (!res.ok) throw new Error('Not found');
-                return res.json();
-            })
-            .then(normalizePost)
-            .catch(function () {
-                return fetchPosts().then(function (posts) {
-                    var found = posts.find(function (p) { return p.slug === slug; });
-                    if (!found) throw new Error('Post not found');
-                    return found;
+    function fetchPosts() {
+        return loadStaticPosts().catch(function () {
+            return fetch(API_BASE + '/journal/posts?status=PUBLISHED&size=50')
+                .then(function (res) {
+                    if (!res.ok) throw new Error('API unavailable');
+                    return res.json();
+                })
+                .then(function (data) {
+                    var list = data.content || data.posts || data;
+                    if (!list || !list.length) throw new Error('No API posts');
+                    return list.map(normalizePost);
+                })
+                .catch(function () {
+                    return loadStaticPosts();
                 });
-            });
+        });
+    }
+
+    function fetchPostBySlug(slug) {
+        return fetchPosts().then(function (posts) {
+            var found = posts.find(function (p) { return p.slug === slug; });
+            if (found) return found;
+            throw new Error('Post not found');
+        }).catch(function () {
+            return fetch(API_BASE + '/journal/posts/slug/' + encodeURIComponent(slug))
+                .then(function (res) {
+                    if (!res.ok) throw new Error('Not found');
+                    return res.json();
+                })
+                .then(normalizePost);
+        });
     }
 
     function normalizePost(raw) {

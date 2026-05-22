@@ -171,7 +171,15 @@
         </div>
     </div>
 
-    <script src="../i18n/platform-translations.js"></script>
+    <script>
+        window.pageTranslations = window.pageTranslations || {};
+        window.pageTranslations.es = Object.assign(window.pageTranslations.es || {}, {
+            'register.newsletter_optin': 'Suscribirme a novedades del artista y entradas del cuaderno.'
+        });
+        window.pageTranslations.en = Object.assign(window.pageTranslations.en || {}, {
+            'register.newsletter_optin': 'Subscribe to artist updates and journal entries.'
+        });
+    </script>
     <script src="../i18n.js" defer></script>
     <script src="config.js"></script>
     <script src="newsletter.js"></script>

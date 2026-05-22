@@ -6,7 +6,7 @@
 
     function t(key) {
         var lang = localStorage.getItem('preferredLanguage') || 'es';
-        var pt = window.platformTranslations && window.platformTranslations[lang];
+        var pt = window.pageTranslations && window.pageTranslations[lang];
         return (pt && pt[key]) || key;
     }
 

@@ -1,33 +1,12 @@
 /**
- * Platform-wide i18n strings (shop, journal, auth, navigation).
- * Loaded before i18n.js; merged into window.platformTranslations.
+ * Journal / notebook page translations (loaded only on journal/* pages).
  */
 (function () {
     'use strict';
 
-    window.platformTranslations = {
+    window.pageTranslations = {
         es: {
-            'nav.bio': 'SOBRE MÍ',
-            'nav.prensa': 'PRENSA',
-            'nav.muestras': 'MUESTRAS',
-            'nav.obras': 'OBRAS',
-            'nav.proyectos': 'PROYECTOS',
-            'nav.textos': 'PUBLICACIONES',
-            'nav.shop': 'SHOP',
-            'nav.catalog': 'CATÁLOGO',
             'nav.journal': 'CUADERNO',
-            'nav.contact': 'CONTACTO',
-            'nav.menu': 'MENÚ',
-            'close': 'CERRAR',
-            'more': 'MÁS',
-            'auth.create_account': 'CREAR CUENTA',
-            'auth.log_in': 'INICIAR SESIÓN',
-            'auth.my_account': 'MI CUENTA',
-            'auth.admin': 'ADMIN',
-            'auth.logout': 'SALIR',
-            'auth.profile': 'PERFIL',
-            'footer.rights': 'Todos los derechos reservados.',
-            'lang.switch': 'Idioma',
             'journal.title': 'Cuaderno del artista',
             'journal.subtitle': 'Proceso, inspiración y archivo vivo',
             'journal.read': 'Leer entrada',
@@ -46,12 +25,10 @@
             'journal.comment_login': 'Iniciá sesión para comentar',
             'journal.comment_pending': 'Tu comentario será visible tras moderación.',
             'journal.related': 'Más del cuaderno',
-            'journal.subscribe_cta': 'Recibí nuevas entradas por email',
             'journal.newsletter_title': 'Boletín del estudio',
             'journal.newsletter_desc': 'Arte, proceso y notas del taller. Sin spam.',
             'journal.newsletter_btn': 'Suscribirme',
             'journal.newsletter_ok': '¡Gracias! Revisá tu bandeja de entrada.',
-            'register.newsletter_optin': 'Suscribirme a novedades del artista y entradas del cuaderno.',
             'profile.title': 'Perfil',
             'profile.saved_posts': 'Entradas guardadas',
             'profile.member_since': 'Miembro desde',
@@ -63,32 +40,10 @@
             'admin.publish': 'Publicar',
             'admin.analytics': 'Analíticas',
             'admin.opens': 'Aperturas',
-            'admin.clicks': 'Clics',
-            'search.placeholder': 'Buscar obras…',
-            'search.clear': 'Limpiar búsqueda'
+            'admin.clicks': 'Clics'
         },
         en: {
-            'nav.bio': 'ABOUT ME',
-            'nav.prensa': 'PRESS',
-            'nav.muestras': 'EXHIBITIONS',
-            'nav.obras': 'ARTWORKS',
-            'nav.proyectos': 'PROJECTS',
-            'nav.textos': 'PUBLICATIONS',
-            'nav.shop': 'SHOP',
-            'nav.catalog': 'CATALOG',
             'nav.journal': 'NOTEBOOK',
-            'nav.contact': 'CONTACT',
-            'nav.menu': 'MENU',
-            'close': 'CLOSE',
-            'more': 'MORE',
-            'auth.create_account': 'CREATE ACCOUNT',
-            'auth.log_in': 'LOG IN',
-            'auth.my_account': 'MY ACCOUNT',
-            'auth.admin': 'ADMIN',
-            'auth.logout': 'LOG OUT',
-            'auth.profile': 'PROFILE',
-            'footer.rights': 'All rights reserved.',
-            'lang.switch': 'Language',
             'journal.title': 'Artist notebook',
             'journal.subtitle': 'Process, inspiration, and a living archive',
             'journal.read': 'Read entry',
@@ -107,12 +62,10 @@
             'journal.comment_login': 'Log in to comment',
             'journal.comment_pending': 'Your comment will appear after moderation.',
             'journal.related': 'More from the notebook',
-            'journal.subscribe_cta': 'Get new entries by email',
             'journal.newsletter_title': 'Studio letter',
             'journal.newsletter_desc': 'Art, process, and notes from the studio. No spam.',
             'journal.newsletter_btn': 'Subscribe',
             'journal.newsletter_ok': 'Thank you! Check your inbox.',
-            'register.newsletter_optin': 'Subscribe to artist updates and journal entries.',
             'profile.title': 'Profile',
             'profile.saved_posts': 'Saved entries',
             'profile.member_since': 'Member since',
@@ -124,9 +77,7 @@
             'admin.publish': 'Publish',
             'admin.analytics': 'Analytics',
             'admin.opens': 'Opens',
-            'admin.clicks': 'Clicks',
-            'search.placeholder': 'Search artworks…',
-            'search.clear': 'Clear search'
+            'admin.clicks': 'Clicks'
         }
     };
 })();
