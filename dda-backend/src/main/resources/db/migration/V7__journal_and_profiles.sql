@@ -1,7 +1,7 @@
--- User profile fields
-ALTER TABLE users ADD COLUMN IF NOT EXISTS display_name VARCHAR(100);
-ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url VARCHAR(500);
-ALTER TABLE users ADD COLUMN IF NOT EXISTS newsletter_opt_in BOOLEAN DEFAULT FALSE;
+-- User profile fields (MySQL: no IF NOT EXISTS on ADD COLUMN)
+ALTER TABLE users ADD COLUMN display_name VARCHAR(100);
+ALTER TABLE users ADD COLUMN avatar_url VARCHAR(500);
+ALTER TABLE users ADD COLUMN newsletter_opt_in BOOLEAN DEFAULT FALSE;
 
 -- Journal posts
 CREATE TABLE IF NOT EXISTS journal_posts (

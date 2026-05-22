@@ -15,13 +15,13 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of(
+        config.setAllowedOriginPatterns(List.of(
                 "https://diegodeaduriz.art",
                 "https://www.diegodeaduriz.art",
                 "https://dda-web-production.up.railway.app",
-                "http://localhost:8080",
-                "http://localhost:3000",
-                "http://localhost:5173"
+                "https://whitewidow.github.io",
+                "http://localhost:*",
+                "http://127.0.0.1:*"
         ));
 
         config.setAllowedMethods(List.of(
