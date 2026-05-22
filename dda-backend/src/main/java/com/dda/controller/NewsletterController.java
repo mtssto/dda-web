@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class NewsletterController {
     @PostMapping("/subscribe")
     public ResponseEntity<Map<String, String>> subscribe(@Valid @RequestBody SubscribeRequest request) {
         String email = request.email().trim().toLowerCase();
+        String source = request.source() != null && !request.source().isBlank() ? request.source() : "web";
 
         Optional<NewsletterSubscriber> existing = newsletterRepository.findByEmail(email);
         if (existing.isPresent()) {
@@ -33,12 +35,14 @@ public class NewsletterController {
                 return ResponseEntity.ok(Map.of("message", "Ya estás suscripto al newsletter."));
             }
             sub.setActive(true);
+            sub.setSource(source);
             newsletterRepository.save(sub);
             return ResponseEntity.ok(Map.of("message", "Te has re-suscripto al newsletter."));
         }
 
         NewsletterSubscriber subscriber = NewsletterSubscriber.builder()
                 .email(email)
+                .source(source)
                 .build();
         newsletterRepository.save(subscriber);
 
@@ -60,17 +64,20 @@ public class NewsletterController {
     }
 
     @GetMapping("/subscribers")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, Object>> getSubscribers() {
         List<NewsletterSubscriber> active = newsletterRepository.findByActiveTrue();
         List<Map<String, Object>> list = active.stream().map(s -> Map.<String, Object>of(
                 "id", s.getId(),
                 "email", s.getEmail(),
-                "subscribedAt", s.getSubscribedAt().toString()
+                "source", s.getSource() != null ? s.getSource() : "",
+                "subscribedAt", s.getSubscribedAt() != null ? s.getSubscribedAt().toString() : ""
         )).toList();
         return ResponseEntity.ok(Map.of("subscribers", list, "count", active.size()));
     }
 
     @PostMapping("/send")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, Object>> sendNewsletter(@Valid @RequestBody SendRequest request) {
         List<NewsletterSubscriber> active = newsletterRepository.findByActiveTrue();
         if (active.isEmpty()) {
@@ -85,6 +92,21 @@ public class NewsletterController {
         }
 
         return ResponseEntity.ok(Map.of("sent", sent, "message", "Newsletter enviado a " + sent + " suscriptor(es)."));
+    }
+
+    @GetMapping("/admin/campaigns")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<Map<String, Object>> campaigns() {
+        long count = newsletterRepository.countByActiveTrue();
+        return List.of(Map.of(
+                "name", "Newsletter",
+                "subject", "Boletín DDA",
+                "sent", count,
+                "opens", 0,
+                "clicks", 0,
+                "subscribers", count,
+                "sentAt", java.time.LocalDateTime.now().toString()
+        ));
     }
 
     private String buildNewsletterHtml(String subject, String body) {
@@ -118,7 +140,8 @@ public class NewsletterController {
     public record SubscribeRequest(
             @NotBlank(message = "El email es obligatorio")
             @Email(message = "Formato de email inválido")
-            String email
+            String email,
+            String source
     ) {}
 
     public record SendRequest(

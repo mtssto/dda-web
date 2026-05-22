@@ -67,11 +67,16 @@ var DDAAuth = (function () {
         });
     }
 
-    function register(username, email, password) {
+    function register(username, email, password, newsletterOptIn) {
         return fetch(API_BASE + '/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: username, email: email, password: password })
+            body: JSON.stringify({
+                username: username,
+                email: email,
+                password: password,
+                newsletterOptIn: newsletterOptIn === true
+            })
         }).then(function (res) {
             if (!res.ok) {
                 return res.json().then(function (data) {
@@ -83,6 +88,9 @@ var DDAAuth = (function () {
             return res.json();
         }).then(function (data) {
             saveAuth(data);
+            if (newsletterOptIn === true && typeof DDANewsletter !== 'undefined') {
+                DDANewsletter.subscribe(email, 'registration').catch(function () {});
+            }
             return data;
         });
     }

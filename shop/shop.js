@@ -251,32 +251,18 @@ document.addEventListener('DOMContentLoaded', function () {
     // shop.html should render immediately from products.js and should not wait for DDAApi.
     initShopContent();
 
-    // Update auth header buttons based on login state
-    var authBtns = document.getElementById('authHeaderBtns');
-    if (authBtns && typeof DDAAuth !== 'undefined') {
-        var cartBtnHtml = '<a href="cart.html" class="auth-header-link cart-header-link" aria-label="Carrito">' +
-            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>' +
-            '<span class="cart-badge" style="display:none">0</span></a>';
-        if (DDAAuth.isAuthenticated()) {
-            var user = DDAAuth.getUser();
-            var isAdmin = user && user.role === 'ADMIN';
-            authBtns.innerHTML = cartBtnHtml +
-                '<a href="mi-cuenta.html" class="auth-header-link">' +
-                    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> ' +
-                    (user ? user.username.toUpperCase() : 'MI CUENTA') +
-                '</a>' +
-                (isAdmin ? '<a href="admin.html" class="auth-header-link">ADMIN</a>' : '') +
-                '<a href="#" class="auth-header-link" id="headerLogout">SALIR</a>';
-            var logoutLink = document.getElementById('headerLogout');
-            if (logoutLink) {
-                logoutLink.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    DDAAuth.logout();
-                });
-            }
+    // Auth header is rendered by platform-header.js; refresh after auth state is known
+    if (typeof DDAAuth !== 'undefined' && window.PlatformHeader && window.PlatformHeader.mount) {
+        if (!document.getElementById('platformHeader')) {
+            window.PlatformHeader.mount({
+                theme: document.body.getAttribute('data-platform-theme') || 'dark',
+                closeHref: document.body.getAttribute('data-close-href')
+            });
+        } else if (window.PlatformHeader.refresh) {
+            window.PlatformHeader.refresh();
         }
-        if (typeof DDACart !== 'undefined') DDACart.updateBadge();
     }
+    if (typeof DDACart !== 'undefined') DDACart.updateBadge();
 
     // Filter Logic
     const categoryFilter = document.getElementById('categoryFilter');

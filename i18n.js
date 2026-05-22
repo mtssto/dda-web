@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Language Switching Logic ---
     window.translations = window.translations || {};
 
     const commonTranslations = {
@@ -77,27 +76,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    function mergeTranslations(lang) {
+        const merged = Object.assign({}, commonTranslations[lang] || {});
+        if (window.platformTranslations && window.platformTranslations[lang]) {
+            Object.assign(merged, window.platformTranslations[lang]);
+        }
+        if (window.pageTranslations && window.pageTranslations[lang]) {
+            Object.assign(merged, window.pageTranslations[lang]);
+        }
+        return merged;
+    }
+
     window.changeLanguage = function (lang) {
         localStorage.setItem('preferredLanguage', lang);
+        document.documentElement.lang = lang;
 
-        updateElements(commonTranslations[lang]);
-
-        if (window.pageTranslations && window.pageTranslations[lang]) {
-            updateElements(window.pageTranslations[lang]);
-        }
+        const t = mergeTranslations(lang);
+        updateElements(t);
 
         document.querySelectorAll('.lang-btn').forEach(btn => {
-            if (btn.getAttribute('data-lang') === lang) {
-                btn.style.fontWeight = '600';
-                btn.style.opacity = '1';
-            } else {
-                btn.style.fontWeight = '300';
-                btn.style.opacity = '0.5';
-            }
+            const isActive = btn.getAttribute('data-lang') === lang;
+            btn.classList.toggle('active', isActive);
+            btn.style.fontWeight = isActive ? '600' : '300';
+            btn.style.opacity = isActive ? '1' : '0.5';
+            btn.setAttribute('aria-pressed', String(isActive));
         });
 
         document.body.classList.remove('lang-es', 'lang-en');
         document.body.classList.add('lang-' + lang);
+
+        if (window.PlatformHeader && window.PlatformHeader.refresh) {
+            window.PlatformHeader.refresh();
+        }
 
         window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
     };
@@ -107,35 +117,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
-            if (t[key]) {
-                el.textContent = t[key];
-            }
+            if (t[key]) el.textContent = t[key];
+        });
+
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            if (t[key]) el.setAttribute('placeholder', t[key]);
+        });
+
+        document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+            const key = el.getAttribute('data-i18n-aria');
+            if (t[key]) el.setAttribute('aria-label', t[key]);
         });
 
         const navMap = {
-            'MUESTRAS': 'nav.muestras',
-            'EXHIBITIONS': 'nav.muestras',
-            'SHOP': 'nav.shop',
-            'ARTWORKS': 'nav.obras',
-            'OBRAS': 'nav.obras',
-            'PRENSA': 'nav.prensa',
-            'PRESS': 'nav.prensa',
-            'PROYECTOS': 'nav.proyectos',
-            'PROJECTS': 'nav.proyectos',
-            'PUBLICACIONES': 'nav.textos',
-            'PUBLICATIONS': 'nav.textos',
-            'ABOUT ME': 'nav.bio',
-            'SOBRE MÍ': 'nav.bio',
-            'CONTACT': 'nav.contact',
-            'CONTACTO': 'nav.contact',
-            'CLOSE': 'close',
-            'CERRAR': 'close',
-            'MORE': 'more',
-            'MÁS': 'more'
+            'MUESTRAS': 'nav.muestras', 'EXHIBITIONS': 'nav.muestras',
+            'SHOP': 'nav.shop', 'ARTWORKS': 'nav.obras', 'OBRAS': 'nav.obras',
+            'PRENSA': 'nav.prensa', 'PRESS': 'nav.prensa',
+            'PROYECTOS': 'nav.proyectos', 'PROJECTS': 'nav.proyectos',
+            'PUBLICACIONES': 'nav.textos', 'PUBLICATIONS': 'nav.textos',
+            'ABOUT ME': 'nav.bio', 'SOBRE MÍ': 'nav.bio',
+            'CONTACT': 'nav.contact', 'CONTACTO': 'nav.contact',
+            'CLOSE': 'close', 'CERRAR': 'close', 'MORE': 'more', 'MÁS': 'more',
+            'CUADERNO': 'nav.journal', 'NOTEBOOK': 'nav.journal',
+            'CATÁLOGO': 'nav.catalog', 'CATALOG': 'nav.catalog'
         };
 
-        // Specially target index.html a wrappers and close-btn
-        document.querySelectorAll('.index-nav-wrapper a, .close-btn').forEach(link => {
+        document.querySelectorAll('.index-nav-wrapper a, .close-btn, .platform-header__nav a').forEach(link => {
             if (!link.hasAttribute('data-i18n')) {
                 const text = link.textContent.trim().toUpperCase();
                 if (navMap[text] && t[navMap[text]]) {
@@ -146,45 +154,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Inject Language Switcher dynamically ---
     function injectLanguageSwitcher() {
-        // Build switcher HTML
         const switcherHTML = `
             <a href="#" class="lang-btn" data-lang="es" style="font-family:'Inter', sans-serif; font-size: 0.9rem; text-decoration: none; color: #111; transition: opacity 0.3s;">ES</a>
             <span style="font-family:'Inter', sans-serif; font-size: 0.9rem; color: #111; opacity: 0.5;">|</span>
             <a href="#" class="lang-btn" data-lang="en" style="font-family:'Inter', sans-serif; font-size: 0.9rem; text-decoration: none; color: #111; transition: opacity 0.3s;">EN</a>
         `;
 
-        // 1. Inject into Global Close Container
-        const closeContainer = document.querySelector('.close-container');
+        const closeContainer = document.querySelector('.close-container:not([data-platform-header])');
         if (closeContainer && !closeContainer.querySelector('.lang-switcher-global')) {
             const div = document.createElement('div');
             div.className = 'lang-switcher-global';
             div.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-right: 20px;';
             div.innerHTML = switcherHTML;
-            // Insert it before the CLOSE button
             closeContainer.insertBefore(div, closeContainer.firstChild);
         }
 
-        // 2. Inject into Index Nav Wrapper
         const indexNavWrapper = document.querySelector('.nav-right-stack');
         if (indexNavWrapper && !indexNavWrapper.querySelector('.lang-switcher-global')) {
             const div = document.createElement('div');
             div.className = 'lang-switcher-global';
             div.style.cssText = 'display: flex; gap: 8px; align-items: center; justify-content: flex-end; margin-bottom: 20px; pointer-events: auto;';
             div.innerHTML = switcherHTML;
-            // Prepend inside nav-right-stack
             indexNavWrapper.insertBefore(div, indexNavWrapper.firstChild);
         }
     }
 
-    injectLanguageSwitcher();
+    if (!document.querySelector('[data-platform-header]') && !document.body.classList.contains('has-platform-header')) {
+        injectLanguageSwitcher();
+    }
 
-    // Initialize
     const savedLang = localStorage.getItem('preferredLanguage') || 'es';
     window.changeLanguage(savedLang);
 
-    // Event delegation for language switching
     document.body.addEventListener('click', (e) => {
         if (e.target.classList.contains('lang-btn')) {
             e.preventDefault();
@@ -192,5 +194,4 @@ document.addEventListener('DOMContentLoaded', () => {
             if (lang) window.changeLanguage(lang);
         }
     });
-
 });
