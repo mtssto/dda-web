@@ -49,6 +49,9 @@ app:
     promote-existing: true
 
 dda:
+  # One-time recovery on Railway: set DDA_FLYWAY_REPAIR=true, deploy once, then remove it.
+  flyway:
+    repair: ${DDA_FLYWAY_REPAIR:false}
   mail:
     enabled: ${DDA_MAIL_ENABLED:false}
     resend-api-key: ${RESEND_API_KEY:}
