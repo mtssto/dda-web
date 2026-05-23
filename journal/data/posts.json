@@ -1,0 +1,91 @@
+{
+  "posts": [
+    {
+      "id": "1",
+      "slug": "notas-desde-el-taller",
+      "status": "PUBLISHED",
+      "publishedAt": "2026-05-10T10:00:00Z",
+      "locale": "es",
+      "title": {
+        "es": "Notas desde el taller",
+        "en": "Notes from the studio"
+      },
+      "excerpt": {
+        "es": "Bocetos, polvo de pastel y la luz de la tarde que cambia el color de todo.",
+        "en": "Sketches, pastel dust, and the late light that changes every color."
+      },
+      "coverImage": "../portfolio/sections/obras/MG_1192.jpg",
+      "tags": ["proceso", "taller", "bocetos"],
+      "readMinutes": 4,
+      "content": {
+        "es": "<p>El taller no es un lugar neutral: es un organismo. Las obras que salen de aquí llevan el ritmo de las pausas, el café, las conversaciones con visitantes que se quedan más de lo previsto.</p><p>Esta semana retomé una serie de <em>paisajes psíquicos</em> en pastel. El soporte absorbe distinto según la humedad; por eso trabajo en capas finas, casi como si fuera acuarela seca.</p><figure class=\"journal-figure\"><img src=\"../portfolio/sections/obras/MG_1192.jpg\" alt=\"Obra en proceso\" loading=\"lazy\" width=\"1200\" height=\"800\"><figcaption>Capas de ocre y óxido — trabajo en curso</figcaption></figure><p>Comparto el proceso porque creo que la obra termina cuando alguien la mira y le devuelve otra historia.</p>",
+        "en": "<p>The studio is not a neutral place: it is an organism. Works that leave here carry the rhythm of pauses, coffee, and conversations with visitors who stay longer than expected.</p><p>This week I returned to a series of <em>psychic landscapes</em> in pastel. The surface absorbs differently depending on humidity; I work in thin layers, almost like dry watercolor.</p><figure class=\"journal-figure\"><img src=\"../portfolio/sections/obras/MG_1192.jpg\" alt=\"Work in progress\" loading=\"lazy\" width=\"1200\" height=\"800\"><figcaption>Layers of ochre and rust — work in progress</figcaption></figure><p>I share the process because I believe a work is finished when someone looks at it and returns another story.</p>"
+      },
+      "embeds": [],
+      "likes": 12,
+      "author": {
+        "username": "diegodeaduriz",
+        "displayName": "Diego De Aduriz",
+        "avatarUrl": null
+      }
+    },
+    {
+      "id": "2",
+      "slug": "antes-de-la-muestra",
+      "status": "PUBLISHED",
+      "publishedAt": "2026-04-22T14:30:00Z",
+      "locale": "es",
+      "title": {
+        "es": "Antes de la muestra: montaje y silencio",
+        "en": "Before the show: installation and silence"
+      },
+      "excerpt": {
+        "es": "Las horas previas a abrir una exposición tienen su propia liturgia.",
+        "en": "The hours before opening an exhibition have their own liturgy."
+      },
+      "coverImage": "../portfolio/sections/obras/MG_1192.jpg",
+      "tags": ["exposición", "muestras", "archivo"],
+      "readMinutes": 6,
+      "content": {
+        "es": "<p>Montar una muestra es editar un poema en tres dimensiones. Cada obra pide distancia, cada pared tiene memoria.</p><p>Dejo este registro para quienes no pudieron estar en el espacio físico: el silencio del salón vacío, las cajas, las etiquetas aún sin nombre.</p><div class=\"journal-embed\"><iframe src=\"https://www.youtube.com/embed/dQw4w9WgXcQ\" title=\"Video proceso\" loading=\"lazy\" allowfullscreen></iframe></div><p>Pronto publicaré el catálogo digital con fichas ampliadas.</p>",
+        "en": "<p>Installing a show is editing a poem in three dimensions. Each work asks for distance; every wall has memory.</p><p>I leave this record for those who could not be in the physical space: the silence of the empty room, the crates, labels still unnamed.</p><div class=\"journal-embed\"><iframe src=\"https://www.youtube.com/embed/dQw4w9WgXcQ\" title=\"Process video\" loading=\"lazy\" allowfullscreen></iframe></div><p>Soon I will publish the digital catalog with extended entries.</p>"
+      },
+      "embeds": [{ "type": "video", "url": "https://www.youtube.com/embed/dQw4w9WgXcQ" }],
+      "likes": 28,
+      "author": {
+        "username": "diegodeaduriz",
+        "displayName": "Diego De Aduriz",
+        "avatarUrl": null
+      }
+    },
+    {
+      "id": "3",
+      "slug": "inspiracion-gatos-y-mitos",
+      "status": "PUBLISHED",
+      "publishedAt": "2026-03-15T09:00:00Z",
+      "locale": "es",
+      "title": {
+        "es": "Gatos, mitos y autorretratos",
+        "en": "Cats, myths, and self-portraits"
+      },
+      "excerpt": {
+        "es": "Por qué los felinos aparecen una y otra vez en mi archivo visual.",
+        "en": "Why felines keep returning in my visual archive."
+      },
+      "coverImage": "../portfolio/sections/obras/MG_1192.jpg",
+      "tags": ["inspiración", "gatos", "autorretrato"],
+      "readMinutes": 5,
+      "content": {
+        "es": "<p>Los gatos en mi obra no son mascotas decorativas: son guardianes de umbral. Aparecen cuando una pintura necesita un testigo que no juzgue.</p><p>En los autorretratos abandono la cara humana para preguntarme qué queda de identidad cuando el cuerpo se vuelve paisaje.</p>",
+        "en": "<p>Cats in my work are not decorative pets: they are threshold guardians. They appear when a painting needs a witness that does not judge.</p><p>In self-portraits I leave the human face to ask what remains of identity when the body becomes landscape.</p>"
+      },
+      "embeds": [],
+      "likes": 41,
+      "author": {
+        "username": "diegodeaduriz",
+        "displayName": "Diego De Aduriz",
+        "avatarUrl": null
+      }
+    }
+  ]
+}

@@ -18,8 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -33,9 +37,52 @@ public class ImageStorageService {
     @Value("${app.upload.allowed-types}")
     private String allowedTypes;
 
+    @Value("${app.upload.dir:uploads}")
+    private String uploadDir;
+
+    @Value("${cloudinary.cloud-name:}")
+    private String cloudName;
+
     // -------------------------------------------------------------------------
     // Upload
     // -------------------------------------------------------------------------
+
+    public String uploadJournalImage(MultipartFile file) throws IOException {
+        String contentType = file.getContentType();
+        if (contentType == null || !List.of(allowedTypes.split(",")).contains(contentType)) {
+            throw new IllegalArgumentException("File type not allowed: " + contentType);
+        }
+
+        String extension = switch (contentType) {
+            case "image/jpeg" -> ".jpg";
+            case "image/png" -> ".png";
+            case "image/webp" -> ".webp";
+            case "image/gif" -> ".gif";
+            default -> "";
+        };
+
+        if (cloudName == null || cloudName.isBlank()) {
+            Path dir = Paths.get(uploadDir).toAbsolutePath().normalize();
+            Files.createDirectories(dir);
+            String filename = "journal_" + UUID.randomUUID() + extension;
+            Path target = dir.resolve(filename);
+            Files.write(target, file.getBytes());
+            log.info("Saved journal image locally — {}", target);
+            return "/uploads/" + filename;
+        }
+
+        Map<?, ?> result = cloudinary.uploader().upload(
+                file.getBytes(),
+                ObjectUtils.asMap(
+                        "folder", "dda/journal",
+                        "resource_type", "image",
+                        "overwrite", false
+                )
+        );
+        String secureUrl = (String) result.get("secure_url");
+        log.info("Uploaded journal image to Cloudinary — {}", secureUrl);
+        return secureUrl;
+    }
 
     @Caching(evict = {
             @CacheEvict(value = "artworks", allEntries = true),

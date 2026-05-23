@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diego De Aduriz | Cuaderno del artista</title>
+    <meta name="description" content="Cuaderno del artista: proceso creativo, exposiciones, bocetos y notas de Diego De Aduriz.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://diegodeaduriz.art/journal/index.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Cuaderno del artista — Diego De Aduriz">
+    <meta property="og:url" content="https://diegodeaduriz.art/journal/index.html">
+    <meta property="og:locale" content="es_AR">
+    <meta property="og:locale:alternate" content="en_US">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../global-close.css">
+    <link rel="stylesheet" href="journal.css">
+</head>
+
+<body class="journal-page forum-page">
+
+    <div class="close-container">
+        <a href="../index.html" class="close-btn">CLOSE</a>
+    </div>
+
+    <main class="forum-layout">
+        <header class="forum-header">
+            <div class="forum-header__intro">
+                <span class="journal-hero__eyebrow" data-i18n="nav.journal">CUADERNO</span>
+                <h1 class="forum-header__title" data-i18n="journal.title">Cuaderno del artista</h1>
+                <p class="forum-header__desc" data-i18n="journal.subtitle">Un espacio para conversar sobre proceso, obra y taller.</p>
+            </div>
+            <div class="forum-toolbar">
+                <label class="forum-search">
+                    <span class="visually-hidden">Buscar</span>
+                    <input type="search" id="forumSearch" placeholder="Buscar en el cuaderno…" autocomplete="off">
+                </label>
+            </div>
+        </header>
+
+        <div class="forum-filters journal-filters" id="journalFilters" role="tablist" aria-label="Temas">
+            <button type="button" class="journal-filter-btn is-active" data-tag="" data-i18n="journal.filter_all">Todo</button>
+        </div>
+
+        <div class="forum-feed" id="journalGrid" aria-live="polite"></div>
+        <p class="journal-empty forum-empty" id="journalEmpty" hidden data-i18n="journal.empty">Aún no hay entradas publicadas.</p>
+
+        <section class="journal-newsletter-block forum-newsletter" aria-labelledby="newsletter-title">
+            <h3 id="newsletter-title" data-i18n="journal.newsletter_title">Boletín del estudio</h3>
+            <p data-i18n="journal.newsletter_desc">Arte, proceso y notas del taller. Sin spam.</p>
+            <form class="journal-newsletter-form" id="journalNewsletterForm">
+                <input type="email" name="email" required placeholder="tu@email.com" autocomplete="email" aria-label="Email">
+                <button type="submit" data-i18n="journal.newsletter_btn">Suscribirme</button>
+            </form>
+            <p class="newsletter-msg" hidden role="status"></p>
+        </section>
+    </main>
+
+    <footer class="journal-footer">
+        &copy; 2026 Diego De Aduriz. <span data-i18n="footer.rights">Todos los derechos reservados.</span>
+    </footer>
+
+    <script src="../i18n/journal-translations.js"></script>
+    <script src="../i18n.js" defer></script>
+    <script src="../shop/config.js"></script>
+    <script src="../shop/newsletter.js" defer></script>
+    <script src="journal-api.js" defer></script>
+    <script src="journal-app.js" defer></script>
+    <script src="index.js" defer></script>
+</body>
+
+</html>

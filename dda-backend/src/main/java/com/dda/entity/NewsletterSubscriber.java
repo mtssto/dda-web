@@ -16,6 +16,9 @@ public class NewsletterSubscriber {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(length = 50)
+    private String source;
+
     @Column(name = "subscribed_at")
     private LocalDateTime subscribedAt;
 
@@ -25,6 +28,8 @@ public class NewsletterSubscriber {
 
     @PrePersist
     protected void onCreate() {
-        subscribedAt = LocalDateTime.now();
+        if (subscribedAt == null) {
+            subscribedAt = LocalDateTime.now();
+        }
     }
 }

@@ -1,7 +1,45 @@
-(function () {
+/**
+ * Newsletter — shop form init + programmatic subscribe API.
+ */
+var DDANewsletter = (function () {
     'use strict';
 
     var API_BASE = window.DDA_API_BASE || '/api';
+
+    function subscribe(email, source) {
+        return fetch(API_BASE + '/newsletter/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, source: source || 'web' })
+        }).then(function (res) {
+            return res.json().then(function (data) {
+                return { ok: res.ok, data: data };
+            });
+        }).then(function (result) {
+            if (!result.ok) {
+                var msg = result.data.message || result.data.email || 'Could not subscribe';
+                throw new Error(msg);
+            }
+            return result.data;
+        }).catch(function (err) {
+            var queue = JSON.parse(localStorage.getItem('dda_newsletter_queue') || '[]');
+            if (queue.indexOf(email) === -1) queue.push(email);
+            localStorage.setItem('dda_newsletter_queue', JSON.stringify(queue));
+            if (err.message && err.message !== 'Failed to fetch') throw err;
+            return { queued: true, email: email, message: 'Queued locally' };
+        });
+    }
+
+    function subscribeWithAuth(email, token) {
+        return fetch(API_BASE + '/newsletter/subscribe', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({ email: email, source: 'registration' })
+        });
+    }
 
     function initNewsletter() {
         var form = document.getElementById('newsletterForm');
@@ -22,35 +60,20 @@
             msg.textContent = '';
             msg.className = 'newsletter-msg';
 
-            fetch(API_BASE + '/newsletter/subscribe', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email })
-            })
-            .then(function (res) {
-                return res.json().then(function (data) {
-                    return { ok: res.ok, data: data };
-                });
-            })
-            .then(function (result) {
-                if (result.ok) {
-                    msg.textContent = result.data.message || '¡Gracias por suscribirte!';
+            subscribe(email, 'shop')
+                .then(function (data) {
+                    msg.textContent = data.message || '¡Gracias por suscribirte!';
                     msg.className = 'newsletter-msg success';
                     emailInput.value = '';
-                } else {
-                    var errorMsg = result.data.message || result.data.email || 'Error al suscribirte. Intentá de nuevo.';
-                    msg.textContent = errorMsg;
+                })
+                .catch(function (err) {
+                    msg.textContent = err.message || 'Error al suscribirte. Intentá de nuevo.';
                     msg.className = 'newsletter-msg error';
-                }
-            })
-            .catch(function () {
-                msg.textContent = 'Error de conexión. Intentá más tarde.';
-                msg.className = 'newsletter-msg error';
-            })
-            .finally(function () {
-                btn.disabled = false;
-                btn.textContent = 'Suscribirme';
-            });
+                })
+                .finally(function () {
+                    btn.disabled = false;
+                    btn.textContent = 'Suscribirme';
+                });
         });
     }
 
@@ -59,4 +82,6 @@
     } else {
         initNewsletter();
     }
+
+    return { subscribe: subscribe, subscribeWithAuth: subscribeWithAuth, init: initNewsletter };
 })();

@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'nav.proyectos': 'PROYECTOS',
             'nav.textos': 'PUBLICACIONES',
             'nav.shop': 'SHOP',
+            'nav.journal': 'CUADERNO',
             'nav.contact': 'CONTACTO',
             'footer.rights': 'Todos los derechos reservados.',
             'auth.guarantee': 'Autenticidad Garantizada',
@@ -47,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'nav.proyectos': 'PROJECTS',
             'nav.textos': 'PUBLICATIONS',
             'nav.shop': 'SHOP',
+            'nav.journal': 'NOTEBOOK',
             'nav.contact': 'CONTACT',
             'footer.rights': 'All rights reserved.',
             'auth.guarantee': 'Authenticity Guaranteed',
@@ -131,7 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
             'CLOSE': 'close',
             'CERRAR': 'close',
             'MORE': 'more',
-            'MÁS': 'more'
+            'MÁS': 'more',
+            'NOTEBOOK': 'nav.journal',
+            'CUADERNO': 'nav.journal'
         };
 
         // Specially target index.html a wrappers and close-btn

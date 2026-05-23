@@ -209,6 +209,17 @@
             </div>
         </div>
 
+        <section class="obra-comments" id="obraCommentsSection" style="display:none" aria-labelledby="obra-comments-heading">
+            <h2 class="obra-comments__title" id="obra-comments-heading">Comentarios</h2>
+            <ul class="obra-comment-list" id="obraCommentList" aria-live="polite"></ul>
+            <form class="obra-comment-form" id="obraCommentForm">
+                <label class="visually-hidden" for="obraCommentText">Tu comentario</label>
+                <textarea id="obraCommentText" rows="3" placeholder="¿Qué te transmite esta obra?" required></textarea>
+                <button type="submit" class="obra-btn-secondary obra-comment-submit">Publicar comentario</button>
+            </form>
+            <p class="obra-comment-hint" id="obraCommentHint" hidden role="status"></p>
+        </section>
+
         <!-- Related artworks -->
         <section class="obra-related" id="obraRelated" style="display:none">
             <h2 class="related-title">Obras similares</h2>
@@ -229,6 +240,7 @@
     <script src="config.js"></script>
     <script src="products.js" defer></script>
     <script src="auth.js" defer></script>
+    <script src="comments.js" defer></script>
     <script src="cart.js" defer></script>
     <script src="obra.js" defer></script>
 </body>

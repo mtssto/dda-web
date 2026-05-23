@@ -10,4 +10,6 @@
     // For production, set this to your Railway backend URL, e.g.:
     // window.DDA_API_BASE = 'https://your-app.up.railway.app/api';
     window.DDA_API_BASE = 'https://dda-web-production.up.railway.app/api';
+    // Uploaded images (/uploads/...) are served by the backend, not GitHub Pages:
+    window.DDA_MEDIA_BASE = 'https://dda-web-production.up.railway.app';
 })();

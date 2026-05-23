@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Diego De Aduriz | Cuaderno Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../global-close.css">
+    <link rel="stylesheet" href="journal.css">
+</head>
+
+<body class="journal-page journal-admin-page">
+
+    <div class="close-container">
+        <a href="../shop/admin.html" class="close-btn">← PANEL</a>
+        <div class="auth-header-btns">
+            <a href="#" class="auth-header-link" id="adminLogout">SALIR</a>
+        </div>
+    </div>
+
+    <main class="admin-panel">
+        <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab is-active" data-panel="posts" data-i18n="admin.journal">Cuaderno</button>
+            <button type="button" class="admin-tab" data-panel="newsletter" data-i18n="admin.newsletter">Boletín</button>
+            <button type="button" class="admin-tab" data-panel="comments" data-i18n="journal.comments">Comentarios</button>
+        </div>
+
+        <section id="panelPosts">
+            <div class="admin-stats" id="journalStats">
+                <div class="admin-stat"><strong id="statPublished">-</strong><span data-i18n="admin.publish">Publicadas</span></div>
+                <div class="admin-stat"><strong id="statDraft">-</strong><span>Borradores</span></div>
+                <div class="admin-stat"><strong id="statScheduled">-</strong><span data-i18n="admin.schedule">Programadas</span></div>
+            </div>
+
+            <div class="admin-card admin-form">
+                <h3 class="admin-card__title" id="postFormTitle">Nueva entrada</h3>
+                <p class="admin-form__intro">Escribí como en un documento. Las imágenes se suben con un clic. No hace falta saber código.</p>
+
+                <label for="postTitleEs">Título (español) *</label>
+                <input type="text" id="postTitleEs" placeholder="Ej: Notas desde el taller" autocomplete="off">
+
+                <label for="postTitleEn">Título (inglés, opcional)</label>
+                <input type="text" id="postTitleEn" placeholder="Ej: Notes from the studio">
+
+                <label for="postSlug">Enlace de la entrada</label>
+                <input type="text" id="postSlug" placeholder="notas-desde-el-taller">
+                <p class="field-hint">Se arma solo desde el título. Solo letras, números y guiones. Aparece en la URL: <code>/journal/post.html?slug=…</code></p>
+
+                <label for="postExcerptEs">Resumen corto (opcional)</label>
+                <textarea id="postExcerptEs" rows="3" placeholder="Una o dos frases para la lista de entradas…"></textarea>
+
+                <label for="postCoverFile">Imagen principal</label>
+                <div class="cover-upload">
+                    <input type="file" id="postCoverFile" accept="image/jpeg,image/png,image/webp,image/gif">
+                    <button type="button" class="admin-btn admin-btn--ghost" id="btnUploadCover">Subir imagen</button>
+                    <span class="upload-status" id="coverUploadStatus" hidden></span>
+                </div>
+                <div class="cover-preview" id="coverPreview" hidden>
+                    <img id="coverPreviewImg" alt="">
+                    <button type="button" class="admin-btn admin-btn--ghost" id="btnRemoveCover">Quitar imagen</button>
+                </div>
+                <input type="hidden" id="postCover">
+
+                <label for="postContentEs">Texto de la entrada *</label>
+                <p class="field-hint">Escribí con párrafos (Enter dos veces entre párrafos). Podés pegar texto normal; no hace falta HTML.</p>
+                <textarea id="postContentEs" class="admin-textarea" rows="12" placeholder="Contá tu proceso, la muestra, el taller…"></textarea>
+                <div class="inline-image-upload">
+                    <input type="file" id="postInlineImage" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+                    <button type="button" class="admin-btn admin-btn--ghost" id="btnInsertImage">+ Insertar imagen en el texto</button>
+                    <span class="upload-status" id="inlineUploadStatus" hidden></span>
+                </div>
+
+                <label for="postTags">Etiquetas (opcional)</label>
+                <input type="text" id="postTags" placeholder="proceso, taller, exposición">
+
+                <label for="postStatus">Estado</label>
+                <select id="postStatus">
+                    <option value="DRAFT">Borrador — solo vos la ves</option>
+                    <option value="SCHEDULED">Programada</option>
+                    <option value="PUBLISHED">Publicada — visible en el cuaderno</option>
+                </select>
+
+                <label for="postSchedule">Fecha de publicación (si programás)</label>
+                <input type="datetime-local" id="postSchedule">
+
+                <label class="checkbox-row"><input type="checkbox" id="postSendNewsletter"> Enviar boletín por email al publicar</label>
+                <p class="admin-save-status" id="postSaveStatus" hidden role="status"></p>
+                <div class="admin-form__actions">
+                    <button type="button" class="admin-btn" id="btnPreview" data-i18n="admin.draft_preview">Vista previa</button>
+                    <button type="button" class="admin-btn" id="btnSavePost">Guardar</button>
+                    <button type="button" class="admin-btn admin-btn--ghost" id="btnCancelEdit" hidden>Cancelar edición</button>
+                    <button type="button" class="admin-btn admin-btn--danger" id="btnDeletePost" hidden>Eliminar entrada</button>
+                </div>
+                <div class="admin-preview" id="postPreview" hidden></div>
+            </div>
+
+            <div class="admin-card">
+                <table class="admin-table" id="postsTable">
+                    <thead><tr><th>Título</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="panelNewsletter" hidden>
+            <div class="admin-stats">
+                <div class="admin-stat"><strong id="statSubscribers">-</strong><span data-i18n="admin.subscribers">Suscriptores</span></div>
+                <div class="admin-stat"><strong id="statOpens">-</strong><span data-i18n="admin.opens">Aperturas</span></div>
+                <div class="admin-stat"><strong id="statClicks">-</strong><span data-i18n="admin.clicks">Clics</span></div>
+            </div>
+            <div class="admin-card">
+                <p class="admin-card__desc" data-i18n="admin.analytics">Analíticas de campañas y envíos automáticos al publicar entradas.</p>
+                <table class="admin-table" id="campaignsTable">
+                    <thead><tr><th>Campaña</th><th>Enviados</th><th>Aperturas</th><th>Clics</th><th>Fecha</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="panelComments" hidden>
+            <div class="admin-card">
+                <table class="admin-table" id="commentsModTable">
+                    <thead><tr><th>Autor</th><th>Comentario</th><th>Estado</th><th></th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="../i18n/journal-translations.js"></script>
+    <script src="../i18n.js"></script>
+    <script src="../shop/config.js"></script>
+    <script src="../shop/auth.js"></script>
+    <script src="journal-api.js"></script>
+    <script src="admin.js"></script>
+</body>
+
+</html>

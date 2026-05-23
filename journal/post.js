@@ -1,0 +1,202 @@
+document.addEventListener('DOMContentLoaded', function () {
+    var params = new URLSearchParams(window.location.search);
+    var slug = params.get('slug');
+    if (!slug) {
+        window.location.href = 'index.html';
+        return;
+    }
+
+    var postId = null;
+    var loginUrl = '../shop/user-login.html?return=' + encodeURIComponent(window.location.pathname + window.location.search);
+
+    function authorInitials(name) {
+        return String(name || 'U').split(/\s+/).map(function (w) {
+            return w.charAt(0);
+        }).join('').slice(0, 2).toUpperCase();
+    }
+
+    DDAJournal.fetchPostBySlug(slug).then(function (post) {
+        postId = post.id;
+        document.title = 'Diego De Aduriz | ' + post.title;
+
+        var meta = document.getElementById('postMeta');
+        var lang = DDAJournal.getLang();
+        var authorName = (post.author && post.author.displayName) || 'Diego De Aduriz';
+        var authorEl = document.getElementById('postAuthor');
+        var avatarEl = document.getElementById('postAuthorAvatar');
+
+        if (authorEl) authorEl.textContent = authorName;
+        if (avatarEl) {
+            avatarEl.textContent = authorName.split(/\s+/).map(function (w) {
+                return w.charAt(0);
+            }).join('').slice(0, 2).toUpperCase();
+        }
+        if (meta) {
+            meta.textContent = DDAJournal.formatDate(post.publishedAt, lang) + ' · ' + post.readMinutes + ' min';
+        }
+
+        document.getElementById('postTitle').textContent = post.title;
+        document.getElementById('postTags').innerHTML = JournalApp.renderTags(post.tags);
+
+        var cover = document.getElementById('postCover');
+        if (cover && post.coverImage) {
+            cover.src = post.coverImage;
+            cover.alt = post.title;
+            cover.onerror = function () {
+                this.style.display = 'none';
+            };
+        } else if (cover) {
+            cover.style.display = 'none';
+        }
+
+        var contentEl = document.getElementById('postContent');
+        if (contentEl) {
+            contentEl.innerHTML = post.content;
+            contentEl.querySelectorAll('img').forEach(function (img) {
+                img.addEventListener('error', function () {
+                    this.style.display = 'none';
+                });
+            });
+        }
+
+        var likeBtn = document.getElementById('btnLike');
+        var saveBtn = document.getElementById('btnSave');
+        var likeCount = document.getElementById('likeCount');
+        var saveLabel = document.getElementById('saveLabel');
+
+        function syncActions() {
+            likeBtn.classList.toggle('is-active', DDAJournal.isLiked(postId));
+            likeBtn.setAttribute('aria-pressed', String(DDAJournal.isLiked(postId)));
+            saveBtn.classList.toggle('is-active', DDAJournal.isSaved(postId));
+            saveBtn.setAttribute('aria-pressed', String(DDAJournal.isSaved(postId)));
+            if (saveLabel) {
+                saveLabel.textContent = DDAJournal.isSaved(postId)
+                    ? JournalApp.t('journal.saved')
+                    : JournalApp.t('journal.save');
+            }
+            var baseLikes = post.likes || 0;
+            var extra = DDAJournal.isLiked(postId) ? 1 : 0;
+            if (likeCount) likeCount.textContent = '(' + (baseLikes + extra) + ')';
+        }
+
+        syncActions();
+
+        likeBtn.addEventListener('click', function () {
+            DDAJournal.toggleLike(postId);
+            syncActions();
+        });
+
+        saveBtn.addEventListener('click', function () {
+            DDAJournal.toggleSave(postId);
+            syncActions();
+        });
+
+        setupComments();
+
+        var schema = {
+            '@context': 'https://schema.org',
+            '@type': 'BlogPosting',
+            headline: post.title,
+            description: post.excerpt,
+            image: post.coverImage,
+            datePublished: post.publishedAt,
+            author: { '@type': 'Person', name: post.author.displayName },
+            url: window.location.href
+        };
+        var script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.textContent = JSON.stringify(schema);
+        document.head.appendChild(script);
+    }).catch(function () {
+        window.location.href = 'index.html';
+    });
+
+    function setupComments() {
+        var form = document.getElementById('commentForm');
+        var hint = document.getElementById('commentHint');
+        var textarea = document.getElementById('commentText');
+        var list = document.getElementById('commentList');
+        var authed = typeof DDAAuth !== 'undefined' && DDAAuth.isAuthenticated();
+        var submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+
+        if (textarea) textarea.disabled = !authed;
+        if (submitBtn) submitBtn.disabled = !authed;
+
+        if (!authed && hint) {
+            hint.hidden = false;
+            hint.innerHTML = (JournalApp.t('journal.comment_login') || 'Iniciá sesión para comentar') +
+                ' <a href="' + loginUrl + '">Iniciar sesión</a> · <a href="../shop/user-login.html#register">Crear cuenta</a>';
+        }
+
+        loadComments();
+
+        if (!form) return;
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (typeof DDAAuth === 'undefined' || !DDAAuth.isAuthenticated()) {
+                window.location.href = loginUrl;
+                return;
+            }
+            var text = textarea ? textarea.value.trim() : '';
+            if (!text || !postId) return;
+
+            DDAJournal.addComment(postId, text).then(function () {
+                if (textarea) textarea.value = '';
+                if (hint) {
+                    hint.hidden = false;
+                    hint.classList.remove('is-error');
+                    hint.textContent = JournalApp.t('journal.comment_published') || 'Comentario publicado.';
+                }
+                loadComments();
+            }).catch(function (err) {
+                if (err && err.message === 'LOGIN_REQUIRED') {
+                    window.location.href = loginUrl;
+                    return;
+                }
+                if (hint) {
+                    hint.hidden = false;
+                    hint.classList.add('is-error');
+                    hint.textContent = (err && err.message) ? err.message : 'No se pudo publicar.';
+                }
+            });
+        });
+    }
+
+    function loadComments() {
+        if (!postId) return;
+        DDAJournal.getComments(postId).then(renderComments);
+    }
+
+    function renderComments(comments) {
+        var list = document.getElementById('commentList');
+        if (!list) return;
+        if (!comments.length) {
+            list.innerHTML = '<li class="journal-comment-empty">' +
+                (JournalApp.t('journal.comments_empty') || 'Todavía no hay comentarios.') + '</li>';
+            return;
+        }
+        list.innerHTML = comments.map(function (c) {
+            var name = c.authorName || c.username || 'Usuario';
+            var date = c.createdAt ? DDAJournal.formatDate(c.createdAt, DDAJournal.getLang()) : '';
+            return (
+                '<li class="journal-comment">' +
+                    '<div class="journal-comment__avatar" aria-hidden="true">' +
+                        JournalApp.escapeHtml(authorInitials(name)) +
+                    '</div>' +
+                    '<div class="journal-comment__body">' +
+                        '<div class="journal-comment__head">' +
+                            '<span class="journal-comment__author">' + JournalApp.escapeHtml(name) + '</span>' +
+                            (date ? '<time class="journal-comment__date">' + JournalApp.escapeHtml(date) + '</time>' : '') +
+                        '</div>' +
+                        '<div class="journal-comment__text">' + JournalApp.escapeHtml(c.content) + '</div>' +
+                    '</div>' +
+                '</li>'
+            );
+        }).join('');
+    }
+
+    window.addEventListener('languageChanged', function () {
+        if (slug) window.location.reload();
+    });
+});
