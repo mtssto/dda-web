@@ -439,9 +439,9 @@
             authBtns.innerHTML = cartBtnHtml +
                 '<a href="mi-cuenta.html" class="auth-header-link">' +
                     '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> ' +
-                    (user ? user.username.toUpperCase() : 'MI CUENTA') +
+                    'MI CUENTA' +
                 '</a>' +
-                (isAdmin ? '<a href="admin.html" class="auth-header-link">ADMIN</a>' : '') +
+                (isAdmin ? '<a href="admin.html" class="auth-header-link">PANEL</a>' : '') +
                 '<a href="#" class="auth-header-link" id="headerLogout">SALIR</a>';
             var logoutLink = document.getElementById('headerLogout');
             if (logoutLink) {
