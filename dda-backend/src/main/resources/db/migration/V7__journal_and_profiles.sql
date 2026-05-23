@@ -1,7 +1,20 @@
--- User profile fields (MySQL: no IF NOT EXISTS on ADD COLUMN)
-ALTER TABLE users ADD COLUMN display_name VARCHAR(100);
-ALTER TABLE users ADD COLUMN avatar_url VARCHAR(500);
-ALTER TABLE users ADD COLUMN newsletter_opt_in BOOLEAN DEFAULT FALSE;
+-- User profile fields (idempotent — safe if a previous V7 run failed partway)
+SET @db = DATABASE();
+
+SET @exists := (SELECT COUNT(*) FROM information_schema.columns
+    WHERE table_schema = @db AND table_name = 'users' AND column_name = 'display_name');
+SET @sql := IF(@exists = 0, 'ALTER TABLE users ADD COLUMN display_name VARCHAR(100)', 'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exists := (SELECT COUNT(*) FROM information_schema.columns
+    WHERE table_schema = @db AND table_name = 'users' AND column_name = 'avatar_url');
+SET @sql := IF(@exists = 0, 'ALTER TABLE users ADD COLUMN avatar_url VARCHAR(500)', 'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exists := (SELECT COUNT(*) FROM information_schema.columns
+    WHERE table_schema = @db AND table_name = 'users' AND column_name = 'newsletter_opt_in');
+SET @sql := IF(@exists = 0, 'ALTER TABLE users ADD COLUMN newsletter_opt_in BOOLEAN DEFAULT FALSE', 'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 
 -- Journal posts
 CREATE TABLE IF NOT EXISTS journal_posts (
@@ -26,8 +39,15 @@ CREATE TABLE IF NOT EXISTS journal_posts (
     CONSTRAINT fk_journal_author FOREIGN KEY (author_id) REFERENCES users(id)
 );
 
-CREATE INDEX idx_journal_status ON journal_posts(status);
-CREATE INDEX idx_journal_published ON journal_posts(published_at);
+SET @exists := (SELECT COUNT(*) FROM information_schema.statistics
+    WHERE table_schema = @db AND table_name = 'journal_posts' AND index_name = 'idx_journal_status');
+SET @sql := IF(@exists = 0, 'CREATE INDEX idx_journal_status ON journal_posts(status)', 'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exists := (SELECT COUNT(*) FROM information_schema.statistics
+    WHERE table_schema = @db AND table_name = 'journal_posts' AND index_name = 'idx_journal_published');
+SET @sql := IF(@exists = 0, 'CREATE INDEX idx_journal_published ON journal_posts(published_at)', 'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 
 -- Comments
 CREATE TABLE IF NOT EXISTS journal_comments (
