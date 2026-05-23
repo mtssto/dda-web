@@ -228,7 +228,8 @@
 
             // ── Redirect if already logged in ────────────
             if (DDAAuth.isAuthenticated()) {
-                window.location.href = 'mi-cuenta.html';
+                var back = new URLSearchParams(window.location.search).get('return');
+                window.location.href = (back && back.indexOf('user-login') === -1) ? back : 'mi-cuenta.html';
             }
 
             // ── Auto-switch to register tab if #register hash ──
@@ -373,7 +374,13 @@
 
                 DDAAuth.login(username, password)
                     .then(function () {
-                        window.location.href = 'mi-cuenta.html';
+                        var params = new URLSearchParams(window.location.search);
+                        var returnTo = params.get('return');
+                        if (returnTo && returnTo.indexOf('user-login') === -1) {
+                            window.location.href = returnTo;
+                        } else {
+                            window.location.href = 'mi-cuenta.html';
+                        }
                     })
                     .catch(function (err) {
                         errorText.textContent = err.message || 'Usuario o contraseña incorrectos';
@@ -443,8 +450,13 @@
                 DDAAuth.register(username, email, password, newsletterOptIn)
                     .then(function () {
                         successBox.hidden = false;
+                        var returnTo = new URLSearchParams(window.location.search).get('return');
                         setTimeout(function () {
-                            window.location.href = 'mi-cuenta.html';
+                            if (returnTo && returnTo.indexOf('user-login') === -1) {
+                                window.location.href = returnTo;
+                            } else {
+                                window.location.href = 'mi-cuenta.html';
+                            }
                         }, 1000);
                     })
                     .catch(function (err) {

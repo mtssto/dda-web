@@ -47,7 +47,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/journal/posts").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/journal/posts/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/journal/posts/*/comments").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/journal/posts/*/comments").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/artworks/*/comments").authenticated()
 
                         .requestMatchers("/api/journal/admin/**").hasRole("ADMIN")
 

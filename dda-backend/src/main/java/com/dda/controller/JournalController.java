@@ -48,13 +48,19 @@ public class JournalController {
     }
 
     @PostMapping("/posts/{id}/comments")
-    public JournalComment addComment(
+    public ResponseEntity<JournalComment> addComment(
             @PathVariable Long id,
             @RequestBody Map<String, String> body,
             @AuthenticationPrincipal UserDetails user) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         String content = body.get("content");
-        String username = user != null ? user.getUsername() : "Guest";
-        return journalService.addComment(id, content, username);
+        if (content == null || content.isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(journalService.addComment(id, content, user.getUsername()));
     }
 
     @PostMapping("/admin/upload")

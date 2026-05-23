@@ -40,6 +40,9 @@
     }
 
     function resolveMediaUrl(url) {
+        if (typeof DDAJournal !== 'undefined' && DDAJournal.resolveMediaUrl) {
+            return DDAJournal.resolveMediaUrl(url);
+        }
         if (!url) return '';
         if (url.indexOf('http://') === 0 || url.indexOf('https://') === 0) return url;
         if (url.indexOf('/uploads/') === 0) return url;
@@ -319,7 +322,10 @@
             }).filter(Boolean),
             coverImage: document.getElementById('postCover').value,
             status: document.getElementById('postStatus').value,
-            scheduledAt: document.getElementById('postSchedule').value || null,
+            scheduledAt: (function () {
+                var v = document.getElementById('postSchedule').value;
+                return v ? v : null;
+            })(),
             sendNewsletter: document.getElementById('postSendNewsletter').checked
         };
     }
@@ -388,10 +394,25 @@
     }
 
     function renderComments(comments) {
-        document.querySelector('#commentsModTable tbody').innerHTML = comments.map(function (c) {
+        var tbody = document.querySelector('#commentsModTable tbody');
+        tbody.innerHTML = comments.map(function (c) {
             return '<tr><td>' + escapeHtml(c.authorName) + '</td><td>' + escapeHtml(c.content) + '</td><td>' + c.status + '</td>' +
-                '<td><button class="admin-btn admin-btn--ghost" data-approve="' + c.id + '">Aprobar</button></td></tr>';
+                '<td><button type="button" class="admin-btn admin-btn--ghost btn-approve-comment" data-id="' + c.id + '">Aprobar</button></td></tr>';
         }).join('') || '<tr><td colspan="4">Sin comentarios pendientes</td></tr>';
+
+        tbody.querySelectorAll('.btn-approve-comment').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var commentId = btn.getAttribute('data-id');
+                DDAAuth.apiFetch('/journal/admin/comments/' + commentId + '/approve', { method: 'PATCH' })
+                    .then(function (r) {
+                        if (!r.ok) throw new Error('No se pudo aprobar');
+                        refresh();
+                    })
+                    .catch(function () {
+                        alert('No se pudo aprobar. ¿Está el backend en marcha?');
+                    });
+            });
+        });
     }
 
     function deletePost(post) {
@@ -452,6 +473,12 @@
         var url = editingId ? '/journal/admin/posts/' + editingId : '/journal/admin/posts';
         var method = editingId ? 'PUT' : 'POST';
 
+        var statusEl = document.getElementById('postSaveStatus');
+        if (statusEl) {
+            statusEl.hidden = true;
+            statusEl.classList.remove('is-error', 'is-success');
+        }
+
         DDAAuth.apiFetch(url, {
             method: method,
             body: JSON.stringify(payload)
@@ -460,16 +487,56 @@
                 window.location.href = '../shop/user-login.html';
                 return;
             }
-            if (!r.ok) throw new Error('API');
+            if (!r.ok) {
+                return r.text().then(function (t) {
+                    var msg = t;
+                    try {
+                        var j = JSON.parse(t);
+                        msg = j.message || j.error || t;
+                    } catch (e) { /* plain text */ }
+                    throw new Error(msg || ('Error del servidor (' + r.status + ')'));
+                });
+            }
             return r.json();
         }).then(function () {
             resetPostForm();
             refresh();
-        }).catch(function () {
-            savePostLocal(payload, !!editingId);
-            resetPostForm();
-            refresh();
-            alert('Guardado localmente (conectá el backend para publicar en el sitio).');
+            var msg = payload.status === 'PUBLISHED'
+                ? 'Publicada en el cuaderno. Abrí el cuaderno en otra pestaña para verla.'
+                : 'Guardada como borrador. Cambiá el estado a «Publicada» para que sea visible.';
+            if (statusEl) {
+                statusEl.hidden = false;
+                statusEl.classList.add('is-success');
+                statusEl.textContent = msg;
+            } else {
+                alert(msg);
+            }
+        }).catch(function (err) {
+            var apiDown = !err || !err.message || err.message === 'Failed to fetch';
+            if (apiDown || (err.message && err.message.indexOf('fetch') !== -1)) {
+                savePostLocal(payload, !!editingId);
+                resetPostForm();
+                refresh();
+                var localMsg = payload.status === 'PUBLISHED'
+                    ? 'Guardado solo en este navegador (sin backend). Iniciá el servidor API para publicar de verdad.'
+                    : 'Guardado localmente. El backend no respondió.';
+                if (statusEl) {
+                    statusEl.hidden = false;
+                    statusEl.classList.add('is-error');
+                    statusEl.textContent = localMsg;
+                } else {
+                    alert(localMsg);
+                }
+                return;
+            }
+            var errMsg = (err && err.message) ? err.message : 'No se pudo guardar.';
+            if (statusEl) {
+                statusEl.hidden = false;
+                statusEl.classList.add('is-error');
+                statusEl.textContent = errMsg;
+            } else {
+                alert(errMsg);
+            }
         });
     });
 

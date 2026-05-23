@@ -20,6 +20,70 @@ var DDAJournal = (function () {
         return obj[lang] || obj.es || obj.en || '';
     }
 
+    function mediaOrigin() {
+        if (window.DDA_MEDIA_BASE) {
+            return String(window.DDA_MEDIA_BASE).replace(/\/$/, '');
+        }
+        var api = window.DDA_API_BASE || '/api';
+        if (api.indexOf('http://') === 0 || api.indexOf('https://') === 0) {
+            return api.replace(/\/api\/?$/, '');
+        }
+        return '';
+    }
+
+    function resolveMediaUrl(url) {
+        if (!url) return '';
+        var trimmed = String(url).trim();
+        if (trimmed.indexOf('http://') === 0 || trimmed.indexOf('https://') === 0) {
+            return trimmed;
+        }
+        if (trimmed.indexOf('/uploads/') === 0 || trimmed.indexOf('uploads/') === 0) {
+            var path = trimmed.indexOf('/') === 0 ? trimmed : '/' + trimmed;
+            var origin = mediaOrigin();
+            return origin ? origin + path : path;
+        }
+        if (trimmed.indexOf('../') === 0) {
+            var sitePath = trimmed.replace(/^(\.\.\/)+/, '/');
+            if (typeof window !== 'undefined' && window.location && window.location.origin) {
+                return window.location.origin + sitePath;
+            }
+            return sitePath;
+        }
+        if (trimmed.indexOf('/') === 0 && typeof window !== 'undefined' && window.location && window.location.origin) {
+            return window.location.origin + trimmed;
+        }
+        return trimmed;
+    }
+
+    function resolveContentHtml(html) {
+        if (!html) return '';
+        var origin = mediaOrigin();
+        var resolved = html;
+        if (origin) {
+            resolved = resolved.replace(/src=(["'])(\/uploads\/[^"']+)\1/gi, function (_, quote, path) {
+                return 'src=' + quote + origin + path + quote;
+            });
+            resolved = resolved.replace(/src=(["'])(uploads\/[^"']+)\1/gi, function (_, quote, path) {
+                return 'src=' + quote + origin + '/' + path + quote;
+            });
+        }
+        resolved = resolved.replace(/src=(["'])(\.\.\/[^"']+)\1/gi, function (_, quote, path) {
+            var sitePath = path.replace(/^(\.\.\/)+/, '/');
+            if (typeof window !== 'undefined' && window.location && window.location.origin) {
+                return 'src=' + quote + window.location.origin + sitePath + quote;
+            }
+            return 'src=' + quote + sitePath + quote;
+        });
+        return resolved;
+    }
+
+    function stripHtml(html) {
+        if (!html) return '';
+        var div = document.createElement('div');
+        div.innerHTML = html;
+        return (div.textContent || div.innerText || '').trim();
+    }
+
     function loadStaticPosts() {
         return fetch(STATIC_DATA)
             .then(function (r) {
@@ -33,48 +97,79 @@ var DDAJournal = (function () {
             });
     }
 
-    function fetchPosts() {
-        return loadStaticPosts().catch(function () {
-            return fetch(API_BASE + '/journal/posts?status=PUBLISHED&size=50')
-                .then(function (res) {
-                    if (!res.ok) throw new Error('API unavailable');
-                    return res.json();
-                })
-                .then(function (data) {
-                    var list = data.content || data.posts || data;
-                    if (!list || !list.length) throw new Error('No API posts');
-                    return list.map(normalizePost);
-                })
-                .catch(function () {
-                    return loadStaticPosts();
-                });
+    function loadLocalPublishedPosts() {
+        try {
+            var raw = JSON.parse(localStorage.getItem('dda_journal_admin_posts') || '[]');
+            return raw.filter(function (p) {
+                return p.status === 'PUBLISHED';
+            }).map(normalizePost);
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function mergeBySlug(lists) {
+        var map = {};
+        lists.forEach(function (list) {
+            (list || []).forEach(function (post) {
+                if (post && post.slug) map[post.slug] = post;
+            });
         });
+        return Object.keys(map).map(function (key) { return map[key]; });
+    }
+
+    function fetchPostsFromApi() {
+        return fetch(API_BASE + '/journal/posts?status=PUBLISHED&size=50')
+            .then(function (res) {
+                if (!res.ok) throw new Error('API unavailable');
+                return res.json();
+            })
+            .then(function (data) {
+                var list = data.content || data.posts || data;
+                if (!Array.isArray(list)) return [];
+                return list.map(normalizePost);
+            });
+    }
+
+    function fetchPosts() {
+        return fetchPostsFromApi()
+            .then(function (apiPosts) {
+                return mergeBySlug([apiPosts, loadLocalPublishedPosts()]);
+            })
+            .catch(function () {
+                return loadStaticPosts().then(function (staticPosts) {
+                    return mergeBySlug([staticPosts, loadLocalPublishedPosts()]);
+                });
+            });
     }
 
     function fetchPostBySlug(slug) {
-        return fetchPosts().then(function (posts) {
-            var found = posts.find(function (p) { return p.slug === slug; });
-            if (found) return found;
-            throw new Error('Post not found');
-        }).catch(function () {
-            return fetch(API_BASE + '/journal/posts/slug/' + encodeURIComponent(slug))
-                .then(function (res) {
-                    if (!res.ok) throw new Error('Not found');
-                    return res.json();
-                })
-                .then(normalizePost);
-        });
+        return fetch(API_BASE + '/journal/posts/slug/' + encodeURIComponent(slug))
+            .then(function (res) {
+                if (!res.ok) throw new Error('Not found');
+                return res.json();
+            })
+            .then(normalizePost)
+            .catch(function () {
+                return fetchPosts().then(function (posts) {
+                    var found = posts.find(function (p) { return p.slug === slug; });
+                    if (!found) throw new Error('Post not found');
+                    return found;
+                });
+            });
     }
 
     function normalizePost(raw) {
         var lang = getLang();
+        var excerptRaw = pickLocalized(raw.excerpt, lang);
+        var contentRaw = pickLocalized(raw.content, lang);
         return {
             id: String(raw.id),
             slug: raw.slug,
             title: pickLocalized(raw.title, lang),
-            excerpt: pickLocalized(raw.excerpt, lang),
-            content: pickLocalized(raw.content, lang),
-            coverImage: raw.coverImage || '',
+            excerpt: stripHtml(excerptRaw).slice(0, 220) || stripHtml(contentRaw).slice(0, 220),
+            content: resolveContentHtml(contentRaw),
+            coverImage: resolveMediaUrl(raw.coverImage || ''),
             tags: raw.tags || [],
             publishedAt: raw.publishedAt,
             readMinutes: raw.readMinutes || 5,
@@ -173,35 +268,41 @@ var DDAJournal = (function () {
             .catch(function () {
                 var all = readLocal(COMMENTS_KEY);
                 return (all[postId] || []).filter(function (c) {
-                    return c.status !== 'REJECTED';
+                    return c.status === 'APPROVED' || !c.status;
                 });
             });
     }
 
     function addComment(postId, text) {
-        var user = typeof DDAAuth !== 'undefined' ? DDAAuth.getUser() : null;
+        if (typeof DDAAuth === 'undefined' || !DDAAuth.isAuthenticated()) {
+            return Promise.reject(new Error('LOGIN_REQUIRED'));
+        }
+        var user = DDAAuth.getUser();
         var comment = {
             id: 'c_' + Date.now(),
             postId: String(postId),
-            authorName: user ? user.username : 'Guest',
+            authorName: user ? user.username : 'Usuario',
             content: text,
-            status: 'PENDING',
+            status: 'APPROVED',
             createdAt: new Date().toISOString()
         };
 
-        if (typeof DDAAuth !== 'undefined' && DDAAuth.isAuthenticated()) {
-            return fetch(API_BASE + '/journal/posts/' + postId + '/comments', {
-                method: 'POST',
-                headers: DDAAuth.authHeaders(),
-                body: JSON.stringify({ content: text })
-            }).then(function (res) {
-                if (!res.ok) throw new Error('Failed');
-                return res.json();
-            }).catch(function () {
-                return saveLocalComment(postId, comment);
-            });
-        }
-        return Promise.resolve(saveLocalComment(postId, comment));
+        return fetch(API_BASE + '/journal/posts/' + postId + '/comments', {
+            method: 'POST',
+            headers: DDAAuth.authHeaders(),
+            body: JSON.stringify({ content: text })
+        }).then(function (res) {
+            if (res.status === 401) return Promise.reject(new Error('LOGIN_REQUIRED'));
+            if (!res.ok) {
+                return res.text().then(function (t) {
+                    throw new Error(t || 'No se pudo publicar el comentario');
+                });
+            }
+            return res.json();
+        }).catch(function (err) {
+            if (err && err.message === 'LOGIN_REQUIRED') throw err;
+            return saveLocalComment(postId, comment);
+        });
     }
 
     function saveLocalComment(postId, comment) {
@@ -232,6 +333,8 @@ var DDAJournal = (function () {
         addComment: addComment,
         formatDate: formatDate,
         getLang: getLang,
-        pickLocalized: pickLocalized
+        pickLocalized: pickLocalized,
+        resolveMediaUrl: resolveMediaUrl,
+        resolveContentHtml: resolveContentHtml
     };
 })();

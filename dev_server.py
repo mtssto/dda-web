@@ -38,6 +38,7 @@ LOCAL_CONFIG_JS = (
     "(function () {\n"
     "    'use strict';\n"
     "    window.DDA_API_BASE = '/api';\n"
+    "    // Local dev: dev_server.py proxies /uploads to the backend on :8081\n"
     "})();\n"
 )
 

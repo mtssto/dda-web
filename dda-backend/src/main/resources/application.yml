@@ -40,6 +40,7 @@ app:
     allowed-types: image/jpeg,image/png,image/webp,image/gif
   static:
     base-url: ${STATIC_BASE_URL:https://diegodeaduriz.art}
+  public-base-url: ${PUBLIC_BASE_URL:https://dda-web-production.up.railway.app}
   admin:
     seed-enabled: ${DDA_ADMIN_SEED_ENABLED:false}
     username: ${DDA_ADMIN_USERNAME:admin}

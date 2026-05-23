@@ -28,6 +28,7 @@ public class JournalService {
     private final JournalCommentRepository commentRepository;
     private final UserRepository userRepository;
     private final NewsletterService newsletterService;
+    private final MediaUrlResolver mediaUrlResolver;
 
     public Page<JournalPostDTO> listPublished(Pageable pageable) {
         return postRepository.findByStatus(JournalPost.Status.PUBLISHED, pageable).map(this::toDto);
@@ -48,6 +49,10 @@ public class JournalService {
 
     @Transactional
     public JournalPostDTO create(JournalPostRequest request, Long authorId) {
+        if (postRepository.findBySlug(request.getSlug()).isPresent()) {
+            throw new IllegalArgumentException("El enlace de la entrada ya está en uso. Cambiá el título o el enlace.");
+        }
+
         JournalPost post = JournalPost.builder()
                 .slug(request.getSlug())
                 .titleEs(request.getTitle().get("es"))
@@ -157,16 +162,20 @@ public class JournalService {
 
     @Transactional
     public JournalComment addComment(Long postId, String content, String username) {
+        if (username == null || username.isBlank()) {
+            throw new IllegalArgumentException("Debes iniciar sesión para comentar");
+        }
         JournalPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
-        User user = userRepository.findByUsername(username).orElse(null);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         JournalComment comment = JournalComment.builder()
                 .postId(post.getId())
-                .userId(user != null ? user.getId() : null)
-                .authorName(username)
-                .content(content)
-                .status(JournalComment.Status.PENDING)
+                .userId(user.getId())
+                .authorName(user.getUsername())
+                .content(content.trim())
+                .status(JournalComment.Status.APPROVED)
                 .build();
 
         return commentRepository.save(comment);
@@ -198,8 +207,10 @@ public class JournalService {
                 .slug(post.getSlug())
                 .title(java.util.Map.of("es", post.getTitleEs(), "en", post.getTitleEn() != null ? post.getTitleEn() : post.getTitleEs()))
                 .excerpt(java.util.Map.of("es", post.getExcerptEs() != null ? post.getExcerptEs() : "", "en", post.getExcerptEn() != null ? post.getExcerptEn() : ""))
-                .content(java.util.Map.of("es", post.getContentEs() != null ? post.getContentEs() : "", "en", post.getContentEn() != null ? post.getContentEn() : ""))
-                .coverImage(post.getCoverImage())
+                .content(java.util.Map.of(
+                        "es", mediaUrlResolver.resolveContentHtml(post.getContentEs() != null ? post.getContentEs() : ""),
+                        "en", mediaUrlResolver.resolveContentHtml(post.getContentEn() != null ? post.getContentEn() : "")))
+                .coverImage(mediaUrlResolver.resolve(post.getCoverImage()))
                 .tags(tags)
                 .status(post.getStatus().name())
                 .publishedAt(post.getPublishedAt())

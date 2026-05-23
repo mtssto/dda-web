@@ -49,6 +49,8 @@
 
             return {
                 id: artwork.slug || String(artwork.id),
+                artworkId: artwork.id,
+                slug: artwork.slug || String(artwork.id),
                 title: artwork.title,
                 description: artwork.description || '',
                 price: artwork.price || 'Consultar',
@@ -275,6 +277,11 @@
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') closeLightbox();
         });
+
+        if (typeof DDAComments !== 'undefined') {
+            var commentSlug = product.slug || product.id;
+            DDAComments.mountArtworkSection(commentSlug);
+        }
 
         // Share buttons
         setupShare(product, fullUrl, fullImg);

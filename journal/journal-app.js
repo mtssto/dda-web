@@ -25,6 +25,10 @@
             .replace(/"/g, '&quot;');
     }
 
+    function attrUrl(url) {
+        return String(url || '').replace(/"/g, '&quot;');
+    }
+
     function avatarHtml(name, url) {
         var initial = (name || '?').charAt(0).toUpperCase();
         if (url) {
@@ -63,6 +67,7 @@
         t: t,
         renderTags: renderTags,
         escapeHtml: escapeHtml,
+        attrUrl: attrUrl,
         avatarHtml: avatarHtml,
         bindNewsletterForm: bindNewsletterForm
     };

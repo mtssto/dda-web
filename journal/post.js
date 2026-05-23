@@ -7,6 +7,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     var postId = null;
+    var loginUrl = '../shop/user-login.html?return=' + encodeURIComponent(window.location.pathname + window.location.search);
+
+    function authorInitials(name) {
+        return String(name || 'U').split(/\s+/).map(function (w) {
+            return w.charAt(0);
+        }).join('').slice(0, 2).toUpperCase();
+    }
 
     DDAJournal.fetchPostBySlug(slug).then(function (post) {
         postId = post.id;
@@ -14,6 +21,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
         var meta = document.getElementById('postMeta');
         var lang = DDAJournal.getLang();
+        var authorName = (post.author && post.author.displayName) || 'Diego De Aduriz';
+        var authorEl = document.getElementById('postAuthor');
+        var avatarEl = document.getElementById('postAuthorAvatar');
+
+        if (authorEl) authorEl.textContent = authorName;
+        if (avatarEl) {
+            avatarEl.textContent = authorName.split(/\s+/).map(function (w) {
+                return w.charAt(0);
+            }).join('').slice(0, 2).toUpperCase();
+        }
         if (meta) {
             meta.textContent = DDAJournal.formatDate(post.publishedAt, lang) + ' · ' + post.readMinutes + ' min';
         }
@@ -25,11 +42,22 @@ document.addEventListener('DOMContentLoaded', function () {
         if (cover && post.coverImage) {
             cover.src = post.coverImage;
             cover.alt = post.title;
+            cover.onerror = function () {
+                this.style.display = 'none';
+            };
         } else if (cover) {
             cover.style.display = 'none';
         }
 
-        document.getElementById('postContent').innerHTML = post.content;
+        var contentEl = document.getElementById('postContent');
+        if (contentEl) {
+            contentEl.innerHTML = post.content;
+            contentEl.querySelectorAll('img').forEach(function (img) {
+                img.addEventListener('error', function () {
+                    this.style.display = 'none';
+                });
+            });
+        }
 
         var likeBtn = document.getElementById('btnLike');
         var saveBtn = document.getElementById('btnSave');
@@ -63,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
             syncActions();
         });
 
-        loadComments();
+        setupComments();
 
         var schema = {
             '@context': 'https://schema.org',
@@ -83,7 +111,60 @@ document.addEventListener('DOMContentLoaded', function () {
         window.location.href = 'index.html';
     });
 
+    function setupComments() {
+        var form = document.getElementById('commentForm');
+        var hint = document.getElementById('commentHint');
+        var textarea = document.getElementById('commentText');
+        var list = document.getElementById('commentList');
+        var authed = typeof DDAAuth !== 'undefined' && DDAAuth.isAuthenticated();
+        var submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+
+        if (textarea) textarea.disabled = !authed;
+        if (submitBtn) submitBtn.disabled = !authed;
+
+        if (!authed && hint) {
+            hint.hidden = false;
+            hint.innerHTML = (JournalApp.t('journal.comment_login') || 'Iniciá sesión para comentar') +
+                ' <a href="' + loginUrl + '">Iniciar sesión</a> · <a href="../shop/user-login.html#register">Crear cuenta</a>';
+        }
+
+        loadComments();
+
+        if (!form) return;
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (typeof DDAAuth === 'undefined' || !DDAAuth.isAuthenticated()) {
+                window.location.href = loginUrl;
+                return;
+            }
+            var text = textarea ? textarea.value.trim() : '';
+            if (!text || !postId) return;
+
+            DDAJournal.addComment(postId, text).then(function () {
+                if (textarea) textarea.value = '';
+                if (hint) {
+                    hint.hidden = false;
+                    hint.classList.remove('is-error');
+                    hint.textContent = JournalApp.t('journal.comment_published') || 'Comentario publicado.';
+                }
+                loadComments();
+            }).catch(function (err) {
+                if (err && err.message === 'LOGIN_REQUIRED') {
+                    window.location.href = loginUrl;
+                    return;
+                }
+                if (hint) {
+                    hint.hidden = false;
+                    hint.classList.add('is-error');
+                    hint.textContent = (err && err.message) ? err.message : 'No se pudo publicar.';
+                }
+            });
+        });
+    }
+
     function loadComments() {
+        if (!postId) return;
         DDAJournal.getComments(postId).then(renderComments);
     }
 
@@ -91,45 +172,29 @@ document.addEventListener('DOMContentLoaded', function () {
         var list = document.getElementById('commentList');
         if (!list) return;
         if (!comments.length) {
-            list.innerHTML = '';
+            list.innerHTML = '<li class="journal-comment-empty">' +
+                (JournalApp.t('journal.comments_empty') || 'Todavía no hay comentarios.') + '</li>';
             return;
         }
         list.innerHTML = comments.map(function (c) {
-            var name = c.authorName || c.username || 'Reader';
+            var name = c.authorName || c.username || 'Usuario';
+            var date = c.createdAt ? DDAJournal.formatDate(c.createdAt, DDAJournal.getLang()) : '';
             return (
                 '<li class="journal-comment">' +
-                    JournalApp.avatarHtml(name, c.avatarUrl) +
-                    '<div><div class="journal-comment__author">' + JournalApp.escapeHtml(name) + '</div>' +
-                    '<div class="journal-comment__text">' + JournalApp.escapeHtml(c.content) + '</div></div>' +
+                    '<div class="journal-comment__avatar" aria-hidden="true">' +
+                        JournalApp.escapeHtml(authorInitials(name)) +
+                    '</div>' +
+                    '<div class="journal-comment__body">' +
+                        '<div class="journal-comment__head">' +
+                            '<span class="journal-comment__author">' + JournalApp.escapeHtml(name) + '</span>' +
+                            (date ? '<time class="journal-comment__date">' + JournalApp.escapeHtml(date) + '</time>' : '') +
+                        '</div>' +
+                        '<div class="journal-comment__text">' + JournalApp.escapeHtml(c.content) + '</div>' +
+                    '</div>' +
                 '</li>'
             );
         }).join('');
     }
-
-    var form = document.getElementById('commentForm');
-    var hint = document.getElementById('commentHint');
-
-    if (typeof DDAAuth === 'undefined' || !DDAAuth.isAuthenticated()) {
-        if (hint) {
-            hint.textContent = JournalApp.t('journal.comment_login');
-            hint.hidden = false;
-        }
-    }
-
-    form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        var text = document.getElementById('commentText').value.trim();
-        if (!text || !postId) return;
-
-        DDAJournal.addComment(postId, text).then(function () {
-            document.getElementById('commentText').value = '';
-            if (hint) {
-                hint.textContent = JournalApp.t('journal.comment_pending');
-                hint.hidden = false;
-            }
-            loadComments();
-        });
-    });
 
     window.addEventListener('languageChanged', function () {
         if (slug) window.location.reload();
