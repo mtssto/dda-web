@@ -219,17 +219,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const btnSeeAll = document.getElementById('btnSeeAll');
         const heroCount = document.getElementById('heroObraCount');
         if (window.products && window.products.length > 0) {
-            const count = window.products.length;
+            const totalCount = window.products.length;
+            const availableCount = window.products.filter(function (p) { return !p.sold; }).length;
             const lang = localStorage.getItem('preferredLanguage') || 'es';
             if (btnSeeAll) {
                 btnSeeAll.textContent = lang === 'en'
-                    ? `VIEW ALL ${count} WORKS`
-                    : `VER LAS ${count} OBRAS DEL CATÁLOGO`;
+                    ? `VIEW ALL ${totalCount} WORKS`
+                    : `VER LAS ${totalCount} OBRAS DEL CATÁLOGO`;
             }
             if (heroCount) {
                 heroCount.textContent = lang === 'en'
-                    ? `${count} works available`
-                    : `${count} obras disponibles`;
+                    ? `${availableCount} works available`
+                    : `${availableCount} obras disponibles`;
             }
         }
 

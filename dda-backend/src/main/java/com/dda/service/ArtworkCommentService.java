@@ -20,6 +20,7 @@ public class ArtworkCommentService {
     private final ArtworkCommentRepository commentRepository;
     private final ArtworkRepository artworkRepository;
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
     public List<ArtworkComment> listApprovedBySlug(String slug) {
         Artwork artwork = artworkRepository.findBySlug(slug)
@@ -47,7 +48,13 @@ public class ArtworkCommentService {
                 .status(ArtworkComment.Status.APPROVED)
                 .build();
 
-        return commentRepository.save(comment);
+        ArtworkComment saved = commentRepository.save(comment);
+        emailService.sendArtworkCommentAlert(
+                artwork.getTitle(),
+                artwork.getSlug(),
+                authorLabel,
+                saved.getContent());
+        return saved;
     }
 
     public List<ArtworkComment> listPending() {

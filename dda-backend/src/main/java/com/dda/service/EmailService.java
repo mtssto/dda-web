@@ -27,6 +27,12 @@ public class EmailService {
     @Value("${dda.mail.from:DDA <onboarding@resend.dev>}")
     private String fromEmail;
 
+    @Value("${dda.mail.comment-notify-to:admin@diegodeaduriz.art}")
+    private String commentNotifyTo;
+
+    @Value("${app.static.base-url:https://diegodeaduriz.art}")
+    private String staticBaseUrl;
+
     private final HttpClient httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
             .build();
@@ -68,6 +74,28 @@ public class EmailService {
             return;
         }
         sendViaResend(toEmail, subject, html);
+    }
+
+    @Async
+    public void sendArtworkCommentAlert(String artworkTitle, String artworkSlug, String authorName, String commentContent) {
+        if (!mailEnabled) {
+            log.info("Email disabled — skipping artwork comment alert for {}", artworkSlug);
+            return;
+        }
+        if (resendApiKey == null || resendApiKey.isBlank()) {
+            log.warn("Resend API key not configured — skipping artwork comment alert for {}", artworkSlug);
+            return;
+        }
+        if (commentNotifyTo == null || commentNotifyTo.isBlank()) {
+            log.warn("Comment notify email not configured — skipping alert for {}", artworkSlug);
+            return;
+        }
+
+        String base = staticBaseUrl.endsWith("/") ? staticBaseUrl.substring(0, staticBaseUrl.length() - 1) : staticBaseUrl;
+        String obraUrl = base + "/shop/obra.html?id=" + java.net.URLEncoder.encode(artworkSlug, java.nio.charset.StandardCharsets.UTF_8);
+        String subject = "Nuevo comentario en obra: " + artworkTitle;
+        String html = buildArtworkCommentHtml(artworkTitle, authorName, commentContent, obraUrl);
+        sendViaResend(commentNotifyTo, subject, html);
     }
 
     private void sendViaResend(String toEmail, String subject, String htmlContent) {
@@ -129,6 +157,33 @@ public class EmailService {
             "<p style=\"margin:0;font-size:11px;color:#999;\">diegodeaduriz.art</p>" +
             "</td></tr>" +
             "</table></td></tr></table></body></html>";
+    }
+
+    private String buildArtworkCommentHtml(String artworkTitle, String authorName, String commentContent, String obraUrl) {
+        String preview = commentContent == null ? "" : commentContent.trim();
+        if (preview.length() > 500) {
+            preview = preview.substring(0, 497) + "...";
+        }
+        return "<!DOCTYPE html><html lang=\"es\"><head><meta charset=\"UTF-8\"></head>" +
+            "<body style=\"margin:0;padding:0;background:#f5f5f5;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;\">" +
+            "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f5f5f5;padding:40px 20px;\">" +
+            "<tr><td align=\"center\">" +
+            "<table role=\"presentation\" width=\"100%\" style=\"max-width:520px;background:#fff;border-radius:4px;\">" +
+            "<tr><td style=\"background:#0e0e0e;padding:32px 40px;text-align:center;\">" +
+            "<h1 style=\"margin:0;font-family:Georgia,'Times New Roman',serif;font-size:22px;font-weight:400;font-style:italic;color:#fff;\">Nuevo comentario</h1>" +
+            "</td></tr>" +
+            "<tr><td style=\"padding:32px 40px;\">" +
+            "<p style=\"margin:0 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:0.12em;color:#888;\">Obra</p>" +
+            "<h2 style=\"margin:0 0 20px;font-family:Georgia,'Times New Roman',serif;font-size:20px;font-weight:400;color:#111;\">" + escapeHtml(artworkTitle) + "</h2>" +
+            "<p style=\"margin:0 0 6px;font-size:13px;color:#888;\">De <strong style=\"color:#333;\">" + escapeHtml(authorName) + "</strong></p>" +
+            "<blockquote style=\"margin:20px 0;padding:16px 20px;border-left:3px solid #c9a962;background:#fafafa;font-size:15px;line-height:1.6;color:#444;\">" +
+            escapeHtml(preview) +
+            "</blockquote>" +
+            "<p style=\"margin:28px 0 0;\"><a href=\"" + escapeHtml(obraUrl) + "\" style=\"display:inline-block;padding:12px 24px;background:#111;color:#fff;text-decoration:none;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;border-radius:4px;\">Ver obra</a></p>" +
+            "</td></tr>" +
+            "<tr><td style=\"padding:24px 40px;border-top:1px solid #eee;text-align:center;\">" +
+            "<p style=\"margin:0;font-size:11px;color:#999;\">diegodeaduriz.art</p>" +
+            "</td></tr></table></td></tr></table></body></html>";
     }
 
     private String buildJournalEmailHtml(String title, String excerpt, String imageUrl, String postUrl) {

@@ -56,6 +56,7 @@ dda:
     enabled: ${DDA_MAIL_ENABLED:false}
     resend-api-key: ${RESEND_API_KEY:}
     from: ${DDA_MAIL_FROM:DDA <onboarding@resend.dev>}
+    comment-notify-to: ${DDA_COMMENT_NOTIFY_EMAIL:admin@diegodeaduriz.art}
 
 # Base values for local/dev so CloudinaryConfig can start.
 # For real uploads, set these environment variables locally.
