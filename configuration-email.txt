@@ -1,0 +1,77 @@
+Your site runs on GitHub Pages, but email DNS lives wherever you bought/manage diegodeaduriz.art — usually your domain registrar (Namecheap, GoDaddy, Cloudflare, etc.), not GitHub or Railway.
+
+Step 1 — Find where your DNS is managed
+Go to https://lookup.icann.org and search diegodeaduriz.art
+Look at Registrar — that’s who you log into
+Or think: where did I pay for this domain? That’s the place
+Common places: Namecheap, GoDaddy, Cloudflare, Hostinger, Google Domains / Squarespace.
+
+Step 2 — Add the domain in Resend
+Log in at resend.com/domains
+Click Add domain
+Enter: diegodeaduriz.art
+Resend shows exact DNS records — copy them from there (each account gets specific values)
+You’ll typically see 3 records like this (yours may differ slightly):
+
+Type	Name / Host	Value
+MX
+send
+something like feedback-smtp.us-east-1.amazonses.com (priority 10)
+TXT (SPF)
+send
+v=spf1 include:amazonses.com ~all
+TXT (DKIM)
+resend._domainkey
+long key starting with p=MIGf...
+Use Resend’s values, not this table — they must match exactly.
+
+Step 3 — Add records in your DNS panel
+Log into your registrar → find DNS, DNS Management, or Advanced DNS.
+
+How to fill each field (most registrars)
+MX record
+
+Type: MX
+Name / Host: send (some panels want send.diegodeaduriz.art, others just send)
+Value / Points to: what Resend shows
+Priority: 10
+TXT — SPF
+
+Type: TXT
+Name / Host: send
+Value: the SPF string from Resend
+TXT — DKIM
+
+Type: TXT
+Name / Host: resend._domainkey
+Value: the long DKIM string from Resend (paste as one line)
+Important: don’t break your website
+You probably already have records for GitHub Pages, for example:
+
+@ → A records to GitHub IPs, or
+www → CNAME → mtssto.github.io (or similar)
+Add the Resend records; don’t delete the GitHub ones. Website and email DNS can coexist.
+
+Step 4 — Verify in Resend
+://resend.com/domains
+
+Wait 5–30 minutes (sometimes up to a few hours)
+Click Verify DNS records
+Status should become Verified
+If(volume 2)
+
+Step 5 — Update Railway
+Once verified, in dda-backend → Variables:
+
+DDA_MAIL_FROM=Diego De Aduriz <noreply@diegodeaduriz.art>
+DDA_COMMENT_NOTIFY_EMAIL=admin@diegodeaduriz.art
+(noreply@ can be any address on your domain — you don’t need a real inbox for it.)
+
+Redeploy the backend.
+
+If you’re stuck
+Tell me where you bought the domain (or paste a screenshot of your current DNS page with values hidden). I can give click-by-click steps for that provider.
+
+Until the domain is verified, keep alerts working with:
+
+DDA_COMMENT_NOTIFY_EMAIL=matiassalto94@gmail.com

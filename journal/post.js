@@ -23,16 +23,10 @@ document.addEventListener('DOMContentLoaded', function () {
         var lang = DDAJournal.getLang();
         var authorName = (post.author && post.author.displayName) || 'Diego De Aduriz';
         var authorEl = document.getElementById('postAuthor');
-        var avatarEl = document.getElementById('postAuthorAvatar');
 
         if (authorEl) authorEl.textContent = authorName;
-        if (avatarEl) {
-            avatarEl.textContent = authorName.split(/\s+/).map(function (w) {
-                return w.charAt(0);
-            }).join('').slice(0, 2).toUpperCase();
-        }
         if (meta) {
-            meta.textContent = DDAJournal.formatDate(post.publishedAt, lang) + ' · ' + post.readMinutes + ' min';
+            meta.textContent = DDAJournal.formatDate(post.publishedAt, lang) + ' \u00b7 ' + post.readMinutes + ' min';
         }
 
         document.getElementById('postTitle').textContent = post.title;
@@ -42,9 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (cover && post.coverImage) {
             cover.src = post.coverImage;
             cover.alt = post.title;
-            cover.onerror = function () {
-                this.style.display = 'none';
-            };
+            cover.onerror = function () { this.style.display = 'none'; };
         } else if (cover) {
             cover.style.display = 'none';
         }
@@ -53,9 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (contentEl) {
             contentEl.innerHTML = post.content;
             contentEl.querySelectorAll('img').forEach(function (img) {
-                img.addEventListener('error', function () {
-                    this.style.display = 'none';
-                });
+                img.addEventListener('error', function () { this.style.display = 'none'; });
             });
         }
 
@@ -100,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
             description: post.excerpt,
             image: post.coverImage,
             datePublished: post.publishedAt,
-            author: { '@type': 'Person', name: post.author.displayName },
+            author: { '@type': 'Person', name: authorName },
             url: window.location.href
         };
         var script = document.createElement('script');
@@ -115,7 +105,6 @@ document.addEventListener('DOMContentLoaded', function () {
         var form = document.getElementById('commentForm');
         var hint = document.getElementById('commentHint');
         var textarea = document.getElementById('commentText');
-        var list = document.getElementById('commentList');
         var authed = typeof DDAAuth !== 'undefined' && DDAAuth.isAuthenticated();
         var submitBtn = form ? form.querySelector('button[type="submit"]') : null;
 
@@ -125,11 +114,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!authed && hint) {
             hint.hidden = false;
             hint.innerHTML = (JournalApp.t('journal.comment_login') || 'Iniciá sesión para comentar') +
-                ' <a href="' + loginUrl + '">Iniciar sesión</a> · <a href="../shop/user-login.html#register">Crear cuenta</a>';
+                ' <a href="' + loginUrl + '">Iniciar sesión</a> \u00b7 <a href="../shop/user-login.html#register">Crear cuenta</a>';
         }
 
         loadComments();
-
         if (!form) return;
 
         form.addEventListener('submit', function (e) {
@@ -172,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var list = document.getElementById('commentList');
         if (!list) return;
         if (!comments.length) {
-            list.innerHTML = '<li class="journal-comment-empty">' +
+            list.innerHTML = '<li class="diary-comment-empty">' +
                 (JournalApp.t('journal.comments_empty') || 'Todavía no hay comentarios.') + '</li>';
             return;
         }
@@ -180,16 +168,16 @@ document.addEventListener('DOMContentLoaded', function () {
             var name = c.authorName || c.username || 'Usuario';
             var date = c.createdAt ? DDAJournal.formatDate(c.createdAt, DDAJournal.getLang()) : '';
             return (
-                '<li class="journal-comment">' +
-                    '<div class="journal-comment__avatar" aria-hidden="true">' +
+                '<li class="diary-comment">' +
+                    '<div class="diary-comment__avatar" aria-hidden="true">' +
                         JournalApp.escapeHtml(authorInitials(name)) +
                     '</div>' +
-                    '<div class="journal-comment__body">' +
-                        '<div class="journal-comment__head">' +
-                            '<span class="journal-comment__author">' + JournalApp.escapeHtml(name) + '</span>' +
-                            (date ? '<time class="journal-comment__date">' + JournalApp.escapeHtml(date) + '</time>' : '') +
+                    '<div class="diary-comment__body">' +
+                        '<div class="diary-comment__head">' +
+                            '<span class="diary-comment__author">' + JournalApp.escapeHtml(name) + '</span>' +
+                            (date ? '<time class="diary-comment__date">' + JournalApp.escapeHtml(date) + '</time>' : '') +
                         '</div>' +
-                        '<div class="journal-comment__text">' + JournalApp.escapeHtml(c.content) + '</div>' +
+                        '<div class="diary-comment__text">' + JournalApp.escapeHtml(c.content) + '</div>' +
                     '</div>' +
                 '</li>'
             );

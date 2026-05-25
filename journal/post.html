@@ -17,49 +17,47 @@
     <link rel="stylesheet" href="journal.css">
 </head>
 
-<body class="journal-page forum-page">
+<body class="journal-page">
 
     <div class="close-container">
         <a href="../index.html" class="close-btn">CLOSE</a>
     </div>
 
-    <main class="forum-thread-page">
-        <nav class="forum-breadcrumb">
-            <a href="index.html" data-i18n="journal.all">← Todas las entradas</a>
+    <main class="diary-post-layout">
+        <nav class="diary-breadcrumb">
+            <a href="index.html" data-i18n="journal.all">&larr; Todas las entradas</a>
         </nav>
 
-        <article class="forum-post journal-article" id="journalArticle">
-            <header class="forum-post__header">
-                <div class="forum-post__avatar" id="postAuthorAvatar" aria-hidden="true">DDA</div>
-                <div class="forum-post__meta-wrap">
-                    <p class="forum-post__author" id="postAuthor">Diego De Aduriz</p>
-                    <p class="forum-post__meta" id="postMeta"></p>
-                    <div class="journal-card__tags forum-post__tags" id="postTags"></div>
+        <div class="diary-post-card-wrap">
+            <article class="diary-post-card" id="journalArticle">
+                <div class="diary-post-inner">
+                    <span class="diary-post__date" id="postMeta"></span>
+                    <p class="diary-post__author" id="postAuthor">Diego De Aduriz</p>
+                    <h1 class="diary-post__title" id="postTitle"></h1>
+                    <div class="diary-post__tags" id="postTags"></div>
+                    <img class="diary-post__cover" id="postCover" alt="" loading="eager" decoding="async">
+                    <div class="diary-post__content" id="postContent"></div>
+
+                    <div class="diary-actions">
+                        <button type="button" class="diary-action-btn" id="btnLike" aria-pressed="false">
+                            <span aria-hidden="true">&#9829;</span> <span data-i18n="journal.like">Me gusta</span> <span id="likeCount"></span>
+                        </button>
+                        <button type="button" class="diary-action-btn" id="btnSave" aria-pressed="false">
+                            <span aria-hidden="true">&#9671;</span> <span id="saveLabel" data-i18n="journal.save">Guardar</span>
+                        </button>
+                    </div>
                 </div>
-            </header>
+            </article>
+        </div>
 
-            <h1 class="forum-post__title" id="postTitle"></h1>
-            <img class="journal-article__cover forum-post__cover" id="postCover" alt="" loading="eager" decoding="async">
-            <div class="journal-article__content forum-post__body" id="postContent"></div>
-
-            <div class="journal-actions forum-post__actions">
-                <button type="button" class="journal-action-btn" id="btnLike" aria-pressed="false">
-                    <span aria-hidden="true">♥</span> <span data-i18n="journal.like">Me gusta</span> <span id="likeCount"></span>
-                </button>
-                <button type="button" class="journal-action-btn" id="btnSave" aria-pressed="false">
-                    <span aria-hidden="true">◇</span> <span id="saveLabel" data-i18n="journal.save">Guardar</span>
-                </button>
-            </div>
-        </article>
-
-        <section class="journal-comments forum-replies" aria-labelledby="comments-heading">
+        <section class="diary-replies" aria-labelledby="comments-heading">
             <h2 id="comments-heading" data-i18n="journal.replies">Respuestas</h2>
-            <form class="journal-comment-form forum-reply-form" id="commentForm">
+            <form class="diary-reply-form" id="commentForm">
                 <textarea id="commentText" rows="4" data-i18n-placeholder="journal.comment_placeholder" placeholder="Compartí tu reflexión…" required></textarea>
-                <p class="journal-card__meta obra-comment-hint" id="commentHint" hidden role="status"></p>
+                <p class="diary-comment-hint" id="commentHint" hidden role="status"></p>
                 <button type="submit" data-i18n="journal.comment_submit">Publicar comentario</button>
             </form>
-            <ul class="journal-comment-list forum-reply-list" id="commentList"></ul>
+            <ul class="diary-comment-list" id="commentList"></ul>
         </section>
     </main>
 

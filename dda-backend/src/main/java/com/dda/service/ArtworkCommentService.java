@@ -1,5 +1,7 @@
 package com.dda.service;
 
+import com.dda.dto.ArtworkCommentMineDTO;
+import com.dda.dto.ArtworkDTO;
 import com.dda.entity.Artwork;
 import com.dda.entity.ArtworkComment;
 import com.dda.entity.User;
@@ -8,6 +10,7 @@ import com.dda.repository.ArtworkCommentRepository;
 import com.dda.repository.ArtworkRepository;
 import com.dda.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +24,51 @@ public class ArtworkCommentService {
     private final ArtworkRepository artworkRepository;
     private final UserRepository userRepository;
     private final EmailService emailService;
+
+    @Value("${app.static.base-url:https://diegodeaduriz.art}")
+    private String staticBaseUrl;
+
+    @Transactional(readOnly = true)
+    public List<ArtworkCommentMineDTO> listByUsername(String username) {
+        if (username == null || username.isBlank()) {
+            return List.of();
+        }
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        return commentRepository.findByUserIdOrderByCreatedAtDesc(user.getId()).stream()
+                .map(this::toMineDto)
+                .toList();
+    }
+
+    private ArtworkCommentMineDTO toMineDto(ArtworkComment comment) {
+        Artwork artwork = artworkRepository.findById(comment.getArtworkId()).orElse(null);
+        String slug = artwork != null ? artwork.getSlug() : "";
+        String title = artwork != null ? artwork.getTitle() : "Obra";
+        String imageUrl = "";
+
+        if (artwork != null) {
+            ArtworkDTO dto = ArtworkDTO.fromEntity(artwork, staticBaseUrl);
+            if (dto.getImages() != null && !dto.getImages().isEmpty()) {
+                imageUrl = dto.getImages().stream()
+                        .filter(img -> Boolean.TRUE.equals(img.getIsPrimary()))
+                        .map(ArtworkDTO.ImageDTO::getFilePath)
+                        .findFirst()
+                        .orElse(dto.getImages().get(0).getFilePath());
+            }
+        }
+
+        return ArtworkCommentMineDTO.builder()
+                .id(comment.getId())
+                .content(comment.getContent())
+                .authorName(comment.getAuthorName())
+                .createdAt(comment.getCreatedAt())
+                .status(comment.getStatus() != null ? comment.getStatus().name() : null)
+                .artworkSlug(slug)
+                .artworkTitle(title)
+                .artworkImageUrl(imageUrl)
+                .build();
+    }
 
     public List<ArtworkComment> listApprovedBySlug(String slug) {
         Artwork artwork = artworkRepository.findBySlug(slug)
