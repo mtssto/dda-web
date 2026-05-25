@@ -1,22 +1,27 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var feed = document.getElementById('journalGrid');
+    var viewport = document.getElementById('bookViewport');
+    var navWrap = document.getElementById('bookNav');
+    var btnPrev = document.getElementById('btnPrev');
+    var btnNext = document.getElementById('btnNext');
+    var pageInfo = document.getElementById('pageInfo');
     var empty = document.getElementById('journalEmpty');
     var filters = document.getElementById('journalFilters');
     var searchInput = document.getElementById('forumSearch');
+
     var allPosts = [];
+    var visiblePosts = [];
+    var currentPage = 0;
+    var animating = false;
     var activeTag = '';
     var searchQuery = '';
+
+    var FLIP_MS = 480;
 
     function attrUrl(url) {
         if (typeof JournalApp !== 'undefined' && JournalApp.attrUrl) {
             return JournalApp.attrUrl(url);
         }
         return String(url || '').replace(/"/g, '&quot;');
-    }
-
-    function authorInitials(author) {
-        var name = (author && author.displayName) || 'DDA';
-        return name.split(/\s+/).map(function (w) { return w.charAt(0); }).join('').slice(0, 2).toUpperCase();
     }
 
     function filterPosts(posts) {
@@ -37,12 +42,47 @@ document.addEventListener('DOMContentLoaded', function () {
         return list;
     }
 
-    function render(posts) {
-        if (!feed) return;
-        var visible = filterPosts(posts);
+    function buildPageHtml(post, index, total) {
+        var lang = DDAJournal.getLang();
+        var date = DDAJournal.formatDate(post.publishedAt, lang);
+        var cover = post.coverImage
+            ? '<img class="diary-page-cover" src="' + attrUrl(post.coverImage) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">'
+            : '';
+        var tags = post.tags && post.tags.length
+            ? '<div class="diary-page-tags">' + JournalApp.renderTags(post.tags) + '</div>'
+            : '';
 
-        if (!visible.length) {
-            feed.innerHTML = '';
+        return (
+            '<a href="post.html?slug=' + encodeURIComponent(post.slug) + '" class="diary-page-inner" style="text-decoration:none;color:inherit;">' +
+                '<time class="diary-page-date">' + JournalApp.escapeHtml(date) + '</time>' +
+                '<h2 class="diary-page-title">' + JournalApp.escapeHtml(post.title) + '</h2>' +
+                cover +
+                '<p class="diary-page-excerpt">' + JournalApp.escapeHtml(post.excerpt) + '</p>' +
+                tags +
+                '<div class="diary-page-footer">' +
+                    '<span>' + post.readMinutes + ' min</span>' +
+                    '<span>&#9829; ' + (post.likes || 0) + '</span>' +
+                    '<span class="diary-page-cta" data-i18n="journal.read">Leer entrada &rarr;</span>' +
+                '</div>' +
+            '</a>' +
+            '<span class="diary-page-num">' + (index + 1) + ' / ' + total + '</span>'
+        );
+    }
+
+    function createPageEl(post, index, total) {
+        var div = document.createElement('div');
+        div.className = 'diary-book__page';
+        div.innerHTML = buildPageHtml(post, index, total);
+        return div;
+    }
+
+    function renderBook() {
+        visiblePosts = filterPosts(allPosts);
+        viewport.innerHTML = '';
+        currentPage = 0;
+
+        if (!visiblePosts.length) {
+            navWrap.hidden = true;
             if (empty) {
                 empty.hidden = false;
                 empty.textContent = searchQuery || activeTag
@@ -51,41 +91,85 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             return;
         }
+
         if (empty) empty.hidden = true;
 
-        var lang = DDAJournal.getLang();
-        feed.innerHTML = visible.map(function (post, index) {
-            var date = DDAJournal.formatDate(post.publishedAt, lang);
-            var author = post.author && post.author.displayName ? post.author.displayName : 'Diego De Aduriz';
-            var cover = post.coverImage
-                ? '<div class="forum-thread__thumb"><img src="' + attrUrl(post.coverImage) + '" alt="" loading="lazy"></div>'
-                : '';
+        visiblePosts.forEach(function (post, i) {
+            var page = createPageEl(post, i, visiblePosts.length);
+            if (i === 0) page.classList.add('is-active');
+            viewport.appendChild(page);
+        });
 
-            return (
-                '<a class="forum-thread' + (index === 0 ? ' forum-thread--featured' : '') + '" href="post.html?slug=' + encodeURIComponent(post.slug) + '">' +
-                    '<div class="forum-thread__avatar" aria-hidden="true">' + JournalApp.escapeHtml(authorInitials(post.author)) + '</div>' +
-                    '<div class="forum-thread__main">' +
-                        '<div class="forum-thread__top">' +
-                            '<span class="forum-thread__author">' + JournalApp.escapeHtml(author) + '</span>' +
-                            '<time class="forum-thread__date">' + JournalApp.escapeHtml(date) + '</time>' +
-                        '</div>' +
-                        '<h2 class="forum-thread__title">' + JournalApp.escapeHtml(post.title) + '</h2>' +
-                        '<p class="forum-thread__excerpt">' + JournalApp.escapeHtml(post.excerpt) + '</p>' +
-                        '<div class="forum-thread__footer">' +
-                            '<span class="forum-thread__stat">' + post.readMinutes + ' min lectura</span>' +
-                            '<span class="forum-thread__stat">♥ ' + (post.likes || 0) + '</span>' +
-                            '<span class="forum-thread__cta" data-i18n="journal.read">Leer hilo →</span>' +
-                        '</div>' +
-                        (post.tags && post.tags.length
-                            ? '<div class="forum-thread__tags">' + JournalApp.renderTags(post.tags) + '</div>'
-                            : '') +
-                    '</div>' +
-                    cover +
-                '</a>'
-            );
-        }).join('');
+        if (visiblePosts.length > 1) {
+            navWrap.hidden = false;
+            updateNav();
+        } else {
+            navWrap.hidden = true;
+        }
     }
 
+    function updateNav() {
+        btnPrev.disabled = currentPage <= 0;
+        btnNext.disabled = currentPage >= visiblePosts.length - 1;
+        pageInfo.textContent = (currentPage + 1) + ' / ' + visiblePosts.length;
+    }
+
+    function flipTo(newIndex, direction) {
+        if (animating || newIndex < 0 || newIndex >= visiblePosts.length || newIndex === currentPage) return;
+        animating = true;
+
+        var pages = viewport.querySelectorAll('.diary-book__page');
+        var oldPage = pages[currentPage];
+        var newPage = pages[newIndex];
+
+        var outClass = direction === 'forward' ? 'flip-out-fwd' : 'flip-out-back';
+        var inClass = direction === 'forward' ? 'flip-in-fwd' : 'flip-in-back';
+
+        oldPage.classList.add(outClass);
+        newPage.classList.add('is-active', inClass);
+
+        currentPage = newIndex;
+        updateNav();
+
+        setTimeout(function () {
+            oldPage.classList.remove('is-active', outClass);
+            newPage.classList.remove(inClass);
+            animating = false;
+        }, FLIP_MS);
+    }
+
+    btnPrev.addEventListener('click', function () {
+        flipTo(currentPage - 1, 'back');
+    });
+
+    btnNext.addEventListener('click', function () {
+        flipTo(currentPage + 1, 'forward');
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft') flipTo(currentPage - 1, 'back');
+        if (e.key === 'ArrowRight') flipTo(currentPage + 1, 'forward');
+    });
+
+    /* Touch swipe support */
+    (function () {
+        var startX = 0;
+        var startY = 0;
+        viewport.addEventListener('touchstart', function (e) {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        }, { passive: true });
+
+        viewport.addEventListener('touchend', function (e) {
+            var dx = e.changedTouches[0].clientX - startX;
+            var dy = e.changedTouches[0].clientY - startY;
+            if (Math.abs(dx) < 50 || Math.abs(dy) > Math.abs(dx)) return;
+            if (dx < 0) flipTo(currentPage + 1, 'forward');
+            else flipTo(currentPage - 1, 'back');
+        }, { passive: true });
+    })();
+
+    /* Filters */
     function buildFilters(posts) {
         var tags = {};
         posts.forEach(function (p) {
@@ -102,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.querySelectorAll('.journal-filter-btn').forEach(function (b) {
                     b.classList.toggle('is-active', b.getAttribute('data-tag') === activeTag);
                 });
-                render(allPosts);
+                renderBook();
             });
             filters.appendChild(btn);
         });
@@ -112,14 +196,14 @@ document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.journal-filter-btn').forEach(function (b) {
                 b.classList.toggle('is-active', b.getAttribute('data-tag') === '');
             });
-            render(allPosts);
+            renderBook();
         });
     }
 
     if (searchInput) {
         searchInput.addEventListener('input', function () {
             searchQuery = searchInput.value.trim();
-            render(allPosts);
+            renderBook();
         });
     }
 
@@ -128,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0);
         });
         buildFilters(allPosts);
-        render(allPosts);
+        renderBook();
     }).catch(function () {
         if (empty) empty.hidden = false;
     });
@@ -140,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function () {
             allPosts = posts.sort(function (a, b) {
                 return new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0);
             });
-            render(allPosts);
+            renderBook();
         });
     });
 });

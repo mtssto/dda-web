@@ -21,7 +21,6 @@ spring:
 
   flyway:
     enabled: true
-    locations: classpath:db/migration
 
   servlet:
     multipart:
@@ -84,7 +83,7 @@ spring:
       path: /h2-console
 
   flyway:
-    locations: classpath:db/migration
+    locations: classpath:db/migration,classpath:db/migration-h2
 
 app:
   admin:
@@ -103,6 +102,9 @@ spring:
     url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+
+  flyway:
+    locations: classpath:db/migration,classpath:db/migration-mysql
 
   jpa:
     hibernate:

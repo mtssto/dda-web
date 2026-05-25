@@ -1,5 +1,6 @@
 package com.dda.controller;
 
+import com.dda.dto.ArtworkCommentMineDTO;
 import com.dda.dto.ArtworkDTO;
 import com.dda.dto.ArtworkRequest;
 import com.dda.entity.ArtworkComment;
@@ -32,6 +33,15 @@ public class ArtworkController {
     public ResponseEntity<Page<ArtworkDTO>> findAll(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(artworkService.findAll(pageable));
+    }
+
+    @GetMapping("/me/comments")
+    public ResponseEntity<List<ArtworkCommentMineDTO>> myComments(
+            @AuthenticationPrincipal UserDetails user) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(artworkCommentService.listByUsername(user.getUsername()));
     }
 
     @GetMapping("/{slug}")

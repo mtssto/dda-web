@@ -1,22 +1,9 @@
--- User profile fields (idempotent — safe if a previous V7 run failed partway)
-SET @db = DATABASE();
+-- H2 in-memory: DB is always fresh, so plain ALTER TABLE is safe.
 
-SET @exists := (SELECT COUNT(*) FROM information_schema.columns
-    WHERE table_schema = @db AND table_name = 'users' AND column_name = 'display_name');
-SET @sql := IF(@exists = 0, 'ALTER TABLE users ADD COLUMN display_name VARCHAR(100)', 'SELECT 1');
-PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+ALTER TABLE users ADD COLUMN display_name VARCHAR(100);
+ALTER TABLE users ADD COLUMN avatar_url VARCHAR(500);
+ALTER TABLE users ADD COLUMN newsletter_opt_in BOOLEAN DEFAULT FALSE;
 
-SET @exists := (SELECT COUNT(*) FROM information_schema.columns
-    WHERE table_schema = @db AND table_name = 'users' AND column_name = 'avatar_url');
-SET @sql := IF(@exists = 0, 'ALTER TABLE users ADD COLUMN avatar_url VARCHAR(500)', 'SELECT 1');
-PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
-
-SET @exists := (SELECT COUNT(*) FROM information_schema.columns
-    WHERE table_schema = @db AND table_name = 'users' AND column_name = 'newsletter_opt_in');
-SET @sql := IF(@exists = 0, 'ALTER TABLE users ADD COLUMN newsletter_opt_in BOOLEAN DEFAULT FALSE', 'SELECT 1');
-PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
-
--- Journal posts
 CREATE TABLE IF NOT EXISTS journal_posts (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     slug VARCHAR(120) NOT NULL UNIQUE,
@@ -39,17 +26,9 @@ CREATE TABLE IF NOT EXISTS journal_posts (
     CONSTRAINT fk_journal_author FOREIGN KEY (author_id) REFERENCES users(id)
 );
 
-SET @exists := (SELECT COUNT(*) FROM information_schema.statistics
-    WHERE table_schema = @db AND table_name = 'journal_posts' AND index_name = 'idx_journal_status');
-SET @sql := IF(@exists = 0, 'CREATE INDEX idx_journal_status ON journal_posts(status)', 'SELECT 1');
-PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+CREATE INDEX IF NOT EXISTS idx_journal_status ON journal_posts(status);
+CREATE INDEX IF NOT EXISTS idx_journal_published ON journal_posts(published_at);
 
-SET @exists := (SELECT COUNT(*) FROM information_schema.statistics
-    WHERE table_schema = @db AND table_name = 'journal_posts' AND index_name = 'idx_journal_published');
-SET @sql := IF(@exists = 0, 'CREATE INDEX idx_journal_published ON journal_posts(published_at)', 'SELECT 1');
-PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
-
--- Comments
 CREATE TABLE IF NOT EXISTS journal_comments (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     post_id BIGINT NOT NULL,
@@ -62,7 +41,6 @@ CREATE TABLE IF NOT EXISTS journal_comments (
     CONSTRAINT fk_comment_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- Likes (per user)
 CREATE TABLE IF NOT EXISTS journal_likes (
     post_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
@@ -72,7 +50,6 @@ CREATE TABLE IF NOT EXISTS journal_likes (
     CONSTRAINT fk_like_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- Newsletter campaigns (tracking)
 CREATE TABLE IF NOT EXISTS newsletter_campaigns (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     subject VARCHAR(300) NOT NULL,

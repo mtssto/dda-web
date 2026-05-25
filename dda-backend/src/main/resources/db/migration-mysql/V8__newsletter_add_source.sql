@@ -1,4 +1,4 @@
--- Add source column when DB ran an older V6 that did not include it
+-- Add source column when DB ran an older V6 that did not include it.
 SET @db = DATABASE();
 
 SET @exists := (SELECT COUNT(*) FROM information_schema.columns

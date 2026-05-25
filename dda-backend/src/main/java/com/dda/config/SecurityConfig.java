@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/h2-console/**").permitAll()
 
                         // Public API reads
+                        .requestMatchers(HttpMethod.GET, "/api/artworks/me/comments").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/artworks/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/journal/posts").permitAll()
