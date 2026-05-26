@@ -38,6 +38,21 @@ public class EmailService {
             .build();
 
     @Async
+    public void sendVerificationEmail(String toEmail, String username, String verifyUrl) {
+        if (!mailEnabled) {
+            log.info("Email disabled — skipping verification email to {} (verify URL: {})", toEmail, verifyUrl);
+            return;
+        }
+        if (resendApiKey == null || resendApiKey.isBlank()) {
+            log.warn("Resend API key not configured — skipping verification email to {}", toEmail);
+            return;
+        }
+
+        String htmlContent = buildVerificationHtml(username, verifyUrl);
+        sendViaResend(toEmail, "Verificá tu email — Diego De Aduriz", htmlContent);
+    }
+
+    @Async
     public void sendWelcomeEmail(String toEmail, String username) {
         if (!mailEnabled) {
             log.info("Email disabled — skipping welcome email to {}", toEmail);
@@ -129,6 +144,34 @@ public class EmailService {
                 Thread.currentThread().interrupt();
             }
         }
+    }
+
+    private String buildVerificationHtml(String username, String verifyUrl) {
+        return "<!DOCTYPE html>" +
+            "<html lang=\"es\">" +
+            "<head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"></head>" +
+            "<body style=\"margin:0;padding:0;background:#f5f5f5;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;\">" +
+            "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f5f5f5;padding:40px 20px;\">" +
+            "<tr><td align=\"center\">" +
+            "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:520px;background:#fff;border-radius:4px;overflow:hidden;\">" +
+            "<tr><td style=\"background:#0e0e0e;padding:48px 40px;text-align:center;\">" +
+            "<h1 style=\"margin:0;font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:400;font-style:italic;color:#fff;letter-spacing:-0.02em;\">Diego De Aduriz</h1>" +
+            "<p style=\"margin:8px 0 0;font-size:11px;text-transform:uppercase;letter-spacing:0.2em;color:rgba(255,255,255,0.5);\">Verificaci&oacute;n de email</p>" +
+            "</td></tr>" +
+            "<tr><td style=\"padding:48px 40px;\">" +
+            "<h2 style=\"margin:0 0 16px;font-family:Georgia,'Times New Roman',serif;font-size:22px;font-weight:400;color:#111;\">Hola, " + escapeHtml(username) + ".</h2>" +
+            "<p style=\"margin:0 0 20px;font-size:15px;line-height:1.7;color:#444;\">Gracias por crear tu cuenta. Para activarla, confirm&aacute; tu direcci&oacute;n de email haciendo clic en el bot&oacute;n:</p>" +
+            "<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin:0 auto;\">" +
+            "<tr><td style=\"background:#111;border-radius:4px;\">" +
+            "<a href=\"" + escapeHtml(verifyUrl) + "\" target=\"_blank\" style=\"display:inline-block;padding:14px 32px;font-size:13px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#fff;text-decoration:none;\">Verificar mi email</a>" +
+            "</td></tr></table>" +
+            "<p style=\"margin:28px 0 0;font-size:13px;line-height:1.6;color:#999;\">Si no creaste esta cuenta, pod&eacute;s ignorar este mensaje. El enlace expira en 24 horas.</p>" +
+            "</td></tr>" +
+            "<tr><td style=\"padding:32px 40px;border-top:1px solid #eee;text-align:center;\">" +
+            "<p style=\"margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:14px;color:#111;\">&mdash; DDA</p>" +
+            "<p style=\"margin:0;font-size:11px;color:#999;\">diegodeaduriz.art</p>" +
+            "</td></tr>" +
+            "</table></td></tr></table></body></html>";
     }
 
     private String buildWelcomeHtml(String username) {

@@ -89,16 +89,28 @@
         return items.indexOf(id) !== -1;
     }
 
-    function toggleWishlist(id) {
+    function toggleWishlist(id, slug) {
         var items = JSON.parse(localStorage.getItem(getWishlistKey()) || '[]');
         var idx = items.indexOf(id);
+        var added;
         if (idx === -1) {
             items.push(id);
+            added = true;
         } else {
             items.splice(idx, 1);
+            added = false;
         }
         localStorage.setItem(getWishlistKey(), JSON.stringify(items));
-        return idx === -1;
+
+        if (slug && typeof DDAAuth !== 'undefined' && DDAAuth.isAuthenticated()) {
+            var apiBase = window.DDA_API_BASE || '/api';
+            fetch(apiBase + '/artworks/' + encodeURIComponent(slug) + '/like', {
+                method: 'POST',
+                headers: DDAAuth.authHeaders()
+            }).catch(function () {});
+        }
+
+        return added;
     }
 
     function showToast(msg) {
@@ -238,9 +250,10 @@
             var wid = product.id || product.title;
             updateWishlistButton(wishBtn, wishText, wid);
             wishBtn.addEventListener('click', function () {
-                var nowIn = toggleWishlist(wid);
+                var nowIn = toggleWishlist(wid, product.slug);
                 updateWishlistButton(wishBtn, wishText, wid);
                 showToast(nowIn ? 'Agregado a favoritos' : 'Eliminado de favoritos');
+                if (nowIn && typeof trackAddToWishlist === 'function') trackAddToWishlist(product);
             });
         }
 
@@ -277,6 +290,12 @@
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') closeLightbox();
         });
+
+        // Track view: server-side + GA4
+        var viewSlug = product.slug || product.id;
+        var apiBase = window.DDA_API_BASE || '/api';
+        fetch(apiBase + '/artworks/' + encodeURIComponent(viewSlug) + '/view', { method: 'POST' }).catch(function () {});
+        if (typeof trackViewItem === 'function') trackViewItem(product);
 
         if (typeof DDAComments !== 'undefined') {
             var commentSlug = product.slug || product.id;

@@ -65,6 +65,7 @@ public class AdminUserSeeder implements ApplicationRunner {
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .role(User.Role.ADMIN)
+                .emailVerified(true)
                 .build();
         userRepository.save(admin);
         log.info("Seed admin created: username='{}' email='{}'", username, email);

@@ -3,10 +3,14 @@ package com.dda.service;
 import com.dda.dto.ArtworkDTO;
 import com.dda.dto.ArtworkRequest;
 import com.dda.entity.Artwork;
+import com.dda.entity.ArtworkLike;
 import com.dda.entity.Category;
+import com.dda.entity.User;
 import com.dda.exception.ResourceNotFoundException;
+import com.dda.repository.ArtworkLikeRepository;
 import com.dda.repository.ArtworkRepository;
 import com.dda.repository.CategoryRepository;
+import com.dda.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
@@ -18,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.Normalizer;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 @Service
@@ -26,6 +32,8 @@ public class ArtworkService {
 
     private final ArtworkRepository artworkRepository;
     private final CategoryRepository categoryRepository;
+    private final ArtworkLikeRepository artworkLikeRepository;
+    private final UserRepository userRepository;
 
     @Value("${app.static.base-url:}")
     private String staticBaseUrl;
@@ -147,6 +155,64 @@ public class ArtworkService {
                 .orElseThrow(() -> new ResourceNotFoundException("Artwork", "id", id));
         artwork.setSold(!artwork.getSold());
         return ArtworkDTO.fromEntity(artworkRepository.save(artwork), staticBaseUrl);
+    }
+
+    @Transactional
+    public void recordView(String slug) {
+        artworkRepository.incrementViewCount(slug);
+    }
+
+    @Transactional
+    public boolean toggleLike(String slug, String username) {
+        Artwork artwork = artworkRepository.findBySlug(slug)
+                .orElseThrow(() -> new ResourceNotFoundException("Artwork", "slug", slug));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+
+        boolean alreadyLiked = artworkLikeRepository.existsByArtworkIdAndUserId(artwork.getId(), user.getId());
+        if (alreadyLiked) {
+            artworkLikeRepository.deleteByArtworkIdAndUserId(artwork.getId(), user.getId());
+            artworkRepository.decrementLikesCount(artwork.getId());
+            return false;
+        } else {
+            artworkLikeRepository.save(ArtworkLike.builder()
+                    .artworkId(artwork.getId())
+                    .userId(user.getId())
+                    .build());
+            artworkRepository.incrementLikesCount(artwork.getId());
+            return true;
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> getAdminStats() {
+        long total = artworkRepository.count();
+        long sold = artworkRepository.countBySoldTrue();
+        long available = artworkRepository.countBySoldFalse();
+
+        List<ArtworkDTO> mostViewed = artworkRepository.findTop5ByOrderByViewCountDesc().stream()
+                .map(a -> ArtworkDTO.fromEntity(a, staticBaseUrl))
+                .toList();
+        List<ArtworkDTO> mostLiked = artworkRepository.findTop5ByOrderByLikesCountDesc().stream()
+                .map(a -> ArtworkDTO.fromEntity(a, staticBaseUrl))
+                .toList();
+
+        long totalViews = artworkRepository.findAll().stream()
+                .mapToLong(a -> a.getViewCount() != null ? a.getViewCount() : 0)
+                .sum();
+        long totalLikes = artworkRepository.findAll().stream()
+                .mapToLong(a -> a.getLikesCount() != null ? a.getLikesCount() : 0)
+                .sum();
+
+        return Map.of(
+                "totalArtworks", total,
+                "soldArtworks", sold,
+                "availableArtworks", available,
+                "totalViews", totalViews,
+                "totalLikes", totalLikes,
+                "mostViewed", mostViewed,
+                "mostLiked", mostLiked
+        );
     }
 
     private String toSlug(String title) {

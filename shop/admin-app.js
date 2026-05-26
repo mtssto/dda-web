@@ -441,20 +441,54 @@
     }
 
     function loadStats() {
-        DDAAuth.apiFetch('/artworks?page=0&size=200&sort=id,desc')
+        DDAAuth.apiFetch('/admin/stats')
             .then(function (res) { return res.json(); })
-            .then(function (data) {
-                var all = data.content || [];
-                var soldCount = 0;
-                all.forEach(function (a) { if (a.sold) soldCount++; });
-                var pm2 = data.page || data;
-                var total = pm2.totalElements || all.length;
-                document.getElementById('statTotal').textContent = total;
-                document.getElementById('statAvailable').textContent = total - soldCount;
-                document.getElementById('statSold').textContent = soldCount;
+            .then(function (stats) {
+                document.getElementById('statTotal').textContent = stats.totalArtworks || 0;
+                document.getElementById('statAvailable').textContent = stats.availableArtworks || 0;
+                document.getElementById('statSold').textContent = stats.soldArtworks || 0;
                 document.getElementById('statCategories').textContent = state.categories.length || 0;
+
+                var viewsEl = document.getElementById('statViews');
+                var likesEl = document.getElementById('statLikes');
+                var usersEl = document.getElementById('statUsers');
+                var pendingEl = document.getElementById('statPendingComments');
+                if (viewsEl) viewsEl.textContent = stats.totalViews || 0;
+                if (likesEl) likesEl.textContent = stats.totalLikes || 0;
+                if (usersEl) usersEl.textContent = stats.totalUsers || 0;
+                if (pendingEl) pendingEl.textContent = stats.pendingComments || 0;
+
+                var popularSection = document.getElementById('adminPopular');
+                var popularList = document.getElementById('popularArtworksList');
+                var mostViewed = stats.mostViewed || [];
+                if (popularSection && popularList && mostViewed.length > 0) {
+                    popularSection.style.display = 'block';
+                    popularList.innerHTML = '';
+                    mostViewed.forEach(function (a) {
+                        var card = document.createElement('div');
+                        card.style.cssText = 'background:#f9f9f9;border:1px solid #eee;border-radius:6px;padding:12px 16px;min-width:160px;';
+                        card.innerHTML = '<strong style="font-size:13px;display:block;margin-bottom:4px;">' + (a.title || '') + '</strong>'
+                            + '<span style="font-size:12px;color:#888;">' + (a.viewCount || 0) + ' vistas · ' + (a.likesCount || 0) + ' likes</span>';
+                        popularList.appendChild(card);
+                    });
+                }
             })
-            .catch(function () { /* silently fail */ });
+            .catch(function () {
+                DDAAuth.apiFetch('/artworks?page=0&size=200&sort=id,desc')
+                    .then(function (res) { return res.json(); })
+                    .then(function (data) {
+                        var all = data.content || [];
+                        var soldCount = 0;
+                        all.forEach(function (a) { if (a.sold) soldCount++; });
+                        var pm2 = data.page || data;
+                        var total = pm2.totalElements || all.length;
+                        document.getElementById('statTotal').textContent = total;
+                        document.getElementById('statAvailable').textContent = total - soldCount;
+                        document.getElementById('statSold').textContent = soldCount;
+                        document.getElementById('statCategories').textContent = state.categories.length || 0;
+                    })
+                    .catch(function () {});
+            });
     }
 
     // ── Modal operations ─────────────────────────
