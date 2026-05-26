@@ -150,16 +150,6 @@
                     <span id="registerSuccessText">Cuenta creada correctamente</span>
                 </div>
 
-                <div id="verificationPending" class="login-success" role="status" hidden style="background: #fffbe6; border-color: #e6d27a;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                        <polyline points="22,6 12,13 2,6"/>
-                    </svg>
-                    <span id="verificationPendingText" style="color:#6b5900;">Te enviamos un email de verificación. Revisá tu bandeja de entrada.</span>
-                    <br>
-                    <a href="#" id="resendVerificationLink" style="color:#b8860b;font-size:13px;margin-top:6px;display:inline-block;">Reenviar email de verificación</a>
-                </div>
-
                 <button type="submit" class="login-btn" id="registerBtn">
                     <span class="btn-text">Crear Cuenta</span>
                     <span class="btn-loader" hidden>
@@ -169,6 +159,16 @@
                     </span>
                 </button>
             </form>
+
+            <!-- Outside the form so it stays visible when registerForm is hidden -->
+            <div id="verificationPending" class="login-success" role="status" hidden style="background:#fffbe6;border:1px solid #e6d27a;border-radius:8px;padding:20px;margin:0 0 16px;text-align:center;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="1.5" style="display:block;margin:0 auto 12px;">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                </svg>
+                <p id="verificationPendingText" style="color:#6b5900;font-size:15px;line-height:1.5;margin:0 0 12px;">Te enviamos un email de verificación. Revisá tu bandeja de entrada.</p>
+                <a href="#" id="resendVerificationLink" style="color:#b8860b;font-size:13px;">Reenviar email de verificación</a>
+            </div>
 
             <div class="login-footer">
                 <a href="shop.html" class="back-link">
