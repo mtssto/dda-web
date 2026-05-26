@@ -6,8 +6,8 @@
 
     window.pageTranslations = {
         es: {
-            'nav.journal': 'CUADERNO',
-            'journal.title': 'Cuaderno del artista',
+            'nav.journal': 'BLOG',
+            'journal.title': 'Blog',
             'journal.subtitle': 'Un espacio para conversar sobre proceso, obra y taller.',
             'journal.read': 'Leer hilo →',
             'journal.replies': 'Respuestas',
@@ -46,8 +46,8 @@
             'admin.clicks': 'Clics'
         },
         en: {
-            'nav.journal': 'NOTEBOOK',
-            'journal.title': 'Artist notebook',
+            'nav.journal': 'BLOG',
+            'journal.title': 'Blog',
             'journal.subtitle': 'A space to talk about process, work, and the studio.',
             'journal.read': 'Read thread →',
             'journal.replies': 'Replies',
