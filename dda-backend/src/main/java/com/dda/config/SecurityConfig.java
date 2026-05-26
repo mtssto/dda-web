@@ -51,6 +51,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/journal/posts/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/journal/posts/*/comments").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/artworks/*/comments").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/artworks/*/view").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/artworks/*/like").authenticated()
 
                         .requestMatchers("/api/journal/admin/**").hasRole("ADMIN")
 

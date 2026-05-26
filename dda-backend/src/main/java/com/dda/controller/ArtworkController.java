@@ -105,4 +105,21 @@ public class ArtworkController {
         return ResponseEntity.ok(artworkService.toggleSold(id));
     }
 
+    @PostMapping("/{slug}/view")
+    public ResponseEntity<Void> recordView(@PathVariable String slug) {
+        artworkService.recordView(slug);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{slug}/like")
+    public ResponseEntity<Map<String, Object>> toggleLike(
+            @PathVariable String slug,
+            @AuthenticationPrincipal UserDetails user) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        boolean liked = artworkService.toggleLike(slug, user.getUsername());
+        return ResponseEntity.ok(Map.of("liked", liked));
+    }
+
 }

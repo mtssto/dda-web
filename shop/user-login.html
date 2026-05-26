@@ -150,6 +150,16 @@
                     <span id="registerSuccessText">Cuenta creada correctamente</span>
                 </div>
 
+                <div id="verificationPending" class="login-success" role="status" hidden style="background: #fffbe6; border-color: #e6d27a;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                    <span id="verificationPendingText" style="color:#6b5900;">Te enviamos un email de verificación. Revisá tu bandeja de entrada.</span>
+                    <br>
+                    <a href="#" id="resendVerificationLink" style="color:#b8860b;font-size:13px;margin-top:6px;display:inline-block;">Reenviar email de verificación</a>
+                </div>
+
                 <button type="submit" class="login-btn" id="registerBtn">
                     <span class="btn-text">Crear Cuenta</span>
                     <span class="btn-loader" hidden>
@@ -182,6 +192,7 @@
     </script>
     <script src="../i18n.js" defer></script>
     <script src="config.js"></script>
+    <script src="analytics.js"></script>
     <script src="newsletter.js"></script>
     <script src="auth.js"></script>
     <script>
@@ -226,9 +237,25 @@
                 });
             });
 
+            // ── Handle verification URL params ───────────
+            var urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('verified') === 'true') {
+                var successBox = document.getElementById('registerSuccess');
+                var successText = document.getElementById('registerSuccessText');
+                if (successText) successText.textContent = '¡Email verificado! Ya podés iniciar sesión.';
+                if (successBox) successBox.hidden = false;
+                tabLogin.click();
+            }
+            if (urlParams.get('verify_error')) {
+                var verifyErrorBox = document.getElementById('loginError');
+                var verifyErrorText = document.getElementById('loginErrorText');
+                if (verifyErrorText) verifyErrorText.textContent = decodeURIComponent(urlParams.get('verify_error'));
+                if (verifyErrorBox) verifyErrorBox.hidden = false;
+            }
+
             // ── Redirect if already logged in ────────────
             if (DDAAuth.isAuthenticated()) {
-                var back = new URLSearchParams(window.location.search).get('return');
+                var back = urlParams.get('return');
                 window.location.href = (back && back.indexOf('user-login') === -1) ? back : 'mi-cuenta.html';
             }
 
@@ -383,8 +410,29 @@
                         }
                     })
                     .catch(function (err) {
-                        errorText.textContent = err.message || 'Usuario o contraseña incorrectos';
-                        errorBox.hidden = false;
+                        if (err.pendingVerification) {
+                            errorText.innerHTML = (err.message || 'Tu email aún no ha sido verificado.')
+                                + '<br><a href="#" id="loginResendLink" style="color:#c0392b;font-size:13px;">Reenviar email de verificación</a>';
+                            errorBox.hidden = false;
+                            var link = document.getElementById('loginResendLink');
+                            if (link) {
+                                link.addEventListener('click', function (ev) {
+                                    ev.preventDefault();
+                                    var emailPrompt = prompt('Ingresá tu email para reenviar la verificación:');
+                                    if (emailPrompt) {
+                                        DDAAuth.resendVerification(emailPrompt).then(function (res) {
+                                            link.textContent = res.message || 'Email reenviado';
+                                            link.style.pointerEvents = 'none';
+                                        }).catch(function (resendErr) {
+                                            link.textContent = resendErr.message || 'Error al reenviar';
+                                        });
+                                    }
+                                });
+                            }
+                        } else {
+                            errorText.textContent = err.message || 'Usuario o contraseña incorrectos';
+                            errorBox.hidden = false;
+                        }
                         btnText.hidden = false;
                         btnLoader.hidden = true;
                         btn.disabled = false;
@@ -448,7 +496,32 @@
                 var newsletterOptIn = document.getElementById('regNewsletter') && document.getElementById('regNewsletter').checked;
 
                 DDAAuth.register(username, email, password, newsletterOptIn)
-                    .then(function () {
+                    .then(function (data) {
+                        if (data.pendingVerification) {
+                            var pendingBox = document.getElementById('verificationPending');
+                            var pendingText = document.getElementById('verificationPendingText');
+                            if (pendingText && data.message) pendingText.textContent = data.message;
+                            pendingBox.hidden = false;
+                            registerForm.hidden = true;
+
+                            var resendLink = document.getElementById('resendVerificationLink');
+                            if (resendLink) {
+                                resendLink.addEventListener('click', function (ev) {
+                                    ev.preventDefault();
+                                    DDAAuth.resendVerification(email).then(function (res) {
+                                        resendLink.textContent = res.message || 'Email reenviado';
+                                        resendLink.style.pointerEvents = 'none';
+                                    }).catch(function (err) {
+                                        resendLink.textContent = err.message || 'Error al reenviar';
+                                    });
+                                });
+                            }
+                            btnText.hidden = false;
+                            btnLoader.hidden = true;
+                            btn.disabled = false;
+                            submitting = false;
+                            return;
+                        }
                         successBox.hidden = false;
                         var returnTo = new URLSearchParams(window.location.search).get('return');
                         setTimeout(function () {

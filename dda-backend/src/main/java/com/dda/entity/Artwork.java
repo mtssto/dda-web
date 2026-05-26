@@ -41,6 +41,14 @@ public class Artwork {
     @Builder.Default
     private Boolean sold = false;
 
+    @Column(name = "view_count", nullable = false)
+    @Builder.Default
+    private Long viewCount = 0L;
+
+    @Column(name = "likes_count", nullable = false)
+    @Builder.Default
+    private Long likesCount = 0L;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;

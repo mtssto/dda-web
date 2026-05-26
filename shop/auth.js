@@ -55,14 +55,17 @@ var DDAAuth = (function () {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: username, password: password })
         }).then(function (res) {
-            if (!res.ok) {
-                return res.json().then(function (data) {
-                    throw new Error(data.message || 'Usuario o contraseña incorrectos');
-                });
-            }
-            return res.json();
+            return res.json().then(function (data) {
+                if (!res.ok) {
+                    var err = new Error(data.message || 'Usuario o contraseña incorrectos');
+                    if (data.pendingVerification) err.pendingVerification = true;
+                    throw err;
+                }
+                return data;
+            });
         }).then(function (data) {
             saveAuth(data);
+            if (typeof trackLogin === 'function') trackLogin('email');
             return data;
         });
     }
@@ -87,11 +90,32 @@ var DDAAuth = (function () {
             }
             return res.json();
         }).then(function (data) {
+            if (data.pendingVerification) {
+                if (typeof trackSignUp === 'function') trackSignUp('email');
+                if (newsletterOptIn === true && typeof DDANewsletter !== 'undefined') {
+                    DDANewsletter.subscribe(email, 'registration').catch(function () {});
+                }
+                return data;
+            }
             saveAuth(data);
+            if (typeof trackSignUp === 'function') trackSignUp('email');
             if (newsletterOptIn === true && typeof DDANewsletter !== 'undefined') {
                 DDANewsletter.subscribe(email, 'registration').catch(function () {});
             }
             return data;
+        });
+    }
+
+    function resendVerification(email) {
+        return fetch(API_BASE + '/auth/resend-verification', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email })
+        }).then(function (res) {
+            return res.json().then(function (data) {
+                if (!res.ok) throw new Error(data.message || 'Error al reenviar verificación');
+                return data;
+            });
         });
     }
 
@@ -140,6 +164,7 @@ var DDAAuth = (function () {
     return {
         login: login,
         register: register,
+        resendVerification: resendVerification,
         logout: logout,
         getToken: getToken,
         getUser: getUser,

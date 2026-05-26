@@ -19,12 +19,19 @@ public class ArtworkDTO {
     private String technique;
     private String year;
     private Boolean sold;
+    private Long viewCount;
+    private Long likesCount;
+    private Boolean likedByCurrentUser;
     private String category;
     private List<ImageDTO> images;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public static ArtworkDTO fromEntity(Artwork artwork, String staticBaseUrl) {
+        return fromEntity(artwork, staticBaseUrl, false);
+    }
+
+    public static ArtworkDTO fromEntity(Artwork artwork, String staticBaseUrl, boolean likedByCurrentUser) {
         return ArtworkDTO.builder()
                 .id(artwork.getId())
                 .slug(artwork.getSlug())
@@ -35,6 +42,9 @@ public class ArtworkDTO {
                 .technique(artwork.getTechnique())
                 .year(artwork.getYear())
                 .sold(artwork.getSold())
+                .viewCount(artwork.getViewCount())
+                .likesCount(artwork.getLikesCount())
+                .likedByCurrentUser(likedByCurrentUser)
                 .category(artwork.getCategory() != null ? artwork.getCategory().getName() : null)
                 .images(artwork.getImages().stream()
                         .map(img -> ImageDTO.fromEntity(img, staticBaseUrl))
