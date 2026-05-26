@@ -5,14 +5,12 @@ document.addEventListener('DOMContentLoaded', function () {
     var btnNext = document.getElementById('btnNext');
     var pageInfo = document.getElementById('pageInfo');
     var empty = document.getElementById('journalEmpty');
-    var filters = document.getElementById('journalFilters');
     var searchInput = document.getElementById('forumSearch');
 
     var allPosts = [];
     var visiblePosts = [];
     var currentPage = 0;
     var animating = false;
-    var activeTag = '';
     var searchQuery = '';
 
     var FLIP_MS = 480;
@@ -25,21 +23,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function filterPosts(posts) {
-        var list = posts;
-        if (activeTag) {
-            list = list.filter(function (p) {
-                return p.tags && p.tags.indexOf(activeTag) !== -1;
-            });
-        }
-        if (searchQuery) {
-            var q = searchQuery.toLowerCase();
-            list = list.filter(function (p) {
-                return (p.title && p.title.toLowerCase().indexOf(q) !== -1) ||
-                    (p.excerpt && p.excerpt.toLowerCase().indexOf(q) !== -1) ||
-                    (p.tags && p.tags.some(function (t) { return t.toLowerCase().indexOf(q) !== -1; }));
-            });
-        }
-        return list;
+        if (!searchQuery) return posts;
+        var q = searchQuery.toLowerCase();
+        return posts.filter(function (p) {
+            return (p.title && p.title.toLowerCase().indexOf(q) !== -1) ||
+                (p.excerpt && p.excerpt.toLowerCase().indexOf(q) !== -1) ||
+                (p.tags && p.tags.some(function (t) { return t.toLowerCase().indexOf(q) !== -1; }));
+        });
     }
 
     function buildPageHtml(post, index, total) {
@@ -85,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
             navWrap.hidden = true;
             if (empty) {
                 empty.hidden = false;
-                empty.textContent = searchQuery || activeTag
+                empty.textContent = searchQuery
                     ? 'No hay entradas con ese criterio.'
                     : (JournalApp.t('journal.empty') || 'Aún no hay entradas publicadas.');
             }
@@ -169,37 +159,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, { passive: true });
     })();
 
-    /* Filters */
-    function buildFilters(posts) {
-        var tags = {};
-        posts.forEach(function (p) {
-            (p.tags || []).forEach(function (t) { tags[t] = true; });
-        });
-        Object.keys(tags).sort().forEach(function (tag) {
-            var btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'journal-filter-btn';
-            btn.setAttribute('data-tag', tag);
-            btn.textContent = tag;
-            btn.addEventListener('click', function () {
-                activeTag = tag;
-                document.querySelectorAll('.journal-filter-btn').forEach(function (b) {
-                    b.classList.toggle('is-active', b.getAttribute('data-tag') === activeTag);
-                });
-                renderBook();
-            });
-            filters.appendChild(btn);
-        });
-
-        filters.querySelector('[data-tag=""]').addEventListener('click', function () {
-            activeTag = '';
-            document.querySelectorAll('.journal-filter-btn').forEach(function (b) {
-                b.classList.toggle('is-active', b.getAttribute('data-tag') === '');
-            });
-            renderBook();
-        });
-    }
-
     if (searchInput) {
         searchInput.addEventListener('input', function () {
             searchQuery = searchInput.value.trim();
@@ -211,7 +170,6 @@ document.addEventListener('DOMContentLoaded', function () {
         allPosts = posts.sort(function (a, b) {
             return new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0);
         });
-        buildFilters(allPosts);
         renderBook();
     }).catch(function () {
         if (empty) empty.hidden = false;

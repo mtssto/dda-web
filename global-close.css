@@ -111,22 +111,37 @@ body.modal-open .close-container {
 }
 
 @media (max-width: 600px) {
+    .close-container {
+        padding: 14px 16px;
+        gap: 8px;
+    }
+
+    .close-btn {
+        font-size: 1rem;
+        letter-spacing: 1px;
+    }
+
     .auth-header-btns {
-        gap: 14px;
+        gap: 12px;
     }
 
     .auth-header-link {
-        font-size: 0.65rem;
-        letter-spacing: 1px;
-        gap: 4px;
+        font-size: 0;
+        letter-spacing: 0;
+        gap: 0;
     }
 
     .auth-header-link svg {
-        width: 14px;
-        height: 14px;
+        width: 18px;
+        height: 18px;
     }
 
-    .close-container {
-        padding: 20px 16px;
+    .auth-header-user {
+        font-size: 0;
+        gap: 10px;
+    }
+
+    .auth-header-user .auth-header-link {
+        margin-left: 0;
     }
 }

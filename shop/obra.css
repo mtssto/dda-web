@@ -507,7 +507,8 @@
     }
 
     .obra-breadcrumb {
-        padding: 16px 20px 0;
+        padding: 70px 20px 0;
+        font-size: 0.75rem;
     }
 
     .obra-gallery {
