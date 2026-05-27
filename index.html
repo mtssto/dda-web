@@ -5,12 +5,30 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0e0e0e">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Diego De Aduriz</title>
+  <title>Diego De Aduriz — Artista Plástico Argentino</title>
+  <meta name="description" content="Diego De Aduriz, artista plástico argentino. Obras originales, exposiciones, juegos, y más. Explorá su universo creativo.">
+  <meta name="author" content="Diego De Aduriz">
   <link rel="stylesheet" href="index-custom.css">
   <link rel="canonical" href="https://diegodeaduriz.art">
 
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://diegodeaduriz.art/">
+  <meta property="og:title" content="Diego De Aduriz — Artista Plástico Argentino">
+  <meta property="og:description" content="Obras originales, exposiciones, juegos y más. Explorá el universo creativo de Diego De Aduriz.">
+  <meta property="og:image" content="https://diegodeaduriz.art/dda.jpeg">
+  <meta property="og:site_name" content="Diego De Aduriz">
+  <meta property="og:locale" content="es_AR">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Diego De Aduriz — Artista Plástico Argentino">
+  <meta name="twitter:description" content="Obras originales, exposiciones, juegos y más. Explorá el universo creativo de Diego De Aduriz.">
+  <meta name="twitter:image" content="https://diegodeaduriz.art/dda.jpeg">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,6 +36,26 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
     rel="stylesheet">
+  <!-- Schema.org: Person + Website -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Diego De Aduriz",
+    "url": "https://diegodeaduriz.art",
+    "description": "Sitio oficial del artista plástico argentino Diego De Aduriz. Obras originales, exposiciones, blog y más.",
+    "author": {
+      "@type": "Person",
+      "@id": "https://diegodeaduriz.art/#artist",
+      "name": "Diego De Aduriz",
+      "jobTitle": "Artista Plástico",
+      "url": "https://diegodeaduriz.art",
+      "image": "https://diegodeaduriz.art/dda.jpeg",
+      "sameAs": ["https://www.instagram.com/diegodeaduriz"]
+    }
+  }
+  </script>
+
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-87SFZWVTQC"></script>
   <script>
@@ -49,6 +87,7 @@
           <a href="./textos/textos.html">PUBLICACIONES</a>
           <a href="./journal/index.html" data-i18n="nav.journal">BLOG</a>
           <a href="react-build/index.html">UNIVERSO DDA</a>
+          <!-- <a href="./game/index.html">GAME</a> -->
         </div>
       </div>
     </div>
@@ -100,6 +139,11 @@
       }
     });
 
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(function () {});
+    }
   </script>
 </body>
 

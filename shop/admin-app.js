@@ -647,6 +647,235 @@
             .catch(function () { /* silently fail */ });
     }
 
+    // ── Stat Detail Panels ──────────────────────
+    var statPanel = document.getElementById('statDetailPanel');
+    var statTitle = document.getElementById('statDetailTitle');
+    var statBody = document.getElementById('statDetailBody');
+    var statCloseBtn = document.getElementById('statDetailClose');
+    var activeStatType = null;
+    var cachedStats = null;
+
+    document.getElementById('adminStats').addEventListener('click', function (e) {
+        var card = e.target.closest('.stat-clickable');
+        if (!card) return;
+        var type = card.dataset.stat;
+        if (activeStatType === type) {
+            closeStatPanel();
+            return;
+        }
+        openStatPanel(type);
+    });
+
+    if (statCloseBtn) statCloseBtn.addEventListener('click', closeStatPanel);
+
+    function closeStatPanel() {
+        if (statPanel) statPanel.hidden = true;
+        activeStatType = null;
+        document.querySelectorAll('.stat-clickable.active').forEach(function (el) {
+            el.classList.remove('active');
+        });
+    }
+
+    function openStatPanel(type) {
+        activeStatType = type;
+        document.querySelectorAll('.stat-clickable.active').forEach(function (el) {
+            el.classList.remove('active');
+        });
+        var card = document.querySelector('.stat-clickable[data-stat="' + type + '"]');
+        if (card) card.classList.add('active');
+
+        statPanel.hidden = false;
+        statBody.innerHTML = '<div class="stat-detail-empty">Cargando...</div>';
+
+        var titles = {
+            total: 'Todas las Obras',
+            available: 'Obras Disponibles',
+            sold: 'Obras Vendidas',
+            categories: 'Categorías',
+            views: 'Vistas por Obra',
+            likes: 'Likes por Obra',
+            users: 'Usuarios Registrados',
+            comments: 'Comentarios Pendientes'
+        };
+        statTitle.textContent = titles[type] || type;
+
+        if (type === 'total' || type === 'available' || type === 'sold') {
+            loadArtworkDetailView(type);
+        } else if (type === 'categories') {
+            loadCategoryDetailView();
+        } else if (type === 'views' || type === 'likes') {
+            loadEngagementDetailView(type);
+        } else if (type === 'users') {
+            loadUsersDetailView();
+        } else if (type === 'comments') {
+            loadCommentsDetailView();
+        }
+    }
+
+    function loadArtworkDetailView(filter) {
+        DDAAuth.apiFetch('/artworks?page=0&size=200&sort=id,desc')
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                var all = data.content || [];
+                if (filter === 'available') all = all.filter(function (a) { return !a.sold; });
+                if (filter === 'sold') all = all.filter(function (a) { return a.sold; });
+
+                if (!all.length) {
+                    statBody.innerHTML = '<div class="stat-detail-empty">No hay obras</div>';
+                    return;
+                }
+                var html = '<table><thead><tr><th></th><th>Título</th><th>Categoría</th><th>Año</th><th>Estado</th></tr></thead><tbody>';
+                all.forEach(function (a) {
+                    var img = (a.images && a.images.length > 0) ? (a.images[0].filePath || a.images[0].url || '') : '';
+                    var badge = a.sold
+                        ? '<span class="stat-detail-badge stat-detail-badge--sold">Vendida</span>'
+                        : '<span class="stat-detail-badge stat-detail-badge--available">Disponible</span>';
+                    html += '<tr>'
+                        + '<td>' + (img ? '<img src="' + img + '" class="stat-detail-thumb" alt="">' : '') + '</td>'
+                        + '<td><strong>' + (a.title || '') + '</strong></td>'
+                        + '<td>' + (a.category || '-') + '</td>'
+                        + '<td>' + (a.year || '-') + '</td>'
+                        + '<td>' + badge + '</td>'
+                        + '</tr>';
+                });
+                html += '</tbody></table>';
+                statBody.innerHTML = html;
+            })
+            .catch(function () {
+                statBody.innerHTML = '<div class="stat-detail-empty">Error al cargar</div>';
+            });
+    }
+
+    function loadCategoryDetailView() {
+        DDAAuth.apiFetch('/artworks?page=0&size=200&sort=id,desc')
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                var all = data.content || [];
+                var counts = {};
+                all.forEach(function (a) {
+                    var cat = a.category || 'Sin categoría';
+                    counts[cat] = (counts[cat] || 0) + 1;
+                });
+                var entries = Object.keys(counts).map(function (k) { return { name: k, count: counts[k] }; });
+                entries.sort(function (a, b) { return b.count - a.count; });
+                var max = entries.length > 0 ? entries[0].count : 1;
+
+                var html = '<table><thead><tr><th>Categoría</th><th>Obras</th><th></th></tr></thead><tbody>';
+                entries.forEach(function (e) {
+                    var pct = Math.round((e.count / max) * 100);
+                    html += '<tr>'
+                        + '<td><strong>' + e.name + '</strong></td>'
+                        + '<td>' + e.count + '</td>'
+                        + '<td style="width:50%"><div class="stat-detail-bar"><div class="stat-detail-bar-fill" style="width:' + pct + '%"></div></div></td>'
+                        + '</tr>';
+                });
+                html += '</tbody></table>';
+                statBody.innerHTML = html;
+            })
+            .catch(function () {
+                statBody.innerHTML = '<div class="stat-detail-empty">Error al cargar</div>';
+            });
+    }
+
+    function loadEngagementDetailView(type) {
+        DDAAuth.apiFetch('/artworks?page=0&size=200&sort=id,desc')
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                var all = data.content || [];
+                var field = type === 'views' ? 'viewCount' : 'likesCount';
+                all.sort(function (a, b) { return (b[field] || 0) - (a[field] || 0); });
+                var top = all.filter(function (a) { return (a[field] || 0) > 0; });
+                if (!top.length) {
+                    statBody.innerHTML = '<div class="stat-detail-empty">Sin datos de ' + (type === 'views' ? 'vistas' : 'likes') + ' todavía</div>';
+                    return;
+                }
+                var max = top[0][field] || 1;
+                var label = type === 'views' ? 'Vistas' : 'Likes';
+                var html = '<table><thead><tr><th></th><th>Título</th><th>' + label + '</th><th></th></tr></thead><tbody>';
+                top.forEach(function (a) {
+                    var img = (a.images && a.images.length > 0) ? (a.images[0].filePath || a.images[0].url || '') : '';
+                    var val = a[field] || 0;
+                    var pct = Math.round((val / max) * 100);
+                    html += '<tr>'
+                        + '<td>' + (img ? '<img src="' + img + '" class="stat-detail-thumb" alt="">' : '') + '</td>'
+                        + '<td><strong>' + (a.title || '') + '</strong></td>'
+                        + '<td>' + val + '</td>'
+                        + '<td style="width:40%"><div class="stat-detail-bar"><div class="stat-detail-bar-fill" style="width:' + pct + '%"></div></div></td>'
+                        + '</tr>';
+                });
+                html += '</tbody></table>';
+                statBody.innerHTML = html;
+            })
+            .catch(function () {
+                statBody.innerHTML = '<div class="stat-detail-empty">Error al cargar</div>';
+            });
+    }
+
+    function loadUsersDetailView() {
+        var token = DDAAuth.getToken();
+        var apiBase = window.DDA_API_BASE || '/api';
+        fetch(apiBase + '/admin/users', {
+            headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' }
+        })
+            .then(function (res) {
+                if (!res.ok) throw new Error('not available');
+                return res.json();
+            })
+            .then(function (users) {
+                if (!users.length) {
+                    statBody.innerHTML = '<div class="stat-detail-empty">No hay usuarios registrados</div>';
+                    return;
+                }
+                var html = '<table><thead><tr><th>Usuario</th><th>Email</th><th>Rol</th><th>Email Verificado</th><th>Registrado</th></tr></thead><tbody>';
+                users.forEach(function (u) {
+                    var roleBadge = u.role === 'ADMIN'
+                        ? '<span class="stat-detail-badge" style="background:#e3f2fd;color:#1565c0;">Admin</span>'
+                        : '<span class="stat-detail-badge" style="background:#f5f5f5;color:#666;">Usuario</span>';
+                    var verifiedBadge = u.emailVerified
+                        ? '<span class="stat-detail-badge stat-detail-badge--available">Sí</span>'
+                        : '<span class="stat-detail-badge stat-detail-badge--pending">No</span>';
+                    var date = u.createdAt ? u.createdAt.substring(0, 10) : '-';
+                    html += '<tr>'
+                        + '<td><strong>' + (u.username || '-') + '</strong></td>'
+                        + '<td>' + (u.email || '-') + '</td>'
+                        + '<td>' + roleBadge + '</td>'
+                        + '<td>' + verifiedBadge + '</td>'
+                        + '<td>' + date + '</td>'
+                        + '</tr>';
+                });
+                html += '</tbody></table>';
+                statBody.innerHTML = html;
+            })
+            .catch(function () {
+                var total = document.getElementById('statUsers').textContent || '0';
+                statBody.innerHTML = '<div style="text-align:center;padding:24px 0;">'
+                    + '<div style="font-size:48px;font-weight:600;">' + total + '</div>'
+                    + '<div style="font-size:13px;color:#888;margin-top:8px;">usuarios registrados</div>'
+                    + '<p style="font-size:12px;color:#aaa;margin-top:12px;">Desplegá el backend con el nuevo endpoint <code>/api/admin/users</code> para ver el detalle.</p>'
+                    + '</div>';
+            });
+    }
+
+    function loadCommentsDetailView() {
+        DDAAuth.apiFetch('/admin/stats')
+            .then(function (res) { return res.json(); })
+            .then(function (stats) {
+                var pending = stats.pendingComments || 0;
+                if (!pending) {
+                    statBody.innerHTML = '<div class="stat-detail-empty">No hay comentarios pendientes de aprobación</div>';
+                    return;
+                }
+                statBody.innerHTML = '<div style="text-align:center;padding:20px 0;">'
+                    + '<div style="font-size:48px;font-weight:600;color:#e65100;">' + pending + '</div>'
+                    + '<div style="font-size:13px;color:#888;margin-top:8px;">comentarios esperando revisión</div>'
+                    + '<p style="font-size:12px;color:#aaa;margin-top:12px;">Los comentarios se pueden moderar desde cada página de obra.</p>'
+                    + '</div>';
+            })
+            .catch(function () {
+                statBody.innerHTML = '<div class="stat-detail-empty">Error al cargar</div>';
+            });
+    }
+
     function initNewsletter() {
         var form = document.getElementById('newsletterForm');
         if (!form) return;

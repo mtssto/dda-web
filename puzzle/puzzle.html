@@ -8,6 +8,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diego De Aduriz | Puzzle</title>
+    <meta name="description" content="Resolvé puzzles con las ilustraciones de Diego De Aduriz. Un juego interactivo para amantes del arte.">
+    <link rel="canonical" href="https://diegodeaduriz.art/puzzle/puzzle.html">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://diegodeaduriz.art/puzzle/puzzle.html">
+    <meta property="og:title" content="Puzzle — Diego De Aduriz">
+    <meta property="og:description" content="Resolvé puzzles con las ilustraciones de Diego De Aduriz.">
+    <meta property="og:image" content="https://diegodeaduriz.art/dda.jpeg">
+    <meta property="og:site_name" content="Diego De Aduriz">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Puzzle — Diego De Aduriz">
+    <meta name="twitter:description" content="Resolvé puzzles con las ilustraciones de Diego De Aduriz.">
+    <meta name="twitter:image" content="https://diegodeaduriz.art/dda.jpeg">
+
     <link rel="stylesheet" href="../index copy.css">
     <link rel="stylesheet" href="puzzle.css">
     <link rel="stylesheet" href="../global-close.css">
@@ -27,19 +42,18 @@
             <h1>Choose an Illustration</h1>
             <p>Select an artwork to start the puzzle.</p>
 
-            <div class="image-grid">
-                <!-- Using images found in Ilustrates folder -->
+            <div class="image-grid" id="puzzleGrid">
                 <div class="puzzle-thumb" data-src="../Ilustrates/dibu1.jpg">
-                    <img src="../Ilustrates/dibu1.jpg" alt="Puzzle Option 1">
+                    <img src="../Ilustrates/dibu1.jpg" alt="Puzzle Option 1" loading="lazy">
                 </div>
                 <div class="puzzle-thumb" data-src="../Ilustrates/b.jpg">
-                    <img src="../Ilustrates/b.jpg" alt="Puzzle Option 2">
+                    <img src="../Ilustrates/b.jpg" alt="Puzzle Option 2" loading="lazy">
                 </div>
                 <div class="puzzle-thumb" data-src="../Ilustrates/cc.jpg">
-                    <img src="../Ilustrates/cc.jpg" alt="Puzzle Option 3">
+                    <img src="../Ilustrates/cc.jpg" alt="Puzzle Option 3" loading="lazy">
                 </div>
                 <div class="puzzle-thumb" data-src="../Ilustrates/dibu5.jpg">
-                    <img src="../Ilustrates/dibu5.jpg" alt="Puzzle Option 4">
+                    <img src="../Ilustrates/dibu5.jpg" alt="Puzzle Option 4" loading="lazy">
                 </div>
             </div>
         </section>
@@ -72,7 +86,42 @@
 
     </main>
 
+    <script src="../shop/config.js"></script>
     <script src="puzzle.js"></script>
+    <script>
+    (function () {
+        var apiBase = window.DDA_API_BASE || '/api';
+        fetch(apiBase + '/artworks?page=0&size=8&sort=viewCount,desc')
+            .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+            .then(function (data) {
+                var artworks = (data.content || []).filter(function (a) {
+                    return a.images && a.images.length > 0;
+                }).slice(0, 8);
+                if (!artworks.length) return;
+                var grid = document.getElementById('puzzleGrid');
+                artworks.forEach(function (a) {
+                    var src = a.images[0].filePath || a.images[0].url || '';
+                    if (!src) return;
+                    var thumb = document.createElement('div');
+                    thumb.className = 'puzzle-thumb';
+                    thumb.setAttribute('data-src', src);
+                    thumb.innerHTML = '<img src="' + src + '" alt="' + (a.title || 'Artwork') + '" loading="lazy">';
+                    thumb.addEventListener('click', function () {
+                        if (typeof startGame !== 'undefined') return;
+                        document.querySelectorAll('.puzzle-thumb')[0].click();
+                    });
+                    grid.appendChild(thumb);
+                });
+                grid.querySelectorAll('.puzzle-thumb').forEach(function (t) {
+                    t.addEventListener('click', function () {
+                        var ev = new CustomEvent('puzzleSelect', { detail: t.dataset.src });
+                        document.dispatchEvent(ev);
+                    });
+                });
+            })
+            .catch(function () {});
+    })();
+    </script>
 </body>
 
 </html>

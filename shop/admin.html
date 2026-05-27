@@ -40,38 +40,51 @@
     <main class="admin-main">
         <!-- Stats Bar -->
         <div class="admin-stats" id="adminStats">
-            <div class="stat-card">
+            <div class="stat-card stat-clickable" data-stat="total">
                 <span class="stat-value" id="statTotal">-</span>
                 <span class="stat-label">Total Obras</span>
             </div>
-            <div class="stat-card">
+            <div class="stat-card stat-clickable" data-stat="available">
                 <span class="stat-value" id="statAvailable">-</span>
                 <span class="stat-label">Disponibles</span>
             </div>
-            <div class="stat-card">
+            <div class="stat-card stat-clickable" data-stat="sold">
                 <span class="stat-value" id="statSold">-</span>
                 <span class="stat-label">Vendidas</span>
             </div>
-            <div class="stat-card">
+            <div class="stat-card stat-clickable" data-stat="categories">
                 <span class="stat-value" id="statCategories">-</span>
                 <span class="stat-label">Categorías</span>
             </div>
-            <div class="stat-card">
+            <div class="stat-card stat-clickable" data-stat="views">
                 <span class="stat-value" id="statViews">-</span>
                 <span class="stat-label">Vistas Totales</span>
             </div>
-            <div class="stat-card">
+            <div class="stat-card stat-clickable" data-stat="likes">
                 <span class="stat-value" id="statLikes">-</span>
                 <span class="stat-label">Likes Totales</span>
             </div>
-            <div class="stat-card">
+            <div class="stat-card stat-clickable" data-stat="users">
                 <span class="stat-value" id="statUsers">-</span>
                 <span class="stat-label">Usuarios</span>
             </div>
-            <div class="stat-card">
+            <div class="stat-card stat-clickable" data-stat="comments">
                 <span class="stat-value" id="statPendingComments">-</span>
                 <span class="stat-label">Comentarios Pendientes</span>
             </div>
+        </div>
+
+        <!-- Stat Detail Panel -->
+        <div class="stat-detail-panel" id="statDetailPanel" hidden>
+            <div class="stat-detail-header">
+                <h3 class="stat-detail-title" id="statDetailTitle"></h3>
+                <button class="stat-detail-close" id="statDetailClose" aria-label="Cerrar">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="stat-detail-body" id="statDetailBody"></div>
         </div>
 
         <!-- Popular Artworks -->

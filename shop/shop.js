@@ -976,35 +976,26 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     })();
 
-    // ── Recently Viewed Section (disabled — only shown in mi-cuenta.html) ──
-    // (function () {
-    //     var rv = JSON.parse(localStorage.getItem('dda_recently_viewed') || '[]');
-    //     if (!rv.length) return;
-    //     var target = document.getElementById('recentlyViewedContainer');
-    //     if (!target) {
-    //         var grid = document.getElementById('productsGrid');
-    //         target = grid ? grid.parentElement : document.querySelector('.shop-content') || document.querySelector('main');
-    //     }
-    //     if (!target) return;
-    //     var section = document.createElement('div');
-    //     section.className = 'recently-viewed-section';
-    //     section.innerHTML = '<h3>Vistos recientemente</h3><div class="recently-viewed-track"></div>';
-    //     target.appendChild(section);
-    //     var track = section.querySelector('.recently-viewed-track');
-    //     rv.forEach(function (item) {
-    //         var el = document.createElement('div');
-    //         el.className = 'recently-viewed-item';
-    //         el.innerHTML = pictureTag(item.image, item.title, ' loading="lazy" width="140" height="140"') +
-    //             '<div class="rv-title">' + item.title + '</div>' +
-    //             (item.year ? '<div class="rv-year">' + item.year + '</div>' : '');
-    //         el.addEventListener('click', function () {
-    //             if (!window.products) return;
-    //             var p = window.products.find(function (pr) { return (pr.id || pr.title) === item.id; });
-    //             if (p) openModal(p);
-    //         });
-    //         track.appendChild(el);
-    //     });
-    // })();
+    window.renderRecentlyViewed = function () {
+        var rv = JSON.parse(localStorage.getItem('dda_recently_viewed') || '[]');
+        var target = document.getElementById('recentlyViewedContainer');
+        if (!target) return;
+        if (!rv.length) { target.innerHTML = ''; target.className = ''; return; }
+        target.className = 'recently-viewed-section';
+        target.innerHTML = '<h2 class="rv-heading">Vistos recientemente</h2><div class="rv-track"></div>';
+        var track = target.querySelector('.rv-track');
+        rv.forEach(function (item) {
+            var el = document.createElement('a');
+            el.className = 'rv-card';
+            el.href = 'obra.html?id=' + encodeURIComponent(item.id);
+            var imgSrc = item.image || '';
+            el.innerHTML =
+                '<div class="rv-img"><img src="' + imgSrc + '" alt="' + (item.title || '').replace(/"/g, '&quot;') + '" loading="lazy"></div>' +
+                '<div class="rv-title">' + (item.title || '') + '</div>';
+            track.appendChild(el);
+        });
+    };
+    window.renderRecentlyViewed();
 
     // ── Dynamic JSON-LD Structured Data ─────────────────
     (function () {
@@ -1078,6 +1069,18 @@ function renderCarouselSections() {
     var productsByImage = {};
     window.products.forEach(function (p) {
         if (p.image) productsByImage[p.image] = p;
+    });
+
+    // Build "Novedades" dynamically: products sorted by year descending
+    window.carouselSections.forEach(function (section) {
+        if (section.id !== 'novedades') return;
+        var sorted = window.products.slice().filter(function (p) {
+            var y = parseInt(p.year, 10);
+            return !isNaN(y);
+        }).sort(function (a, b) {
+            return parseInt(b.year, 10) - parseInt(a.year, 10);
+        });
+        section.images = sorted.slice(0, 14).map(function (p) { return p.image; });
     });
 
     var eyeSvg = '<svg viewBox="0 0 24 24" class="icon-eye" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
@@ -1491,7 +1494,7 @@ function openModal(productOrElement) {
         }
     }
 
-    // Track recently viewed
+    // Track recently viewed and refresh the carousel
     if (product.id || product.title) {
         var rvKey = 'dda_recently_viewed';
         var rv = JSON.parse(localStorage.getItem(rvKey) || '[]');
@@ -1500,6 +1503,7 @@ function openModal(productOrElement) {
         rv.unshift({ id: rvId, title: product.title, image: product.image, year: product.year || '' });
         if (rv.length > 8) rv = rv.slice(0, 8);
         localStorage.setItem(rvKey, JSON.stringify(rv));
+        if (typeof window.renderRecentlyViewed === 'function') window.renderRecentlyViewed();
     }
 
     const modalImg = document.getElementById('modalImage');
