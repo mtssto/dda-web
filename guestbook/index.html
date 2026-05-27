@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libro de Visitas — Diego De Aduriz</title>
+    <meta name="description" content="Dejá tu mensaje en el libro de visitas de Diego De Aduriz. Un espacio para reflexiones y conexiones.">
+    <link rel="canonical" href="https://diegodeaduriz.art/guestbook/index.html">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../icon-192x192.png">
+    <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://diegodeaduriz.art/guestbook/index.html">
+    <meta property="og:title" content="Libro de Visitas — Diego De Aduriz">
+    <meta property="og:description" content="Dejá tu mensaje en el libro de visitas del artista.">
+    <meta property="og:image" content="https://diegodeaduriz.art/dda.jpeg">
+    <meta property="og:site_name" content="Diego De Aduriz">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Libro de Visitas — Diego De Aduriz">
+    <meta name="twitter:description" content="Dejá tu mensaje en el libro de visitas del artista.">
+    <meta name="twitter:image" content="https://diegodeaduriz.art/dda.jpeg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../global-close.css">
+    <link rel="stylesheet" href="guestbook.css">
+</head>
+
+<body>
+    <div class="close-container">
+        <a href="../index.html" class="close-btn">CLOSE</a>
+    </div>
+
+    <main class="gb-page">
+        <div class="gb-header">
+            <h1 class="gb-title">Libro de Visitas</h1>
+            <p class="gb-subtitle">Dejá tu huella. Compartí una reflexión, un saludo o lo que te inspire.</p>
+        </div>
+
+        <form class="gb-form" id="gbForm">
+            <input type="text" id="gbName" placeholder="Tu nombre" required maxlength="60" autocomplete="name" class="gb-input">
+            <textarea id="gbMessage" placeholder="Tu mensaje..." required maxlength="500" rows="3" class="gb-textarea"></textarea>
+            <button type="submit" class="gb-submit">Firmar el libro</button>
+        </form>
+
+        <div class="gb-wall" id="gbWall"></div>
+
+        <p class="gb-empty" id="gbEmpty" hidden>Sé el primero en dejar un mensaje.</p>
+    </main>
+
+    <footer class="gb-footer">
+        <p>&copy; 2026 Diego De Aduriz. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+    (function () {
+        'use strict';
+        var STORAGE_KEY = 'dda_guestbook';
+        var wall = document.getElementById('gbWall');
+        var form = document.getElementById('gbForm');
+        var emptyMsg = document.getElementById('gbEmpty');
+
+        var palettes = [
+            '#fef3c7', '#dbeafe', '#fce7f3', '#d1fae5', '#ede9fe',
+            '#fff1f2', '#ecfdf5', '#fdf4ff', '#f0f9ff', '#fefce8'
+        ];
+
+        function getEntries() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+            catch (e) { return []; }
+        }
+
+        function saveEntries(entries) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+        }
+
+        function escapeHtml(s) {
+            var d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+
+        function relativeTime(ts) {
+            var diff = Date.now() - ts;
+            var mins = Math.floor(diff / 60000);
+            if (mins < 1) return 'Justo ahora';
+            if (mins < 60) return 'Hace ' + mins + ' min';
+            var hours = Math.floor(mins / 60);
+            if (hours < 24) return 'Hace ' + hours + 'h';
+            var days = Math.floor(hours / 24);
+            return 'Hace ' + days + ' día' + (days > 1 ? 's' : '');
+        }
+
+        function render() {
+            var entries = getEntries();
+            if (!entries.length) {
+                wall.innerHTML = '';
+                emptyMsg.hidden = false;
+                return;
+            }
+            emptyMsg.hidden = true;
+            wall.innerHTML = entries.map(function (e, i) {
+                var bg = palettes[i % palettes.length];
+                var initial = (e.name || '?').charAt(0).toUpperCase();
+                return '<div class="gb-card" style="background:' + bg + '">' +
+                    '<div class="gb-card-head">' +
+                        '<span class="gb-avatar">' + escapeHtml(initial) + '</span>' +
+                        '<span class="gb-author">' + escapeHtml(e.name) + '</span>' +
+                        '<span class="gb-time">' + relativeTime(e.ts) + '</span>' +
+                    '</div>' +
+                    '<p class="gb-text">' + escapeHtml(e.message) + '</p>' +
+                '</div>';
+            }).join('');
+        }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var name = document.getElementById('gbName').value.trim();
+            var message = document.getElementById('gbMessage').value.trim();
+            if (!name || !message) return;
+
+            var entries = getEntries();
+            entries.unshift({ name: name, message: message, ts: Date.now() });
+            if (entries.length > 50) entries = entries.slice(0, 50);
+            saveEntries(entries);
+            form.reset();
+            render();
+        });
+
+        render();
+    })();
+    </script>
+</body>
+
+</html>

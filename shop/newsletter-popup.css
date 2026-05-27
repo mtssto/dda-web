@@ -1,0 +1,144 @@
+#nlPopupOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    padding: 16px;
+}
+
+#nlPopupOverlay.is-visible {
+    opacity: 1;
+}
+
+.nl-popup {
+    background: #fff;
+    border-radius: 10px;
+    padding: 36px 32px;
+    max-width: 400px;
+    width: 100%;
+    position: relative;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+#nlPopupOverlay.is-visible .nl-popup {
+    transform: translateY(0);
+}
+
+.nl-popup-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+}
+
+.nl-popup-close:hover {
+    color: #333;
+}
+
+.nl-popup-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #111;
+    margin: 0 0 8px;
+}
+
+.nl-popup-desc {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.5;
+    margin: 0 0 20px;
+}
+
+.nl-popup-form {
+    display: flex;
+    gap: 8px;
+}
+
+.nl-popup-input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.nl-popup-input:focus {
+    border-color: #111;
+}
+
+.nl-popup-btn {
+    padding: 10px 20px;
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+.nl-popup-btn:hover {
+    background: #333;
+}
+
+.nl-popup-btn:disabled {
+    background: #888;
+    cursor: default;
+}
+
+.nl-popup-msg {
+    margin: 12px 0 0;
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.nl-popup-msg.success {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.nl-popup-msg.error {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.nl-popup-fine {
+    margin: 14px 0 0;
+    font-size: 0.72rem;
+    color: #aaa;
+}
+
+@media (max-width: 480px) {
+    .nl-popup {
+        padding: 28px 20px;
+    }
+
+    .nl-popup-form {
+        flex-direction: column;
+    }
+}

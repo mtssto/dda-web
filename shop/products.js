@@ -1003,22 +1003,8 @@ window.carouselSections = [
         id: "novedades",
         labelKey: "shop.novedades",
         labelDefault: "Novedades",
-        images: [
-            "/portfolio/sections/obras/micuerpo.jpg",
-            "/portfolio/sections/obras/Diego+de+Aduriz+-+Autorretrato+-+110+x+150+cm+-+Marcadores+sobre+papel+-+2007.jpg",
-            "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+arcoiris+-+100+x+65+cm+-++pastel+sobre+papel+-+2020.png",
-            "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+con+flor+de+loto+-+Pastel+tiza+sobre+papel+-+25+x+18+cm+-+2018.png",
-            "/portfolio/sections/obras/Diego+de+Aduriz+-+Gato+cosmico+-+Pastel+tiza+-+80+x+110+cm+2013.jpeg",
-            "/portfolio/sections/obras/Diego+de+Aduriz+-+Mi+cuerpo+electrico+29+160+x+200+-+Pastel+y+acrilico+sobre+tela+-+2021.jpg",
-            "/portfolio/sections/obras/Diego+de+Aduriz+-+Paisaje+teorico+-+Tecnica+mixta+sobre+papel+-+24+x+34+cm+-+2009.png",
-            "/portfolio/sections/obras/Diego+de+Aduriz+-+Piasaje+con+monstruo+amistoso+-+Lapiz+sobre+papel+-+24+x+34+cm+-+2011.jpeg",
-            "/portfolio/sections/obras/Diego+de+Aduriz+-+Puerta+Azul+-+210+x+92+cm+-+Pintura+y+pastel+tiza+sobre+madera+-+2015_2017.jpeg",
-            "/portfolio/sections/obras/Diego+de+Aduriz+-+Sin+titulo+-+Tecnica+mixta+sobre+papel+-+34+x+24+cm+-+2012.png",
-            "/portfolio/sections/obras/luz_azul.jpg",
-            "/portfolio/sections/obras/IMG_0402+copia.jpg",
-            "/portfolio/sections/obras/MG_0329.png",
-            "/portfolio/sections/obras/mascara1.jpg"
-        ]
+        dynamic: "newest",
+        images: []
     },
     {
         id: "gatos",

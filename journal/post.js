@@ -83,6 +83,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
         setupComments();
 
+        // Update OG / Twitter meta dynamically
+        var fullUrl = window.location.href;
+        var coverImg = post.coverImage || 'https://diegodeaduriz.art/dda.jpeg';
+        var ogTitle = post.title + ' — Diego De Aduriz';
+        var ogDesc = post.excerpt || 'Entrada del cuaderno del artista Diego De Aduriz.';
+
+        var metaMap = {
+            'og-url': fullUrl, 'og-title': ogTitle, 'og-description': ogDesc, 'og-image': coverImg,
+            'tw-title': ogTitle, 'tw-description': ogDesc, 'tw-image': coverImg
+        };
+        Object.keys(metaMap).forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) el.setAttribute('content', metaMap[id]);
+        });
+
+        setupShareButtons(post.title, fullUrl);
+
         var schema = {
             '@context': 'https://schema.org',
             '@type': 'BlogPosting',
@@ -182,6 +199,33 @@ document.addEventListener('DOMContentLoaded', function () {
                 '</li>'
             );
         }).join('');
+    }
+
+    function setupShareButtons(title, url) {
+        var shareTitle = title + ' — Diego De Aduriz';
+        var wa = document.getElementById('shareWhatsApp');
+        var tw = document.getElementById('shareTwitter');
+        var fb = document.getElementById('shareFacebook');
+        var cp = document.getElementById('shareCopy');
+
+        if (wa) wa.addEventListener('click', function () {
+            window.open('https://wa.me/?text=' + encodeURIComponent(shareTitle + '\n' + url), '_blank');
+        });
+        if (tw) tw.addEventListener('click', function () {
+            window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareTitle) + '&url=' + encodeURIComponent(url), '_blank');
+        });
+        if (fb) fb.addEventListener('click', function () {
+            window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url), '_blank');
+        });
+        if (cp) cp.addEventListener('click', function () {
+            navigator.clipboard.writeText(url).then(function () {
+                var toast = document.createElement('div');
+                toast.className = 'copy-toast visible';
+                toast.textContent = 'Enlace copiado';
+                document.body.appendChild(toast);
+                setTimeout(function () { toast.remove(); }, 2500);
+            });
+        });
     }
 
     window.addEventListener('languageChanged', function () {

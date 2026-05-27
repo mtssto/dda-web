@@ -145,3 +145,13 @@ body.modal-open .close-container {
         margin-left: 0;
     }
 }
+
+/* Page entrance animation — applies to all pages that include global-close.css */
+@keyframes pageEntrance {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+body {
+    animation: pageEntrance 0.35s ease-out;
+}

@@ -297,6 +297,17 @@
         fetch(apiBase + '/artworks/' + encodeURIComponent(viewSlug) + '/view', { method: 'POST' }).catch(function () {});
         if (typeof trackViewItem === 'function') trackViewItem(product);
 
+        // Track recently viewed for shop carousel
+        (function () {
+            var rvKey = 'dda_recently_viewed';
+            var rv = JSON.parse(localStorage.getItem(rvKey) || '[]');
+            var rvId = product.slug || product.id || product.title;
+            rv = rv.filter(function (r) { return String(r.id) !== String(rvId); });
+            rv.unshift({ id: rvId, title: product.title, image: (product.images && product.images[0]) || product.image || '', year: product.year || '' });
+            if (rv.length > 8) rv = rv.slice(0, 8);
+            localStorage.setItem(rvKey, JSON.stringify(rv));
+        })();
+
         if (typeof DDAComments !== 'undefined') {
             var commentSlug = product.slug || product.id;
             DDAComments.mountArtworkSection(commentSlug);
