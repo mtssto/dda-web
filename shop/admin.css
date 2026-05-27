@@ -119,6 +119,163 @@ body {
     letter-spacing: 0.05em;
 }
 
+.stat-clickable {
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
+.stat-clickable:hover {
+    border-color: #ccc;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+}
+
+.stat-clickable.active {
+    border-color: #111;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Stat Detail Panel ────────────────────── */
+.stat-detail-panel {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    animation: panelSlideIn 0.25s ease-out;
+}
+
+@keyframes panelSlideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.stat-detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.stat-detail-title {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+}
+
+.stat-detail-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-subtext);
+    padding: 4px;
+    border-radius: 4px;
+    transition: color 0.2s, background 0.2s;
+}
+
+.stat-detail-close:hover {
+    color: #111;
+    background: #f0f0f0;
+}
+
+.stat-detail-body {
+    padding: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.stat-detail-body table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.stat-detail-body th {
+    text-align: left;
+    font-weight: 500;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-subtext);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.stat-detail-body td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f5f5f5;
+    vertical-align: middle;
+}
+
+.stat-detail-body tr:last-child td {
+    border-bottom: none;
+}
+
+.stat-detail-body tr:hover td {
+    background: #fafafa;
+}
+
+.stat-detail-thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+    background: #f5f5f5;
+}
+
+.stat-detail-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+}
+
+.stat-detail-badge--available {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.stat-detail-badge--sold {
+    background: #fce4ec;
+    color: #c62828;
+}
+
+.stat-detail-badge--pending {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.stat-detail-empty {
+    text-align: center;
+    color: var(--color-subtext);
+    padding: 32px 0;
+    font-size: 13px;
+}
+
+.stat-detail-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-detail-bar-fill {
+    height: 6px;
+    border-radius: 3px;
+    background: #111;
+    min-width: 2px;
+}
+
+.stat-detail-bar-label {
+    font-size: 12px;
+    color: var(--color-subtext);
+    white-space: nowrap;
+}
+
 /* ── Toolbar ──────────────────────────────── */
 .admin-toolbar {
     display: flex;
