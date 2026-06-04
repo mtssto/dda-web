@@ -228,9 +228,41 @@ body:not(.catalog-page) .product-image:hover img {
     transform: scale(1.05);
 }
 
+/* Shop masonry grid — framed crop; carousel keeps contain (see .carousel-container-mini) */
+body.shop-page .products-grid .product-image {
+    aspect-ratio: 4 / 5;
+}
+
+body.shop-page .products-grid .product-image img,
+body.shop-page .products-grid .product-image picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+body.shop-page .carousel-container-mini .product-image {
+    aspect-ratio: auto;
+    height: 320px;
+}
+
+body.shop-page .carousel-container-mini .product-image img,
+body.shop-page .carousel-container-mini .product-image picture,
+body.shop-page .carousel-container-mini .product-image .carousel-img {
+    width: 100%;
+    height: 100%;
+    max-height: 320px;
+    object-fit: contain;
+}
+
 /* Sold Overlay */
 .product-card.sold {
     position: relative;
+}
+
+body.shop-page .products-grid .product-card.sold .product-image img,
+body.shop-page .carousel-container-mini .product-card.sold .product-image img {
+    filter: grayscale(0.35);
+    opacity: 0.82;
 }
 
 .product-card.sold::after {
@@ -979,7 +1011,14 @@ footer p {
     }
 
     .carousel-container-mini .product-image {
-        height: auto;
+        height: 280px;
+    }
+
+    body.shop-page .carousel-container-mini .product-image img,
+    body.shop-page .carousel-container-mini .product-image picture,
+    body.shop-page .carousel-container-mini .product-image .carousel-img {
+        max-height: 280px;
+        object-fit: contain;
     }
 }
 

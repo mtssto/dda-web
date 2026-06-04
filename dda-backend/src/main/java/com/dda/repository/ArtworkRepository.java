@@ -19,11 +19,21 @@ public interface ArtworkRepository extends JpaRepository<Artwork, Long> {
 
     Page<Artwork> findBySold(boolean sold, Pageable pageable);
 
+    Page<Artwork> findBySoldFalse(Pageable pageable);
+
+    Page<Artwork> findByCategoryNameAndSoldFalse(String categoryName, Pageable pageable);
+
     @Query("SELECT a FROM Artwork a WHERE " +
            "LOWER(a.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
            "LOWER(a.technique) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
            "LOWER(a.dimensions) LIKE LOWER(CONCAT('%', :query, '%'))")
     Page<Artwork> search(@Param("query") String query, Pageable pageable);
+
+    @Query("SELECT a FROM Artwork a WHERE a.sold = false AND (" +
+           "LOWER(a.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+           "LOWER(a.technique) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+           "LOWER(a.dimensions) LIKE LOWER(CONCAT('%', :query, '%')))")
+    Page<Artwork> searchAvailable(@Param("query") String query, Pageable pageable);
 
     @Modifying
     @Query("UPDATE Artwork a SET a.viewCount = a.viewCount + 1 WHERE a.slug = :slug")

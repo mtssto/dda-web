@@ -1,36 +1,86 @@
-/* Minimalist Close Button Global Styles */
+/* Site header — shop & inner pages */
 .close-container {
-    padding: 30px 40px;
-    display: flex;
-    justify-content: flex-end;
+    padding: 14px clamp(16px, 4vw, 40px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
+    gap: 12px 20px;
     position: fixed;
     top: 0;
-    right: 0;
+    left: 0;
     width: 100%;
     box-sizing: border-box;
     z-index: 9999;
-    transition: z-index 0s, opacity 0.2s;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    transition: opacity 0.2s;
     pointer-events: auto;
 }
 
-/* When auth buttons are present, space between CLOSE and auth links */
-.close-container:has(.auth-header-btns) {
-    justify-content: space-between;
+.close-container.site-header {
+    justify-content: stretch;
 }
 
-/* Hide behind modal when modal is open */
 body.modal-open .close-container {
     z-index: 1 !important;
     pointer-events: none !important;
     opacity: 0;
 }
 
+.site-header-left {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: clamp(12px, 2.5vw, 24px);
+    justify-self: start;
+    min-width: 0;
+}
+
+.site-header-lang {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.site-header-back {
+    text-decoration: none;
+    color: #444;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+}
+
+.site-header-back:hover {
+    color: #111;
+}
+
+.site-header-brand {
+    justify-self: center;
+    text-decoration: none;
+    color: #111;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1rem, 2.2vw, 1.35rem);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+}
+
+.site-header-brand:hover {
+    color: #555;
+}
+
+/* Legacy close button (pages not yet using site-header.js) */
 .close-btn {
     text-decoration: none;
     color: #111;
     font-family: 'Inter', sans-serif;
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-weight: 300;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -41,11 +91,14 @@ body.modal-open .close-container {
     color: #888;
 }
 
-/* ── Auth header buttons (shop pages) ────── */
 .auth-header-btns {
     display: flex;
     align-items: center;
-    gap: 24px;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+    gap: 10px 14px;
+    justify-self: end;
+    min-width: 0;
 }
 
 .auth-header-link {
@@ -55,22 +108,22 @@ body.modal-open .close-container {
     text-decoration: none;
     color: #111;
     font-family: 'Inter', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 400;
+    font-size: 0.68rem;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 0.12em;
     transition: color 0.3s ease;
+    white-space: nowrap;
 }
 
 .auth-header-link:hover {
-    color: #888;
+    color: #666;
 }
 
 .auth-header-link svg {
     flex-shrink: 0;
 }
 
-/* When user is logged in, show user menu instead */
 .auth-header-user {
     display: inline-flex;
     align-items: center;
@@ -83,11 +136,6 @@ body.modal-open .close-container {
     color: #111;
 }
 
-.auth-header-user .auth-header-link {
-    margin-left: 8px;
-}
-
-/* ── Cart badge ─────────────────────────── */
 .cart-header-link {
     position: relative;
 }
@@ -110,21 +158,14 @@ body.modal-open .close-container {
     line-height: 1;
 }
 
-@media (max-width: 600px) {
-    .close-container {
-        padding: 14px 16px;
-        gap: 8px;
-    }
+/* Offset page content below fixed header */
+body.catalog-page,
+body.obra-detail-page,
+body.shop-page {
+    padding-top: 72px;
+}
 
-    .close-btn {
-        font-size: 1rem;
-        letter-spacing: 1px;
-    }
-
-    .auth-header-btns {
-        gap: 12px;
-    }
-
+@media (max-width: 900px) {
     .auth-header-link {
         font-size: 0;
         letter-spacing: 0;
@@ -135,18 +176,38 @@ body.modal-open .close-container {
         width: 18px;
         height: 18px;
     }
+}
 
-    .auth-header-user {
-        font-size: 0;
+@media (max-width: 720px) {
+    .close-container {
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+            "back auth"
+            "brand brand";
+        row-gap: 8px;
+    }
+
+    .site-header-left {
+        grid-area: back;
         gap: 10px;
     }
 
-    .auth-header-user .auth-header-link {
-        margin-left: 0;
+    .site-header-back {
+        font-size: 0.72rem;
+    }
+
+    .site-header-brand {
+        grid-area: brand;
+        justify-self: center;
+        font-size: 1.05rem;
+    }
+
+    .auth-header-btns {
+        grid-area: auth;
+        gap: 8px;
     }
 }
 
-/* Page entrance animation — applies to all pages that include global-close.css */
 @keyframes pageEntrance {
     from { opacity: 0; }
     to   { opacity: 1; }
