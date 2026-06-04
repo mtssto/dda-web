@@ -953,6 +953,68 @@
     display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
 }
 
+/* ── Admin: mobile friendliness ───────────────── */
+.journal-admin-page .schedule-row {
+    margin-top: 6px;
+}
+
+.journal-admin-page .schedule-row[hidden] {
+    display: none !important;
+}
+
+.journal-admin-page .admin-mobile-list {
+    display: none;
+}
+
+.journal-admin-page .admin-mobile-card {
+    border: 1px solid var(--diary-border);
+    background: var(--diary-paper);
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.journal-admin-page .admin-mobile-card__title {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    margin: 0 0 6px;
+    font-size: 1.05rem;
+    line-height: 1.25;
+}
+
+.journal-admin-page .admin-mobile-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    font-size: 0.75rem;
+    color: var(--diary-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.journal-admin-page .admin-mobile-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.journal-admin-page .admin-mobile-card__actions a {
+    color: var(--diary-ink);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.journal-admin-page .admin-form__actions {
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(to top, var(--diary-paper) 70%, rgba(250, 248, 243, 0));
+    padding: 14px 0 6px;
+    margin-top: 8px;
+}
+
 .journal-admin-page .admin-table__actions {
     display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
 }
@@ -1011,6 +1073,22 @@
     .diary-post-card {
         padding-left: 32px;
     }
+
+    /* Admin: switch tables to cards on mobile */
+    .journal-admin-page .admin-card { padding: 16px; }
+    .journal-admin-page .admin-stats { gap: 10px; }
+    .journal-admin-page .admin-stat { padding: 14px 12px; }
+
+    .journal-admin-page .admin-table { display: none; }
+    .journal-admin-page .admin-mobile-list { display: block; }
+
+    .journal-admin-page .admin-btn {
+        padding: 12px 16px;
+        width: 100%;
+        margin-right: 0;
+    }
+    .journal-admin-page .admin-btn--ghost,
+    .journal-admin-page .admin-btn--danger { width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {

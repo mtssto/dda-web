@@ -5,7 +5,8 @@
 (function () {
     'use strict';
 
-    if (!DDAAuth.requireAdmin()) return;
+    DDAAuth.init().then(function () {
+        if (!DDAAuth.requireAdmin()) return;
 
     // ── State ────────────────────────────────────
     var state = {
@@ -123,7 +124,7 @@
 
             fetch(getApiBaseUrl() + '/images/' + imageId, {
                 method: 'DELETE',
-                headers: { 'Authorization': 'Bearer ' + getAuthToken() }
+                credentials: 'include'
             }).then(function (res) {
                 if (!res.ok) throw new Error('No se pudo eliminar');
                 var card = deleteBtn.closest('.image-preview-card');
@@ -269,7 +270,7 @@
 
                 return fetch(getApiBaseUrl() + '/artworks/' + artworkId + '/images', {
                     method: 'POST',
-                    headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+                    credentials: 'include',
                     body: formData
                 }).then(function (res) {
                     if (!res.ok) {
@@ -283,18 +284,6 @@
         });
 
         return chain;
-    }
-
-    function getAuthToken() {
-        if (typeof DDAAuth !== 'undefined' && typeof DDAAuth.getToken === 'function') {
-            return DDAAuth.getToken();
-        }
-
-        return localStorage.getItem('dda_token') ||
-            localStorage.getItem('token') ||
-            localStorage.getItem('authToken') ||
-            localStorage.getItem('dda_auth_token') ||
-            '';
     }
 
     function getApiBaseUrl() {
@@ -812,10 +801,10 @@
     }
 
     function loadUsersDetailView() {
-        var token = DDAAuth.getToken();
         var apiBase = window.DDA_API_BASE || '/api';
         fetch(apiBase + '/admin/users', {
-            headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' }
+            credentials: 'include',
+            headers: { Accept: 'application/json' }
         })
             .then(function (res) {
                 if (!res.ok) throw new Error('not available');
@@ -927,4 +916,5 @@
             });
         });
     }
+    });
 })();

@@ -67,6 +67,7 @@ var DDAComments = (function () {
         }
         return fetch(API_BASE + '/artworks/' + encodeURIComponent(slug) + '/comments', {
             method: 'POST',
+            credentials: 'include',
             headers: DDAAuth.authHeaders(),
             body: JSON.stringify({ content: text })
         }).then(function (res) {

@@ -177,6 +177,8 @@
     <script src="auth.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function () {
+            await DDAAuth.init();
+
             // ── Auth check ───────────────────────────
             if (!DDAAuth.isAuthenticated()) {
                 window.location.href = 'user-login.html';
@@ -658,6 +660,7 @@
 
             async function fetchMyCommentsFromApi() {
                 var response = await fetch(getApiBaseUrl() + '/artworks/me/comments', {
+                    credentials: 'include',
                     headers: Object.assign({ Accept: 'application/json' }, DDAAuth.authHeaders())
                 });
                 if (!response.ok) throw new Error('Could not load comments');

@@ -229,6 +229,29 @@ section[id] {
   font-size: 1rem;
 }
 
+.masonry-item.reveal-item {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  will-change: opacity, transform;
+}
+
+.masonry-item.reveal-item.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.masonry-item.reveal-item img {
+  opacity: 0;
+  filter: saturate(0.96);
+  transition: opacity 0.45s ease, filter 0.6s ease;
+}
+
+.masonry-item.reveal-item.is-loaded img {
+  opacity: 1;
+  filter: saturate(1);
+}
+
 .masonry-item img {
   width: 100%;
   height: auto;
@@ -561,6 +584,74 @@ body.obras-modal-open .cat-nav {
 
 .modal-actions {
   margin-top: 24px;
+}
+
+.obras-share {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  flex-wrap: wrap;
+}
+
+.obras-share-label {
+  font-size: 0.75rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.obras-share-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid #e0e0e0;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.obras-share-btn svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.obras-share-btn:hover {
+  background: #f5f5f5;
+  color: #111;
+  border-color: #ccc;
+}
+
+.obras-share-toast {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  background: #333;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  opacity: 0;
+  transition: opacity 0.25s, transform 0.25s;
+  z-index: 10002;
+  pointer-events: none;
+}
+
+.obras-share-toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 .btn-modal-buy,

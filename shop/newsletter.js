@@ -30,13 +30,11 @@ var DDANewsletter = (function () {
         });
     }
 
-    function subscribeWithAuth(email, token) {
+    function subscribeWithAuth(email) {
         return fetch(API_BASE + '/newsletter/subscribe', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-            },
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: email, source: 'registration' })
         });
     }

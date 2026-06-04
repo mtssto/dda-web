@@ -254,10 +254,12 @@
             }
 
             // ── Redirect if already logged in ────────────
-            if (DDAAuth.isAuthenticated()) {
-                var back = urlParams.get('return');
-                window.location.href = (back && back.indexOf('user-login') === -1) ? back : 'mi-cuenta.html';
-            }
+            DDAAuth.init().then(function () {
+                if (DDAAuth.isAuthenticated()) {
+                    var back = urlParams.get('return');
+                    window.location.href = (back && back.indexOf('user-login') === -1) ? back : 'mi-cuenta.html';
+                }
+            });
 
             // ── Auto-switch to register tab if #register hash ──
             if (window.location.hash === '#register') {

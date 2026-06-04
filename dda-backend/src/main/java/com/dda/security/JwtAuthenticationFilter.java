@@ -21,6 +21,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider tokenProvider;
     private final CustomUserDetailsService userDetailsService;
+    private final AuthCookieService authCookieService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -42,6 +43,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String extractToken(HttpServletRequest request) {
+        String cookieToken = authCookieService.extractToken(request);
+        if (StringUtils.hasText(cookieToken)) {
+            return cookieToken;
+        }
+
         String header = request.getHeader("Authorization");
         if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
             return header.substring(7);

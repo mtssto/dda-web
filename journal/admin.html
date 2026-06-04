@@ -85,8 +85,11 @@
                     <option value="PUBLISHED">Publicada — visible en el cuaderno</option>
                 </select>
 
-                <label for="postSchedule">Fecha de publicación (si programás)</label>
-                <input type="datetime-local" id="postSchedule">
+                <div class="schedule-row" id="scheduleRow">
+                    <label for="postSchedule">Fecha de publicación</label>
+                    <input type="datetime-local" id="postSchedule">
+                    <p class="field-hint">Solo se usa si el estado es “Programada”.</p>
+                </div>
 
                 <label class="checkbox-row"><input type="checkbox" id="postSendNewsletter"> Enviar boletín por email al publicar</label>
                 <p class="admin-save-status" id="postSaveStatus" hidden role="status"></p>
@@ -100,6 +103,7 @@
             </div>
 
             <div class="admin-card">
+                <div class="admin-mobile-list" id="postsMobileList" hidden></div>
                 <table class="admin-table" id="postsTable">
                     <thead><tr><th>Título</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
                     <tbody></tbody>
@@ -115,6 +119,7 @@
             </div>
             <div class="admin-card">
                 <p class="admin-card__desc" data-i18n="admin.analytics">Analíticas de campañas y envíos automáticos al publicar entradas.</p>
+                <div class="admin-mobile-list" id="campaignsMobileList" hidden></div>
                 <table class="admin-table" id="campaignsTable">
                     <thead><tr><th>Campaña</th><th>Enviados</th><th>Aperturas</th><th>Clics</th><th>Fecha</th></tr></thead>
                     <tbody></tbody>
@@ -124,6 +129,7 @@
 
         <section id="panelComments" hidden>
             <div class="admin-card">
+                <div class="admin-mobile-list" id="commentsMobileList" hidden></div>
                 <table class="admin-table" id="commentsModTable">
                     <thead><tr><th>Autor</th><th>Comentario</th><th>Estado</th><th></th></tr></thead>
                     <tbody></tbody>

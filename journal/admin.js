@@ -1,10 +1,11 @@
 (function () {
     'use strict';
 
-    if (typeof DDAAuth === 'undefined' || !DDAAuth.isAdmin()) {
-        window.location.href = '../shop/user-login.html';
-        return;
-    }
+    DDAAuth.init().then(function () {
+        if (typeof DDAAuth === 'undefined' || !DDAAuth.isAdmin()) {
+            window.location.href = '../shop/user-login.html';
+            return;
+        }
 
     var API = window.DDA_API_BASE || '/api';
     var LOCAL_POSTS = 'dda_journal_admin_posts';
@@ -70,13 +71,9 @@
     function uploadImageFile(file) {
         var formData = new FormData();
         formData.append('file', file);
-        var token = DDAAuth.getToken && DDAAuth.getToken();
-        var headers = {};
-        if (token) headers.Authorization = 'Bearer ' + token;
-
         return fetch(API + '/journal/admin/upload', {
             method: 'POST',
-            headers: headers,
+            credentials: 'include',
             body: formData
         }).then(function (res) {
             if (res.status === 401 || res.status === 403) {
@@ -178,6 +175,19 @@
         });
     });
 
+    // Show schedule input only for SCHEDULED
+    function syncScheduleVisibility() {
+        var status = document.getElementById('postStatus').value;
+        var row = document.getElementById('scheduleRow');
+        if (!row) return;
+        row.hidden = status !== 'SCHEDULED';
+        if (status !== 'SCHEDULED') {
+            document.getElementById('postSchedule').value = '';
+        }
+    }
+    document.getElementById('postStatus').addEventListener('change', syncScheduleVisibility);
+    syncScheduleVisibility();
+
     function readLocal(key) {
         try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) { return []; }
     }
@@ -207,6 +217,7 @@
 
     function renderPostsTable(posts) {
         var tbody = document.querySelector('#postsTable tbody');
+        var mobile = document.getElementById('postsMobileList');
         var published = 0, draft = 0, scheduled = 0;
         posts.forEach(function (p) {
             if (p.status === 'PUBLISHED') published++;
@@ -221,15 +232,36 @@
             var id = p.id;
             var title = pickTitle(p);
             return '<tr data-id="' + escapeHtml(String(id)) + '">' +
-                '<td>' + escapeHtml(title) + '</td>' +
-                '<td>' + escapeHtml(p.status) + '</td>' +
-                '<td>' + escapeHtml(p.publishedAt || p.scheduledAt || '-') + '</td>' +
+                '<td data-label="Título">' + escapeHtml(title) + '</td>' +
+                '<td data-label="Estado">' + escapeHtml(p.status) + '</td>' +
+                '<td data-label="Fecha">' + escapeHtml(p.publishedAt || p.scheduledAt || '-') + '</td>' +
                 '<td class="admin-table__actions">' +
                     '<button type="button" class="admin-btn admin-btn--ghost btn-edit-post" data-id="' + id + '">Editar</button> ' +
                     '<button type="button" class="admin-btn admin-btn--danger btn-delete-post" data-id="' + id + '">Eliminar</button> ' +
                     '<a href="post.html?slug=' + encodeURIComponent(p.slug) + '" target="_blank" rel="noopener">Ver</a>' +
                 '</td></tr>';
         }).join('') || '<tr><td colspan="4">Sin entradas</td></tr>';
+
+        if (mobile) {
+            mobile.hidden = false;
+            mobile.innerHTML = posts.map(function (p) {
+                var id = p.id;
+                var title = pickTitle(p);
+                var date = p.publishedAt || p.scheduledAt || '-';
+                return '<div class="admin-mobile-card" data-id="' + escapeHtml(String(id)) + '">' +
+                    '<div class="admin-mobile-card__title">' + escapeHtml(title) + '</div>' +
+                    '<div class="admin-mobile-card__meta">' +
+                        '<span>' + escapeHtml(p.status) + '</span>' +
+                        '<span>' + escapeHtml(date) + '</span>' +
+                    '</div>' +
+                    '<div class="admin-mobile-card__actions">' +
+                        '<button type="button" class="admin-btn admin-btn--ghost btn-edit-post" data-id="' + id + '">Editar</button>' +
+                        '<button type="button" class="admin-btn admin-btn--danger btn-delete-post" data-id="' + id + '">Eliminar</button>' +
+                        '<a href="post.html?slug=' + encodeURIComponent(p.slug) + '" target="_blank" rel="noopener">Ver</a>' +
+                    '</div>' +
+                '</div>';
+            }).join('') || '<div class="stat-detail-empty">Sin entradas</div>';
+        }
 
         tbody.querySelectorAll('.btn-edit-post').forEach(function (btn) {
             btn.addEventListener('click', function () {
@@ -373,9 +405,32 @@
         document.getElementById('statOpens').textContent = opens || '-';
         document.getElementById('statClicks').textContent = clicks || '-';
 
-        document.querySelector('#campaignsTable tbody').innerHTML = campaigns.map(function (c) {
-            return '<tr><td>' + escapeHtml(c.name || c.subject) + '</td><td>' + (c.sent || 0) + '</td><td>' + (c.opens || 0) + '</td><td>' + (c.clicks || 0) + '</td><td>' + (c.sentAt || '-') + '</td></tr>';
+        var tbody = document.querySelector('#campaignsTable tbody');
+        var mobile = document.getElementById('campaignsMobileList');
+        tbody.innerHTML = campaigns.map(function (c) {
+            return '<tr>' +
+                '<td data-label="Campaña">' + escapeHtml(c.name || c.subject) + '</td>' +
+                '<td data-label="Enviados">' + (c.sent || 0) + '</td>' +
+                '<td data-label="Aperturas">' + (c.opens || 0) + '</td>' +
+                '<td data-label="Clics">' + (c.clicks || 0) + '</td>' +
+                '<td data-label="Fecha">' + (c.sentAt || '-') + '</td>' +
+            '</tr>';
         }).join('') || '<tr><td colspan="5">Sin campañas aún</td></tr>';
+
+        if (mobile) {
+            mobile.hidden = false;
+            mobile.innerHTML = campaigns.map(function (c) {
+                return '<div class="admin-mobile-card">' +
+                    '<div class="admin-mobile-card__title">' + escapeHtml(c.name || c.subject) + '</div>' +
+                    '<div class="admin-mobile-card__meta">' +
+                        '<span>Enviados ' + (c.sent || 0) + '</span>' +
+                        '<span>Aperturas ' + (c.opens || 0) + '</span>' +
+                        '<span>Clics ' + (c.clicks || 0) + '</span>' +
+                        '<span>' + (c.sentAt ? escapeHtml(String(c.sentAt).slice(0, 10)) : '-') + '</span>' +
+                    '</div>' +
+                '</div>';
+            }).join('') || '<div class="stat-detail-empty">Sin campañas aún</div>';
+        }
     }
 
     function loadCommentsMod() {
@@ -395,10 +450,27 @@
 
     function renderComments(comments) {
         var tbody = document.querySelector('#commentsModTable tbody');
+        var mobile = document.getElementById('commentsMobileList');
         tbody.innerHTML = comments.map(function (c) {
-            return '<tr><td>' + escapeHtml(c.authorName) + '</td><td>' + escapeHtml(c.content) + '</td><td>' + c.status + '</td>' +
+            return '<tr><td data-label="Autor">' + escapeHtml(c.authorName) + '</td><td data-label="Comentario">' + escapeHtml(c.content) + '</td><td data-label="Estado">' + c.status + '</td>' +
                 '<td><button type="button" class="admin-btn admin-btn--ghost btn-approve-comment" data-id="' + c.id + '">Aprobar</button></td></tr>';
         }).join('') || '<tr><td colspan="4">Sin comentarios pendientes</td></tr>';
+
+        if (mobile) {
+            mobile.hidden = false;
+            mobile.innerHTML = comments.map(function (c) {
+                return '<div class="admin-mobile-card">' +
+                    '<div class="admin-mobile-card__title">' + escapeHtml(c.authorName || 'Anónimo') + '</div>' +
+                    '<div style="color: var(--diary-muted); line-height: 1.6; margin-top: 8px;">' + escapeHtml(c.content) + '</div>' +
+                    '<div class="admin-mobile-card__meta" style="margin-top:10px;">' +
+                        '<span>' + escapeHtml(c.status) + '</span>' +
+                    '</div>' +
+                    '<div class="admin-mobile-card__actions">' +
+                        '<button type="button" class="admin-btn admin-btn--ghost btn-approve-comment" data-id="' + c.id + '">Aprobar</button>' +
+                    '</div>' +
+                '</div>';
+            }).join('') || '<div class="stat-detail-empty">Sin comentarios pendientes</div>';
+        }
 
         tbody.querySelectorAll('.btn-approve-comment').forEach(function (btn) {
             btn.addEventListener('click', function () {
@@ -472,6 +544,12 @@
 
         var url = editingId ? '/journal/admin/posts/' + editingId : '/journal/admin/posts';
         var method = editingId ? 'PUT' : 'POST';
+
+        // Ensure schedule is set when scheduled
+        if (payload.status === 'SCHEDULED' && !payload.scheduledAt) {
+            alert('Elegí una fecha para programar la entrada.');
+            return;
+        }
 
         var statusEl = document.getElementById('postSaveStatus');
         if (statusEl) {
@@ -551,4 +629,5 @@
     }
 
     refresh();
+    });
 })();
