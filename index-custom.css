@@ -57,7 +57,7 @@ html {
     filter: blur(12px);
 }
 
-.index-nav-wrapper a {
+.index-nav-wrapper a:not(.nav-auth-link-item):not(.lang-btn) {
     position: absolute;
     color: #111;
     text-decoration: none;
@@ -66,20 +66,18 @@ html {
     text-transform: uppercase;
     letter-spacing: 1px;
     pointer-events: auto;
-    /* Re-enable clicks on links */
     transition: color 0.2s ease, text-shadow 0.2s ease;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-    /* Helps readability over images */
 }
 
 @media (max-width: 768px) {
-    .index-nav-wrapper a {
+    .index-nav-wrapper a:not(.nav-auth-link-item):not(.lang-btn) {
         font-size: 1.5rem;
         letter-spacing: -2px;
     }
 }
 
-.index-nav-wrapper a:hover {
+.index-nav-wrapper a:not(.nav-auth-link-item):not(.lang-btn):hover {
     color: #555;
     text-shadow: 0 0 15px rgba(255, 255, 255, 1);
 }
@@ -108,9 +106,84 @@ html {
     gap: 0.2rem;
 }
 
+/* ES | EN — larger on index (inline 0.9rem in i18n.js is too small vs nav links) */
+.nav-right-stack .lang-switcher-global {
+    margin-bottom: 0.5rem !important;
+}
+
+.nav-right-stack .lang-switcher-global .lang-btn,
+.nav-right-stack .lang-switcher-global span {
+    font-size: 1.15rem !important;
+    letter-spacing: 0.06em;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+.nav-right-stack .lang-switcher-global .lang-btn {
+    text-decoration: none;
+    color: #111;
+}
+
 .nav-right-stack a {
     position: relative;
     /* Inside flex container */
+}
+
+.nav-auth-links {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px 18px;
+    margin-bottom: 0.35rem;
+}
+
+.index-nav-wrapper .nav-auth-link-item {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #111;
+    text-decoration: none;
+    transition: color 0.25s ease;
+    white-space: nowrap;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+.index-nav-wrapper .nav-auth-link-item:hover {
+    color: #555;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 1);
+}
+
+.nav-auth-link-item svg {
+    flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    .nav-right-stack .lang-switcher-global .lang-btn,
+    .nav-right-stack .lang-switcher-global span {
+        font-size: 1rem !important;
+    }
+
+    .nav-auth-links {
+        gap: 10px 14px;
+        max-width: min(100vw - 40px, 280px);
+    }
+
+    .index-nav-wrapper .nav-auth-link-item {
+        font-size: 0.62rem;
+        letter-spacing: 0.1em;
+    }
+
+    .index-nav-wrapper .nav-auth-link-item svg {
+        width: 14px;
+        height: 14px;
+    }
 }
 
 

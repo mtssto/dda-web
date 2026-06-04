@@ -40,11 +40,14 @@ public class ArtworkService {
 
     @Cacheable(
             value = "artworks",
-            key = "'page:' + #pageable.pageNumber + ':' + #pageable.pageSize + ':' + #pageable.sort"
+            key = "'page:' + #pageable.pageNumber + ':' + #pageable.pageSize + ':' + #pageable.sort + ':available:' + #availableOnly"
     )
     @Transactional(readOnly = true)
-    public Page<ArtworkDTO> findAll(Pageable pageable) {
-        return artworkRepository.findAll(pageable).map(a -> ArtworkDTO.fromEntity(a, staticBaseUrl));
+    public Page<ArtworkDTO> findAll(Pageable pageable, boolean availableOnly) {
+        Page<Artwork> page = availableOnly
+                ? artworkRepository.findBySoldFalse(pageable)
+                : artworkRepository.findAll(pageable);
+        return page.map(a -> ArtworkDTO.fromEntity(a, staticBaseUrl));
     }
 
     @Cacheable(value = "artworkBySlug", key = "#slug")
@@ -57,17 +60,23 @@ public class ArtworkService {
 
     @Cacheable(
             value = "artworks",
-            key = "'category:' + #categoryName + ':' + #pageable.pageNumber + ':' + #pageable.pageSize + ':' + #pageable.sort"
+            key = "'category:' + #categoryName + ':' + #pageable.pageNumber + ':' + #pageable.pageSize + ':' + #pageable.sort + ':available:' + #availableOnly"
     )
     @Transactional(readOnly = true)
-    public Page<ArtworkDTO> findByCategory(String categoryName, Pageable pageable) {
-        return artworkRepository.findByCategoryName(categoryName, pageable).map(a -> ArtworkDTO.fromEntity(a, staticBaseUrl));
+    public Page<ArtworkDTO> findByCategory(String categoryName, Pageable pageable, boolean availableOnly) {
+        Page<Artwork> page = availableOnly
+                ? artworkRepository.findByCategoryNameAndSoldFalse(categoryName, pageable)
+                : artworkRepository.findByCategoryName(categoryName, pageable);
+        return page.map(a -> ArtworkDTO.fromEntity(a, staticBaseUrl));
     }
 
     // Search results are not cached — queries are too varied and change frequently
     @Transactional(readOnly = true)
-    public Page<ArtworkDTO> search(String query, Pageable pageable) {
-        return artworkRepository.search(query, pageable).map(a -> ArtworkDTO.fromEntity(a, staticBaseUrl));
+    public Page<ArtworkDTO> search(String query, Pageable pageable, boolean availableOnly) {
+        Page<Artwork> page = availableOnly
+                ? artworkRepository.searchAvailable(query, pageable)
+                : artworkRepository.search(query, pageable);
+        return page.map(a -> ArtworkDTO.fromEntity(a, staticBaseUrl));
     }
 
     @Caching(evict = {

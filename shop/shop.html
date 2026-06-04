@@ -148,10 +148,14 @@
 
 </head>
 
-<body>
+<body class="shop-page">
 
-    <div class="close-container">
-        <a href="../index.html" class="close-btn">CLOSE</a>
+    <div class="close-container"
+        data-back-href="../index.html"
+        data-back-label="← Inicio"
+        data-brand-href="../index.html"
+        data-brand-text="Diego De Aduriz">
+        <a href="../index.html" class="close-btn" hidden>CLOSE</a>
         <div class="auth-header-btns" id="authHeaderBtns">
             <a href="cart.html" class="auth-header-link cart-header-link" aria-label="Carrito">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
@@ -321,11 +325,14 @@
     </div>
 
     <script src="../i18n.js" defer></script>
+    <script src="page-i18n.js"></script>
     <script src="products.js" defer></script>
     <script src="api-client.js" defer></script>
     <script src="config.js"></script>
+    <script src="image-utils.js"></script>
     <script src="analytics.js"></script>
     <script src="auth.js" defer></script>
+    <script src="site-header.js" defer></script>
     <script src="cart.js" defer></script>
     <script src="shop.js" defer></script>
     <script src="newsletter.js" defer></script>

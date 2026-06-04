@@ -137,74 +137,6 @@ function cssEscapeSafe(value) {
     return String(value).replace(/"/g, '\\"');
 }
 
-// Language Configuration (Shop Specific)
-window.pageTranslations = {
-    es: {
-        'hero.eyebrow': 'Arte Argentino Contemporáneo',
-        'hero.subtitle': 'Obras Originales y Ediciones Limitadas',
-        'hero.featured': 'Destacados',
-        'filter.all': 'Todos',
-        'filter.pasteles': 'Pasteles',
-        'filter.digital': 'Arte Digital',
-        'filter.gatos': 'Gatos',
-        'filter.paisajes': 'Paisajes',
-        'filter.Autorretratos': 'Autorretratos',
-        'filter.ilustraciones': 'Ilustraciones',
-        'card.details': 'DETALLES',
-        'card.buy': 'COMPRAR',
-        'card.sold': 'VENDIDO',
-        'modal.dimensions': 'Dimensiones',
-        'modal.technique': 'Técnica',
-        'modal.consult': 'CONSULTAR / COMPRAR',
-        'shop.guarantee': 'Autenticidad Garantizada',
-        'shop.guarantee_desc': 'Todas las obras incluyen certificado.',
-        'shop.shipping': 'Envíos Globales',
-        'shop.shipping_desc': 'Enviamos a todo el mundo con embalaje seguro.',
-        'shop.service': 'Atención Personalizada',
-        'shop.service_desc': 'Contacto directo por WhatsApp para consultas.',
-        'catalog.title': 'Catálogo',
-        'catalog.download': 'Descargar Catálogo (PDF)',
-        'shop.see_all': 'Ver catálogo completo',
-        'shop.ver_todo': 'Ver catálogo completo',
-        'shop.cta_eyebrow': 'Obras originales · Ediciones limitadas · Envíos internacionales',
-        'shop.float_cta': '¿Querés ver todas las obras?',
-        'shop.float_btn': 'Ver catálogo completo',
-        'shop.whatsapp_float': 'Consultar por WhatsApp'
-    },
-    en: {
-        'hero.eyebrow': 'Contemporary Argentine Art',
-        'hero.subtitle': 'Original Artworks & Limited Editions',
-        'hero.featured': 'Featured',
-        'filter.all': 'All',
-        'filter.pasteles': 'Pastels',
-        'filter.digital': 'Digital Art',
-        'filter.gatos': 'Cats',
-        'filter.paisajes': 'Landscapes',
-        'filter.Autorretratos': 'Self-portraits',
-        'filter.ilustraciones': 'Illustrations',
-        'card.details': 'DETAILS',
-        'card.buy': 'BUY',
-        'card.sold': 'SOLD',
-        'modal.dimensions': 'Dimensions',
-        'modal.technique': 'Technique',
-        'modal.consult': 'INQUIRE / BUY',
-        'shop.guarantee': 'Authenticity Guaranteed',
-        'shop.guarantee_desc': 'All artworks arrive with a signed certificate.',
-        'shop.shipping': 'Global Shipping',
-        'shop.shipping_desc': 'We ship worldwide with secure packaging.',
-        'shop.service': 'Personal Service',
-        'shop.service_desc': 'Direct contact via WhatsApp for inquiries.',
-        'catalog.title': 'Catalog',
-        'catalog.download': 'Download Catalog (PDF)',
-        'shop.see_all': 'SEE ALL PRODUCTS',
-        'shop.ver_todo': 'View full catalog →',
-        'shop.cta_eyebrow': 'Original artworks · Limited editions · International shipping',
-        'shop.float_cta': 'Want to see all the works?',
-        'shop.float_btn': 'View full catalog',
-        'shop.whatsapp_float': 'Inquire via WhatsApp'
-    }
-};
-
 document.addEventListener('DOMContentLoaded', function () {
     // Re-apply translations on load to catch page-specific ones
     const savedLang = localStorage.getItem('preferredLanguage') || 'es';
@@ -251,33 +183,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // catalog.html uses catalog-api.js for paginated backend loading.
     // shop.html should render immediately from products.js and should not wait for DDAApi.
     initShopContent();
-
-    // Update auth header buttons based on login state
-    var authBtns = document.getElementById('authHeaderBtns');
-    if (authBtns && typeof DDAAuth !== 'undefined') {
-        var cartBtnHtml = '<a href="cart.html" class="auth-header-link cart-header-link" aria-label="Carrito">' +
-            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>' +
-            '<span class="cart-badge" style="display:none">0</span></a>';
-        if (DDAAuth.isAuthenticated()) {
-            var user = DDAAuth.getUser();
-            var isAdmin = user && user.role === 'ADMIN';
-            authBtns.innerHTML = cartBtnHtml +
-                '<a href="mi-cuenta.html" class="auth-header-link">' +
-                    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> ' +
-                    'MI CUENTA' +
-                '</a>' +
-                (isAdmin ? '<a href="admin.html" class="auth-header-link">PANEL</a>' : '') +
-                '<a href="#" class="auth-header-link" id="headerLogout">SALIR</a>';
-            var logoutLink = document.getElementById('headerLogout');
-            if (logoutLink) {
-                logoutLink.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    DDAAuth.logout();
-                });
-            }
-        }
-        if (typeof DDACart !== 'undefined') DDACart.updateBadge();
-    }
 
     // Filter Logic
     const categoryFilter = document.getElementById('categoryFilter');
@@ -1044,12 +949,16 @@ function encodeSrcset(url) {
 }
 
 function pictureTag(src, alt, extra) {
+    if (typeof DDAImages !== 'undefined') {
+        return DDAImages.pictureHtml(src, alt, extra);
+    }
+
     var webpSrc = toWebP(src || '');
     var attrs = extra || '';
 
-    if (!/loading=/.test(attrs)) attrs += ' loading="lazy"';
-    if (!/decoding=/.test(attrs)) attrs += ' decoding="async"';
-    if (!/fetchpriority=/.test(attrs)) attrs += ' fetchpriority="low"';
+    if (!/\bloading=/.test(attrs)) attrs += ' loading="lazy"';
+    if (!/\bdecoding=/.test(attrs)) attrs += ' decoding="async"';
+    if (!/\bfetchpriority=/.test(attrs)) attrs += ' fetchpriority="low"';
 
     return '<picture>' +
         '<source srcset="' + encodeSrcset(webpSrc) + '" type="image/webp">' +
@@ -1080,7 +989,9 @@ function renderCarouselSections() {
         }).sort(function (a, b) {
             return parseInt(b.year, 10) - parseInt(a.year, 10);
         });
-        section.images = sorted.slice(0, 14).map(function (p) { return p.image; });
+        var availableFirst = sorted.filter(function (p) { return !p.sold; })
+            .concat(sorted.filter(function (p) { return p.sold; }));
+        section.images = availableFirst.slice(0, 14).map(function (p) { return p.image; });
     });
 
     var eyeSvg = '<svg viewBox="0 0 24 24" class="icon-eye" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
@@ -1628,6 +1539,9 @@ function showCartToast(msg) {
 }
 
 function buyProduct(product) {
+    if (typeof trackGenerateLead === 'function') {
+        trackGenerateLead(product, 'shop_buy');
+    }
     if (typeof openInquiry === 'function') {
         openInquiry(product, product.price);
         return;

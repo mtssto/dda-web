@@ -3,16 +3,13 @@
 
     var WA_NUMBER = '5491160139563';
 
-    const closeBtn = document.getElementById("closeBtn");
+    var backBtn = document.querySelector('.site-header-back');
 
-    if (closeBtn) {
-        closeBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-
+    if (backBtn) {
+        backBtn.addEventListener('click', function (e) {
             if (window.history.length > 1) {
+                e.preventDefault();
                 window.history.back();
-            } else {
-                window.location.href = "../index.html";
             }
         });
     }
@@ -47,6 +44,16 @@
                 return img.filePath || img.url || '';
             }).filter(Boolean);
 
+            var pageBase = (window.DDA_STATIC_BASE || window.location.origin) + '/shop/obra.html';
+            var resolvedImages = allImages.length > 0 ? allImages : [imagePath || '/portfolio/sections/obras/MG_1192.jpg'];
+            resolvedImages = resolvedImages.map(function (path) {
+                if (typeof DDAImages !== 'undefined') {
+                    return DDAImages.resolveImageUrl(path, pageBase);
+                }
+                return path;
+            });
+            var primaryImage = resolvedImages[0] || '/portfolio/sections/obras/MG_1192.jpg';
+
             return {
                 id: artwork.slug || String(artwork.id),
                 artworkId: artwork.id,
@@ -57,12 +64,34 @@
                 dimensions: artwork.dimensions || '',
                 technique: artwork.technique || '',
                 category: (artwork.category || '').toLowerCase(),
-                image: imagePath || '/portfolio/sections/obras/MG_1192.jpg',
-                images: allImages.length > 0 ? allImages : [imagePath || '/portfolio/sections/obras/MG_1192.jpg'],
-                sold: artwork.sold || false,
+                image: primaryImage,
+                images: resolvedImages,
+                sold: artwork.sold === true,
                 year: artwork.year || ''
             };
         });
+    }
+
+    function optimizeObraImage(url, size) {
+        if (typeof DDAImages === 'undefined') return url;
+        if (size === 'detail') return DDAImages.getDetailImageUrl(url);
+        if (size === 'thumb') return DDAImages.getThumbImageUrl(url);
+        return DDAImages.getCardImageUrl(url);
+    }
+
+    function getTranslation(key) {
+        var lang = localStorage.getItem('preferredLanguage') || 'es';
+        if (document.body.classList.contains('lang-en')) lang = 'en';
+        if (window.pageTranslations && window.pageTranslations[lang] && window.pageTranslations[lang][key]) {
+            return window.pageTranslations[lang][key];
+        }
+        return '';
+    }
+
+    function applyPageTranslations() {
+        if (typeof window.changeLanguage === 'function') {
+            window.changeLanguage(localStorage.getItem('preferredLanguage') || 'es');
+        }
     }
 
     function getCategoryLabel(cat) {
@@ -142,7 +171,10 @@
         if (breadcrumbTitle) breadcrumbTitle.textContent = product.title;
 
         var fullUrl = 'https://diegodeaduriz.art/shop/obra.html?id=' + encodeURIComponent(product.id);
-        var fullImg = product.image.startsWith('http') ? product.image : 'https://diegodeaduriz.art' + product.image;
+        var fullImg = optimizeObraImage(product.image, 'detail');
+        if (fullImg && fullImg.indexOf('http') !== 0) {
+            fullImg = 'https://diegodeaduriz.art' + (fullImg.indexOf('/') === 0 ? '' : '/') + fullImg;
+        }
 
         // Update OG meta
         var ogUrl = document.getElementById('og-url');
@@ -166,8 +198,13 @@
         var currentIndex = 0;
         var mainImg = document.getElementById('obraImg');
         if (mainImg) {
-            mainImg.src = images[0];
+            mainImg.src = optimizeObraImage(images[0], 'detail');
             mainImg.alt = product.title;
+            mainImg.width = 1200;
+            mainImg.height = 1500;
+            mainImg.loading = 'eager';
+            mainImg.decoding = 'async';
+            mainImg.fetchPriority = 'high';
             mainImg.onerror = function () {
                 this.src = '/portfolio/sections/obras/MG_1192.jpg';
             };
@@ -180,12 +217,16 @@
                 var thumb = document.createElement('div');
                 thumb.className = 'obra-thumb' + (i === 0 ? ' active' : '');
                 var img = document.createElement('img');
-                img.src = imgSrc;
+                img.src = optimizeObraImage(imgSrc, 'thumb');
                 img.alt = product.title + ' - imagen ' + (i + 1);
+                img.loading = 'lazy';
+                img.decoding = 'async';
+                img.width = 72;
+                img.height = 72;
                 thumb.appendChild(img);
                 thumb.addEventListener('click', function () {
                     currentIndex = i;
-                    mainImg.src = imgSrc;
+                    mainImg.src = optimizeObraImage(imgSrc, 'detail');
                     thumbContainer.querySelectorAll('.obra-thumb').forEach(function (t) { t.classList.remove('active'); });
                     thumb.classList.add('active');
                 });
@@ -195,13 +236,30 @@
 
         // Sold badge
         var soldBadge = document.getElementById('obraSoldBadge');
-        if (soldBadge && product.sold) soldBadge.style.display = 'block';
+        if (soldBadge) soldBadge.style.display = product.sold ? 'block' : 'none';
 
-        // Title & Price
+        // Title, availability & price
         var titleEl = document.getElementById('obraTitle');
+        var availabilityEl = document.getElementById('obraAvailability');
         var priceEl = document.getElementById('obraPrice');
+        var inquiryHint = document.getElementById('obraInquiryHint');
+        var soldPanel = document.getElementById('obraSoldPanel');
+        var actionsEl = document.getElementById('obraActions');
+
         if (titleEl) titleEl.textContent = product.title;
-        if (priceEl) priceEl.textContent = product.price || 'Consultar';
+        if (availabilityEl) {
+            availabilityEl.textContent = product.sold
+                ? (getTranslation('card.sold') || 'VENDIDA')
+                : (getTranslation('obra.available') || 'Disponible para consulta');
+            availabilityEl.className = 'obra-availability' + (product.sold ? ' obra-availability--sold' : ' obra-availability--open');
+        }
+        if (priceEl) {
+            priceEl.textContent = product.sold ? (getTranslation('card.sold') || 'Vendida') : (product.price || 'Consultar');
+            priceEl.classList.toggle('obra-price--sold', product.sold);
+        }
+        if (inquiryHint) inquiryHint.hidden = !!product.sold;
+        if (soldPanel) soldPanel.hidden = !product.sold;
+        if (actionsEl) actionsEl.hidden = !!product.sold;
 
         // Meta
         setMetaRow('obraDimensionsRow', 'obraDimensions', product.dimensions);
@@ -237,12 +295,23 @@
 
         // WhatsApp
         var waBtn = document.getElementById('obraWhatsApp');
-        if (waBtn) {
-            var waMsg = 'Hola, me interesa la obra: ' + product.title;
+        if (waBtn && !product.sold) {
+            var waMsg = 'Hola Diego, me interesa la obra "' + product.title + '"';
             if (product.price && product.price !== 'Consultar') waMsg += ' (' + product.price + ')';
+            waMsg += '. ¿Podés contarme disponibilidad y envío?';
             waBtn.href = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(waMsg);
-            if (product.sold) waBtn.style.display = 'none';
+            waBtn.addEventListener('click', function () {
+                if (typeof trackGenerateLead === 'function') {
+                    trackGenerateLead(product, 'whatsapp_obra');
+                }
+            });
         }
+
+        if (typeof trackViewItem === 'function') {
+            trackViewItem(product);
+        }
+
+        applyPageTranslations();
 
         // Wishlist
         var wishBtn = document.getElementById('obraWishlist');

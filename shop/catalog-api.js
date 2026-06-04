@@ -5,10 +5,12 @@
     let isLoading = false;
     let hasMore = true;
     let observer = null;
+    let revealObserver = null;
     let activeRequestController = null;
     let gridEventsBound = false;
 
     const artworkByKey = new Map();
+    const AVAILABILITY_PREF_KEY = 'dda_catalog_available_only';
 
 
     function getWishlistId(artwork) {
@@ -75,6 +77,7 @@
         if (!document.body.classList.contains('catalog-page')) return;
 
         initCatalogDropdowns();
+        initAvailabilityFilter();
         initCatalogEvents();
         bindCatalogGridEvents();
         setupInfiniteScroll();
@@ -169,7 +172,46 @@
             params.set('q', query);
         }
 
+        if (isAvailableOnlyEnabled()) {
+            params.set('available', 'true');
+        }
+
         return `${endpoint}?${params.toString()}`;
+    }
+
+    function isAvailableOnlyEnabled() {
+        const checkbox = document.getElementById('availableOnlyFilter');
+        return !!(checkbox && checkbox.checked);
+    }
+
+    function persistAvailabilityPreference() {
+        try {
+            localStorage.setItem(AVAILABILITY_PREF_KEY, isAvailableOnlyEnabled() ? '1' : '0');
+        } catch (e) {
+            // ignore
+        }
+    }
+
+    function initAvailabilityFilter() {
+        const checkbox = document.getElementById('availableOnlyFilter');
+        if (!checkbox) return;
+
+        const params = new URLSearchParams(window.location.search);
+        let enabled = params.get('available') === '1';
+
+        if (!params.has('available')) {
+            try {
+                enabled = localStorage.getItem(AVAILABILITY_PREF_KEY) === '1';
+            } catch (e) {
+                enabled = false;
+            }
+        }
+
+        checkbox.checked = enabled;
+        checkbox.addEventListener('change', () => {
+            persistAvailabilityPreference();
+            loadArtworkPage({ reset: true });
+        });
     }
 
     function appendStableSort(params, sortValue) {
@@ -255,6 +297,7 @@
                 .join('');
 
             grid.insertAdjacentHTML('beforeend', cardsHtml);
+            observeCatalogCardReveals(grid);
 
             if (window.updatePageTranslations) {
                 window.updatePageTranslations();
@@ -314,6 +357,14 @@
 
         const yearHtml = year
             ? `<p class="product-year">${escapeHtml(year)}</p>`
+            : '';
+
+        const statusBadgeHtml = sold
+            ? '<span class="product-status-badge product-status-badge--sold" data-i18n="card.sold">VENDIDO</span>'
+            : '<span class="product-status-badge product-status-badge--available" data-i18n="card.available">DISPONIBLE</span>';
+
+        const priceHint = (!price || price === 'Consultar')
+            ? '<span class="catalog-price-hint" data-i18n="card.price_hint">Consultá precio y envío</span>'
             : '';
 
         const soldButtonHtml = `
@@ -393,11 +444,13 @@
                 </div>
 
                 <div class="product-info">
+                    <div class="product-card-status">${statusBadgeHtml}</div>
                     <h3 class="product-title">${escapeHtml(title)}</h3>
 
                     ${yearHtml}
 
-                    <p class="product-price catalog-card-price">${escapeHtml(price)}</p>
+                    <p class="product-price catalog-card-price${(!price || price === 'Consultar') ? ' catalog-card-price--consult' : ''}">${escapeHtml(price)}</p>
+                    ${priceHint}
 
                     <div class="product-actions-grid">
                         <button
@@ -479,6 +532,10 @@
             if (buyBtn) {
                 event.preventDefault();
                 event.stopPropagation();
+
+                if (typeof trackGenerateLead === 'function') {
+                    trackGenerateLead(artwork, 'catalog_buy');
+                }
 
                 if (typeof openInquiry === 'function') {
                     openInquiry(artwork, artwork.price);
@@ -564,27 +621,32 @@
     }
 
     function getCloudinaryTransformedUrl(url, width) {
+        if (typeof DDAImages !== 'undefined') {
+            return DDAImages.getTransformedUrl(url, width);
+        }
         if (!isCloudinaryImageUrl(url)) {
             return url;
         }
-
-        // Avoid stacking transformations if the backend already returns a transformed Cloudinary URL.
         if (/\/upload\/[^/]*(f_auto|q_auto|w_\d+|c_limit|c_fill)[^/]*\//.test(url)) {
             return url;
         }
-
         return url.replace('/upload/', `/upload/f_auto,q_auto,w_${width},c_limit/`);
     }
 
     function getCatalogCardImageUrl(url) {
+        if (typeof DDAImages !== 'undefined') {
+            return DDAImages.getCardImageUrl(url);
+        }
         return getCloudinaryTransformedUrl(url, 700);
     }
 
     function getCatalogCardSrcset(url) {
+        if (typeof DDAImages !== 'undefined') {
+            return DDAImages.getCardSrcset(url);
+        }
         if (!isCloudinaryImageUrl(url)) {
             return '';
         }
-
         return [
             `${getCloudinaryTransformedUrl(url, 450)} 450w`,
             `${getCloudinaryTransformedUrl(url, 700)} 700w`,
@@ -593,6 +655,10 @@
     }
 
     function normalizeImageUrl(image) {
+        if (typeof DDAImages !== 'undefined') {
+            return DDAImages.resolveImageUrl(image, getStaticBaseUrl() + '/shop/catalog.html');
+        }
+
         if (!image) return '';
 
         const rawPath = typeof image === 'string'
@@ -693,6 +759,38 @@
 
         sortSelect?.addEventListener('change', () => {
             loadArtworkPage({ reset: true });
+        });
+    }
+
+    function observeCatalogCardReveals(grid) {
+        if (!grid) return;
+
+        const pending = grid.querySelectorAll('.product-card:not(.is-visible)');
+        if (!pending.length) return;
+
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reducedMotion || !('IntersectionObserver' in window)) {
+            pending.forEach(card => card.classList.add('is-visible'));
+            return;
+        }
+
+        if (!revealObserver) {
+            revealObserver = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('is-visible');
+                    revealObserver.unobserve(entry.target);
+                });
+            }, {
+                root: null,
+                rootMargin: '0px 0px -6% 0px',
+                threshold: 0.06
+            });
+        }
+
+        pending.forEach((card, index) => {
+            card.style.setProperty('--reveal-delay', `${Math.min(index % 4, 3) * 70}ms`);
+            revealObserver.observe(card);
         });
     }
 

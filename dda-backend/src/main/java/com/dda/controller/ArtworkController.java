@@ -31,8 +31,9 @@ public class ArtworkController {
 
     @GetMapping
     public ResponseEntity<Page<ArtworkDTO>> findAll(
+            @RequestParam(required = false) Boolean available,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(artworkService.findAll(pageable));
+        return ResponseEntity.ok(artworkService.findAll(pageable, Boolean.TRUE.equals(available)));
     }
 
     @GetMapping("/me/comments")
@@ -73,15 +74,17 @@ public class ArtworkController {
     @GetMapping("/category/{categoryName}")
     public ResponseEntity<Page<ArtworkDTO>> findByCategory(
             @PathVariable String categoryName,
+            @RequestParam(required = false) Boolean available,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(artworkService.findByCategory(categoryName, pageable));
+        return ResponseEntity.ok(artworkService.findByCategory(categoryName, pageable, Boolean.TRUE.equals(available)));
     }
 
     @GetMapping("/search")
     public ResponseEntity<Page<ArtworkDTO>> search(
             @RequestParam String q,
+            @RequestParam(required = false) Boolean available,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(artworkService.search(q, pageable));
+        return ResponseEntity.ok(artworkService.search(q, pageable, Boolean.TRUE.equals(available)));
     }
 
     @PostMapping

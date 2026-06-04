@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
             'nav.proyectos': 'PROYECTOS',
             'nav.textos': 'PUBLICACIONES',
             'nav.shop': 'SHOP',
+            'nav.account': 'CUENTA',
+            'nav.create_account': 'CREAR CUENTA',
+            'nav.sign_in': 'INICIAR SESIÓN',
+            'nav.my_account': 'MI CUENTA',
             'nav.journal': 'BLOG',
             'nav.contact': 'CONTACTO',
             'footer.rights': 'Todos los derechos reservados.',
@@ -48,6 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
             'nav.proyectos': 'PROJECTS',
             'nav.textos': 'PUBLICATIONS',
             'nav.shop': 'SHOP',
+            'nav.account': 'ACCOUNT',
+            'nav.create_account': 'CREATE ACCOUNT',
+            'nav.sign_in': 'SIGN IN',
+            'nav.my_account': 'MY ACCOUNT',
             'nav.journal': 'NOTEBOOK',
             'nav.contact': 'CONTACT',
             'footer.rights': 'All rights reserved.',
@@ -159,15 +167,27 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="#" class="lang-btn" data-lang="en" style="font-family:'Inter', sans-serif; font-size: 0.9rem; text-decoration: none; color: #111; transition: opacity 0.3s;">EN</a>
         `;
 
-        // 1. Inject into Global Close Container
+        // 1. Inject into Global Close Container (shop header: inside .site-header-left when present)
         const closeContainer = document.querySelector('.close-container');
         if (closeContainer && !closeContainer.querySelector('.lang-switcher-global')) {
             const div = document.createElement('div');
-            div.className = 'lang-switcher-global';
-            div.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-right: 20px;';
+            div.className = 'lang-switcher-global site-header-lang';
+            div.style.cssText = 'display: flex; gap: 8px; align-items: center;';
             div.innerHTML = switcherHTML;
-            // Insert it before the CLOSE button
-            closeContainer.insertBefore(div, closeContainer.firstChild);
+            const headerLeft = closeContainer.querySelector('.site-header-left');
+            const closeBtn = closeContainer.querySelector('.close-btn');
+            const isMuestrasBar = document.body.classList.contains('minimal-gallery')
+                || document.body.classList.contains('minimal-muestras');
+
+            if (headerLeft) {
+                headerLeft.appendChild(div);
+            } else if (isMuestrasBar && closeBtn) {
+                closeBtn.before(div);
+            } else if (closeBtn) {
+                closeBtn.before(div);
+            } else {
+                closeContainer.appendChild(div);
+            }
         }
 
         // 2. Inject into Index Nav Wrapper
