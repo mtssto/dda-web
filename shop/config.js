@@ -7,9 +7,9 @@
     'use strict';
 
     // When running locally with dev_server.py, '/api' gets proxied to localhost:8081
-    // For production, set this to your Railway backend URL, e.g.:
-    // window.DDA_API_BASE = 'https://your-app.up.railway.app/api';
+    // Production API (Railway). For reliable cookie auth from diegodeaduriz.art, prefer:
+    // window.DDA_API_BASE = 'https://api.diegodeaduriz.art/api';
+    // window.DDA_MEDIA_BASE = 'https://api.diegodeaduriz.art';
     window.DDA_API_BASE = 'https://dda-web-production.up.railway.app/api';
-    // Uploaded images (/uploads/...) are served by the backend, not GitHub Pages:
     window.DDA_MEDIA_BASE = 'https://dda-web-production.up.railway.app';
 })();

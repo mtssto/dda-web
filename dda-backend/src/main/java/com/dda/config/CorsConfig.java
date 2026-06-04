@@ -18,6 +18,7 @@ public class CorsConfig {
         config.setAllowedOriginPatterns(List.of(
                 "https://diegodeaduriz.art",
                 "https://www.diegodeaduriz.art",
+                "https://api.diegodeaduriz.art",
                 "https://dda-web-production.up.railway.app",
                 "https://whitewidow.github.io",
                 "http://localhost:*",

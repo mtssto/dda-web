@@ -37,6 +37,8 @@ app:
     cookie-name: dda_auth
     cookie-secure: ${JWT_COOKIE_SECURE:true}
     cookie-same-site: ${JWT_COOKIE_SAME_SITE:None}
+    # Optional: .diegodeaduriz.art when API uses api.diegodeaduriz.art (same-site cookies with the shop)
+    cookie-domain: ${JWT_COOKIE_DOMAIN:}
   upload:
     dir: ${UPLOAD_DIR:uploads}
     allowed-types: image/jpeg,image/png,image/webp,image/gif
