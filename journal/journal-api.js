@@ -229,6 +229,7 @@ var DDAJournal = (function () {
         if (typeof DDAAuth !== 'undefined' && DDAAuth.isAuthenticated()) {
             fetch(API_BASE + '/journal/posts/' + id + '/like', {
                 method: 'POST',
+                credentials: 'include',
                 headers: DDAAuth.authHeaders()
             }).catch(function () {});
         }
@@ -289,6 +290,7 @@ var DDAJournal = (function () {
 
         return fetch(API_BASE + '/journal/posts/' + postId + '/comments', {
             method: 'POST',
+            credentials: 'include',
             headers: DDAAuth.authHeaders(),
             body: JSON.stringify({ content: text })
         }).then(function (res) {

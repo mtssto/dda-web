@@ -106,6 +106,7 @@
             var apiBase = window.DDA_API_BASE || '/api';
             fetch(apiBase + '/artworks/' + encodeURIComponent(slug) + '/like', {
                 method: 'POST',
+                credentials: 'include',
                 headers: DDAAuth.authHeaders()
             }).catch(function () {});
         }

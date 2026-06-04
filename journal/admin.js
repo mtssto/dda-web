@@ -1,10 +1,11 @@
 (function () {
     'use strict';
 
-    if (typeof DDAAuth === 'undefined' || !DDAAuth.isAdmin()) {
-        window.location.href = '../shop/user-login.html';
-        return;
-    }
+    DDAAuth.init().then(function () {
+        if (typeof DDAAuth === 'undefined' || !DDAAuth.isAdmin()) {
+            window.location.href = '../shop/user-login.html';
+            return;
+        }
 
     var API = window.DDA_API_BASE || '/api';
     var LOCAL_POSTS = 'dda_journal_admin_posts';
@@ -70,13 +71,9 @@
     function uploadImageFile(file) {
         var formData = new FormData();
         formData.append('file', file);
-        var token = DDAAuth.getToken && DDAAuth.getToken();
-        var headers = {};
-        if (token) headers.Authorization = 'Bearer ' + token;
-
         return fetch(API + '/journal/admin/upload', {
             method: 'POST',
-            headers: headers,
+            credentials: 'include',
             body: formData
         }).then(function (res) {
             if (res.status === 401 || res.status === 403) {
@@ -632,4 +629,5 @@
     }
 
     refresh();
+    });
 })();

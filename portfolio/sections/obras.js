@@ -7,14 +7,77 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalBuyBtn = document.getElementById('modalBuyBtn');
   const modalClose = document.querySelector('.modal-close');
 
-  // Initialize grids from products.js
-  renderPortfolio();
+  // Load artworks from API (fallback to products.js)
+  let obrasDataset = [];
+  loadObrasDataset().then((items) => {
+    obrasDataset = items;
+    renderPortfolio(obrasDataset);
+    initModalTriggers(obrasDataset);
+  });
 
-  // Setup modal triggers
-  initModalTriggers();
+  // Share buttons in modal
+  const shareWrap = document.getElementById('obrasShare');
+  const shareWhatsApp = document.getElementById('obrasShareWhatsApp');
+  const shareTwitter = document.getElementById('obrasShareTwitter');
+  const shareFacebook = document.getElementById('obrasShareFacebook');
+  const shareCopy = document.getElementById('obrasShareCopy');
+  let currentShareUrl = '';
+  let currentShareTitle = '';
 
-  function renderPortfolio() {
-    if (!window.products) return;
+  function normalizeProduct(p) {
+    // Accept shop/products.js objects and backend API objects, return the shape we need
+    const images = (p.images || []).map((img) => {
+      if (!img) return '';
+      if (typeof img === 'string') return img;
+      return img.filePath || img.url || '';
+    }).filter(Boolean);
+
+    const primary = p.image || images[0] || '';
+    return {
+      id: p.slug || p.id || '',
+      slug: p.slug || p.id || '',
+      title: p.title || '',
+      technique: p.technique || 'Consultar técnica',
+      dimensions: p.dimensions || 'Consultar medidas',
+      year: p.year || 'Consultar año',
+      category: p.category || 'pasteles',
+      image: primary,
+      images: images.length ? images : (primary ? [primary] : []),
+      sold: !!p.sold
+    };
+  }
+
+  function resolveImagePath(path) {
+    if (!path) return '';
+    if (path.startsWith('http://') || path.startsWith('https://')) return path;
+    // Backend static file paths already start with /uploads or /portfolio
+    if (path.startsWith('/')) return path;
+    return path;
+  }
+
+  async function loadObrasDataset() {
+    const API = window.DDA_API_BASE || '/api';
+    try {
+      const res = await fetch(API + '/artworks?page=0&size=200&sort=id,desc', {
+        headers: { 'Accept': 'application/json' }
+      });
+      if (!res.ok) throw new Error('api');
+      const data = await res.json();
+      const content = data.content || data;
+      if (Array.isArray(content) && content.length) {
+        return content.map(normalizeProduct);
+      }
+    } catch (e) {
+      // fallback
+    }
+    if (window.products && Array.isArray(window.products)) {
+      return window.products.map(normalizeProduct);
+    }
+    return [];
+  }
+
+  function renderPortfolio(dataset) {
+    if (!dataset || !dataset.length) return;
 
     // Define category to container mapping
     const sectionMap = {
@@ -31,12 +94,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (grid) grid.innerHTML = '';
     });
 
-    window.products.forEach(product => {
-      const grid = sectionMap[product.category];
+    dataset.forEach(product => {
+      const grid = sectionMap[product.category] || sectionMap[(String(product.category || '').toLowerCase())] || sectionMap['pasteles'];
       if (!grid) return;
 
       const item = document.createElement('div');
-      item.className = 'masonry-item grid-modal-trigger';
+      item.className = 'masonry-item grid-modal-trigger reveal-item';
 
       // Store complete dataset context
       if (product.dimensions && product.dimensions !== "Consultar medidas") {
@@ -58,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       item.dataset.title = product.title;
+      item.dataset.slug = product.slug || product.id || '';
       // Encode whatsapp link with title
       item.dataset.waLink = `https://wa.me/5491160139563?text=Hola,%20quisiera%20consultar%20por%20la%20obra:%20${encodeURIComponent(product.title)}`;
 
@@ -67,17 +131,75 @@ document.addEventListener('DOMContentLoaded', () => {
         item.dataset.images = JSON.stringify(product.images);
       }
 
-      // Ensure primary image path is adjusted for portfolio context
-      let imagePath = product.image || '';
-      if (imagePath.startsWith('../')) {
-        imagePath = '../' + imagePath;
-      }
-      item.innerHTML = `<img alt="${product.title}" src="${imagePath}" />`;
+      // Ensure primary image path resolves
+      const imagePath = resolveImagePath(product.image || '');
+      item.innerHTML = `<img alt="${product.title}" src="${imagePath}" loading="lazy" decoding="async" />`;
       grid.appendChild(item);
     });
+
+    setupRevealOnScroll();
   }
 
-  function initModalTriggers() {
+  function setupRevealOnScroll() {
+    const items = document.querySelectorAll('.masonry-item.reveal-item');
+    if (!items.length) return;
+
+    // Mark loaded when the image finishes loading
+    items.forEach((el) => {
+      const img = el.querySelector('img');
+      if (!img) return;
+      const markLoaded = () => el.classList.add('is-loaded');
+      if (img.complete && img.naturalWidth > 0) {
+        markLoaded();
+      } else {
+        img.addEventListener('load', markLoaded, { once: true });
+        img.addEventListener('error', () => el.classList.add('is-loaded'), { once: true });
+      }
+    });
+
+    if (!('IntersectionObserver' in window)) {
+      items.forEach((el) => el.classList.add('is-visible'));
+      return;
+    }
+
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        obs.unobserve(entry.target);
+      });
+    }, { root: null, rootMargin: '80px 0px', threshold: 0.01 });
+
+    items.forEach((el) => io.observe(el));
+  }
+
+  function getShareUrlForProduct(product) {
+    const slug = product && (product.slug || product.id);
+    if (!slug) return '';
+    // Share the shop detail page (better for commerce) from portfolio
+    return window.location.origin + '/shop/obra.html?id=' + encodeURIComponent(slug);
+  }
+
+  function showShareToast(text) {
+    const el = document.createElement('div');
+    el.className = 'obras-share-toast';
+    el.textContent = text;
+    document.body.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('visible'));
+    setTimeout(() => {
+      el.classList.remove('visible');
+      setTimeout(() => el.remove(), 250);
+    }, 1800);
+  }
+
+  function updateShareUI(title, url) {
+    currentShareTitle = title || '';
+    currentShareUrl = url || '';
+    if (!shareWrap) return;
+    shareWrap.hidden = !currentShareUrl;
+  }
+
+  function initModalTriggers(dataset) {
     const triggers = document.querySelectorAll('.grid-modal-trigger');
     triggers.forEach(trigger => {
       // ... existing trigger logic ...
@@ -118,26 +240,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const imgSrcToMatch = img ? (img.getAttribute('src') || img.src) : '';
 
         let productData = null;
-        if (imgSrcToMatch && window.products) {
+        if (imgSrcToMatch && dataset && dataset.length) {
           const filename = imgSrcToMatch.split('/').pop().split('?')[0];
-          const found = window.products.find(p => {
+          const found = dataset.find(p => {
             return (p.image && p.image.includes(filename)) ||
               (p.images && p.images.some(i => i.includes(filename)));
           });
 
           if (found) {
-            const fixPath = (p) => {
-              if (!p) return p;
-              if (p.startsWith('../')) return '../' + p;
-              return p.replace('../portfolio/sections/', '../sections/');
-            };
             productData = {
+              id: found.id,
+              slug: found.slug,
               title: found.title,
               technique: found.technique,
               dimensions: found.dimensions,
               year: found.year,
-              price: found.price,
-              images: found.images ? found.images.map(fixPath) : [fixPath(found.image)]
+              images: (found.images && found.images.length) ? found.images.map(resolveImagePath) : [resolveImagePath(found.image)]
             };
           }
         }
@@ -206,6 +324,11 @@ document.addEventListener('DOMContentLoaded', () => {
           modalBuyBtn.href = trigger.dataset.waLink || 'https://wa.me/5491160139563';
         }
 
+        // Share links (prefer slug -> shop obra page)
+        const shareUrl = getShareUrlForProduct(productData || { slug: trigger.dataset.slug });
+        const shareTitle = productData ? productData.title : (trigger.dataset.title || '');
+        updateShareUI(shareTitle, shareUrl);
+
         // Show modal
         if (modal) {
           modal.classList.add('active');
@@ -213,6 +336,40 @@ document.addEventListener('DOMContentLoaded', () => {
           document.body.style.overflow = 'hidden';
         }
       });
+    });
+  }
+
+  if (shareWhatsApp) {
+    shareWhatsApp.addEventListener('click', function () {
+      if (!currentShareUrl) return;
+      const txt = (currentShareTitle ? currentShareTitle + '\n' : '') + currentShareUrl;
+      window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+    });
+  }
+  if (shareTwitter) {
+    shareTwitter.addEventListener('click', function () {
+      if (!currentShareUrl) return;
+      const t = currentShareTitle || 'Obra';
+      window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(t) + '&url=' + encodeURIComponent(currentShareUrl), '_blank');
+    });
+  }
+  if (shareFacebook) {
+    shareFacebook.addEventListener('click', function () {
+      if (!currentShareUrl) return;
+      window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(currentShareUrl), '_blank');
+    });
+  }
+  if (shareCopy) {
+    shareCopy.addEventListener('click', function () {
+      if (!currentShareUrl) return;
+      const fallback = function () {
+        showShareToast('Enlace copiado');
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(currentShareUrl).then(fallback).catch(fallback);
+      } else {
+        fallback();
+      }
     });
   }
 

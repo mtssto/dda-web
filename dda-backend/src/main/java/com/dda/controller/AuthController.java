@@ -3,13 +3,18 @@ package com.dda.controller;
 import com.dda.dto.AuthResponse;
 import com.dda.dto.LoginRequest;
 import com.dda.dto.RegisterRequest;
+import com.dda.dto.UserProfileResponse;
+import com.dda.security.AuthCookieService;
+import com.dda.security.CustomUserDetails;
 import com.dda.service.AuthService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -21,14 +26,17 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
+    private final AuthCookieService authCookieService;
 
     @Value("${app.static.base-url:https://diegodeaduriz.art}")
     private String staticBaseUrl;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
         try {
-            return ResponseEntity.ok(authService.login(request));
+            AuthResponse authResponse = authService.login(request);
+            authCookieService.setAuthCookie(response, authResponse.getToken());
+            return ResponseEntity.ok(toPublicResponse(authResponse));
         } catch (DisabledException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of(
@@ -39,8 +47,39 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authService.register(request));
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request,
+                                                 HttpServletResponse response) {
+        AuthResponse authResponse = authService.register(request);
+        if (authResponse.getToken() != null) {
+            authCookieService.setAuthCookie(response, authResponse.getToken());
+        }
+        return ResponseEntity.ok(toPublicResponse(authResponse));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserProfileResponse> me(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(new UserProfileResponse(
+                userDetails.getUsername(),
+                userDetails.getUser().getRole().name()
+        ));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletResponse response) {
+        authCookieService.clearAuthCookie(response);
+        return ResponseEntity.noContent().build();
+    }
+
+    private AuthResponse toPublicResponse(AuthResponse authResponse) {
+        return AuthResponse.builder()
+                .username(authResponse.getUsername())
+                .role(authResponse.getRole())
+                .message(authResponse.getMessage())
+                .pendingVerification(authResponse.getPendingVerification())
+                .build();
     }
 
     @GetMapping("/verify")

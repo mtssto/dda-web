@@ -44,6 +44,7 @@
     <script src="journal-app.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            DDAAuth.init().then(function () {
             if (typeof DDAAuth === 'undefined' || !DDAAuth.isAuthenticated()) {
                 window.location.href = '../shop/user-login.html';
                 return;
@@ -79,6 +80,7 @@
                     );
                 }).join('');
             });
+        });
         });
     </script>
 </body>

@@ -93,9 +93,11 @@
         });
 
         // ── Redirect if already admin ─────────────────
-        if (DDAAuth.isAdmin()) {
-            window.location.href = 'admin.html';
-        }
+        DDAAuth.init().then(function () {
+            if (DDAAuth.isAdmin()) {
+                window.location.href = 'admin.html';
+            }
+        });
 
         // ── Login submit ─────────────────────────────
         loginForm.addEventListener('submit', function (e) {
