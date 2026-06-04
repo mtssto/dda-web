@@ -16,16 +16,19 @@ public class AuthCookieService {
     private final long maxAgeSeconds;
     private final boolean secure;
     private final String sameSite;
+    private final String domain;
 
     public AuthCookieService(
             @Value("${app.jwt.cookie-name}") String cookieName,
             @Value("${app.jwt.expiration-ms}") long expirationMs,
             @Value("${app.jwt.cookie-secure}") boolean secure,
-            @Value("${app.jwt.cookie-same-site}") String sameSite) {
+            @Value("${app.jwt.cookie-same-site}") String sameSite,
+            @Value("${app.jwt.cookie-domain:}") String domain) {
         this.cookieName = cookieName;
         this.maxAgeSeconds = expirationMs / 1000;
         this.secure = secure;
         this.sameSite = sameSite;
+        this.domain = StringUtils.hasText(domain) ? domain.trim() : null;
     }
 
     public String getCookieName() {
@@ -53,12 +56,15 @@ public class AuthCookieService {
     }
 
     private ResponseCookie buildCookie(String value, long maxAge) {
-        return ResponseCookie.from(cookieName, value)
+        ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from(cookieName, value)
                 .httpOnly(true)
                 .secure(secure)
                 .path("/")
                 .maxAge(maxAge)
-                .sameSite(sameSite)
-                .build();
+                .sameSite(sameSite);
+        if (domain != null) {
+            builder.domain(domain);
+        }
+        return builder.build();
     }
 }
