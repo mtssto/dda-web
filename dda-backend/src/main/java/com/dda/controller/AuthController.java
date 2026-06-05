@@ -74,11 +74,14 @@ public class AuthController {
     }
 
     private AuthResponse toPublicResponse(AuthResponse authResponse) {
+        // Token in JSON is a fallback when the httpOnly cookie cannot be sent cross-site
+        // (diegodeaduriz.art → *.railway.app). Frontend keeps it in sessionStorage only.
         return AuthResponse.builder()
                 .username(authResponse.getUsername())
                 .role(authResponse.getRole())
                 .message(authResponse.getMessage())
                 .pendingVerification(authResponse.getPendingVerification())
+                .token(authResponse.getToken())
                 .build();
     }
 

@@ -326,13 +326,35 @@ body {
 
 .login-error {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 8px;
     padding: 12px 16px;
     background: var(--color-error-bg);
     border: 1px solid #fecaca;
     border-radius: 8px;
     color: var(--color-error);
+    line-height: 1.5;
+}
+
+.login-error.login-warning {
+    background: #fffbe6;
+    border-color: #e6d27a;
+    color: #6b5900;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.login-inline-link {
+    color: inherit;
+    font-size: 13px;
+    text-decoration: underline;
+}
+
+.login-inline-link:hover {
+    opacity: 0.85;
+}
+
+.login-error:not(.login-warning) {
     font-size: 13px;
     margin-bottom: 20px;
     animation: shakeError 0.4s ease;
