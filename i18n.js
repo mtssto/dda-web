@@ -122,6 +122,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+            const key = el.getAttribute('data-i18n-aria');
+            if (t[key]) {
+                el.setAttribute('aria-label', t[key]);
+            }
+        });
+
         const navMap = {
             'MUESTRAS': 'nav.muestras',
             'EXHIBITIONS': 'nav.muestras',
