@@ -801,15 +801,8 @@
     }
 
     function loadUsersDetailView() {
-        var apiBase = window.DDA_API_BASE || '/api';
-        fetch(apiBase + '/admin/users', {
-            credentials: 'include',
-            headers: { Accept: 'application/json' }
-        })
-            .then(function (res) {
-                if (!res.ok) throw new Error('not available');
-                return res.json();
-            })
+        DDAAuth.apiFetch('/admin/users')
+            .then(function (res) { return res.json(); })
             .then(function (users) {
                 if (!users.length) {
                     statBody.innerHTML = '<div class="stat-detail-empty">No hay usuarios registrados</div>';
@@ -836,12 +829,7 @@
                 statBody.innerHTML = html;
             })
             .catch(function () {
-                var total = document.getElementById('statUsers').textContent || '0';
-                statBody.innerHTML = '<div style="text-align:center;padding:24px 0;">'
-                    + '<div style="font-size:48px;font-weight:600;">' + total + '</div>'
-                    + '<div style="font-size:13px;color:#888;margin-top:8px;">usuarios registrados</div>'
-                    + '<p style="font-size:12px;color:#aaa;margin-top:12px;">Desplegá el backend con el nuevo endpoint <code>/api/admin/users</code> para ver el detalle.</p>'
-                    + '</div>';
+                statBody.innerHTML = '<div class="stat-detail-empty">No se pudo cargar el listado de usuarios</div>';
             });
     }
 
