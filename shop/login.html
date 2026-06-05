@@ -92,12 +92,51 @@
             });
         });
 
+        function showLoginMessage(text, isWarning) {
+            var errorBox = document.getElementById('loginError');
+            var errorText = document.getElementById('loginErrorText');
+            if (!errorBox || !errorText) return;
+            errorText.innerHTML = text;
+            errorBox.hidden = false;
+            if (isWarning) {
+                errorBox.classList.add('login-warning');
+            } else {
+                errorBox.classList.remove('login-warning');
+            }
+        }
+
+        function bindResendLink(linkId) {
+            var link = document.getElementById(linkId);
+            if (!link) return;
+            link.addEventListener('click', function (ev) {
+                ev.preventDefault();
+                var emailPrompt = prompt('Ingresá tu email para reenviar la verificación:');
+                if (!emailPrompt) return;
+                DDAAuth.resendVerification(emailPrompt.trim()).then(function (res) {
+                    link.textContent = res.message || 'Email reenviado';
+                    link.style.pointerEvents = 'none';
+                }).catch(function (resendErr) {
+                    link.textContent = resendErr.message || 'Error al reenviar';
+                });
+            });
+        }
+
         // ── Redirect if already admin ─────────────────
         DDAAuth.init().then(function () {
             if (DDAAuth.isAdmin()) {
                 window.location.href = 'admin.html';
             }
         });
+
+        // ── Show message when redirected from admin ───
+        (function () {
+            var reason = new URLSearchParams(window.location.search).get('reason');
+            if (reason === 'unauthorized') {
+                showLoginMessage('No estás autorizado para acceder al panel de administración.');
+            } else if (reason === 'session') {
+                showLoginMessage('Tu sesión expiró o no es válida. Iniciá sesión nuevamente.');
+            }
+        })();
 
         // ── Login submit ─────────────────────────────
         loginForm.addEventListener('submit', function (e) {
@@ -125,9 +164,8 @@
             DDAAuth.login(username, password)
                 .then(function (data) {
                     if (data.role !== 'ADMIN') {
-                        DDAAuth.logout();
-                        errorText.textContent = 'No tenés permisos de administrador';
-                        errorBox.hidden = false;
+                        DDAAuth.clearSession();
+                        showLoginMessage('No estás autorizado para acceder al panel de administración.');
                         btnText.hidden = false;
                         btnLoader.hidden = true;
                         btn.disabled = false;
@@ -136,8 +174,16 @@
                     window.location.href = 'admin.html';
                 })
                 .catch(function (err) {
-                    errorText.textContent = err.message || 'Usuario o contraseña incorrectos';
-                    errorBox.hidden = false;
+                    if (err.pendingVerification) {
+                        showLoginMessage(
+                            (err.message || 'Tu email aún no ha sido verificado. Revisá tu bandeja de entrada.')
+                            + '<br><a href="#" id="loginResendLink" class="login-inline-link">Reenviar email de verificación</a>',
+                            true
+                        );
+                        bindResendLink('loginResendLink');
+                    } else {
+                        showLoginMessage(err.message || 'Usuario o contraseña incorrectos');
+                    }
                     btnText.hidden = false;
                     btnLoader.hidden = true;
                     btn.disabled = false;
