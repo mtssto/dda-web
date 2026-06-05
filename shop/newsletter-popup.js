@@ -6,10 +6,14 @@
     'use strict';
 
     var STORAGE_KEY = 'dda_nl_popup_dismissed';
-    var DELAY_MS = 25000;
-    var SCROLL_THRESHOLD = 0.55;
+    var DELAY_MS = 90000;
+    var SCROLL_THRESHOLD = 0.72;
+    var MIN_PAGE_HEIGHT = 900;
 
     if (localStorage.getItem(STORAGE_KEY)) return;
+
+    // Shop landing already has a newsletter section — skip intrusive popup there.
+    if (document.body.classList.contains('shop-page')) return;
 
     var shown = false;
 
@@ -100,10 +104,12 @@
     setTimeout(createPopup, DELAY_MS);
 
     window.addEventListener('scroll', function onScroll() {
-        var scrolled = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+        var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        if (maxScroll < MIN_PAGE_HEIGHT) return;
+        var scrolled = window.scrollY / maxScroll;
         if (scrolled >= SCROLL_THRESHOLD) {
             createPopup();
             window.removeEventListener('scroll', onScroll);
         }
-    });
+    }, { passive: true });
 })();

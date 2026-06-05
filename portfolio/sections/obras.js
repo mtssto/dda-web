@@ -94,12 +94,19 @@ document.addEventListener('DOMContentLoaded', () => {
       if (grid) grid.innerHTML = '';
     });
 
+    const sectionCounters = {};
+
     dataset.forEach(product => {
       const grid = sectionMap[product.category] || sectionMap[(String(product.category || '').toLowerCase())] || sectionMap['pasteles'];
       if (!grid) return;
 
+      const sectionKey = product.category || 'pasteles';
+      const indexInSection = sectionCounters[sectionKey] || 0;
+      sectionCounters[sectionKey] = indexInSection + 1;
+
       const item = document.createElement('div');
       item.className = 'masonry-item grid-modal-trigger reveal-item';
+      item.style.setProperty('--reveal-delay', Math.min(indexInSection * 75, 450) + 'ms');
 
       // Store complete dataset context
       if (product.dimensions && product.dimensions !== "Consultar medidas") {
@@ -133,7 +140,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Ensure primary image path resolves
       const imagePath = resolveImagePath(product.image || '');
-      item.innerHTML = `<img alt="${product.title}" src="${imagePath}" loading="lazy" decoding="async" />`;
+      const soldBadge = product.sold
+        ? '<span class="artwork-badge artwork-badge--sold">Vendida</span>'
+        : '';
+
+      item.innerHTML = `
+        <div class="artwork-card">
+          <div class="artwork-media">
+            <img alt="${product.title}" src="${imagePath}" loading="lazy" decoding="async" />
+            ${soldBadge}
+          </div>
+        </div>
+      `;
       grid.appendChild(item);
     });
 
@@ -173,6 +191,51 @@ document.addEventListener('DOMContentLoaded', () => {
     items.forEach((el) => io.observe(el));
   }
 
+  function setupSectionReveal() {
+    const sections = document.querySelectorAll('.container > section[id]');
+    if (!sections.length) return;
+
+    if (!('IntersectionObserver' in window)) {
+      sections.forEach((s) => s.classList.add('is-inview'));
+      return;
+    }
+
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-inview');
+        obs.unobserve(entry.target);
+      });
+    }, { root: null, rootMargin: '-8% 0px -55% 0px', threshold: 0 });
+
+    sections.forEach((s) => io.observe(s));
+  }
+
+  function setupVideoReveal() {
+    const items = document.querySelectorAll('#videos .video-item');
+    if (!items.length) return;
+
+    items.forEach((el, i) => {
+      el.classList.add('reveal-video');
+      el.style.setProperty('--reveal-delay', Math.min(i * 90, 540) + 'ms');
+    });
+
+    if (!('IntersectionObserver' in window)) {
+      items.forEach((el) => el.classList.add('is-visible'));
+      return;
+    }
+
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        obs.unobserve(entry.target);
+      });
+    }, { root: null, rootMargin: '60px 0px', threshold: 0.05 });
+
+    items.forEach((el) => io.observe(el));
+  }
+
   function getShareUrlForProduct(product) {
     const slug = product && (product.slug || product.id);
     if (!slug) return '';
@@ -203,8 +266,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const triggers = document.querySelectorAll('.grid-modal-trigger');
     triggers.forEach(trigger => {
       // ... existing trigger logic ...
-      // Dynamically inject professional hover overlay
-      if (!trigger.querySelector('.masonry-overlay')) {
+      // Dynamically inject hover overlay inside artwork card
+      const card = trigger.querySelector('.artwork-card');
+      if (card && !card.querySelector('.masonry-overlay')) {
         const overlay = document.createElement('div');
         overlay.className = 'masonry-overlay';
 
@@ -228,10 +292,10 @@ document.addEventListener('DOMContentLoaded', () => {
               ${tech}<br>
               ${yearDisplay}
             </p>
-            <button class="btn-grid-details" style="pointer-events: auto; margin-top: 15px; background: transparent; border: 1px solid #111; color: #111; padding: 10px 20px; font-family: var(--font-body); font-size: 0.8rem; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s ease;">DETALLES</button>
+            <button type="button" class="btn-grid-details">DETALLES</button>
           </div>
         `;
-        trigger.appendChild(overlay);
+        card.appendChild(overlay);
       }
 
       trigger.addEventListener('click', (e) => {
@@ -618,5 +682,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Apply saved language on load
   const savedLang = localStorage.getItem('preferredLanguage') || 'es';
   applyLang(savedLang);
+
+  setupSectionReveal();
+  setupVideoReveal();
 
 });

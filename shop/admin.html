@@ -23,7 +23,6 @@
             <h1 class="topbar-title">DDA Admin</h1>
         </div>
         <div class="topbar-right">
-            <a href="../journal/admin.html" class="btn-secondary admin-journal-link" id="journalAdminBtn">Cuaderno del artista</a>
             <span class="topbar-user" id="adminUsername"></span>
             <button class="topbar-logout" id="logoutBtn" aria-label="Cerrar sesión">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -38,6 +37,16 @@
 
     <!-- Main Content -->
     <main class="admin-main">
+        <nav class="admin-section-tabs" role="tablist" aria-label="Secciones del panel">
+            <button type="button" class="admin-section-tab is-active" data-panel="obras" role="tab" aria-selected="true">
+                Obras
+            </button>
+            <button type="button" class="admin-section-tab" data-panel="cuaderno" role="tab" aria-selected="false">
+                Cuaderno del artista
+            </button>
+        </nav>
+
+        <div id="panelObras" class="admin-panel" role="tabpanel">
         <!-- Stats Bar -->
         <div class="admin-stats" id="adminStats">
             <div class="stat-card stat-clickable" data-stat="total">
@@ -174,11 +183,96 @@
                 </div>
             </form>
         </section>
+        </div><!-- /panelObras -->
+
+        <div id="panelCuaderno" class="admin-panel" role="tabpanel" hidden>
+            <div class="quick-compose-header">
+                <div>
+                    <h2 class="quick-compose-title">Cuaderno del artista</h2>
+                    <p class="quick-compose-intro">Escribí una entrada como en un documento. Título, texto e imagen — sin código.</p>
+                </div>
+                <a href="../journal/admin.html" class="btn-secondary btn-sm">Panel completo (comentarios y boletín)</a>
+            </div>
+
+            <div class="quick-compose-card" id="journalComposeCard">
+                <h3 class="quick-compose-card__title" id="journalFormTitle">Nueva entrada</h3>
+
+                <div class="form-group">
+                    <label for="journalTitle">Título *</label>
+                    <input type="text" id="journalTitle" placeholder="Ej: Notas desde el taller" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="journalContent">Texto *</label>
+                    <p class="form-hint">Escribí con párrafos (Enter dos veces entre párrafos).</p>
+                    <textarea id="journalContent" rows="8" placeholder="Contá tu proceso, la muestra, el taller…"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Imagen principal (opcional)</label>
+                    <div class="cover-upload-row">
+                        <input type="file" id="journalCoverFile" accept="image/jpeg,image/png,image/webp,image/gif">
+                        <button type="button" class="btn-secondary btn-sm" id="journalUploadCover">Subir imagen</button>
+                        <span class="upload-inline-status" id="journalCoverStatus" hidden></span>
+                    </div>
+                    <div class="cover-preview-mini" id="journalCoverPreview" hidden>
+                        <img id="journalCoverPreviewImg" alt="">
+                        <button type="button" class="btn-secondary btn-sm" id="journalRemoveCover">Quitar</button>
+                    </div>
+                    <input type="hidden" id="journalCoverUrl">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="journalStatus">Estado</label>
+                        <select id="journalStatus" class="form-select">
+                            <option value="DRAFT">Borrador — solo vos la ves</option>
+                            <option value="PUBLISHED">Publicada — visible en el cuaderno</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label" style="margin-top: 28px;">
+                            <input type="checkbox" id="journalSendNewsletter">
+                            Enviar boletín al publicar
+                        </label>
+                    </div>
+                </div>
+
+                <div id="journalFormError" class="form-error" hidden></div>
+                <div id="journalFormSuccess" class="form-success" hidden></div>
+
+                <div class="quick-compose-actions">
+                    <button type="button" class="btn-secondary" id="journalCancelEdit" hidden>Cancelar edición</button>
+                    <button type="button" class="btn-primary" id="journalSaveBtn">Guardar entrada</button>
+                </div>
+            </div>
+
+            <div class="admin-table-wrap" style="margin-top: 24px;">
+                <div class="quick-compose-header" style="margin-bottom: 12px;">
+                    <h3 class="quick-compose-card__title" style="margin: 0;">Entradas recientes</h3>
+                    <button type="button" class="btn-secondary btn-sm" id="journalNewBtn">+ Nueva entrada</button>
+                </div>
+                <table class="admin-table" id="journalPostsTable">
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th class="col-actions">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="journalPostsBody">
+                        <tr class="table-loading"><td colspan="4">Cargando entradas…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div><!-- /panelCuaderno -->
+
     </main>
 
     <!-- Artwork Modal (Create / Edit) -->
     <div class="modal-overlay" id="artworkModal" hidden>
-        <div class="modal-content">
+        <div class="modal-content modal-content--wide">
             <div class="modal-header">
                 <h2 class="modal-title" id="modalTitle">Nueva Obra</h2>
                 <button class="modal-close" id="modalClose" aria-label="Cerrar">
@@ -189,60 +283,70 @@
             </div>
             <form id="artworkForm" novalidate>
                 <input type="hidden" id="artworkId">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="artTitle">Título *</label>
-                        <input type="text" id="artTitle" required maxlength="200">
-                    </div>
-                    <div class="form-group">
-                        <label for="artCategory">Categoría</label>
-                        <select id="artCategory" class="form-select"></select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="artTechnique">Técnica</label>
-                        <input type="text" id="artTechnique" maxlength="100">
-                    </div>
-                    <div class="form-group">
-                        <label for="artDimensions">Dimensiones</label>
-                        <input type="text" id="artDimensions" maxlength="50" placeholder="ej: 50 x 70 cm">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="artPrice">Precio</label>
-                        <input type="text" id="artPrice" maxlength="50" placeholder="ej: USD 500">
-                    </div>
-                    <div class="form-group">
-                        <label for="artYear">Año</label>
-                        <input type="text" id="artYear" maxlength="20" placeholder="ej: 2024">
-                    </div>
-                </div>
+                <p class="form-intro">Completá título, categoría e imágenes. El resto es opcional.</p>
+
                 <div class="form-group">
-                    <label for="artDescription">Descripción</label>
-                    <textarea id="artDescription" rows="3"></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="artSold">
-                        Vendida
-                    </label>
+                    <label for="artTitle">Título *</label>
+                    <input type="text" id="artTitle" required maxlength="200" placeholder="Ej: Equilibrista">
                 </div>
 
                 <div class="form-group">
-                    <label for="artImages">Imágenes</label>
-                    <input
-                        type="file"
-                        id="artImages"
-                        class="image-upload-input"
-                        accept="image/jpeg,image/png,image/webp,image/gif"
-                        multiple
-                    >
-                    <p class="form-hint">En una obra nueva, la primera imagen seleccionada será la principal. En edición, las imágenes seleccionadas se agregan a la obra.</p>
+                    <label for="artCategory">Categoría</label>
+                    <div class="category-chips" id="artCategoryChips" aria-label="Categorías rápidas"></div>
+                    <select id="artCategory" class="form-select" style="margin-top: 10px;"></select>
+                </div>
+
+                <div class="form-group">
+                    <label>Imágenes</label>
+                    <div class="image-dropzone" id="artImageDropzone" tabindex="0" role="button" aria-label="Subir imágenes">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        <p class="dropzone-text"><strong>Arrastrá imágenes acá</strong> o hacé clic para elegir</p>
+                        <p class="form-hint">JPG, PNG o WebP. La primera imagen será la principal.</p>
+                    </div>
+                    <input type="file" id="artImages" class="image-upload-input" accept="image/jpeg,image/png,image/webp,image/gif" multiple hidden>
                     <div class="image-preview-grid" id="artImagesPreview" aria-live="polite"></div>
                     <div class="image-upload-status" id="imageUploadStatus" hidden></div>
                 </div>
+
+                <details class="form-details" id="artOptionalDetails">
+                    <summary>Detalles opcionales (técnica, medidas, precio…)</summary>
+                    <div class="form-details-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="artTechnique">Técnica</label>
+                                <input type="text" id="artTechnique" maxlength="100" placeholder="Ej: Acrílico sobre papel">
+                            </div>
+                            <div class="form-group">
+                                <label for="artDimensions">Dimensiones</label>
+                                <input type="text" id="artDimensions" maxlength="50" placeholder="Ej: 50 x 70 cm">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="artPrice">Precio</label>
+                                <input type="text" id="artPrice" maxlength="50" placeholder="Ej: USD 500 o Consultar">
+                            </div>
+                            <div class="form-group">
+                                <label for="artYear">Año</label>
+                                <input type="text" id="artYear" maxlength="20" placeholder="Ej: 2024">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="artDescription">Descripción</label>
+                            <textarea id="artDescription" rows="3" placeholder="Descripción para la tienda (opcional)"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="artSold">
+                                Marcar como vendida
+                            </label>
+                        </div>
+                    </div>
+                </details>
 
                 <div id="formError" class="form-error" hidden></div>
                 <div class="modal-actions">
@@ -283,6 +387,7 @@
     <script src="config.js"></script>
     <script src="auth.js"></script>
     <script src="admin-app.js"></script>
+    <script src="admin-journal.js"></script>
 </body>
 
 </html>
