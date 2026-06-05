@@ -37,7 +37,8 @@ body.no-scroll {
 .shop-container {
     max-width: 100%;
     margin: 0 auto;
-    padding: 140px 0 40px;
+    /* Fixed site header (~56px) + breathing room */
+    padding: 72px 0 40px;
     overflow-x: hidden;
 }
 
@@ -428,8 +429,8 @@ body.lang-en .product-card.sold::after {
 /* Shop Info Section */
 .shop-info-section {
     background-color: var(--color-light-bg);
-    padding: 80px 20px;
-    margin-top: 100px;
+    padding: 64px 20px;
+    margin-top: 48px;
 }
 
 .shop-info-container {
@@ -744,8 +745,8 @@ footer p {
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 80px 20px 48px;
-    gap: 40px;
+    padding: 24px 20px 32px;
+    gap: 28px;
 }
 
 .hero-header {
