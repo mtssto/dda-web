@@ -1,0 +1,23 @@
+# GitHub Pages (Jekyll) — only publish the public site, not the whole monorepo.
+# Without this, dda-backend/, docs, and dev files are served at diegodeaduriz.art/*
+title: Diego De Aduriz
+exclude:
+  - dda-backend
+  - node_modules
+  - 3d-react-gallery/node_modules
+  - 3d-react-gallery
+  - scripts
+  - DEPLOYMENT.md
+  - README.md
+  - configuration-email.txt
+  - recent_files.txt
+  - dev_server.py
+  - package.json
+  - package-lock.json
+  - .github
+  - .cursor
+  - .git
+  - .gitignore
+  - Gemfile
+  - Gemfile.lock
+  - vendor
