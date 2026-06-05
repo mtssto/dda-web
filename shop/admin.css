@@ -88,6 +88,240 @@ body {
     padding: 24px;
 }
 
+.admin-panel[hidden] { display: none !important; }
+
+/* ── Section tabs ───────────────────────── */
+.admin-section-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    padding: 4px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    width: fit-content;
+    max-width: 100%;
+    flex-wrap: wrap;
+}
+
+.admin-section-tab {
+    padding: 10px 18px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--color-subtext);
+    transition: var(--transition);
+}
+
+.admin-section-tab:hover {
+    color: var(--color-text);
+    background: var(--color-light-bg);
+}
+
+.admin-section-tab.is-active {
+    background: var(--color-accent);
+    color: #fff;
+}
+
+/* ── Quick compose (cuaderno) ───────────── */
+.quick-compose-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.quick-compose-title {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 6px;
+}
+
+.quick-compose-intro {
+    font-size: 14px;
+    color: var(--color-subtext);
+    margin: 0;
+    max-width: 520px;
+    line-height: 1.5;
+}
+
+.quick-compose-card {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.quick-compose-card__title {
+    font-size: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 20px;
+    color: var(--color-subtext);
+}
+
+.quick-compose-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.cover-upload-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.cover-preview-mini {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.cover-preview-mini img {
+    width: 120px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+}
+
+.upload-inline-status {
+    font-size: 12px;
+    color: var(--color-subtext);
+}
+
+.upload-inline-status.is-error { color: var(--color-error); }
+
+.form-success {
+    padding: 10px 14px;
+    background: var(--color-success-bg);
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    color: var(--color-success);
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.btn-sm {
+    padding: 8px 14px !important;
+    font-size: 12px !important;
+}
+
+.btn-danger.btn-sm {
+    padding: 8px 14px !important;
+    font-size: 12px !important;
+}
+
+/* ── Obra form improvements ─────────────── */
+.modal-content--wide {
+    max-width: 640px;
+}
+
+.form-intro {
+    font-size: 14px;
+    color: var(--color-subtext);
+    line-height: 1.5;
+    margin: -8px 0 20px;
+    padding: 12px 14px;
+    background: var(--color-light-bg);
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+}
+
+.category-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.category-chip {
+    padding: 6px 12px;
+    font-size: 12px;
+    font-family: var(--font-body);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-bg);
+    cursor: pointer;
+    transition: var(--transition);
+    text-transform: capitalize;
+}
+
+.category-chip:hover {
+    border-color: #999;
+}
+
+.category-chip.is-selected {
+    background: var(--color-accent);
+    color: #fff;
+    border-color: var(--color-accent);
+}
+
+.image-dropzone {
+    border: 2px dashed var(--color-border);
+    border-radius: 10px;
+    padding: 28px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    color: var(--color-subtext);
+}
+
+.image-dropzone:hover,
+.image-dropzone.is-dragover {
+    border-color: #999;
+    background: var(--color-light-bg);
+}
+
+.image-dropzone svg {
+    margin-bottom: 10px;
+    opacity: 0.5;
+}
+
+.dropzone-text {
+    margin: 0 0 4px;
+    font-size: 14px;
+    color: var(--color-text);
+}
+
+.form-details {
+    margin-top: 8px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.form-details summary {
+    padding: 12px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    background: var(--color-light-bg);
+    list-style: none;
+    user-select: none;
+}
+
+.form-details summary::-webkit-details-marker { display: none; }
+
+.form-details-body {
+    padding: 16px 14px 4px;
+    border-top: 1px solid var(--color-border);
+}
+
 /* ── Stats ──────────────────────────────── */
 .admin-stats {
     display: grid;

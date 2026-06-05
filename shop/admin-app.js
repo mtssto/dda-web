@@ -58,6 +58,13 @@
     loadStats();
     loadNewsletterCount();
     initNewsletter();
+    initAdminTabs();
+    initImageDropzone();
+
+    var artCategorySelect = document.getElementById('artCategory');
+    if (artCategorySelect) {
+        artCategorySelect.addEventListener('change', syncCategoryChips);
+    }
 
     // ── Event listeners ──────────────────────────
     var searchTimer;
@@ -418,7 +425,6 @@
         });
         categoryFilter.innerHTML = html;
 
-        // Also update modal category select
         var modalCat = document.getElementById('artCategory');
         if (modalCat) {
             var modalHtml = '<option value="">Sin categoría</option>';
@@ -427,6 +433,104 @@
             });
             modalCat.innerHTML = modalHtml;
         }
+
+        renderCategoryChips();
+    }
+
+    function renderCategoryChips() {
+        var chipsEl = document.getElementById('artCategoryChips');
+        var modalCat = document.getElementById('artCategory');
+        if (!chipsEl || !modalCat) return;
+
+        chipsEl.innerHTML = state.categories.map(function (cat) {
+            return '<button type="button" class="category-chip" data-category="' + escapeHtml(cat.name) + '">' +
+                escapeHtml(cat.name) + '</button>';
+        }).join('');
+
+        chipsEl.querySelectorAll('.category-chip').forEach(function (chip) {
+            chip.addEventListener('click', function () {
+                modalCat.value = chip.getAttribute('data-category') || '';
+                syncCategoryChips();
+            });
+        });
+
+        syncCategoryChips();
+    }
+
+    function syncCategoryChips() {
+        var modalCat = document.getElementById('artCategory');
+        var chipsEl = document.getElementById('artCategoryChips');
+        if (!modalCat || !chipsEl) return;
+        var val = modalCat.value;
+        chipsEl.querySelectorAll('.category-chip').forEach(function (chip) {
+            chip.classList.toggle('is-selected', chip.getAttribute('data-category') === val);
+        });
+    }
+
+    function initAdminTabs() {
+        var tabs = document.querySelectorAll('.admin-section-tab');
+        if (!tabs.length) return;
+
+        function switchPanel(panel) {
+            tabs.forEach(function (t) {
+                var active = t.getAttribute('data-panel') === panel;
+                t.classList.toggle('is-active', active);
+                t.setAttribute('aria-selected', active ? 'true' : 'false');
+            });
+            var obrasPanel = document.getElementById('panelObras');
+            var cuadernoPanel = document.getElementById('panelCuaderno');
+            if (obrasPanel) obrasPanel.hidden = panel !== 'obras';
+            if (cuadernoPanel) cuadernoPanel.hidden = panel !== 'cuaderno';
+            if (panel === 'cuaderno' && window.DDAAdminJournal) {
+                window.DDAAdminJournal.load();
+            }
+        }
+
+        tabs.forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                switchPanel(tab.getAttribute('data-panel'));
+            });
+        });
+
+        if (window.location.hash === '#cuaderno') {
+            switchPanel('cuaderno');
+        }
+
+        window.adminSwitchTab = switchPanel;
+    }
+
+    function initImageDropzone() {
+        var dropzone = document.getElementById('artImageDropzone');
+        if (!dropzone || !imageInput) return;
+
+        dropzone.addEventListener('click', function () { imageInput.click(); });
+        dropzone.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                imageInput.click();
+            }
+        });
+
+        dropzone.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            dropzone.classList.add('is-dragover');
+        });
+        dropzone.addEventListener('dragleave', function () {
+            dropzone.classList.remove('is-dragover');
+        });
+        dropzone.addEventListener('drop', function (e) {
+            e.preventDefault();
+            dropzone.classList.remove('is-dragover');
+            if (!e.dataTransfer || !e.dataTransfer.files.length) return;
+            try {
+                var dt = new DataTransfer();
+                Array.from(e.dataTransfer.files).forEach(function (f) { dt.items.add(f); });
+                imageInput.files = dt.files;
+            } catch (err) {
+                imageInput.files = e.dataTransfer.files;
+            }
+            renderImagePreview(null, getSelectedImageFiles());
+        });
     }
 
     function loadStats() {
@@ -500,6 +604,16 @@
         if (imageInput) imageInput.value = '';
         setUploadStatus('', null, true);
         renderImagePreview(artwork, []);
+        syncCategoryChips();
+
+        var optionalDetails = document.getElementById('artOptionalDetails');
+        if (optionalDetails && artwork) {
+            var hasOptional = artwork.technique || artwork.dimensions || artwork.price ||
+                artwork.year || artwork.description || artwork.sold;
+            optionalDetails.open = !!hasOptional;
+        } else if (optionalDetails) {
+            optionalDetails.open = false;
+        }
 
         modal.hidden = false;
         document.body.style.overflow = 'hidden';
