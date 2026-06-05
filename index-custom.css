@@ -6,9 +6,7 @@ html {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    /* No scrolling on index */
     background-color: #f4eaf2;
-    /* Light grey */
     font-family: 'Inter', sans-serif;
 }
 
@@ -36,7 +34,6 @@ html {
     max-width: 100%;
     display: block;
     border: 1px solid rgba(0, 0, 0, 0.1);
-    /* Subtle edge */
 }
 
 /* Navbar */
@@ -49,15 +46,13 @@ html {
     height: 100dvh;
     z-index: 10;
     pointer-events: none;
-    /* Let clicks pass through empty space */
 }
 
-/* Hovering the nav wrapper blurs the background */
 .index-nav-wrapper.hovered~#collage-bg-container {
     filter: blur(12px);
 }
 
-.index-nav-wrapper a:not(.nav-auth-link-item):not(.lang-btn) {
+.index-nav-wrapper a {
     position: absolute;
     color: #111;
     text-decoration: none;
@@ -71,18 +66,17 @@ html {
 }
 
 @media (max-width: 768px) {
-    .index-nav-wrapper a:not(.nav-auth-link-item):not(.lang-btn) {
+    .index-nav-wrapper a {
         font-size: 1.5rem;
         letter-spacing: -2px;
     }
 }
 
-.index-nav-wrapper a:not(.nav-auth-link-item):not(.lang-btn):hover {
+.index-nav-wrapper a:hover {
     color: #555;
     text-shadow: 0 0 15px rgba(255, 255, 255, 1);
 }
 
-/* Positions from mockup */
 .nav-past {
     top: 2vw;
     left: 2vw;
@@ -106,9 +100,12 @@ html {
     gap: 0.2rem;
 }
 
-/* ES | EN — larger on index (inline 0.9rem in i18n.js is too small vs nav links) */
+.nav-right-stack a {
+    position: relative;
+}
+
 .nav-right-stack .lang-switcher-global {
-    margin-bottom: 0.5rem !important;
+    margin-bottom: 20px;
 }
 
 .nav-right-stack .lang-switcher-global .lang-btn,
@@ -118,75 +115,22 @@ html {
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
 }
 
-.nav-right-stack .lang-switcher-global .lang-btn {
-    text-decoration: none;
-    color: #111;
-}
-
-.nav-right-stack a {
-    position: relative;
-    /* Inside flex container */
-}
-
-.nav-auth-links {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 12px 18px;
-    margin-bottom: 0.35rem;
-}
-
-.index-nav-wrapper .nav-auth-link-item {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.72rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #111;
-    text-decoration: none;
-    transition: color 0.25s ease;
-    white-space: nowrap;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-}
-
-.index-nav-wrapper .nav-auth-link-item:hover {
-    color: #555;
-    text-shadow: 0 0 12px rgba(255, 255, 255, 1);
-}
-
-.nav-auth-link-item svg {
-    flex-shrink: 0;
+.index-nav-wrapper .nav-right-stack .nav-auth-link {
+    font-size: 1.15rem;
+    letter-spacing: 0.14em;
+    margin-bottom: 0.15rem;
 }
 
 @media (max-width: 768px) {
+    .index-nav-wrapper .nav-right-stack .nav-auth-link {
+        font-size: 0.95rem;
+    }
+
     .nav-right-stack .lang-switcher-global .lang-btn,
     .nav-right-stack .lang-switcher-global span {
         font-size: 1rem !important;
     }
-
-    .nav-auth-links {
-        gap: 10px 14px;
-        max-width: min(100vw - 40px, 280px);
-    }
-
-    .index-nav-wrapper .nav-auth-link-item {
-        font-size: 0.62rem;
-        letter-spacing: 0.1em;
-    }
-
-    .index-nav-wrapper .nav-auth-link-item svg {
-        width: 14px;
-        height: 14px;
-    }
 }
-
-
 
 .nav-about {
     position: absolute;
@@ -215,8 +159,6 @@ html {
         right: 20px;
     }
 
-
-
     .nav-about {
         bottom: 30px;
         left: 20px;
@@ -234,39 +176,34 @@ html {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    /* right-align */
 }
 
 .nav-dropdown-content {
     display: none;
     position: absolute;
     top: 100%;
-    /* Drop down below the MORE button */
     right: 0;
-    /* Align to the right edge of MORE */
     background: transparent;
     padding-top: 5px;
-    /* Subtle gap below MORE */
     text-align: right;
     flex-direction: column;
     gap: 0.2rem;
     z-index: 20;
 }
 
-/* Reveal on hover */
 .nav-dropdown:hover .nav-dropdown-content {
     display: flex;
 }
 
-/* Make dropdown links slightly smaller to distinguish them from top-level */
-.nav-dropdown-content a {
+.index-nav-wrapper .nav-dropdown-content a {
     position: relative;
     font-size: 1.5rem;
     color: #111;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
 }
 
 @media (max-width: 768px) {
-    .nav-dropdown-content a {
+    .index-nav-wrapper .nav-dropdown-content a {
         font-size: 1.2rem;
     }
 }

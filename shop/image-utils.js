@@ -52,9 +52,7 @@ var DDAImages = (function () {
         if (window.DDA_STATIC_BASE) {
             return String(window.DDA_STATIC_BASE).replace(/\/$/, '');
         }
-        if (window.DDA_MEDIA_BASE) {
-            return String(window.DDA_MEDIA_BASE).replace(/\/$/, '');
-        }
+        // Portfolio /shop static files are on GitHub Pages — never use DDA_MEDIA_BASE (API host).
         return window.location.origin;
     }
 

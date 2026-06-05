@@ -7,9 +7,10 @@
     'use strict';
 
     // When running locally with dev_server.py, '/api' gets proxied to localhost:8081
-    // Production API (Railway). For reliable cookie auth from diegodeaduriz.art, prefer:
-    // window.DDA_API_BASE = 'https://api.diegodeaduriz.art/api';
-    // window.DDA_MEDIA_BASE = 'https://api.diegodeaduriz.art';
+    // Production API (Railway). For cookie auth, prefer api.diegodeaduriz.art (see DEPLOYMENT.md).
     window.DDA_API_BASE = 'https://dda-web-production.up.railway.app/api';
+    // Backend uploads only (/uploads/...). Portfolio images stay on the static site.
     window.DDA_MEDIA_BASE = 'https://dda-web-production.up.railway.app';
+    // Optional if the shop HTML is served from another host (e.g. preview on github.io):
+    // window.DDA_STATIC_BASE = 'https://diegodeaduriz.art';
 })();
