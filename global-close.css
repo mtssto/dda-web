@@ -165,6 +165,15 @@ body.shop-page {
     padding-top: 72px;
 }
 
+@media (max-width: 720px) {
+    body.catalog-page,
+    body.obra-detail-page,
+    body.shop-page {
+        /* Two-row site header (back/auth + brand) */
+        padding-top: 104px;
+    }
+}
+
 @media (max-width: 900px) {
     .auth-header-link {
         font-size: 0;
