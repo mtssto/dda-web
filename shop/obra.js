@@ -248,14 +248,25 @@
 
         if (titleEl) titleEl.textContent = product.title;
         if (availabilityEl) {
-            availabilityEl.textContent = product.sold
-                ? (getTranslation('card.sold') || 'VENDIDA')
-                : (getTranslation('obra.available') || 'Disponible para consulta');
-            availabilityEl.className = 'obra-availability' + (product.sold ? ' obra-availability--sold' : ' obra-availability--open');
+            if (product.sold) {
+                availabilityEl.hidden = true;
+                availabilityEl.textContent = '';
+            } else {
+                availabilityEl.hidden = false;
+                availabilityEl.textContent = getTranslation('obra.available') || 'Disponible para consulta';
+                availabilityEl.className = 'obra-availability obra-availability--open';
+            }
         }
         if (priceEl) {
-            priceEl.textContent = product.sold ? (getTranslation('card.sold') || 'Vendida') : (product.price || 'Consultar');
-            priceEl.classList.toggle('obra-price--sold', product.sold);
+            if (product.sold) {
+                priceEl.hidden = true;
+                priceEl.textContent = '';
+                priceEl.classList.remove('obra-price--sold');
+            } else {
+                priceEl.hidden = false;
+                priceEl.textContent = product.price || 'Consultar';
+                priceEl.classList.remove('obra-price--sold');
+            }
         }
         if (inquiryHint) inquiryHint.hidden = !!product.sold;
         if (soldPanel) soldPanel.hidden = !product.sold;

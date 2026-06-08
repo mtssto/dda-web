@@ -886,7 +886,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var target = document.getElementById('recentlyViewedContainer');
         if (!target) return;
         if (!rv.length) { target.innerHTML = ''; target.className = ''; return; }
-        target.className = 'recently-viewed-section';
+        target.className = 'recently-viewed-section recently-viewed-section--top';
         target.innerHTML = '<h2 class="rv-heading">Vistos recientemente</h2><div class="rv-track"></div>';
         var track = target.querySelector('.rv-track');
         rv.forEach(function (item) {
