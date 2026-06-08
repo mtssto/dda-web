@@ -199,9 +199,16 @@
             return;
         }
 
+        var category = document.getElementById('artCategory').value.trim();
+        if (!category) {
+            formError.textContent = 'Elegí una categoría para que la obra aparezca en la tienda y en Obras del portfolio';
+            formError.hidden = false;
+            return;
+        }
+
         var body = {
             title: title,
-            category: document.getElementById('artCategory').value || null,
+            category: category,
             technique: document.getElementById('artTechnique').value.trim() || null,
             dimensions: document.getElementById('artDimensions').value.trim() || null,
             price: document.getElementById('artPrice').value.trim() || null,
@@ -593,7 +600,7 @@
 
         document.getElementById('artworkId').value = artwork ? artwork.id : '';
         document.getElementById('artTitle').value = artwork ? artwork.title : '';
-        document.getElementById('artCategory').value = artwork ? (artwork.category || '') : '';
+        document.getElementById('artCategory').value = artwork ? (artwork.category || '') : 'pasteles';
         document.getElementById('artTechnique').value = artwork ? (artwork.technique || '') : '';
         document.getElementById('artDimensions').value = artwork ? (artwork.dimensions || '') : '';
         document.getElementById('artPrice').value = artwork ? (artwork.price || '') : '';
