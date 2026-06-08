@@ -24,15 +24,45 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentShareUrl = '';
   let currentShareTitle = '';
 
+  // Shop-only categories map to the nearest portfolio section.
+  const PORTFOLIO_CATEGORY_ALIASES = {
+    paisaje: 'paisajes',
+    simbolico: 'pasteles',
+    texto: 'ilustraciones',
+    obras: 'pasteles',
+    retrato: 'Autorretratos',
+    abstracto: 'digital',
+    figurativo: 'pasteles',
+    paisajes: 'paisajes',
+    pasteles: 'pasteles',
+    gatos: 'gatos',
+    digital: 'digital',
+    ilustraciones: 'ilustraciones',
+    autorretratos: 'Autorretratos'
+  };
+
+  function resolvePortfolioCategory(category) {
+    const raw = String(category || '').trim();
+    if (!raw) return 'pasteles';
+    if (PORTFOLIO_CATEGORY_ALIASES[raw]) return PORTFOLIO_CATEGORY_ALIASES[raw];
+    const lower = raw.toLowerCase();
+    if (PORTFOLIO_CATEGORY_ALIASES[lower]) return PORTFOLIO_CATEGORY_ALIASES[lower];
+    return raw;
+  }
+
   function normalizeProduct(p) {
-    // Accept shop/products.js objects and backend API objects, return the shape we need
     const images = (p.images || []).map((img) => {
       if (!img) return '';
       if (typeof img === 'string') return img;
-      return img.filePath || img.url || '';
+      return img.filePath || img.url || img.imageUrl || '';
     }).filter(Boolean);
 
-    const primary = p.image || images[0] || '';
+    const primaryImageObj = (p.images || []).find((img) => img && (img.isPrimary === true || img.primary === true));
+    const primaryFromObj = primaryImageObj
+      ? (typeof primaryImageObj === 'string' ? primaryImageObj : primaryImageObj.filePath || primaryImageObj.url || '')
+      : '';
+    const primary = primaryFromObj || p.image || p.imageUrl || images[0] || '';
+
     return {
       id: p.slug || p.id || '',
       slug: p.slug || p.id || '',
@@ -40,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
       technique: p.technique || 'Consultar técnica',
       dimensions: p.dimensions || 'Consultar medidas',
       year: p.year || 'Consultar año',
-      category: p.category || 'pasteles',
+      category: resolvePortfolioCategory(p.category),
       image: primary,
       images: images.length ? images : (primary ? [primary] : []),
       sold: !!p.sold
@@ -49,8 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function resolveImagePath(path) {
     if (!path) return '';
+    if (typeof DDAImages !== 'undefined' && typeof DDAImages.resolveImageUrl === 'function') {
+      return DDAImages.resolveImageUrl(path, window.location.href);
+    }
     if (path.startsWith('http://') || path.startsWith('https://')) return path;
-    // Backend static file paths already start with /uploads or /portfolio
+    const mediaBase = (window.DDA_MEDIA_BASE || '').replace(/\/$/, '');
+    if (mediaBase && (path.startsWith('/uploads/') || path.startsWith('uploads/'))) {
+      return mediaBase + (path.startsWith('/') ? path : '/' + path);
+    }
     if (path.startsWith('/')) return path;
     return path;
   }
@@ -97,10 +133,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionCounters = {};
 
     dataset.forEach(product => {
-      const grid = sectionMap[product.category] || sectionMap[(String(product.category || '').toLowerCase())] || sectionMap['pasteles'];
+      const sectionKey = resolvePortfolioCategory(product.category);
+      const grid = sectionMap[sectionKey] || sectionMap['pasteles'];
       if (!grid) return;
 
-      const sectionKey = product.category || 'pasteles';
+      const imagePath = resolveImagePath(product.image || '');
+      if (!imagePath) return;
       const indexInSection = sectionCounters[sectionKey] || 0;
       sectionCounters[sectionKey] = indexInSection + 1;
 
@@ -138,8 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
         item.dataset.images = JSON.stringify(product.images);
       }
 
-      // Ensure primary image path resolves
-      const imagePath = resolveImagePath(product.image || '');
       const soldBadge = product.sold
         ? '<span class="artwork-badge artwork-badge--sold">Vendida</span>'
         : '';
@@ -153,6 +189,16 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       `;
       grid.appendChild(item);
+    });
+
+    Object.keys(sectionMap).forEach((key) => {
+      const section = document.getElementById(key);
+      const grid = sectionMap[key];
+      if (!section || !grid) return;
+      const hasItems = grid.children.length > 0;
+      section.hidden = !hasItems;
+      const navPill = document.querySelector('.cat-pill[data-section="' + key + '"]');
+      if (navPill) navPill.hidden = !hasItems;
     });
 
     setupRevealOnScroll();
