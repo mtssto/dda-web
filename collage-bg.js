@@ -29,20 +29,33 @@ document.addEventListener('DOMContentLoaded', () => {
         'portfolio/sections/obras/las-nave-dibu (7).JPG'
     ];
 
-    // Decide between three modes (each ~33%):
-    //   0.00 - 0.33 → Single full-screen background
-    //   0.33 - 0.66 → Interactive collage (original)
-    //   0.66 - 1.00 → Las naves - espacialidad (full-screen grid)
-    const roll = Math.random();
-    const showSingleImage = roll < 0.33;
-    const showEspacialidad = roll >= 0.66;
+    // Background mode weights (must sum to 1).
+    // video: disabled for now — re-enable when game background is ready.
+    const INDEX_BG_WEIGHTS = {
+        single: 0.20,
+        collage: 0.40,
+        espacialidad: 0.40,
+        video: 0
+    };
 
-    if (showEspacialidad) {
+    const weights = getIndexBgWeights(INDEX_BG_WEIGHTS);
+    const roll = Math.random();
+    const videoThreshold = weights.video;
+    const espacialidadThreshold = videoThreshold + weights.espacialidad;
+    const collageThreshold = espacialidadThreshold + weights.collage;
+
+    if (roll < videoThreshold) {
+        showGameVideo(container, navWrapper);
+        return;
+    }
+
+    if (roll < espacialidadThreshold) {
         showNavesEspacialidad(container, navWrapper);
         return;
     }
 
-    if (showSingleImage) {
+    if (roll >= collageThreshold) {
+        // Single full-screen image (~15%)
         let currentBgIndex = Math.floor(Math.random() * backgroundImages.length);
         let isTransitioning = false;
 
@@ -80,10 +93,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 500); // matches the 0.5s transition time
         });
 
-        return; // Don't run the collage logic
+        return;
     }
 
-    // Option 2: The Collage Grabbing Logic
+    // Interactive collage (~20%)
 
     // Load Las Naves images (1 to 11.jpg)
     const navesImages = Array.from({ length: 11 }, (_, i) => `portfolio/sections/Las Naves/${i + 1}.jpg`);
@@ -319,6 +332,138 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+function isIndexMobileViewport() {
+    return window.matchMedia('(max-width: 768px)').matches;
+}
+
+function getIndexBgWeights(base) {
+    const w = { ...base };
+    if (!isIndexMobileViewport()) return w;
+
+    // No video background on mobile (performance + game not shown there).
+    const videoShare = w.video;
+    w.video = 0;
+    const rest = w.single + w.collage + w.espacialidad;
+    if (rest <= 0) return w;
+
+    w.single += videoShare * (w.single / rest);
+    w.collage += videoShare * (w.collage / rest);
+    w.espacialidad += videoShare * (w.espacialidad / rest);
+    return w;
+}
+
+// ═══════════════════════════════════════════════════════════
+// GAME VIDEOS — full-screen playlist (plays in order, then loops)
+// Edit game/index-background-videos.json to add/reorder clips.
+// ═══════════════════════════════════════════════════════════
+async function loadIndexBackgroundVideos() {
+    const fallback = ['game/game.mp4'];
+    try {
+        const res = await fetch('game/index-background-videos.json', {
+            cache: 'no-cache',
+            headers: { 'Accept': 'application/json' }
+        });
+        if (!res.ok) return fallback;
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : (data.videos || []);
+        const paths = list
+            .map((item) => (typeof item === 'string' ? item : item && item.src))
+            .filter(Boolean);
+        return paths.length ? paths : fallback;
+    } catch (e) {
+        return fallback;
+    }
+}
+
+function showGameVideo(container, navWrapper) {
+    if (isIndexMobileViewport()) return;
+
+    loadIndexBackgroundVideos().then((playlist) => {
+        if (!playlist.length) return;
+
+        container.style.backgroundImage = 'none';
+        container.style.cursor = 'default';
+        container.style.transition = 'opacity 0.45s ease, filter 0.4s ease';
+
+        let currentIndex = 0;
+        let isSwitching = false;
+
+        const video = document.createElement('video');
+        video.className = 'collage-bg-video';
+        video.muted = true;
+        video.playsInline = true;
+        video.autoplay = true;
+        video.loop = false;
+        video.preload = 'auto';
+        video.setAttribute('playsinline', '');
+        video.setAttribute('webkit-playsinline', '');
+        video.setAttribute('aria-hidden', 'true');
+        video.setAttribute('tabindex', '-1');
+
+        container.appendChild(video);
+
+        // Game caption overlay — disabled for now (revisit later).
+        // const caption = document.createElement('div');
+        // caption.className = 'index-game-caption';
+        // caption.innerHTML =
+        //     '<p class="index-game-caption__text" data-i18n="index.game_caption">' +
+        //     'Un juego inspirado en las obras de Diego De Aduriz' +
+        //     '</p>' +
+        //     '<a href="game/index.html" class="index-game-caption__link" data-i18n="index.game_cta">Conocer el juego</a>';
+        // container.appendChild(caption);
+        // if (typeof window.changeLanguage === 'function') {
+        //     window.changeLanguage(localStorage.getItem('preferredLanguage') || 'es');
+        // }
+
+        const tryPlay = () => {
+            const playPromise = video.play();
+            if (playPromise && typeof playPromise.catch === 'function') {
+                playPromise.catch(() => {});
+            }
+        };
+
+        const playAt = (index) => {
+            currentIndex = index;
+            video.src = playlist[currentIndex];
+            video.load();
+            tryPlay();
+        };
+
+        const playNext = () => {
+            if (isSwitching) return;
+            isSwitching = true;
+            const nextIndex = (currentIndex + 1) % playlist.length;
+
+            container.style.opacity = '0';
+            setTimeout(() => {
+                playAt(nextIndex);
+                const onReady = () => {
+                    container.style.opacity = '1';
+                    isSwitching = false;
+                    video.removeEventListener('loadeddata', onReady);
+                };
+                video.addEventListener('loadeddata', onReady);
+            }, 450);
+        };
+
+        video.addEventListener('ended', playNext);
+        video.addEventListener('loadeddata', tryPlay);
+
+        playAt(0);
+        bindNavBlur(container, navWrapper);
+    });
+}
+
+function bindNavBlur(container, navWrapper) {
+    if (!navWrapper) return;
+    navWrapper.querySelectorAll('a').forEach(link => {
+        link.addEventListener('mouseenter', () => container.style.filter = 'blur(12px)');
+        link.addEventListener('mouseleave', () => container.style.filter = 'blur(0px)');
+        link.addEventListener('focus', () => container.style.filter = 'blur(12px)');
+        link.addEventListener('blur', () => container.style.filter = 'blur(0px)');
+    });
+}
+
 // ═══════════════════════════════════════════════════════════
 // LAS NAVES – ESPACIALIDAD
 // Full-screen mosaic. Images fill 100% viewport, no gaps.
@@ -372,13 +517,5 @@ function showNavesEspacialidad(container, navWrapper) {
         }, 500);
     });
 
-    // Nav hover blur — same as original
-    if (navWrapper) {
-        navWrapper.querySelectorAll('a').forEach(link => {
-            link.addEventListener('mouseenter', () => container.style.filter = 'blur(12px)');
-            link.addEventListener('mouseleave', () => container.style.filter = 'blur(0px)');
-            link.addEventListener('focus', () => container.style.filter = 'blur(12px)');
-            link.addEventListener('blur', () => container.style.filter = 'blur(0px)');
-        });
-    }
+    bindNavBlur(container, navWrapper);
 }

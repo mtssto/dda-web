@@ -33,21 +33,27 @@
     </div>
 
     <!-- Sticky category nav -->
-    <nav class="cat-nav" id="catNav">
-        <div class="cat-nav-inner">
-            <a class="cat-pill active" href="#pasteles" data-section="pasteles">Pasteles</a>
-            <a class="cat-pill" href="#gatos" data-section="gatos">Gatos</a>
-            <a class="cat-pill" href="#paisajes" data-section="paisajes">Paisajes</a>
-            <a class="cat-pill" href="#Autorretratos" data-section="Autorretratos">Autorretratos</a>
-            <a class="cat-pill" href="#digital" data-section="digital">Digital</a>
-            <a class="cat-pill" href="#ilustraciones" data-section="ilustraciones">Ilustraciones</a>
-            <a class="cat-pill" href="#videos" data-section="videos">Videos</a>
-        </div>
-        <div class="cat-nav-right">
-            <button class="cat-lang-btn active-lang" data-lang="es" id="navLangEs">ES</button>
-            <span class="cat-lang-sep">|</span>
-            <button class="cat-lang-btn" data-lang="en" id="navLangEn">EN</button>
-            <a href="../../index.html" class="cat-close-btn">CERRAR</a>
+    <nav class="cat-nav" id="catNav" aria-label="Categorías de obras">
+        <div class="cat-nav-shell">
+            <a href="../../index.html" class="cat-nav-back">← Volver</a>
+            <div class="cat-nav-track">
+                <div class="cat-nav-inner">
+                    <a class="cat-pill active" href="#pasteles" data-section="pasteles">Pasteles</a>
+                    <a class="cat-pill" href="#gatos" data-section="gatos">Gatos</a>
+                    <a class="cat-pill" href="#paisajes" data-section="paisajes">Paisajes</a>
+                    <a class="cat-pill" href="#Autorretratos" data-section="Autorretratos">Autorretratos</a>
+                    <a class="cat-pill" href="#digital" data-section="digital">Digital</a>
+                    <a class="cat-pill" href="#ilustraciones" data-section="ilustraciones">Ilustraciones</a>
+                    <a class="cat-pill" href="#videos" data-section="videos">Videos</a>
+                </div>
+            </div>
+            <div class="cat-nav-utils">
+                <div class="lang-switcher-global" role="group" aria-label="Idioma">
+                    <a href="#" class="lang-btn" data-lang="es">ES</a>
+                    <span class="lang-sep">|</span>
+                    <a href="#" class="lang-btn" data-lang="en">EN</a>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -86,36 +92,10 @@
             </div>
         </section>
 
-        <!-- SECTION 4: VIDEOS -->
+        <!-- SECTION 4: VIDEOS (cards rendered by obras.js) -->
         <section id="videos">
             <h1 class="section-title">Videos</h1>
-            <div class="video-grid">
-                <!-- Using paths found in user's directory in 2-column grid -->
-                <div class="video-item reveal-video"><video controls="">
-                        <source src="videos/ddavideo1.mp4" type="video/mp4" />
-                    </video></div>
-                <div class="video-item reveal-video"><video controls="">
-                        <source src="videos/dda3.mp4" type="video/mp4" />
-                    </video></div>
-                <div class="video-item reveal-video"><video controls="">
-                        <source src="videos/dda4.mp4" type="video/mp4" />
-                    </video></div>
-                <div class="video-item reveal-video"><video controls="">
-                        <source src="videos/dda5.mp4" type="video/mp4" />
-                    </video></div>
-                <div class="video-item reveal-video"><video controls="">
-                        <source src="videos/dda6.mp4" type="video/mp4" />
-                    </video></div>
-                <div class="video-item reveal-video"><video controls="">
-                        <source src="videos/dda7.mp4" type="video/mp4" />
-                    </video></div>
-                <div class="video-item reveal-video"><video controls="">
-                        <source src="videos/dda8.mp4" type="video/mp4" />
-                    </video></div>
-                <div class="video-item reveal-video"><video controls="">
-                        <source src="videos/dda9.mp4" type="video/mp4" />
-                    </video></div>
-            </div>
+            <div class="video-grid" id="obrasVideoGrid"></div>
         </section>
         <!-- Modal for Image View -->
         <div class="image-modal" id="imageModal">
