@@ -42,7 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
             'elefantes.p3': 'La imaginación ilimitada tiene su contrapeso terrenal en las técnicas clásicas de dibujo y pintura, con trazos limpios y geométricos en marcador, pastel tiza y al temple, en tonos tierra, ocre y óxido.',
             'elefantes.p4': '“Aquí, lo celestial y lo carnal se unen en un bazar de pinturas rupestres extraterrestres”, describe la curadora.',
             'index.welcome_shop': 'Descubre obras originales exclusivas.',
-            'index.go_to_shop': 'IR AL SHOP'
+            'index.go_to_shop': 'IR AL SHOP',
+            'index.game_caption': 'Un juego inspirado en las obras de Diego De Aduriz',
+            'index.game_cta': 'Conocer el juego',
+            'modal.consult': 'CONSULTAR / COMPRAR'
         },
         en: {
             'nav.bio': 'ABOUT ME',
@@ -83,7 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
             'elefantes.p3': 'This boundless imagination is grounded by the counterweight of classical drawing and painting techniques, with clean, geometric strokes in marker, chalk pastel, and tempera, in earth, ochre, and rust tones.',
             'elefantes.p4': '“Here, the celestial and the carnal come together in a bazaar of extraterrestrial cave paintings,” the curator describes.',
             'index.welcome_shop': 'Discover exclusive original artworks.',
-            'index.go_to_shop': 'GO TO SHOP'
+            'index.go_to_shop': 'GO TO SHOP',
+            'index.game_caption': 'A game inspired by Diego De Aduriz\'s artworks',
+            'index.game_cta': 'Discover the game',
+            'modal.consult': 'INQUIRE / BUY'
         }
     };
 

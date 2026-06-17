@@ -23,6 +23,14 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "auth_provider", nullable = false, length = 20)
+    @Builder.Default
+    private AuthProvider authProvider = AuthProvider.LOCAL;
+
+    @Column(name = "provider_user_id", length = 255)
+    private String providerUserId;
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
     @Builder.Default
     private Role role = Role.USER;

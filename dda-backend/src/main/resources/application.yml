@@ -45,6 +45,11 @@ app:
   static:
     base-url: ${STATIC_BASE_URL:https://diegodeaduriz.art}
   public-base-url: ${PUBLIC_BASE_URL:https://dda-web-production.up.railway.app}
+  oauth:
+    google:
+      client-id: ${GOOGLE_OAUTH_CLIENT_ID:}
+    apple:
+      client-id: ${APPLE_OAUTH_CLIENT_ID:}
   admin:
     seed-enabled: ${DDA_ADMIN_SEED_ENABLED:false}
     username: ${DDA_ADMIN_USERNAME:admin}

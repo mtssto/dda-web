@@ -1,5 +1,6 @@
 package com.dda.repository;
 
+import com.dda.entity.AuthProvider;
 import com.dda.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -16,4 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);
+
+    Optional<User> findByAuthProviderAndProviderUserId(AuthProvider authProvider, String providerUserId);
 }

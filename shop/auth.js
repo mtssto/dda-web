@@ -51,6 +51,44 @@ var DDAAuth = (function () {
         }
     }
 
+    function saveOAuthSession(data, provider) {
+        saveUser(data);
+        if (typeof trackSignUp === 'function' && provider) {
+            trackSignUp(provider);
+        }
+    }
+
+    function postOAuth(path, body) {
+        return fetch(API_BASE + path, {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        }).then(function (res) {
+            return res.json().then(function (data) {
+                if (!res.ok) {
+                    throw new Error(data.message || 'No se pudo iniciar sesión');
+                }
+                return data;
+            });
+        }).then(function (data) {
+            saveUser(data);
+            return data;
+        });
+    }
+
+    function loginWithGoogle(idToken) {
+        return postOAuth('/auth/google', { idToken: idToken });
+    }
+
+    function loginWithApple(idToken, firstName, lastName) {
+        return postOAuth('/auth/apple', {
+            idToken: idToken,
+            firstName: firstName || null,
+            lastName: lastName || null
+        });
+    }
+
     function clearAuth() {
         sessionStorage.removeItem(USER_KEY);
         sessionStorage.removeItem(TOKEN_KEY);
@@ -263,6 +301,9 @@ var DDAAuth = (function () {
         authHeaders: authHeaders,
         requireAuth: requireAuth,
         requireAdmin: requireAdmin,
-        clearSession: clearSession
+        clearSession: clearSession,
+        loginWithGoogle: loginWithGoogle,
+        loginWithApple: loginWithApple,
+        saveOAuthSession: saveOAuthSession
     };
 })();

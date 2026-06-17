@@ -180,10 +180,11 @@ document.addEventListener('DOMContentLoaded', () => {
         ? '<span class="artwork-badge artwork-badge--sold">Vendida</span>'
         : '';
 
+      const safeTitle = String(product.title || '').replace(/"/g, '&quot;');
       item.innerHTML = `
         <div class="artwork-card">
-          <div class="artwork-media">
-            <img alt="${product.title}" src="${imagePath}" loading="lazy" decoding="async" />
+          <div class="artwork-media artwork-media--pending">
+            <img alt="${safeTitle}" data-src="${imagePath}" decoding="async" />
             ${soldBadge}
           </div>
         </div>
@@ -204,35 +205,47 @@ document.addEventListener('DOMContentLoaded', () => {
     setupRevealOnScroll();
   }
 
+  function loadLazyImage(img) {
+    if (!img || img.dataset.loaded === '1') return;
+    const src = img.dataset.src || img.getAttribute('data-src');
+    if (!src) return;
+    img.dataset.loaded = '1';
+
+    const media = img.closest('.artwork-media');
+    const onDone = () => {
+      img.classList.add('is-loaded');
+      if (media) media.classList.remove('artwork-media--pending');
+      img.closest('.masonry-item')?.classList.add('is-loaded');
+    };
+
+    img.addEventListener('load', onDone, { once: true });
+    img.addEventListener('error', onDone, { once: true });
+    img.src = src;
+    if (img.complete && img.naturalWidth > 0) onDone();
+  }
+
   function setupRevealOnScroll() {
     const items = document.querySelectorAll('.masonry-item.reveal-item');
     if (!items.length) return;
 
-    // Mark loaded when the image finishes loading
-    items.forEach((el) => {
-      const img = el.querySelector('img');
-      if (!img) return;
-      const markLoaded = () => el.classList.add('is-loaded');
-      if (img.complete && img.naturalWidth > 0) {
-        markLoaded();
-      } else {
-        img.addEventListener('load', markLoaded, { once: true });
-        img.addEventListener('error', () => el.classList.add('is-loaded'), { once: true });
-      }
-    });
+    const revealItem = (el) => {
+      const img = el.querySelector('img[data-src]');
+      if (img) loadLazyImage(img);
+      el.classList.add('is-visible');
+    };
 
     if (!('IntersectionObserver' in window)) {
-      items.forEach((el) => el.classList.add('is-visible'));
+      items.forEach(revealItem);
       return;
     }
 
     const io = new IntersectionObserver((entries, obs) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
-        entry.target.classList.add('is-visible');
+        revealItem(entry.target);
         obs.unobserve(entry.target);
       });
-    }, { root: null, rootMargin: '80px 0px', threshold: 0.01 });
+    }, { root: null, rootMargin: '120px 0px 80px', threshold: 0.01 });
 
     items.forEach((el) => io.observe(el));
   }
@@ -257,29 +270,130 @@ document.addEventListener('DOMContentLoaded', () => {
     sections.forEach((s) => io.observe(s));
   }
 
-  function setupVideoReveal() {
-    const items = document.querySelectorAll('#videos .video-item');
-    if (!items.length) return;
+  const OBRAS_VIDEOS = [
+    { src: 'videos/ddavideo1.mp4', title: 'Proceso creativo I' },
+    { src: 'videos/dda3.mp4', title: 'Proceso creativo II' },
+    { src: 'videos/dda4.mp4', title: 'Proceso creativo III' },
+    { src: 'videos/dda5.mp4', title: 'Proceso creativo IV' },
+    { src: 'videos/dda6.mp4', title: 'Proceso creativo V' },
+    { src: 'videos/dda7.mp4', title: 'Proceso creativo VI' },
+    { src: 'videos/dda8.mp4', title: 'Proceso creativo VII' },
+    { src: 'videos/dda9.mp4', title: 'Proceso creativo VIII' }
+  ];
 
-    items.forEach((el, i) => {
-      el.classList.add('reveal-video');
-      el.style.setProperty('--reveal-delay', Math.min(i * 90, 540) + 'ms');
+  function escapeHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function loadLazyVideo(video) {
+    if (!video || video.dataset.loaded === '1') return;
+    const src = video.dataset.src;
+    if (!src) return;
+    video.dataset.loaded = '1';
+    video.src = src;
+    video.preload = 'metadata';
+  }
+
+  function initObrasVideos() {
+    const grid = document.getElementById('obrasVideoGrid');
+    const section = document.getElementById('videos');
+    if (!grid || !OBRAS_VIDEOS.length) {
+      if (section) section.hidden = true;
+      const pill = document.querySelector('.cat-pill[data-section="videos"]');
+      if (pill) pill.hidden = true;
+      return;
+    }
+
+    let playingVideo = null;
+
+    OBRAS_VIDEOS.forEach((item, i) => {
+      const card = document.createElement('article');
+      card.className = 'video-card reveal-video';
+      card.style.setProperty('--reveal-delay', Math.min(i * 80, 480) + 'ms');
+
+      card.innerHTML =
+        '<div class="video-card__inner">' +
+          '<div class="video-card__media">' +
+            '<video class="video-card__player" playsinline preload="none" data-src="' + escapeHtml(item.src) + '"></video>' +
+            '<button type="button" class="video-card__play" aria-label="Reproducir ' + escapeHtml(item.title) + '">' +
+              '<span class="video-card__play-icon" aria-hidden="true"></span>' +
+            '</button>' +
+          '</div>' +
+          (item.title ? '<p class="video-card__title">' + escapeHtml(item.title) + '</p>' : '') +
+        '</div>';
+
+      const video = card.querySelector('video');
+      const playBtn = card.querySelector('.video-card__play');
+
+      const pauseOthers = () => {
+        grid.querySelectorAll('.video-card.is-playing').forEach((other) => {
+          if (other === card) return;
+          const v = other.querySelector('video');
+          if (v) {
+            v.pause();
+            v.controls = false;
+          }
+          other.classList.remove('is-playing');
+        });
+      };
+
+      const startPlayback = () => {
+        pauseOthers();
+        card.classList.add('is-playing');
+        video.controls = true;
+        playingVideo = video;
+        const playPromise = video.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+          playPromise.catch(() => {
+            card.classList.remove('is-playing');
+            video.controls = false;
+          });
+        }
+      };
+
+      playBtn.addEventListener('click', () => {
+        loadLazyVideo(video);
+        if (video.readyState >= 2) {
+          startPlayback();
+        } else {
+          video.addEventListener('loadeddata', startPlayback, { once: true });
+        }
+      });
+
+      video.addEventListener('ended', () => {
+        card.classList.remove('is-playing');
+        video.controls = false;
+        if (playingVideo === video) playingVideo = null;
+      });
+
+      grid.appendChild(card);
     });
 
+    const cards = grid.querySelectorAll('.video-card');
+    const revealCard = (card) => {
+      const video = card.querySelector('video[data-src]');
+      if (video) loadLazyVideo(video);
+      card.classList.add('is-visible');
+    };
+
     if (!('IntersectionObserver' in window)) {
-      items.forEach((el) => el.classList.add('is-visible'));
+      cards.forEach(revealCard);
       return;
     }
 
     const io = new IntersectionObserver((entries, obs) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
-        entry.target.classList.add('is-visible');
+        revealCard(entry.target);
         obs.unobserve(entry.target);
       });
-    }, { root: null, rootMargin: '60px 0px', threshold: 0.05 });
+    }, { root: null, rootMargin: '100px 0px', threshold: 0.08 });
 
-    items.forEach((el) => io.observe(el));
+    cards.forEach((card) => io.observe(card));
   }
 
   function getShareUrlForProduct(product) {
@@ -698,38 +812,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── Language switching ───────────────────────────────────
-  const applyLang = (lang) => {
-    // 1. Save preference
-    localStorage.setItem('preferredLanguage', lang);
-    // 2. Call i18n.js changeLanguage if available (handles data-i18n elements)
-    if (window.changeLanguage) {
-      window.changeLanguage(lang);
-    } else {
-      // Fallback: update html lang attribute and data-i18n elements manually
-      document.documentElement.lang = lang;
-    }
-    // 3. Update active state on our buttons
-    document.querySelectorAll('.cat-lang-btn').forEach(btn => {
-      btn.classList.toggle('active-lang', btn.dataset.lang === lang);
-    });
-    // 4. Update modal buy button text
-    const buyBtn = document.getElementById('modalBuyBtn');
-    if (buyBtn) {
-      buyBtn.textContent = lang === 'en' ? 'INQUIRE / BUY' : 'CONSULTAR / COMPRAR';
-    }
-  };
-
-  // Wire up buttons using data-lang attribute
-  document.querySelectorAll('.cat-lang-btn').forEach(btn => {
-    btn.addEventListener('click', () => applyLang(btn.dataset.lang));
-  });
-
-  // Apply saved language on load
-  const savedLang = localStorage.getItem('preferredLanguage') || 'es';
-  applyLang(savedLang);
-
   setupSectionReveal();
-  setupVideoReveal();
+  initObrasVideos();
 
 });

@@ -274,9 +274,27 @@ def validate_gallery() -> None:
         sys.exit(1)
 
 
+def _port_bind_help(host: str, port: int) -> None:
+    print(f"{Colors.RED}Cannot bind {host}:{port}{Colors.RESET}")
+    print("Another process is probably already using this port (often a previous dev_server.py).")
+    print(f"  Try: python dev_server.py --port {port + 1}")
+    if os.name == "nt":
+        print(f"  Find PID: netstat -ano | findstr :{port}")
+        print("  Stop it:  taskkill /F /PID <pid>")
+    else:
+        print(f"  Find PID: lsof -i :{port}")
+
+
 def run_site_server(host: str, port: int, backend_port: int) -> ThreadingHTTPServer:
     DevSiteHandler.backend_base = f"http://127.0.0.1:{backend_port}"
-    httpd = ThreadingHTTPServer((host, port), DevSiteHandler)
+    try:
+        httpd = ThreadingHTTPServer((host, port), DevSiteHandler)
+    except OSError as exc:
+        in_use = exc.errno in (98, 10048) or getattr(exc, "winerror", None) in (10048, 10013)
+        if in_use:
+            _port_bind_help(host, port)
+            sys.exit(1)
+        raise
     thread = threading.Thread(target=httpd.serve_forever, daemon=True)
     thread.start()
     return httpd

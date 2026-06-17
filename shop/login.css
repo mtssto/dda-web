@@ -156,6 +156,86 @@ body {
     background: #eee;
 }
 
+/* ── OAuth (Google / Apple) ───────────── */
+.oauth-section {
+    margin-bottom: 24px;
+}
+
+.oauth-btn-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+    min-height: 44px;
+}
+
+.oauth-btn-wrap > div {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.oauth-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.oauth-btn:hover {
+    background: var(--color-light-bg);
+    border-color: #bbb;
+}
+
+.oauth-btn--apple {
+    margin-bottom: 4px;
+}
+
+.oauth-btn__icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.oauth-btn__icon--apple {
+    background: #000;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M16.7 13.1c-.02-2.2 1.8-3.26 1.88-3.31-1.02-1.49-2.61-1.69-3.17-1.71-1.35-.14-2.64.8-3.32.8-.69 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.19-1.54 2.67-.39 6.63 1.1 8.8.73 1.06 1.6 2.25 2.74 2.21 1.1-.04 1.52-.71 2.85-.71 1.33 0 1.7.71 2.86.69 1.18-.02 1.93-1.08 2.65-2.14.83-1.22 1.18-2.39 1.2-2.45-.03-.01-2.3-.88-2.32-3.49ZM14.9 4.2c.61-.74 1.02-1.77.91-2.8-.88.04-1.95.59-2.58 1.32-.56.65-1.05 1.7-.92 2.7.97.08 1.97-.5 2.59-1.22Z'/%3E%3C/svg%3E") center / contain no-repeat;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M16.7 13.1c-.02-2.2 1.8-3.26 1.88-3.31-1.02-1.49-2.61-1.69-3.17-1.71-1.35-.14-2.64.8-3.32.8-.69 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.19-1.54 2.67-.39 6.63 1.1 8.8.73 1.06 1.6 2.25 2.74 2.21 1.1-.04 1.52-.71 2.85-.71 1.33 0 1.7.71 2.86.69 1.18-.02 1.93-1.08 2.65-2.14.83-1.22 1.18-2.39 1.2-2.45-.03-.01-2.3-.88-2.32-3.49ZM14.9 4.2c.61-.74 1.02-1.77.91-2.8-.88.04-1.95.59-2.58 1.32-.56.65-1.05 1.7-.92 2.7.97.08 1.97-.5 2.59-1.22Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.oauth-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 18px 0 0;
+    color: var(--color-subtext);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.oauth-divider::before,
+.oauth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border);
+}
+
+.oauth-divider span {
+    white-space: nowrap;
+}
+
 /* ── Hidden attribute override ────────── */
 .login-success[hidden],
 .login-error[hidden] { display: none !important; }
