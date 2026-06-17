@@ -23,6 +23,9 @@ var DDAApi = (function () {
             technique: artwork.technique || '',
             category: (artwork.category || '').toLowerCase(),
             image: imagePath || FALLBACK_IMAGE,
+            images: (artwork.images || [])
+                .map(function (img) { return img && (img.filePath || img.url || ''); })
+                .filter(Boolean),
             sold: artwork.sold || false,
             year: artwork.year || ''
         };
