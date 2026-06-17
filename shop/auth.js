@@ -58,6 +58,16 @@ var DDAAuth = (function () {
         }
     }
 
+    function parseAuthError(data, fallback) {
+        if (!data) return fallback;
+        if (data.message) return data.message;
+        if (data.errors && typeof data.errors === 'object') {
+            var firstKey = Object.keys(data.errors)[0];
+            if (firstKey && data.errors[firstKey]) return data.errors[firstKey];
+        }
+        return fallback;
+    }
+
     function postOAuth(path, body) {
         return fetch(API_BASE + path, {
             method: 'POST',
@@ -67,7 +77,7 @@ var DDAAuth = (function () {
         }).then(function (res) {
             return res.json().then(function (data) {
                 if (!res.ok) {
-                    throw new Error(data.message || 'No se pudo iniciar sesión');
+                    throw new Error(parseAuthError(data, 'No se pudo iniciar sesión'));
                 }
                 return data;
             });
@@ -129,6 +139,13 @@ var DDAAuth = (function () {
         }).then(function (res) {
             if (res.ok) {
                 return res.json().then(function (data) {
+                    if (data && data.authenticated === false) {
+                        if (!getToken()) {
+                            clearAuth();
+                            return null;
+                        }
+                        return getUser();
+                    }
                     saveUser(data);
                     return data;
                 });

@@ -51,6 +51,14 @@ public class OAuthAuthService {
             if (existingByEmail.isPresent()) {
                 User existing = existingByEmail.get();
                 if (existing.getAuthProvider() != provider) {
+                    if (existing.getAuthProvider() == AuthProvider.LOCAL) {
+                        existing.setAuthProvider(provider);
+                        existing.setProviderUserId(info.getSubject());
+                        if (info.isEmailVerified()) {
+                            existing.setEmailVerified(true);
+                        }
+                        return userRepository.save(existing);
+                    }
                     throw new IllegalArgumentException(
                             "Ya existe una cuenta con este email. Iniciá sesión con tu contraseña o el mismo proveedor.");
                 }

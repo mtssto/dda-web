@@ -111,9 +111,9 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserProfileResponse> me(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<?> me(@AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.ok(Map.of("authenticated", false));
         }
         return ResponseEntity.ok(new UserProfileResponse(
                 userDetails.getUsername(),

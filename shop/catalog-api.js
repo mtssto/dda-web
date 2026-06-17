@@ -949,4 +949,10 @@
     function escapeAttribute(value) {
         return escapeHtml(value);
     }
+
+    window.DDACatalog = {
+        getArtworkByKey: function (key) {
+            return artworkByKey.get(key) || null;
+        }
+    };
 })();

@@ -1649,13 +1649,204 @@ function closeLightBox() {
 }
 
 // PDF Generation Logic
-document.addEventListener('DOMContentLoaded', () => {
-    const btnDownloadPDF = document.getElementById('btnDownloadPDF');
-    if (btnDownloadPDF) {
+(function () {
+    const PDF_MARGIN = 12;
+    const PDF_META_RESERVE = 58;
+    const PDF_COL_GAP = 8;
+
+    function resolvePdfImageUrl(url) {
+        if (!url) return '';
+        if (typeof DDAImages !== 'undefined') {
+            const resolved = DDAImages.resolveImageUrl(url, window.location.href);
+            return DDAImages.getPdfImageUrl(resolved);
+        }
+        return url;
+    }
+
+    function imageFormatFromDataUrl(dataUrl) {
+        if (String(dataUrl).startsWith('data:image/png')) return 'PNG';
+        return 'JPEG';
+    }
+
+    async function fetchBase64(src) {
+        try {
+            const response = await fetch(src);
+            const blob = await response.blob();
+            return await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        } catch (fetchErr) {
+            return await new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.naturalWidth || img.width || 800;
+                    canvas.height = img.naturalHeight || img.height || 800;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    try { resolve(canvas.toDataURL('image/jpeg', 0.92)); }
+                    catch (e) { reject(e); }
+                };
+                img.onerror = () => reject(new Error('Image load error'));
+                img.src = src;
+            });
+        }
+    }
+
+    async function getImgDims(base64) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve({
+                w: img.naturalWidth || 800,
+                h: img.naturalHeight || 800
+            });
+            img.src = base64;
+        });
+    }
+
+    function fitInBox(imgW, imgH, boxW, boxH) {
+        const scale = Math.min(boxW / imgW, boxH / imgH);
+        return { w: imgW * scale, h: imgH * scale };
+    }
+
+    function getArtworkDataFromCard(card) {
+        const key = card.dataset.artworkKey;
+        if (key && window.DDACatalog && typeof window.DDACatalog.getArtworkByKey === 'function') {
+            const artwork = window.DDACatalog.getArtworkByKey(key);
+            if (artwork) return artwork;
+        }
+
+        const imgEl = card.querySelector('img');
+        const imgSrc = imgEl ? imgEl.src : '';
+        const fullSrc = imgEl?.dataset?.fullSrc || imgSrc;
+        return (window.products || []).find((p) => {
+            const pop = String(p.image || '').split('/').pop();
+            return pop && (imgSrc.includes(pop) || fullSrc.includes(pop));
+        }) || null;
+    }
+
+    function getArtworkImageUrls(artwork, imgEl) {
+        const toUrl = (entry) => {
+            if (!entry) return '';
+            const raw = typeof entry === 'string' ? entry : (entry.filePath || entry.url || entry.imageUrl || '');
+            return resolvePdfImageUrl(raw);
+        };
+
+        if (artwork && Array.isArray(artwork.images) && artwork.images.length > 0) {
+            const urls = artwork.images.map(toUrl).filter(Boolean);
+            if (urls.length) return urls;
+        }
+
+        const fallback = imgEl?.dataset?.fullSrc || imgEl?.src || artwork?.image || '';
+        return fallback ? [resolvePdfImageUrl(fallback)] : [];
+    }
+
+    function addWatermark(doc) {
+        const pageW = doc.internal.pageSize.getWidth();
+        const pageH = doc.internal.pageSize.getHeight();
+        doc.saveGraphicsState();
+        doc.setGState(new doc.GState({ opacity: 0.06 }));
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(72);
+        doc.setTextColor(0);
+        doc.text('dda', pageW / 2, pageH / 2, { align: 'center', angle: 45 });
+        doc.restoreGraphicsState();
+    }
+
+    async function addArtworkImages(doc, imageUrls, yPos, pageW, pageH) {
+        const contentW = pageW - PDF_MARGIN * 2;
+        const maxImgH = pageH - PDF_MARGIN * 2 - PDF_META_RESERVE;
+
+        if (imageUrls.length >= 2) {
+            const colW = (contentW - PDF_COL_GAP) / 2;
+            const frontBase64 = await fetchBase64(imageUrls[0]);
+            const backBase64 = await fetchBase64(imageUrls[1]);
+            const frontDims = await getImgDims(frontBase64);
+            const backDims = await getImgDims(backBase64);
+            const frontFit = fitInBox(frontDims.w, frontDims.h, colW, maxImgH);
+            const backFit = fitInBox(backDims.w, backDims.h, colW, maxImgH);
+            const rowH = Math.max(frontFit.h, backFit.h);
+
+            const frontX = PDF_MARGIN + (colW - frontFit.w) / 2;
+            const frontY = yPos + (rowH - frontFit.h) / 2;
+            doc.addImage(frontBase64, imageFormatFromDataUrl(frontBase64), frontX, frontY, frontFit.w, frontFit.h);
+
+            const backX = PDF_MARGIN + colW + PDF_COL_GAP + (colW - backFit.w) / 2;
+            const backY = yPos + (rowH - backFit.h) / 2;
+            doc.addImage(backBase64, imageFormatFromDataUrl(backBase64), backX, backY, backFit.w, backFit.h);
+
+            doc.setFontSize(7);
+            doc.setTextColor(180);
+            doc.text('FRENTE', PDF_MARGIN + colW / 2, yPos + rowH + 4, { align: 'center' });
+            doc.text('REVERSO', PDF_MARGIN + colW + PDF_COL_GAP + colW / 2, yPos + rowH + 4, { align: 'center' });
+
+            return yPos + rowH + 10;
+        }
+
+        const frontBase64 = await fetchBase64(imageUrls[0]);
+        const frontDims = await getImgDims(frontBase64);
+        const fit = fitInBox(frontDims.w, frontDims.h, contentW, maxImgH);
+        const xOffset = PDF_MARGIN + (contentW - fit.w) / 2;
+        doc.addImage(frontBase64, imageFormatFromDataUrl(frontBase64), xOffset, yPos, fit.w, fit.h);
+        return yPos + fit.h + 8;
+    }
+
+    function addArtworkMeta(doc, title, price, productData, yPos, pageW) {
+        const margin = PDF_MARGIN;
+        const textW = pageW - margin * 2;
+
+        doc.setFontSize(15);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(0);
+        doc.text(title, margin, yPos);
+        yPos += 8;
+
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(90);
+
+        if (productData) {
+            if (productData.technique) {
+                doc.text(`Técnica: ${productData.technique}`, margin, yPos);
+                yPos += 5;
+            }
+            if (productData.dimensions) {
+                doc.text(`Dimensiones: ${productData.dimensions}`, margin, yPos);
+                yPos += 5;
+            }
+            if (productData.year && productData.year !== 'Consultar año') {
+                doc.text(String(productData.year), margin, yPos);
+                yPos += 5;
+            }
+            if (productData.description) {
+                yPos += 2;
+                doc.setFontSize(9);
+                doc.setTextColor(70);
+                doc.setFont('helvetica', 'italic');
+                const plainDesc = String(productData.description).replace(/<[^>]*>/g, '');
+                const descLines = doc.splitTextToSize(plainDesc, textW);
+                doc.text(descLines, margin, yPos);
+                yPos += descLines.length * 4.5 + 3;
+            }
+        }
+
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(0);
+        doc.text(`Precio: ${price}`, margin, yPos + 2);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const btnDownloadPDF = document.getElementById('btnDownloadPDF');
+        if (!btnDownloadPDF) return;
+
         btnDownloadPDF.addEventListener('click', async (e) => {
             e.preventDefault();
 
-            // Show loading state
             const originalText = btnDownloadPDF.innerHTML;
             btnDownloadPDF.innerHTML = 'Generando PDF...';
             btnDownloadPDF.style.opacity = '0.7';
@@ -1664,218 +1855,71 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
+                const pageW = doc.internal.pageSize.getWidth();
+                const pageH = doc.internal.pageSize.getHeight();
 
-                // Title
-                doc.setFont("helvetica", "bold");
+                doc.setFont('helvetica', 'bold');
                 doc.setFontSize(22);
-                doc.text("Catálogo - Diego De Aduriz", 14, 20);
+                doc.text('Catálogo - Diego De Aduriz', PDF_MARGIN, 20);
 
-                // Subtitle
-                doc.setFont("helvetica", "normal");
+                doc.setFont('helvetica', 'normal');
                 doc.setFontSize(12);
                 doc.setTextColor(100);
                 const date = new Date().toLocaleDateString('es-AR');
-                doc.text(`Generado el ${date}`, 14, 28);
-
+                doc.text(`Generado el ${date}`, PDF_MARGIN, 28);
                 doc.setTextColor(0);
-
-                // Watermark function
-                function addWatermark(doc) {
-                    const pageW = doc.internal.pageSize.getWidth();
-                    const pageH = doc.internal.pageSize.getHeight();
-                    doc.saveGraphicsState();
-                    doc.setGState(new doc.GState({ opacity: 0.06 }));
-                    doc.setFont("helvetica", "bold");
-                    doc.setFontSize(72);
-                    doc.setTextColor(0);
-                    doc.text("dda", pageW / 2, pageH / 2, { align: "center", angle: 45 });
-                    doc.restoreGraphicsState();
-                }
-
-                // Apply watermark to first page
                 addWatermark(doc);
 
-                // Get visible products
-                const visibleCards = Array.from(document.querySelectorAll('.product-card')).filter(card => card.style.display !== 'none');
+                const visibleCards = Array.from(document.querySelectorAll('.product-card')).filter((card) => {
+                    if (card.style.display === 'none') return false;
+                    if (card.classList.contains('hidden')) return false;
+                    return card.offsetParent !== null || card.classList.contains('is-visible');
+                });
 
                 if (visibleCards.length === 0) {
-                    alert("No hay productos visibles para incluir en el catálogo.");
+                    alert('No hay productos visibles para incluir en el catálogo.');
                     return;
                 }
 
-                let yPos = 40;
-                const pageHeight = doc.internal.pageSize.getHeight();
-
                 for (let i = 0; i < visibleCards.length; i++) {
                     const card = visibleCards[i];
-
-                    // Check if we need a new page
-                    if (yPos > pageHeight - 60) {
-                        doc.addPage();
-                        yPos = 20;
-                    }
-
-                    const title = card.querySelector('.product-title').innerText;
+                    const imgEl = card.querySelector('img');
+                    const title = card.querySelector('.product-title')?.innerText || 'Obra sin título';
                     const priceEl = card.querySelector('.product-price');
                     const price = priceEl ? priceEl.innerText : 'Consultar';
-                    const imgSrc = card.querySelector('img').src;
+                    const productData = getArtworkDataFromCard(card);
+                    const imageUrls = getArtworkImageUrls(productData, imgEl);
 
-                    // Find product data from global array
-                    const productData = (window.products || []).find(p => imgSrc.includes(p.image.split('/').pop()));
-
-                    // Helper: fetch image as base64
-                    async function fetchBase64(src) {
-                        try {
-                            const response = await fetch(src);
-                            const blob = await response.blob();
-                            return await new Promise((resolve, reject) => {
-                                const reader = new FileReader();
-                                reader.onloadend = () => resolve(reader.result);
-                                reader.onerror = reject;
-                                reader.readAsDataURL(blob);
-                            });
-                        } catch (fetchErr) {
-                            return await new Promise((resolve, reject) => {
-                                const img = new Image();
-                                img.onload = () => {
-                                    const canvas = document.createElement('canvas');
-                                    canvas.width = img.width || 800;
-                                    canvas.height = img.height || 800;
-                                    const ctx = canvas.getContext('2d');
-                                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                                    try { resolve(canvas.toDataURL('image/jpeg', 0.8)); }
-                                    catch (e) { reject(e); }
-                                };
-                                img.onerror = () => reject('Image load error');
-                                img.src = src;
-                            });
-                        }
-                    }
-
-                    // Helper: get image natural dimensions from base64
-                    async function getImgDims(base64) {
-                        return new Promise(r => {
-                            const img = new Image();
-                            img.onload = () => r({ w: img.naturalWidth || 800, h: img.naturalHeight || 800 });
-                            img.src = base64;
-                        });
-                    }
-
-                    // Helper: fit image into a box preserving aspect ratio, returns {w, h}
-                    function fitInBox(imgW, imgH, boxW, boxH) {
-                        if (imgW / imgH > boxW / boxH) {
-                            return { w: boxW, h: (imgH / imgW) * boxW };
-                        } else {
-                            return { w: (imgW / imgH) * boxH, h: boxH };
-                        }
-                    }
-
-                    const hasBack = productData && productData.images && productData.images.length > 1;
-                    const margin = 20;
-                    const pageW = 210;
-                    const maxImgH = 150;
-
-                    if (hasBack) {
-                        // Side by side: each image gets half the page width minus margins
-                        const colW = (pageW - margin * 2 - 8) / 2; // 8px gap between
-                        try {
-                            const frontBase64 = await fetchBase64(productData.images[0]);
-                            const backBase64 = await fetchBase64(productData.images[1]);
-                            const frontDims = await getImgDims(frontBase64);
-                            const backDims = await getImgDims(backBase64);
-                            const frontFit = fitInBox(frontDims.w, frontDims.h, colW, maxImgH);
-                            const backFit = fitInBox(backDims.w, backDims.h, colW, maxImgH);
-                            const rowH = Math.max(frontFit.h, backFit.h);
-
-                            // Front image — left column, centered vertically
-                            const frontX = margin + (colW - frontFit.w) / 2;
-                            const frontY = yPos + (rowH - frontFit.h) / 2;
-                            doc.addImage(frontBase64, 'JPEG', frontX, frontY, frontFit.w, frontFit.h);
-
-                            // Back image — right column, centered vertically
-                            const backX = margin + colW + 8 + (colW - backFit.w) / 2;
-                            const backY = yPos + (rowH - backFit.h) / 2;
-                            doc.addImage(backBase64, 'JPEG', backX, backY, backFit.w, backFit.h);
-
-                            // Labels below images
-                            doc.setFontSize(7);
-                            doc.setTextColor(180);
-                            doc.text('FRENTE', margin + colW / 2, yPos + rowH + 5, { align: 'center' });
-                            doc.text('REVERSO', margin + colW + 8 + colW / 2, yPos + rowH + 5, { align: 'center' });
-
-                            yPos += rowH + 10;
-                        } catch (e) {
-                            console.warn('Error adding side-by-side images', e);
-                            yPos += 10;
-                        }
-                    } else {
-                        // Single image centered
-                        try {
-                            const frontBase64 = await fetchBase64(imgSrc);
-                            const frontDims = await getImgDims(frontBase64);
-                            const fit = fitInBox(frontDims.w, frontDims.h, 170, maxImgH);
-                            const xOffset = margin + (170 - fit.w) / 2;
-                            doc.addImage(frontBase64, 'JPEG', xOffset, yPos, fit.w, fit.h);
-                            yPos += fit.h + 10;
-                        } catch (e) {
-                            console.warn('Could not add image to PDF', e);
-                            doc.setDrawColor(200);
-                            doc.rect(margin, yPos, 170, 80);
-                            doc.setFontSize(10);
-                            doc.text("Sin imagen", 105, yPos + 40, { align: "center" });
-                            yPos += 90;
-                        }
-                    }
-
-                    // Text info
-                    if (yPos > pageHeight - 60) { doc.addPage(); yPos = 20; addWatermark(doc); }
-                    doc.setFontSize(15);
-                    doc.setFont("helvetica", "bold");
-                    doc.setTextColor(0);
-                    doc.text(title, margin, yPos);
-                    yPos += 8;
-
-                    doc.setFontSize(10);
-                    doc.setFont("helvetica", "normal");
-                    doc.setTextColor(90);
-                    if (productData) {
-                        if (productData.technique) { doc.text(`Técnica: ${productData.technique}`, margin, yPos); yPos += 5; }
-                        if (productData.dimensions) { doc.text(`Dimensiones: ${productData.dimensions}`, margin, yPos); yPos += 5; }
-                        if (productData.year && productData.year !== "Consultar año") { doc.text(productData.year, margin, yPos); yPos += 5; }
-                        if (productData.description) {
-                            yPos += 2;
-                            doc.setFontSize(9);
-                            doc.setTextColor(70);
-                            doc.setFont("helvetica", "italic");
-                            const plainDesc = productData.description.replace(/<[^>]*>/g, ""); const descLines = doc.splitTextToSize(plainDesc, 170);
-                            doc.text(descLines, margin, yPos);
-                            yPos += descLines.length * 4.5 + 3;
-                        }
-                    }
-
-                    doc.setFontSize(12);
-                    doc.setFont("helvetica", "bold");
-                    doc.setTextColor(0);
-                    doc.text(`Precio: ${price}`, margin, yPos + 2);
-
-                    // New page for next product + watermark
                     doc.addPage();
                     addWatermark(doc);
-                    yPos = 20;
+
+                    let yPos = PDF_MARGIN;
+
+                    if (imageUrls.length > 0) {
+                        try {
+                            yPos = await addArtworkImages(doc, imageUrls, yPos, pageW, pageH);
+                        } catch (err) {
+                            console.warn('Could not add image to PDF', err);
+                            doc.setDrawColor(200);
+                            doc.rect(PDF_MARGIN, yPos, pageW - PDF_MARGIN * 2, 40);
+                            doc.setFontSize(10);
+                            doc.text('Sin imagen', pageW / 2, yPos + 22, { align: 'center' });
+                            yPos += 48;
+                        }
+                    }
+
+                    addArtworkMeta(doc, title, price, productData, yPos, pageW);
                 }
 
-                // Save the PDF
-                doc.save("Catalogo_DiegoDeAduriz.pdf");
-
+                doc.save('Catalogo_DiegoDeAduriz.pdf');
             } catch (error) {
-                console.error("PDF Generation Error:", error);
-                alert("Hubo un error al generar el PDF. Por favor, intenta de nuevo.");
+                console.error('PDF Generation Error:', error);
+                alert('Hubo un error al generar el PDF. Por favor, intenta de nuevo.');
             } finally {
-                // Restore button
                 btnDownloadPDF.innerHTML = originalText;
                 btnDownloadPDF.style.opacity = '1';
                 btnDownloadPDF.disabled = false;
             }
         });
-    }
-});
+    });
+})();

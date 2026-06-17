@@ -4,6 +4,7 @@
 var DDAOAuthLogin = (function () {
     'use strict';
 
+    var APPLE_LOGIN_ENABLED = false;
     var config = { googleClientId: '', appleClientId: '' };
     var initialized = false;
 
@@ -58,7 +59,9 @@ var DDAOAuthLogin = (function () {
             client_id: config.googleClientId,
             callback: handleGoogleCredential,
             auto_select: false,
-            cancel_on_tap_outside: true
+            cancel_on_tap_outside: true,
+            context: 'signin',
+            use_fedcm_for_prompt: false
         });
 
         google.accounts.id.renderButton(mount, {
@@ -68,7 +71,11 @@ var DDAOAuthLogin = (function () {
             text: 'continue_with',
             shape: 'rectangular',
             logo_alignment: 'left',
-            width: Math.min(360, mount.offsetWidth || 320)
+            width: Math.min(360, mount.offsetWidth || 320),
+            click_listener: function () {
+                var errorBox = document.getElementById('loginError');
+                if (errorBox) errorBox.hidden = true;
+            }
         });
     }
 
@@ -173,7 +180,7 @@ var DDAOAuthLogin = (function () {
 
             var section = document.getElementById('oauthSection');
             var hasGoogle = !!config.googleClientId;
-            var hasApple = !!config.appleClientId;
+            var hasApple = APPLE_LOGIN_ENABLED && !!config.appleClientId;
 
             if (!hasGoogle && !hasApple) {
                 if (section) section.hidden = true;

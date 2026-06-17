@@ -151,6 +151,7 @@ var DDAImages = (function () {
         getCardSrcset: getCardSrcset,
         getCardImageUrl: function (url) { return getTransformedUrl(url, 700); },
         getDetailImageUrl: function (url) { return getTransformedUrl(url, 1200); },
+        getPdfImageUrl: function (url) { return getTransformedUrl(url, 2000); },
         getThumbImageUrl: function (url) { return getTransformedUrl(url, 120); },
         resolveImageUrl: resolveImageUrl,
         pictureHtml: pictureHtml,
