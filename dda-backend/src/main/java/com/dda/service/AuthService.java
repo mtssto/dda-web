@@ -3,6 +3,7 @@ package com.dda.service;
 import com.dda.dto.AuthResponse;
 import com.dda.dto.LoginRequest;
 import com.dda.dto.RegisterRequest;
+import com.dda.entity.AuthProvider;
 import com.dda.entity.User;
 import com.dda.repository.UserRepository;
 import com.dda.security.JwtTokenProvider;
@@ -72,6 +73,7 @@ public class AuthService {
                     .username(request.getUsername())
                     .email(request.getEmail())
                     .password(passwordEncoder.encode(request.getPassword()))
+                    .authProvider(AuthProvider.LOCAL)
                     .role(isFirstUser ? User.Role.ADMIN : User.Role.USER)
                     .emailVerified(true)
                     .build();
@@ -95,6 +97,7 @@ public class AuthService {
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .authProvider(AuthProvider.LOCAL)
                 .role(isFirstUser ? User.Role.ADMIN : User.Role.USER)
                 .emailVerified(false)
                 .verificationToken(verificationToken)

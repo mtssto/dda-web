@@ -2,11 +2,18 @@ package com.dda.controller;
 
 import com.dda.dto.AuthResponse;
 import com.dda.dto.LoginRequest;
+import com.dda.dto.OAuthConfigResponse;
+import com.dda.dto.OAuthLoginRequest;
 import com.dda.dto.RegisterRequest;
 import com.dda.dto.UserProfileResponse;
+import com.dda.entity.AuthProvider;
 import com.dda.security.AuthCookieService;
 import com.dda.security.CustomUserDetails;
 import com.dda.service.AuthService;
+import com.dda.service.oauth.AppleTokenVerifier;
+import com.dda.service.oauth.GoogleTokenVerifier;
+import com.dda.service.oauth.OAuthAuthService;
+import com.dda.service.oauth.OAuthUserInfo;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +34,56 @@ public class AuthController {
 
     private final AuthService authService;
     private final AuthCookieService authCookieService;
+    private final GoogleTokenVerifier googleTokenVerifier;
+    private final AppleTokenVerifier appleTokenVerifier;
+    private final OAuthAuthService oauthAuthService;
 
     @Value("${app.static.base-url:https://diegodeaduriz.art}")
     private String staticBaseUrl;
+
+    @Value("${app.oauth.google.client-id:}")
+    private String googleClientId;
+
+    @Value("${app.oauth.apple.client-id:}")
+    private String appleClientId;
+
+    @GetMapping("/oauth-config")
+    public ResponseEntity<OAuthConfigResponse> oauthConfig() {
+        return ResponseEntity.ok(OAuthConfigResponse.builder()
+                .googleClientId(googleClientId == null ? "" : googleClientId.trim())
+                .appleClientId(appleClientId == null ? "" : appleClientId.trim())
+                .build());
+    }
+
+    @PostMapping("/google")
+    public ResponseEntity<?> loginWithGoogle(@Valid @RequestBody OAuthLoginRequest request,
+                                             HttpServletResponse response) {
+        try {
+            OAuthUserInfo info = googleTokenVerifier.verify(request.getIdToken());
+            AuthResponse authResponse = oauthAuthService.loginWithProvider(AuthProvider.GOOGLE, info, null, null);
+            authCookieService.setAuthCookie(response, authResponse.getToken());
+            return ResponseEntity.ok(toPublicResponse(authResponse));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/apple")
+    public ResponseEntity<?> loginWithApple(@Valid @RequestBody OAuthLoginRequest request,
+                                            HttpServletResponse response) {
+        try {
+            OAuthUserInfo info = appleTokenVerifier.verify(request.getIdToken());
+            AuthResponse authResponse = oauthAuthService.loginWithProvider(
+                    AuthProvider.APPLE,
+                    info,
+                    request.getFirstName(),
+                    request.getLastName());
+            authCookieService.setAuthCookie(response, authResponse.getToken());
+            return ResponseEntity.ok(toPublicResponse(authResponse));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
