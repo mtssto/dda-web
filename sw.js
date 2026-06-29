@@ -1,4 +1,4 @@
-var CACHE_NAME = 'dda-v1';
+var CACHE_NAME = 'dda-v2';
 
 var PRECACHE_URLS = [
     '/',
@@ -40,6 +40,12 @@ self.addEventListener('fetch', function (event) {
     var url = new URL(event.request.url);
 
     if (url.pathname.startsWith('/api/')) return;
+
+    // Shop JS changes often — never serve a stale cached bundle.
+    if (url.pathname.indexOf('/shop/') === 0 && /\.js$/i.test(url.pathname)) {
+        event.respondWith(fetch(event.request));
+        return;
+    }
 
     event.respondWith(
         fetch(event.request).then(function (response) {

@@ -347,7 +347,6 @@
         const sold = modalArtwork.sold === true;
         const fullImageUrl = modalArtwork.image;
         const cardImageUrl = getCatalogCardImageUrl(fullImageUrl);
-        const cardSrcset = getCatalogCardSrcset(fullImageUrl);
         const isInitialPriorityImage = currentPage === 0 && indexInPage < 4;
         const imageLoading = isInitialPriorityImage ? 'eager' : 'lazy';
         const imageFetchPriority = isInitialPriorityImage ? 'high' : 'auto';
@@ -421,8 +420,6 @@
 
                     <img
                         src="${escapeAttribute(cardImageUrl)}"
-                        ${cardSrcset ? `srcset="${escapeAttribute(cardSrcset)}"` : ''}
-                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 420px"
                         data-full-src="${escapeAttribute(fullImageUrl)}"
                         alt="${escapeAttribute(title)}"
                         loading="${imageLoading}"

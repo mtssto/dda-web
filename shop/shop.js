@@ -225,6 +225,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         renderCarouselSections();
 
+        scheduleShopSectionNavUpdate();
+
         const gridParams = document.getElementById('productsGrid');
         if (gridParams) {
             renderGrid(window.products || []);
@@ -892,17 +894,22 @@ document.addEventListener('DOMContentLoaded', function () {
             }).slice(0, 5);
 
             if (matches.length === 0) {
-                dropdown.classList.remove('open');
-                dropdown.innerHTML = '';
+                var emptyMsg = (window.pageTranslations && window.pageTranslations[localStorage.getItem('preferredLanguage') || 'es'])
+                    ? window.pageTranslations[localStorage.getItem('preferredLanguage') || 'es']['shop.search_empty']
+                    : 'No se encontraron obras';
+                dropdown.innerHTML = '<div class="search-dropdown-empty">' + escapeHtmlAttr(emptyMsg || 'No se encontraron obras') + '</div>';
+                dropdown.classList.add('open');
                 return;
             }
             dropdown.innerHTML = matches.map(function (p) {
-                var webpSrc = toWebP(p.image);
-                return '<div class="search-dropdown-item" data-id="' + p.id + '">' +
-                    '<img src="' + webpSrc + '" alt="' + p.title + '">' +
+                var thumbSrc = getSearchThumbUrl(p.image);
+                return '<div class="search-dropdown-item" data-id="' + escapeAttributeValue(p.id) + '">' +
+                    '<img src="' + escapeHtmlAttr(thumbSrc) + '" alt="" loading="lazy" decoding="async">' +
                     '<div class="search-item-info">' +
-                        '<div class="search-item-title">' + p.title + '</div>' +
-                        '<div class="search-item-meta">' + (p.technique || '') + (p.year && p.year !== 'Consultar año' && p.year !== 'a confirmar' ? ' · ' + p.year : '') + '</div>' +
+                        '<div class="search-item-title">' + escapeHtmlAttr(p.title) + '</div>' +
+                        '<div class="search-item-meta">' + escapeHtmlAttr(p.technique || '') +
+                            (p.year && p.year !== 'Consultar año' && p.year !== 'a confirmar' ? ' · ' + p.year : '') +
+                        '</div>' +
                     '</div>' +
                 '</div>';
             }).join('') +
@@ -949,8 +956,14 @@ document.addEventListener('DOMContentLoaded', function () {
             el.className = 'rv-card';
             el.href = 'obra.html?id=' + encodeURIComponent(item.id);
             var imgSrc = item.image || '';
+            if (typeof DDAImages !== 'undefined' && imgSrc) {
+                var resolvedRv = DDAImages.resolveImageUrl(imgSrc, window.location.href);
+                imgSrc = DDAImages.isCloudinaryUrl(resolvedRv)
+                    ? DDAImages.getThumbImageUrl(resolvedRv)
+                    : resolvedRv;
+            }
             el.innerHTML =
-                '<div class="rv-img"><img src="' + imgSrc + '" alt="' + (item.title || '').replace(/"/g, '&quot;') + '" loading="lazy"></div>' +
+                '<div class="rv-img"><img src="' + escapeHtmlAttr(imgSrc) + '" alt="' + escapeHtmlAttr(item.title || '') + '" loading="lazy"></div>' +
                 '<div class="rv-title">' + (item.title || '') + '</div>';
             track.appendChild(el);
         });
@@ -1026,6 +1039,119 @@ function toWebP(src) {
     return src.replace(/\.(png|jpe?g)$/i, '.webp');
 }
 
+function escapeHtmlAttr(value) {
+    if (typeof DDAImages !== 'undefined' && DDAImages.escapeHtmlAttr) {
+        return DDAImages.escapeHtmlAttr(value);
+    }
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+function formatShopPriceHtml(price) {
+    var value = String(price || '').trim();
+    if (!value || value.toLowerCase() === 'consultar') {
+        return '<span class="product-price product-price--consult">Consultar</span>' +
+            '<span class="product-price-hint" data-i18n="card.price_hint">Consultá precio y envío</span>';
+    }
+    return '<span class="product-price">' + escapeHtmlAttr(value) + '</span>';
+}
+
+function getSearchThumbUrl(image) {
+    if (typeof DDAImages !== 'undefined') {
+        var resolved = DDAImages.resolveImageUrl(image, window.location.href);
+        if (DDAImages.isCloudinaryUrl(resolved)) {
+            return DDAImages.getThumbImageUrl(resolved);
+        }
+        return resolved;
+    }
+    return image || '';
+}
+
+var _shopSectionNavTimer = null;
+var _shopSectionNavObserver = null;
+
+function updateShopSectionNav() {
+    var nav = document.getElementById('shopSectionNav');
+    var inner = document.getElementById('shopSectionNavInner');
+    if (!nav || !inner) return;
+
+    var sections = document.querySelectorAll('.shop-carousel-section[id^="shop-section-"]');
+    inner.innerHTML = '';
+
+    if (!sections.length) {
+        nav.hidden = true;
+        return;
+    }
+
+    sections.forEach(function (sectionEl) {
+        var label = sectionEl.querySelector('.featured-label');
+        if (!label) return;
+        var link = document.createElement('a');
+        link.className = 'shop-section-nav__link';
+        link.href = '#' + sectionEl.id;
+        link.textContent = label.textContent.trim();
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            sectionEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        inner.appendChild(link);
+    });
+
+    var catalogLink = document.createElement('a');
+    catalogLink.className = 'shop-section-nav__link shop-section-nav__link--catalog';
+    catalogLink.href = 'catalog.html';
+    catalogLink.setAttribute('data-i18n', 'shop.nav_catalog');
+    catalogLink.textContent = 'Catálogo';
+    inner.appendChild(catalogLink);
+
+    nav.hidden = false;
+
+    if (window.updatePageTranslations) {
+        window.updatePageTranslations();
+    }
+
+    initShopSectionNavSpy();
+}
+
+function initShopSectionNavSpy() {
+    if (!('IntersectionObserver' in window)) return;
+
+    if (_shopSectionNavObserver) {
+        _shopSectionNavObserver.disconnect();
+        _shopSectionNavObserver = null;
+    }
+
+    var links = document.querySelectorAll('.shop-section-nav__link[href^="#"]');
+    if (!links.length) return;
+
+    _shopSectionNavObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            var id = entry.target.id;
+            document.querySelectorAll('.shop-section-nav__link[href^="#"]').forEach(function (link) {
+                link.classList.toggle('is-active', link.getAttribute('href') === '#' + id);
+            });
+        });
+    }, {
+        rootMargin: '-40% 0px -45% 0px',
+        threshold: 0
+    });
+
+    document.querySelectorAll('.shop-carousel-section[id^="shop-section-"]').forEach(function (section) {
+        _shopSectionNavObserver.observe(section);
+    });
+}
+
+function scheduleShopSectionNavUpdate() {
+    if (_shopSectionNavTimer) {
+        window.clearTimeout(_shopSectionNavTimer);
+    }
+    _shopSectionNavTimer = window.setTimeout(updateShopSectionNav, 80);
+}
+
 function encodeSrcset(url) {
     if (typeof DDAImages !== 'undefined' && DDAImages.encodeUrlSpaces) {
         return DDAImages.encodeUrlSpaces(url);
@@ -1044,23 +1170,32 @@ function escapeHtmlAttr(value) {
         .replace(/>/g, '&gt;');
 }
 
-/** Carousel cards: single optimized Cloudinary URL (no srcset) — avoids responsive parse issues at small sizes. */
+/** Carousel / grid cards: single optimized Cloudinary URL (no srcset). */
 function carouselImageHtml(src, alt, extra) {
-    var attrs = extra || '';
-
-    if (typeof DDAImages !== 'undefined') {
-        var resolved = DDAImages.resolveImageUrl(src, window.location.href);
-        var imgSrc = DDAImages.isCloudinaryUrl(resolved)
-            ? DDAImages.getCardImageUrl(resolved)
-            : resolved;
-
-        if (attrs.indexOf('loading=') === -1) attrs += ' loading="lazy"';
-        if (attrs.indexOf('decoding=') === -1) attrs += ' decoding="async"';
-
-        return '<img src="' + escapeHtmlAttr(encodeSrcset(imgSrc)) + '" alt="' + escapeHtmlAttr(alt) + '"' + attrs + '>';
+    if (typeof DDAImages !== 'undefined' && DDAImages.cardImageHtml) {
+        return DDAImages.cardImageHtml(src, alt, extra);
     }
-
     return pictureTag(src, alt, extra);
+}
+
+function getShopCardImageHtml(product, richAlt) {
+    if (typeof DDAImages !== 'undefined' && DDAImages.cardImageHtml) {
+        return DDAImages.cardImageHtml(
+            product.image,
+            richAlt,
+            ' loading="lazy" decoding="async"'
+        );
+    }
+    return '<picture>' +
+        '<source srcset="' + escapeHtmlAttr(encodeSrcset(toWebP(product.image))) + '" type="image/webp">' +
+        '<img src="' + escapeHtmlAttr(encodeSrcset(product.image || '')) + '" alt="' + escapeHtmlAttr(richAlt) + '" loading="lazy" decoding="async">' +
+    '</picture>';
+}
+
+function repairShopImages(root) {
+    if (typeof DDAImages !== 'undefined' && DDAImages.repairBrokenImages) {
+        DDAImages.repairBrokenImages(root);
+    }
 }
 
 function pictureTag(src, alt, extra) {
@@ -1241,6 +1376,7 @@ function renderCarouselSections() {
 
         var sectionEl = document.createElement('section');
         sectionEl.className = 'shop-hero-vertical shop-carousel-section';
+        sectionEl.id = 'shop-section-' + (section.id || String(sIdx));
         if (isHeroFeatured) {
             sectionEl.classList.add('shop-carousel-section--hero');
         } else if (sIdx > 0) {
@@ -1312,8 +1448,8 @@ function renderCarouselSections() {
                     carouselImageHtml(product.image, carouselAlt, imageAttrs) +
                 '</div>' +
                 '<div class="product-info">' +
-                    '<h3 class="product-title">' + product.title + '</h3>' +
-                    '<p class="product-price">' + product.price + '</p>' +
+                    '<h3 class="product-title">' + escapeHtmlAttr(product.title) + '</h3>' +
+                    formatShopPriceHtml(product.price) +
                     '<div class="product-actions-grid">' +
                         '<button class="btn-grid-action btn-grid-details">' +
                             '<span class="btn-icon" aria-hidden="true">' + eyeSvg + '</span>' +
@@ -1379,6 +1515,8 @@ function renderCarouselSections() {
         bindMiniCarouselControls(miniContainer);
 
         if (window.updatePageTranslations) window.updatePageTranslations();
+        scheduleShopSectionNavUpdate();
+        repairShopImages(sectionEl);
     }
 
     window.carouselSections.forEach(function (section, sIdx) {
@@ -1404,6 +1542,11 @@ function renderCarouselSections() {
             window.setTimeout(renderSection, SHOP_DEFER_SECTION_RENDER_MS * sIdx);
         }
     });
+
+    window.setTimeout(function () {
+        repairShopImages(document.getElementById('shopHeroFeatured'));
+        repairShopImages(document.getElementById('carouselSectionsContainer'));
+    }, 2000);
 }
 
 function bindMiniCarouselControls(container) {
@@ -1510,10 +1653,7 @@ function renderGrid(items) {
             <div class="product-image loading">
                 <div class="skeleton-shimmer"></div>
                 <button class="btn-wishlist${isWished ? ' active' : ''}" data-product-id="${escapeAttributeValue(productWishlistId)}" aria-label="Agregar a favoritos">${heartSvg}</button>
-                <picture>
-                    <source srcset="${encodeSrcset(toWebP(product.image))}" type="image/webp">
-                    <img src="${product.image}" alt="${richAlt}" loading="lazy" decoding="async">
-                </picture>
+                ${getShopCardImageHtml(product, richAlt)}
                 ${overlayHTML}
             </div>
             <div class="product-info">
