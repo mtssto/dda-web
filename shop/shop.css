@@ -2,12 +2,26 @@
 :root {
     --font-heading: 'Playfair Display', serif;
     --font-body: 'Inter', sans-serif;
-    --color-text: #1a1a1a;
+    --color-text: #111;
     --color-subtext: #666;
+    --color-muted: #888;
     --color-accent: #000;
     --color-bg: #fff;
     --color-light-bg: #f8f8f8;
+    --color-border: #e5e5e5;
     --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 body {
@@ -149,8 +163,8 @@ body.no-scroll {
 }
 
 .product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
 .product-image {
@@ -739,6 +753,24 @@ footer p {
 }
 
 /* --- Vertical Shop Hero (Landing) --- */
+.shop-hero-featured {
+    width: 100%;
+    padding: 4px 0 0;
+}
+
+.shop-hero-featured .shop-carousel-section--hero {
+    padding: 0 0 12px;
+}
+
+.shop-hero-featured .carousel-container-mini {
+    padding: 0 clamp(12px, 4vw, 48px);
+}
+
+.shop-hero-featured .carousel-card {
+    flex: 0 0 min(72vw, 300px);
+    scroll-snap-align: start;
+}
+
 .shop-hero-vertical {
     display: flex;
     flex-direction: column;
@@ -747,6 +779,27 @@ footer p {
     text-align: center;
     padding: 24px 20px 32px;
     gap: 28px;
+}
+
+.shop-hero-vertical--compact {
+    padding: 12px 20px 28px;
+    gap: 0;
+}
+
+.shop-hero-vertical--compact .hero-eyebrow {
+    margin-bottom: 12px;
+}
+
+.shop-hero-vertical--compact .shop-hero-h1 {
+    margin-bottom: 18px;
+}
+
+.shop-hero-vertical--compact .hero-actions {
+    margin-bottom: 20px;
+}
+
+.shop-hero-vertical--compact .shop-search-wrapper {
+    margin-top: 0;
 }
 
 .hero-header {
@@ -767,7 +820,7 @@ footer p {
     font-size: 0.68rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: #bbb;
+    color: var(--color-muted);
     margin: 0 0 22px;
 }
 
@@ -775,8 +828,20 @@ footer p {
     flex: 1;
     max-width: 60px;
     height: 1px;
-    background: #ddd;
+    background: var(--color-border);
     display: block;
+}
+
+.shop-hero-h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(1.15rem, 2.8vw, 1.45rem);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--color-text);
+    letter-spacing: 0.03em;
+    line-height: 1.35;
+    margin: 0 0 20px;
+    max-width: 28ch;
 }
 
 /* Title */
@@ -789,7 +854,7 @@ footer p {
 /* Subtitle */
 .shop-hero-vertical .shop-subtitle {
     font-size: 0.78rem;
-    color: #aaa;
+    color: var(--color-subtext);
     letter-spacing: 0.22em;
     margin: 0 0 36px;
 }
@@ -815,7 +880,13 @@ footer p {
     text-transform: uppercase;
     text-decoration: none;
     padding: 16px 36px;
+    border-radius: 2px;
     transition: background 0.22s, gap 0.22s;
+}
+
+.hero-catalog-btn:focus-visible {
+    outline: 2px solid #111;
+    outline-offset: 3px;
 }
 
 .hero-catalog-btn svg {
@@ -837,7 +908,7 @@ footer p {
     font-family: var(--font-body);
     font-size: 0.68rem;
     letter-spacing: 0.1em;
-    color: #bbb;
+    color: var(--color-muted);
     text-transform: uppercase;
 }
 
@@ -872,7 +943,7 @@ footer p {
     margin-bottom: 30px;
     font-size: 0.9rem;
     letter-spacing: 0.2em;
-    color: #666;
+    color: var(--color-subtext);
     position: relative;
     display: inline-block;
 }
@@ -933,7 +1004,7 @@ footer p {
     top: 50%;
     transform: translateY(-50%);
     background: #fff;
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-border);
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -951,6 +1022,11 @@ footer p {
     background: #000;
     color: #fff;
     border-color: #000;
+}
+
+.carousel-btn:focus-visible {
+    outline: 2px solid #111;
+    outline-offset: 2px;
 }
 
 .prev-btn {
@@ -1182,7 +1258,7 @@ footer p {
     }
 
     .carousel-container-mini {
-        padding: 0 15px;
+        padding: 0 10px;
     }
 
     .carousel-container-mini .product-image {
@@ -1190,7 +1266,7 @@ footer p {
     }
 
     .carousel-container-mini .carousel-card {
-        flex: 0 0 85%;
+        flex: 0 0 min(88vw, 340px);
         margin: 0;
     }
 
@@ -1817,6 +1893,41 @@ footer p {
         font-size: 2rem;
     }
 }
+/* ── Carousel loading skeleton (P2) ── */
+.carousel-skeleton {
+    padding: 8px clamp(12px, 4vw, 48px) 20px;
+}
+
+.carousel-skeleton__label {
+    width: 120px;
+    height: 12px;
+    margin: 0 auto 24px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shop-skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.carousel-skeleton__track {
+    display: flex;
+    gap: 20px;
+    overflow: hidden;
+}
+
+.carousel-skeleton__card {
+    flex: 0 0 min(72vw, 300px);
+    aspect-ratio: 1 / 1;
+    background: linear-gradient(90deg, #f3f3f3 25%, #ececec 50%, #f3f3f3 75%);
+    background-size: 200% 100%;
+    animation: shop-skeleton-shimmer 1.4s ease-in-out infinite;
+    border: 1px solid var(--color-border);
+}
+
+@keyframes shop-skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
 /* ── Search bar ──────────────────────────────────────── */
 .shop-search-wrapper {
     width: 100%;
@@ -1839,13 +1950,18 @@ footer p {
     transition: border-color 0.2s;
 }
 
+.search-input:focus-visible {
+    outline: none;
+}
+
 .shop-search-bar:focus-within {
     border-bottom-color: #111;
+    box-shadow: inset 0 -1px 0 #111;
 }
 
 .search-icon {
     flex-shrink: 0;
-    color: #aaa;
+    color: var(--color-muted);
     transition: color 0.2s;
 }
 
@@ -1867,7 +1983,7 @@ footer p {
 }
 
 .search-input::placeholder {
-    color: #bbb;
+    color: var(--color-muted);
     letter-spacing: 0.5px;
 }
 
@@ -1893,7 +2009,7 @@ footer p {
     font-size: 0.68rem;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    color: #aaa;
+    color: var(--color-muted);
     min-height: 16px;
 }
 
@@ -1969,12 +2085,106 @@ footer p {
     opacity: 1;
 }
 
+@media (max-width: 768px) {
+    /* Swipe scroll — arrows collide with floats and artwork */
+    .carousel-container-mini .carousel-btn {
+        display: none;
+    }
+
+    .carousel-container-mini {
+        padding: 0 10px;
+    }
+
+    .shop-hero-featured .carousel-container-mini {
+        padding: 0 10px;
+    }
+
+    .catalog-float {
+        bottom: max(16px, env(safe-area-inset-bottom, 0px));
+        left: 16px;
+        right: 16px;
+        width: auto;
+        max-width: none;
+        transform: translateY(12px);
+        justify-content: center;
+        padding: 12px 16px;
+        border-radius: 6px;
+        font-size: 0.68rem;
+        letter-spacing: 0.08em;
+        gap: 10px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+    }
+
+    .catalog-float.visible {
+        transform: translateY(0);
+    }
+
+    .catalog-float-text {
+        flex: 1;
+        justify-content: center;
+        min-width: 0;
+    }
+
+    .catalog-float-label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .catalog-float-count {
+        flex-shrink: 0;
+        font-size: 0.62rem;
+    }
+
+    .catalog-float-arrow {
+        flex-shrink: 0;
+    }
+
+    .back-to-top {
+        bottom: max(16px, env(safe-area-inset-bottom, 0px));
+        left: 16px;
+        right: auto;
+        width: 38px;
+        height: 38px;
+        z-index: 9996;
+    }
+
+    .catalog-float.visible ~ .back-to-top.visible {
+        bottom: calc(max(16px, env(safe-area-inset-bottom, 0px)) + 58px);
+    }
+
+    .whatsapp-float {
+        bottom: max(16px, env(safe-area-inset-bottom, 0px));
+        right: 16px;
+        padding: 12px 14px;
+        font-size: 0;
+        gap: 0;
+    }
+
+    .whatsapp-float svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .whatsapp-float span {
+        display: none;
+    }
+
+    .catalog-float.visible ~ .whatsapp-float.is-ready {
+        bottom: calc(max(16px, env(safe-area-inset-bottom, 0px)) + 58px);
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+        animation: none;
+    }
+}
+
 /* ── WhatsApp Floating Button ── */
 .whatsapp-float {
     position: fixed;
     bottom: 28px;
     right: 28px;
-    z-index: 9999;
+    z-index: 9997;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -1988,8 +2198,43 @@ footer p {
     border-radius: 50px;
     text-decoration: none;
     box-shadow: 0 4px 20px rgba(37, 211, 102, 0.38);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.35s ease, bottom 0.35s ease;
     cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+}
+
+.whatsapp-float.is-ready {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+/* Fade in shortly after paint (no 8s wait) */
+.shop-page .whatsapp-float.is-ready {
+    animation: whatsapp-float-in 0.45s ease 0.35s both;
+}
+
+@keyframes whatsapp-float-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.whatsapp-float.is-shifted {
+    bottom: 88px;
+}
+
+@media (max-width: 768px) {
+    .whatsapp-float.is-shifted {
+        bottom: calc(max(16px, env(safe-area-inset-bottom, 0px)) + 58px);
+    }
 }
 
 .whatsapp-float:hover {

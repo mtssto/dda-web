@@ -32,8 +32,36 @@ var DDAImages = (function () {
         ].join(', ');
     }
 
-    function encodeSrcset(url) {
+    function encodeUrlSpaces(url) {
         return String(url || '').replace(/ /g, '%20');
+    }
+
+    /** @deprecated Use encodeUrlSpaces for single URLs; formatSrcsetAttr for srcset. */
+    function encodeSrcset(url) {
+        return encodeUrlSpaces(url);
+    }
+
+    function escapeHtmlAttr(value) {
+        return String(value || '')
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+
+    function formatSrcsetAttr(srcset) {
+        if (!srcset) return '';
+        return srcset.split(',').map(function (part) {
+            part = part.trim();
+            if (!part) return '';
+            var lastSpace = part.lastIndexOf(' ');
+            if (lastSpace === -1) {
+                return encodeUrlSpaces(part);
+            }
+            var url = part.slice(0, lastSpace).trim();
+            var descriptor = part.slice(lastSpace + 1).trim();
+            return encodeUrlSpaces(url) + ' ' + descriptor;
+        }).filter(Boolean).join(', ');
     }
 
     function getApiBaseUrl() {
@@ -118,12 +146,13 @@ var DDAImages = (function () {
     function pictureHtml(src, alt, extraAttrs) {
         var resolved = resolveImageUrl(src, getStaticBaseUrl() + '/shop/shop.html');
         var attrs = extraAttrs || '';
+        var safeAlt = escapeHtmlAttr(alt);
 
         if (isCloudinaryUrl(resolved)) {
             var optimized = getTransformedUrl(resolved, 700);
             var srcset = getCardSrcset(resolved);
             if (srcset && attrs.indexOf('srcset=') === -1) {
-                attrs += ' srcset="' + encodeSrcset(srcset) + '"';
+                attrs += ' srcset="' + formatSrcsetAttr(srcset) + '"';
             }
             if (attrs.indexOf('sizes=') === -1) {
                 attrs += ' sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 420px"';
@@ -133,8 +162,8 @@ var DDAImages = (function () {
             var webpSrc = toWebPFallback(resolved);
             if (webpSrc !== resolved) {
                 return '<picture>' +
-                    '<source srcset="' + encodeSrcset(webpSrc) + '" type="image/webp">' +
-                    '<img src="' + encodeSrcset(resolved) + '" alt="' + String(alt || '').replace(/"/g, '&quot;') + '"' + attrs + '>' +
+                    '<source srcset="' + escapeHtmlAttr(encodeUrlSpaces(webpSrc)) + '" type="image/webp">' +
+                    '<img src="' + escapeHtmlAttr(encodeUrlSpaces(resolved)) + '" alt="' + safeAlt + '"' + attrs + '>' +
                     '</picture>';
             }
         }
@@ -142,7 +171,7 @@ var DDAImages = (function () {
         if (attrs.indexOf('loading=') === -1) attrs += ' loading="lazy"';
         if (attrs.indexOf('decoding=') === -1) attrs += ' decoding="async"';
 
-        return '<img src="' + encodeSrcset(resolved) + '" alt="' + String(alt || '').replace(/"/g, '&quot;') + '"' + attrs + '>';
+        return '<img src="' + escapeHtmlAttr(encodeUrlSpaces(resolved)) + '" alt="' + safeAlt + '"' + attrs + '>';
     }
 
     return {
@@ -155,6 +184,9 @@ var DDAImages = (function () {
         getThumbImageUrl: function (url) { return getTransformedUrl(url, 120); },
         resolveImageUrl: resolveImageUrl,
         pictureHtml: pictureHtml,
-        encodeSrcset: encodeSrcset
+        encodeSrcset: encodeSrcset,
+        encodeUrlSpaces: encodeUrlSpaces,
+        formatSrcsetAttr: formatSrcsetAttr,
+        escapeHtmlAttr: escapeHtmlAttr
     };
 })();
