@@ -18,7 +18,9 @@
         search: '',
         category: '',
         soldFilter: '',
-        editingId: null
+        editingId: null,
+        imageItems: [],
+        imageKeyCounter: 0
     };
 
     // ── DOM refs ─────────────────────────────────
@@ -115,12 +117,41 @@
 
     if (imageInput) {
         imageInput.addEventListener('change', function () {
-            renderImagePreview(null, getSelectedImageFiles());
+            addFilesToImageQueue(getSelectedImageFiles());
+            imageInput.value = '';
         });
     }
 
     if (imagePreview) {
         imagePreview.addEventListener('click', function (e) {
+            var moveUpBtn = e.target.closest('[data-move-up]');
+            if (moveUpBtn) {
+                e.preventDefault();
+                moveImageItem(moveUpBtn.getAttribute('data-move-up'), -1);
+                return;
+            }
+
+            var moveDownBtn = e.target.closest('[data-move-down]');
+            if (moveDownBtn) {
+                e.preventDefault();
+                moveImageItem(moveDownBtn.getAttribute('data-move-down'), 1);
+                return;
+            }
+
+            var primaryInput = e.target.closest('[data-set-primary]');
+            if (primaryInput) {
+                e.preventDefault();
+                setPrimaryImageItem(primaryInput.getAttribute('data-set-primary'));
+                return;
+            }
+
+            var removeNewBtn = e.target.closest('[data-remove-new]');
+            if (removeNewBtn) {
+                e.preventDefault();
+                removeImageItem(removeNewBtn.getAttribute('data-remove-new'));
+                return;
+            }
+
             var deleteBtn = e.target.closest('[data-delete-image]');
             if (!deleteBtn) return;
             var imageId = deleteBtn.getAttribute('data-delete-image');
@@ -134,8 +165,11 @@
                 credentials: 'include'
             }).then(function (res) {
                 if (!res.ok) throw new Error('No se pudo eliminar');
-                var card = deleteBtn.closest('.image-preview-card');
-                if (card) card.remove();
+                state.imageItems = state.imageItems.filter(function (item) {
+                    return String(item.id) !== String(imageId);
+                });
+                normalizeImageItems();
+                renderImagePreview();
                 loadArtworks();
             }).catch(function (err) {
                 alert(err.message || 'Error al eliminar imagen');
@@ -217,7 +251,7 @@
             sold: document.getElementById('artSold').checked
         };
 
-        var selectedImages = getSelectedImageFiles();
+        var hasImageChanges = state.imageItems.length > 0;
 
         var btnText = modalSave.querySelector('.btn-text');
         var btnLoader = modalSave.querySelector('.btn-loader');
@@ -240,11 +274,19 @@
             return res.json();
         })
         .then(function (savedArtwork) {
-            if (!selectedImages.length) return savedArtwork;
+            if (!hasImageChanges) return savedArtwork;
 
-            setUploadStatus('Subiendo ' + selectedImages.length + ' imagen(es) a Cloudinary...', null, false);
+            var newCount = state.imageItems.filter(function (item) {
+                return item.type === 'new' && item.file;
+            }).length;
 
-            return uploadArtworkImages(savedArtwork.id, selectedImages).then(function () {
+            if (newCount > 0) {
+                setUploadStatus('Subiendo ' + newCount + ' imagen(es) a Cloudinary...', null, false);
+            } else {
+                setUploadStatus('Guardando orden de imágenes...', null, false);
+            }
+
+            return syncArtworkImages(savedArtwork.id).then(function () {
                 return savedArtwork;
             });
         })
@@ -271,16 +313,137 @@
         return imageInput ? Array.from(imageInput.files || []) : [];
     }
 
-    function uploadArtworkImages(artworkId, files) {
+    function resetImageItems(artwork) {
+        revokeNewImagePreviews();
+        state.imageKeyCounter = 0;
+        state.imageItems = [];
+
+        if (!artwork || !Array.isArray(artwork.images)) {
+            renderImagePreview();
+            return;
+        }
+
+        var sorted = artwork.images.slice().sort(function (a, b) {
+            return (a.sortOrder || 0) - (b.sortOrder || 0);
+        });
+
+        var hasPrimary = sorted.some(function (img) {
+            return img && (img.isPrimary === true || img.primary === true);
+        });
+
+        state.imageItems = sorted.map(function (img, index) {
+            return {
+                key: 'existing-' + img.id,
+                type: 'existing',
+                id: img.id,
+                file: null,
+                previewUrl: toCloudinaryThumb(getImageUrl(img), 240),
+                fileName: img.fileName || '',
+                isPrimary: hasPrimary
+                    ? (img.isPrimary === true || img.primary === true)
+                    : index === 0,
+                sortOrder: index
+            };
+        });
+
+        normalizeImageItems();
+        renderImagePreview();
+    }
+
+    function addFilesToImageQueue(files) {
+        if (!files || !files.length) return;
+
+        Array.from(files).forEach(function (file) {
+            state.imageKeyCounter += 1;
+            state.imageItems.push({
+                key: 'new-' + state.imageKeyCounter,
+                type: 'new',
+                id: null,
+                file: file,
+                previewUrl: URL.createObjectURL(file),
+                fileName: file.name,
+                isPrimary: state.imageItems.length === 0,
+                sortOrder: state.imageItems.length
+            });
+        });
+
+        normalizeImageItems();
+        renderImagePreview();
+    }
+
+    function normalizeImageItems() {
+        state.imageItems.forEach(function (item, index) {
+            item.sortOrder = index;
+        });
+
+        var primaryItems = state.imageItems.filter(function (item) { return item.isPrimary; });
+        if (state.imageItems.length && primaryItems.length !== 1) {
+            state.imageItems.forEach(function (item, index) {
+                item.isPrimary = index === 0;
+            });
+        }
+    }
+
+    function moveImageItem(key, delta) {
+        var index = state.imageItems.findIndex(function (item) { return item.key === key; });
+        if (index === -1) return;
+
+        var target = index + delta;
+        if (target < 0 || target >= state.imageItems.length) return;
+
+        var moved = state.imageItems.splice(index, 1)[0];
+        state.imageItems.splice(target, 0, moved);
+        normalizeImageItems();
+        renderImagePreview();
+    }
+
+    function setPrimaryImageItem(key) {
+        state.imageItems.forEach(function (item) {
+            item.isPrimary = item.key === key;
+        });
+        renderImagePreview();
+    }
+
+    function removeImageItem(key) {
+        var index = state.imageItems.findIndex(function (item) { return item.key === key; });
+        if (index === -1) return;
+
+        var removed = state.imageItems.splice(index, 1)[0];
+        if (removed && removed.previewUrl && removed.type === 'new') {
+            URL.revokeObjectURL(removed.previewUrl);
+        }
+
+        normalizeImageItems();
+        renderImagePreview();
+    }
+
+    function revokeNewImagePreviews() {
+        state.imageItems.forEach(function (item) {
+            if (item.type === 'new' && item.previewUrl) {
+                URL.revokeObjectURL(item.previewUrl);
+            }
+        });
+    }
+
+    function syncArtworkImages(artworkId) {
+        normalizeImageItems();
+        var items = state.imageItems.slice();
         var chain = Promise.resolve();
 
-        files.forEach(function (file, index) {
+        items.forEach(function (item, index) {
+            if (item.type !== 'new' || !item.file) return;
+
             chain = chain.then(function () {
-                setUploadStatus('Subiendo imagen ' + (index + 1) + ' de ' + files.length + ': ' + file.name, null, false);
+                setUploadStatus(
+                    'Subiendo imagen ' + (index + 1) + ' de ' + items.length + ': ' + item.fileName,
+                    null,
+                    false
+                );
 
                 var formData = new FormData();
-                formData.append('file', file);
-                formData.append('primary', String(index === 0 && state.editingId === null));
+                formData.append('file', item.file);
+                formData.append('primary', String(!!item.isPrimary));
+                formData.append('sortOrder', String(index));
 
                 return fetch(getApiBaseUrl() + '/artworks/' + artworkId + '/images', {
                     method: 'POST',
@@ -289,7 +452,7 @@
                 }).then(function (res) {
                     if (!res.ok) {
                         return res.text().then(function (message) {
-                            throw new Error(message || ('Error al subir ' + file.name));
+                            throw new Error(message || ('Error al subir ' + item.fileName));
                         });
                     }
                     return res.json();
@@ -297,7 +460,35 @@
             });
         });
 
-        return chain;
+        return chain.then(function () {
+            var existingPayload = items
+                .map(function (item, index) {
+                    return { item: item, index: index };
+                })
+                .filter(function (entry) {
+                    return entry.item.type === 'existing' && entry.item.id;
+                })
+                .map(function (entry) {
+                    return {
+                        id: entry.item.id,
+                        sortOrder: entry.index,
+                        isPrimary: !!entry.item.isPrimary
+                    };
+                });
+
+            if (!existingPayload.length) return;
+
+            return DDAAuth.apiFetch('/artworks/' + artworkId + '/images/layout', {
+                method: 'PUT',
+                body: JSON.stringify({ images: existingPayload })
+            }).then(function (res) {
+                if (!res.ok) {
+                    return res.text().then(function (message) {
+                        throw new Error(message || 'No se pudo guardar el orden de las imágenes');
+                    });
+                }
+            });
+        });
     }
 
     function getApiBaseUrl() {
@@ -536,7 +727,8 @@
             } catch (err) {
                 imageInput.files = e.dataTransfer.files;
             }
-            renderImagePreview(null, getSelectedImageFiles());
+            addFilesToImageQueue(getSelectedImageFiles());
+            imageInput.value = '';
         });
     }
 
@@ -610,7 +802,7 @@
 
         if (imageInput) imageInput.value = '';
         setUploadStatus('', null, true);
-        renderImagePreview(artwork, []);
+        resetImageItems(artwork);
         syncCategoryChips();
 
         var optionalDetails = document.getElementById('artOptionalDetails');
@@ -633,6 +825,8 @@
         state.editingId = null;
         artworkForm.reset();
         if (imageInput) imageInput.value = '';
+        revokeNewImagePreviews();
+        state.imageItems = [];
         if (imagePreview) imagePreview.innerHTML = '';
         setUploadStatus('', null, true);
     }
@@ -675,38 +869,43 @@
     };
 
     // ── Helpers ──────────────────────────────────
-    function renderImagePreview(artwork, selectedFiles) {
+    function renderImagePreview() {
         if (!imagePreview) return;
 
-        var html = '';
-
-        if (artwork && Array.isArray(artwork.images) && artwork.images.length > 0) {
-            html += artwork.images.map(function (img, index) {
-                var src = getImageUrl(img);
-                if (!src) return '';
-                var imgId = img.id || '';
-
-                return '<div class="image-preview-card is-existing" data-image-id="' + imgId + '">' +
-                    '<img src="' + escapeHtml(toCloudinaryThumb(src, 240)) + '" alt="Imagen actual ' + (index + 1) + '">' +
-                    '<span class="preview-label">' + (img.isPrimary || img.primary ? 'Actual · Principal' : 'Actual') + '</span>' +
-                    (imgId ? '<button type="button" class="preview-delete-btn" data-delete-image="' + imgId + '" title="Eliminar imagen">×</button>' : '') +
-                '</div>';
-            }).join('');
+        if (!state.imageItems.length) {
+            imagePreview.innerHTML = '<p class="form-hint">No hay imágenes seleccionadas.</p>';
+            return;
         }
 
-        if (selectedFiles && selectedFiles.length > 0) {
-            html += selectedFiles.map(function (file, index) {
-                var url = URL.createObjectURL(file);
+        imagePreview.innerHTML = state.imageItems.map(function (item, index) {
+            var src = item.previewUrl || '';
+            if (!src) return '';
 
-                return '<div class="image-preview-card">' +
-                    '<img src="' + url + '" alt="' + escapeHtml(file.name) + '">' +
-                    '<span class="preview-label">' + (index === 0 && state.editingId === null ? 'Nueva · Principal' : 'Nueva') + '</span>' +
-                    '<span class="preview-filename">' + escapeHtml(file.name) + '</span>' +
-                '</div>';
-            }).join('');
-        }
+            var isExisting = item.type === 'existing';
+            var cardClass = 'image-preview-card' +
+                (isExisting ? ' is-existing' : ' is-new') +
+                (item.isPrimary ? ' is-primary' : '');
 
-        imagePreview.innerHTML = html || '<p class="form-hint">No hay imágenes seleccionadas.</p>';
+            var removeBtn = isExisting
+                ? '<button type="button" class="preview-delete-btn" data-delete-image="' + item.id + '" title="Eliminar imagen">×</button>'
+                : '<button type="button" class="preview-delete-btn" data-remove-new="' + escapeHtml(item.key) + '" title="Quitar imagen">×</button>';
+
+            return '<div class="' + cardClass + '" data-image-key="' + escapeHtml(item.key) + '">' +
+                '<span class="image-order-badge">' + (index + 1) + '</span>' +
+                '<img src="' + escapeHtml(src) + '" alt="' + escapeHtml(item.fileName || ('Imagen ' + (index + 1))) + '">' +
+                '<div class="image-preview-actions">' +
+                    '<button type="button" class="image-move-btn" data-move-up="' + escapeHtml(item.key) + '" title="Subir"' + (index === 0 ? ' disabled' : '') + '>↑</button>' +
+                    '<button type="button" class="image-move-btn" data-move-down="' + escapeHtml(item.key) + '" title="Bajar"' + (index === state.imageItems.length - 1 ? ' disabled' : '') + '>↓</button>' +
+                    '<label class="image-primary-toggle">' +
+                        '<input type="radio" name="artPrimaryImage" data-set-primary="' + escapeHtml(item.key) + '"' + (item.isPrimary ? ' checked' : '') + '>' +
+                        '<span>Principal</span>' +
+                    '</label>' +
+                '</div>' +
+                '<span class="preview-label">' + (isExisting ? 'Actual' : 'Nueva') + '</span>' +
+                (item.fileName ? '<span class="preview-filename">' + escapeHtml(item.fileName) + '</span>' : '') +
+                removeBtn +
+            '</div>';
+        }).join('');
     }
 
     function getArtworkThumbnailUrl(artwork) {

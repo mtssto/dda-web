@@ -43,6 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
             'elefantes.p4': '“Aquí, lo celestial y lo carnal se unen en un bazar de pinturas rupestres extraterrestres”, describe la curadora.',
             'index.welcome_shop': 'Descubre obras originales exclusivas.',
             'index.go_to_shop': 'IR AL SHOP',
+            'index.new_artwork': 'Nueva obra',
+            'index.view_artwork': 'Ver obra',
             'index.game_caption': 'Un juego inspirado en las obras de Diego De Aduriz',
             'index.game_cta': 'Conocer el juego',
             'modal.consult': 'CONSULTAR / COMPRAR'
@@ -87,6 +89,8 @@ document.addEventListener('DOMContentLoaded', () => {
             'elefantes.p4': '“Here, the celestial and the carnal come together in a bazaar of extraterrestrial cave paintings,” the curator describes.',
             'index.welcome_shop': 'Discover exclusive original artworks.',
             'index.go_to_shop': 'GO TO SHOP',
+            'index.new_artwork': 'New artwork',
+            'index.view_artwork': 'View artwork',
             'index.game_caption': 'A game inspired by Diego De Aduriz\'s artworks',
             'index.game_cta': 'Discover the game',
             'modal.consult': 'INQUIRE / BUY'

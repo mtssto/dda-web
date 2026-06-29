@@ -1012,14 +1012,14 @@ body {
 
 .image-preview-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 10px;
     margin-top: 12px;
 }
 
 .image-preview-card {
     position: relative;
-    min-height: 92px;
+    min-height: 160px;
     border: 1px solid var(--color-border);
     border-radius: 8px;
     overflow: hidden;
@@ -1057,6 +1057,69 @@ body {
 
 .image-preview-card.is-existing {
     border-style: dashed;
+}
+
+.image-preview-card.is-primary {
+    border-color: #111;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.image-order-badge {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    z-index: 2;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.72);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 20px;
+    text-align: center;
+}
+
+.image-preview-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 6px 6px;
+    border-top: 1px solid var(--color-border);
+    background: rgba(255, 255, 255, 0.82);
+}
+
+.image-move-btn {
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: #fff;
+    color: #333;
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.image-move-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.image-primary-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    font-size: 10px;
+    color: var(--color-subtext);
+    cursor: pointer;
+    user-select: none;
+}
+
+.image-primary-toggle input {
+    margin: 0;
 }
 
 .preview-delete-btn {

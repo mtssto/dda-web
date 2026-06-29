@@ -36,11 +36,20 @@
             return res.json();
         })
         .then(function (artwork) {
+            var images = Array.isArray(artwork.images) ? artwork.images.slice() : [];
+            images.sort(function (a, b) {
+                return (a.sortOrder || 0) - (b.sortOrder || 0);
+            });
+
+            var primaryImage = images.find(function (img) {
+                return img && (img.isPrimary === true || img.primary === true);
+            }) || images[0];
+
             var imagePath = '';
-            if (artwork.images && artwork.images.length > 0) {
-                imagePath = artwork.images[0].filePath || artwork.images[0].url || '';
+            if (primaryImage) {
+                imagePath = primaryImage.filePath || primaryImage.url || '';
             }
-            var allImages = (artwork.images || []).map(function (img) {
+            var allImages = images.map(function (img) {
                 return img.filePath || img.url || '';
             }).filter(Boolean);
 
@@ -200,8 +209,8 @@
         if (mainImg) {
             mainImg.src = optimizeObraImage(images[0], 'detail');
             mainImg.alt = product.title;
-            mainImg.width = 1200;
-            mainImg.height = 1500;
+            mainImg.removeAttribute('width');
+            mainImg.removeAttribute('height');
             mainImg.loading = 'eager';
             mainImg.decoding = 'async';
             mainImg.fetchPriority = 'high';

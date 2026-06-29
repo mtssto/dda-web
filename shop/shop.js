@@ -137,6 +137,30 @@ function cssEscapeSafe(value) {
     return String(value).replace(/"/g, '\\"');
 }
 
+function resetShopCarouselContainer() {
+    var container = document.getElementById('carouselSectionsContainer');
+    if (!container) return;
+    delete container.dataset.rendered;
+    container.innerHTML = '';
+}
+
+function updateShopCategoryCounts() {
+    if (!window.products || !window.products.length) return;
+    var counts = {};
+    window.products.forEach(function (p) {
+        var cat = p.category || 'other';
+        counts[cat] = (counts[cat] || 0) + 1;
+    });
+    document.querySelectorAll('.cd-option').forEach(function (opt) {
+        var val = opt.getAttribute('data-value');
+        if (!val || val === 'all') {
+            opt.innerHTML = opt.textContent.trim() + ' <span class="cd-count">(' + window.products.length + ')</span>';
+        } else if (counts[val]) {
+            opt.innerHTML = opt.textContent.trim() + ' <span class="cd-count">(' + counts[val] + ')</span>';
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     // Re-apply translations on load to catch page-specific ones
     const savedLang = localStorage.getItem('preferredLanguage') || 'es';
@@ -178,11 +202,29 @@ document.addEventListener('DOMContentLoaded', function () {
         if (gridParams) {
             renderGrid(window.products || []);
         }
+
+        updateShopCategoryCounts();
     }
 
-    // catalog.html uses catalog-api.js for paginated backend loading.
-    // shop.html should render immediately from products.js and should not wait for DDAApi.
-    initShopContent();
+    function bootstrapShopPage() {
+        if (isCatalogPage) return;
+
+        resetShopCarouselContainer();
+        initShopContent();
+
+        if (window.changeLanguage) {
+            window.changeLanguage(savedLang);
+        }
+    }
+
+    // Load live catalog from API, then render (products.js is fallback only).
+    if (isCatalogPage) {
+        initShopContent();
+    } else if (typeof DDAApi !== 'undefined' && DDAApi.loadProducts) {
+        DDAApi.loadProducts().then(bootstrapShopPage).catch(bootstrapShopPage);
+    } else {
+        bootstrapShopPage();
+    }
 
     // Filter Logic
     const categoryFilter = document.getElementById('categoryFilter');
@@ -735,24 +777,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, { passive: true });
         btn.addEventListener('click', function () {
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    })();
-
-    // ── Category Counts ─────────────────────────────────
-    (function () {
-        if (isCatalogPage || !window.products) return;
-        var counts = {};
-        window.products.forEach(function (p) {
-            var cat = p.category || 'other';
-            counts[cat] = (counts[cat] || 0) + 1;
-        });
-        document.querySelectorAll('.cd-option').forEach(function (opt) {
-            var val = opt.getAttribute('data-value');
-            if (!val || val === 'all') {
-                opt.innerHTML = opt.textContent.trim() + ' <span class="cd-count">(' + window.products.length + ')</span>';
-            } else if (counts[val]) {
-                opt.innerHTML = opt.textContent.trim() + ' <span class="cd-count">(' + counts[val] + ')</span>';
-            }
         });
     })();
 

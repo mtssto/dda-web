@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
     obrasDataset = items;
     renderPortfolio(obrasDataset);
     initModalTriggers(obrasDataset);
+    setupCategoryNavObserver();
+    initObrasVideos();
   });
 
   // Share buttons in modal
@@ -112,94 +114,89 @@ document.addEventListener('DOMContentLoaded', () => {
     return [];
   }
 
+  const PORTFOLIO_SECTION_ORDER = [
+    'pasteles', 'gatos', 'paisajes', 'Autorretratos', 'digital', 'ilustraciones'
+  ];
+
   function renderPortfolio(dataset) {
     if (!dataset || !dataset.length) return;
 
-    // Define category to container mapping
-    const sectionMap = {
-      'pasteles': document.querySelector('#pasteles .masonry-grid'),
-      'gatos': document.querySelector('#gatos .masonry-grid'),
-      'paisajes': document.querySelector('#paisajes .masonry-grid'),
-      'digital': document.querySelector('#digital .masonry-grid'),
-      'ilustraciones': document.querySelector('#ilustraciones .masonry-grid'),
-      'Autorretratos': document.querySelector('#Autorretratos .masonry-grid')
-    };
+    const grid = document.getElementById('obrasMasonryGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
 
-    // Clear existing content securely
-    Object.values(sectionMap).forEach(grid => {
-      if (grid) grid.innerHTML = '';
+    const byCategory = {};
+    dataset.forEach((product) => {
+      const key = resolvePortfolioCategory(product.category);
+      if (!byCategory[key]) byCategory[key] = [];
+      byCategory[key].push(product);
     });
 
-    const sectionCounters = {};
+    let revealIndex = 0;
 
-    dataset.forEach(product => {
-      const sectionKey = resolvePortfolioCategory(product.category);
-      const grid = sectionMap[sectionKey] || sectionMap['pasteles'];
-      if (!grid) return;
-
-      const imagePath = resolveImagePath(product.image || '');
-      if (!imagePath) return;
-      const indexInSection = sectionCounters[sectionKey] || 0;
-      sectionCounters[sectionKey] = indexInSection + 1;
-
-      const item = document.createElement('div');
-      item.className = 'masonry-item grid-modal-trigger reveal-item';
-      item.style.setProperty('--reveal-delay', Math.min(indexInSection * 75, 450) + 'ms');
-
-      // Store complete dataset context
-      if (product.dimensions && product.dimensions !== "Consultar medidas") {
-        item.dataset.dimensions = product.dimensions;
-      } else {
-        item.dataset.dimensions = "Consultar medidas";
+    PORTFOLIO_SECTION_ORDER.forEach((sectionKey) => {
+      const items = byCategory[sectionKey] || [];
+      const navPill = document.querySelector('.cat-pill[data-section="' + sectionKey + '"]');
+      if (!items.length) {
+        if (navPill) navPill.hidden = true;
+        return;
       }
+      if (navPill) navPill.hidden = false;
 
-      if (product.technique && product.technique !== "Consultar técnica") {
-        item.dataset.technique = product.technique;
-      } else {
-        item.dataset.technique = "Consultar técnica";
-      }
+      items.forEach((product, indexInSection) => {
+        const imagePath = resolveImagePath(product.image || '');
+        if (!imagePath) return;
 
-      if (product.year && product.year !== "Consultar año") {
-        item.dataset.year = product.year;
-      } else {
-        item.dataset.year = "Consultar año";
-      }
+        const item = document.createElement('div');
+        item.className = 'masonry-item grid-modal-trigger reveal-item';
+        item.style.setProperty('--reveal-delay', Math.min(revealIndex * 50, 400) + 'ms');
+        revealIndex += 1;
 
-      item.dataset.title = product.title;
-      item.dataset.slug = product.slug || product.id || '';
-      // Encode whatsapp link with title
-      item.dataset.waLink = `https://wa.me/5491160139563?text=Hola,%20quisiera%20consultar%20por%20la%20obra:%20${encodeURIComponent(product.title)}`;
+        if (indexInSection === 0) {
+          item.id = sectionKey;
+          item.dataset.sectionAnchor = sectionKey;
+        }
 
-      // Resolve images data attribute if multiple images exist
-      if (product.images && product.images.length > 1) {
-        // Adjust paths for portfolio context if necessary
-        item.dataset.images = JSON.stringify(product.images);
-      }
+        item.dataset.dimensions = (product.dimensions && product.dimensions !== 'Consultar medidas')
+          ? product.dimensions : 'Consultar medidas';
+        item.dataset.technique = (product.technique && product.technique !== 'Consultar técnica')
+          ? product.technique : 'Consultar técnica';
+        item.dataset.year = (product.year && product.year !== 'Consultar año')
+          ? product.year : 'Consultar año';
+        item.dataset.title = product.title;
+        item.dataset.slug = product.slug || product.id || '';
+        item.dataset.waLink = 'https://wa.me/5491160139563?text=Hola,%20quisiera%20consultar%20por%20la%20obra:%20' + encodeURIComponent(product.title);
 
-      const soldBadge = product.sold
-        ? '<span class="artwork-badge artwork-badge--sold">Vendida</span>'
-        : '';
+        if (product.images && product.images.length > 1) {
+          item.dataset.images = JSON.stringify(product.images);
+        }
 
-      const safeTitle = String(product.title || '').replace(/"/g, '&quot;');
-      item.innerHTML = `
-        <div class="artwork-card">
-          <div class="artwork-media artwork-media--pending">
-            <img alt="${safeTitle}" data-src="${imagePath}" decoding="async" />
-            ${soldBadge}
-          </div>
-        </div>
-      `;
-      grid.appendChild(item);
-    });
+        const soldBadge = product.sold
+          ? '<span class="artwork-badge artwork-badge--sold">Vendida</span>'
+          : '';
 
-    Object.keys(sectionMap).forEach((key) => {
-      const section = document.getElementById(key);
-      const grid = sectionMap[key];
-      if (!section || !grid) return;
-      const hasItems = grid.children.length > 0;
-      section.hidden = !hasItems;
-      const navPill = document.querySelector('.cat-pill[data-section="' + key + '"]');
-      if (navPill) navPill.hidden = !hasItems;
+        const safeTitle = escapeHtml(product.title || '');
+        const safeDims = escapeHtml(item.dataset.dimensions);
+        const safeTech = escapeHtml(item.dataset.technique);
+        const safeYear = escapeHtml(item.dataset.year);
+
+        item.innerHTML =
+          '<div class="artwork-card">' +
+            '<div class="artwork-media artwork-media--pending">' +
+              '<img alt="' + safeTitle + '" data-src="' + imagePath + '" decoding="async" />' +
+              soldBadge +
+            '</div>' +
+            '<div class="masonry-overlay">' +
+              '<div class="overlay-content">' +
+                '<h3 class="overlay-title">' + safeTitle + '</h3>' +
+                '<p class="overlay-details">' + safeDims + '<br>' + safeTech + '<br>' + safeYear + '</p>' +
+                '<button type="button" class="btn-grid-details">DETALLES</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+
+        grid.appendChild(item);
+      });
     });
 
     setupRevealOnScroll();
@@ -778,41 +775,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ── Sticky nav: highlight active section ───────────────
-  const catPills = document.querySelectorAll('.cat-pill');
-  if (catPills.length && 'IntersectionObserver' in window) {
+  function setupCategoryNavObserver() {
+    const catPills = document.querySelectorAll('.cat-pill');
+    if (!catPills.length || !('IntersectionObserver' in window)) return;
+
     const sectionIds = ['pasteles', 'gatos', 'paisajes', 'Autorretratos', 'digital', 'ilustraciones', 'videos'];
-    const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+    const anchors = sectionIds.map((id) => document.getElementById(id)).filter(Boolean);
+    if (!anchors.length) return;
 
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          catPills.forEach(p => p.classList.remove('active'));
-          const activeId = entry.target.id;
-          const pill = document.querySelector(`.cat-pill[data-section="${activeId}"]`);
-          if (pill) {
-            pill.classList.add('active');
-            // Scroll pill into view within nav
-            pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-          }
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        catPills.forEach((p) => p.classList.remove('active'));
+        const activeId = entry.target.id;
+        const pill = document.querySelector('.cat-pill[data-section="' + activeId + '"]');
+        if (pill) {
+          pill.classList.add('active');
+          pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }
       });
-    }, { rootMargin: '-40px 0px -60% 0px', threshold: 0 });
+    }, { rootMargin: '-72px 0px -55% 0px', threshold: 0 });
 
-    sections.forEach(s => observer.observe(s));
+    anchors.forEach((el) => observer.observe(el));
   }
 
-  // Smooth scroll for nav pills
-  document.querySelectorAll('.cat-pill').forEach(pill => {
-    pill.addEventListener('click', e => {
+  document.querySelectorAll('.cat-pill').forEach((pill) => {
+    pill.addEventListener('click', (e) => {
       e.preventDefault();
       const id = pill.dataset.section;
       const target = document.getElementById(id);
-      if (target) target.scrollIntoView({ behavior: 'smooth' });
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
-
-  setupSectionReveal();
-  initObrasVideos();
 
 });
