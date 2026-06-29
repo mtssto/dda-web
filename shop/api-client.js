@@ -9,30 +9,86 @@ var DDAApi = (function () {
     var API_BASE = window.DDA_API_BASE || '/api';
     var FALLBACK_IMAGE = '/portfolio/sections/obras/MG_1192.jpg';
 
-    function mapArtworkToProduct(artwork) {
-        var imagePath = '';
-        if (artwork.images && artwork.images.length > 0) {
-            imagePath = artwork.images[0].filePath || '';
+    function getCategoryValue(artwork) {
+        if (!artwork || !artwork.category) return '';
+        if (typeof artwork.category === 'string') {
+            return artwork.category.toLowerCase();
         }
+        return String(artwork.category.name || artwork.category.slug || '').toLowerCase();
+    }
+
+    function resolveImageUrl(image) {
+        if (typeof DDAImages !== 'undefined' && typeof DDAImages.resolveImageUrl === 'function') {
+            return DDAImages.resolveImageUrl(image, window.location.href);
+        }
+
+        if (!image) return '';
+
+        var rawPath = typeof image === 'string'
+            ? image
+            : (image.filePath || image.url || image.imageUrl || '');
+
+        rawPath = String(rawPath || '').trim();
+        if (!rawPath) return '';
+
+        if (rawPath.indexOf('http://') === 0 || rawPath.indexOf('https://') === 0) {
+            return rawPath;
+        }
+
+        var mediaBase = (window.DDA_MEDIA_BASE || '').replace(/\/$/, '');
+        if (mediaBase && (rawPath.indexOf('/uploads/') === 0 || rawPath.indexOf('uploads/') === 0)) {
+            return mediaBase + (rawPath.indexOf('/') === 0 ? rawPath : '/' + rawPath);
+        }
+
+        if (rawPath.indexOf('/') === 0) {
+            return rawPath;
+        }
+
+        return rawPath;
+    }
+
+    function getPrimaryImageUrl(artwork) {
+        var images = Array.isArray(artwork.images) ? artwork.images.slice() : [];
+        images.sort(function (a, b) {
+            return (a.sortOrder || 0) - (b.sortOrder || 0);
+        });
+        var primaryImage = images.find(function (img) {
+            return img && (img.isPrimary === true || img.primary === true);
+        }) || images[0];
+
+        var primaryUrl = resolveImageUrl(primaryImage);
+        if (primaryUrl) return primaryUrl;
+
+        return resolveImageUrl(artwork.imageUrl || artwork.image || '') || FALLBACK_IMAGE;
+    }
+
+    function mapArtworkToProduct(artwork) {
+        var imageUrls = Array.isArray(artwork.images)
+            ? artwork.images.map(resolveImageUrl).filter(Boolean)
+            : [];
+
+        var primary = getPrimaryImageUrl(artwork);
+        var slug = artwork.slug || String(artwork.id || '');
+
         return {
-            id: artwork.slug || String(artwork.id),
-            title: artwork.title,
+            id: slug,
+            slug: slug,
+            backendId: artwork.id != null ? artwork.id : null,
+            title: artwork.title || 'Obra sin título',
             description: artwork.description || '',
             price: artwork.price || 'Consultar',
             dimensions: artwork.dimensions || '',
             technique: artwork.technique || '',
-            category: (artwork.category || '').toLowerCase(),
-            image: imagePath || FALLBACK_IMAGE,
-            images: (artwork.images || [])
-                .map(function (img) { return img && (img.filePath || img.url || ''); })
-                .filter(Boolean),
-            sold: artwork.sold || false,
+            category: getCategoryValue(artwork),
+            image: primary,
+            images: imageUrls.length ? imageUrls : (primary ? [primary] : []),
+            sold: artwork.sold === true,
             year: artwork.year || ''
         };
     }
 
     function fetchAllArtworks() {
-        return fetch(API_BASE + '/artworks?page=0&size=200&sort=createdAt,desc')
+        return fetch(API_BASE + '/artworks?page=0&size=500&sort=createdAt,desc')
             .then(function (res) {
                 if (!res.ok) throw new Error('API unavailable');
                 return res.json();

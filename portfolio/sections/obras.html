@@ -32,22 +32,19 @@
         <a href="../../index.html" class="close-btn">CLOSE</a>
     </div>
 
-    <!-- Sticky category nav -->
-    <nav class="cat-nav" id="catNav" aria-label="Categorías de obras">
-        <div class="cat-nav-shell">
-            <a href="../../index.html" class="cat-nav-back">← Volver</a>
-            <div class="cat-nav-track">
-                <div class="cat-nav-inner">
-                    <a class="cat-pill active" href="#pasteles" data-section="pasteles">Pasteles</a>
-                    <a class="cat-pill" href="#gatos" data-section="gatos">Gatos</a>
-                    <a class="cat-pill" href="#paisajes" data-section="paisajes">Paisajes</a>
-                    <a class="cat-pill" href="#Autorretratos" data-section="Autorretratos">Autorretratos</a>
-                    <a class="cat-pill" href="#digital" data-section="digital">Digital</a>
-                    <a class="cat-pill" href="#ilustraciones" data-section="ilustraciones">Ilustraciones</a>
-                    <a class="cat-pill" href="#videos" data-section="videos">Videos</a>
-                </div>
-            </div>
-            <div class="cat-nav-utils">
+    <header class="obras-top" id="catNav">
+        <div class="obras-top__inner">
+            <nav class="obras-top__links" aria-label="Categorías de obras">
+                <a href="../../index.html" class="obras-top__home">inicio</a>
+                <a class="cat-pill active" href="#pasteles" data-section="pasteles">pasteles</a>
+                <a class="cat-pill" href="#gatos" data-section="gatos">gatos</a>
+                <a class="cat-pill" href="#paisajes" data-section="paisajes">paisajes</a>
+                <a class="cat-pill" href="#Autorretratos" data-section="Autorretratos">autorretratos</a>
+                <a class="cat-pill" href="#digital" data-section="digital">digital</a>
+                <a class="cat-pill" href="#ilustraciones" data-section="ilustraciones">ilustraciones</a>
+                <a class="cat-pill" href="#videos" data-section="videos">videos</a>
+            </nav>
+            <div class="obras-top__lang">
                 <div class="lang-switcher-global" role="group" aria-label="Idioma">
                     <a href="#" class="lang-btn" data-lang="es">ES</a>
                     <span class="lang-sep">|</span>
@@ -55,46 +52,14 @@
                 </div>
             </div>
         </div>
-    </nav>
+    </header>
 
     <main class="container">
-        <!-- SECTION 1: PASTELES -->
-        <section id="pasteles">
-            <h1 class="section-title">Pasteles</h1>
-            <div class="masonry-grid">
-            </div>
-        </section>
-        <section id="gatos">
-            <h1 class="section-title">Gatos</h1>
-            <div class="masonry-grid">
-            </div>
-        </section>
-        <section id="paisajes">
-            <h1 class="section-title">Paisajes</h1>
-            <div class="masonry-grid">
-            </div>
-        </section>
-        <section id="Autorretratos">
-            <h1 class="section-title">Autorretratos</h1>
-            <div class="masonry-grid">
-            </div>
-        </section>
-        <!-- SECTION 2: DIGITAL ART -->
-        <section id="digital">
-            <h1 class="section-title">Digital Art</h1>
-            <div class="masonry-grid">
-            </div>
-        </section>
-        <!-- SECTION 3: ILUSTRACIONES -->
-        <section id="ilustraciones">
-            <h1 class="section-title">Ilustraciones</h1>
-            <div class="masonry-grid">
-            </div>
+        <section id="obras-gallery" class="obras-gallery">
+            <div class="masonry-grid" id="obrasMasonryGrid"></div>
         </section>
 
-        <!-- SECTION 4: VIDEOS (cards rendered by obras.js) -->
-        <section id="videos">
-            <h1 class="section-title">Videos</h1>
+        <section id="videos" class="obras-videos" hidden>
             <div class="video-grid" id="obrasVideoGrid"></div>
         </section>
         <!-- Modal for Image View -->

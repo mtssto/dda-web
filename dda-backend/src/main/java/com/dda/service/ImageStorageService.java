@@ -3,6 +3,7 @@ package com.dda.service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.dda.dto.ArtworkDTO;
+import com.dda.dto.ArtworkImageLayoutRequest;
 import com.dda.entity.Artwork;
 import com.dda.entity.ArtworkImage;
 import com.dda.exception.ResourceNotFoundException;
@@ -91,7 +92,8 @@ public class ImageStorageService {
     @Transactional
     public ArtworkDTO.ImageDTO uploadImage(Long artworkId,
                                            MultipartFile file,
-                                           boolean isPrimary) throws IOException {
+                                           boolean isPrimary,
+                                           Integer sortOrder) throws IOException {
 
         Artwork artwork = artworkRepository.findById(artworkId)
                 .orElseThrow(() -> new ResourceNotFoundException("Artwork", "id", artworkId));
@@ -117,25 +119,55 @@ public class ImageStorageService {
 
         log.info("Uploaded to Cloudinary — artworkId={} publicId={}", artworkId, publicId);
 
-        // Demote any existing primary image for this artwork
         if (isPrimary) {
-            artwork.getImages().forEach(img -> img.setIsPrimary(false));
+            artworkImageRepository.clearPrimaryForArtwork(artworkId);
         }
 
-        int nextOrder = artwork.getImages().size();
+        int order = sortOrder != null ? sortOrder : artwork.getImages().size();
 
         ArtworkImage image = ArtworkImage.builder()
                 .artwork(artwork)
-                .filePath(secureUrl)           // store the full https://res.cloudinary.com/... URL
+                .filePath(secureUrl)
                 .fileName(file.getOriginalFilename())
                 .contentType(contentType)
                 .fileSize(file.getSize())
                 .isPrimary(isPrimary)
-                .sortOrder(nextOrder)
-                .cloudinaryPublicId(publicId)  // needed for deletion later
+                .sortOrder(order)
+                .cloudinaryPublicId(publicId)
                 .build();
 
         return ArtworkDTO.ImageDTO.fromEntity(artworkImageRepository.save(image));
+    }
+
+    @Caching(evict = {
+            @CacheEvict(value = "artworks", allEntries = true),
+            @CacheEvict(value = "artworkBySlug", allEntries = true)
+    })
+    @Transactional
+    public void updateImageLayout(Long artworkId, ArtworkImageLayoutRequest request) {
+        artworkRepository.findById(artworkId)
+                .orElseThrow(() -> new ResourceNotFoundException("Artwork", "id", artworkId));
+
+        long primaryCount = request.getImages().stream()
+                .filter(item -> Boolean.TRUE.equals(item.getIsPrimary()))
+                .count();
+        if (primaryCount > 1) {
+            throw new IllegalArgumentException("Only one image can be primary");
+        }
+
+        if (primaryCount == 1) {
+            artworkImageRepository.clearPrimaryForArtwork(artworkId);
+        }
+
+        for (ArtworkImageLayoutRequest.Item item : request.getImages()) {
+            ArtworkImage image = artworkImageRepository.findById(item.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Image", "id", item.getId()));
+            if (!image.getArtwork().getId().equals(artworkId)) {
+                throw new IllegalArgumentException("Image does not belong to artwork");
+            }
+            image.setSortOrder(item.getSortOrder());
+            image.setIsPrimary(item.getIsPrimary());
+        }
     }
 
     // -------------------------------------------------------------------------

@@ -54,6 +54,7 @@ public class Artwork {
     private Category category;
 
     @OneToMany(mappedBy = "artwork", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("sortOrder ASC")
     @Builder.Default
     @BatchSize(size = 20)
     private List<ArtworkImage> images = new ArrayList<>();

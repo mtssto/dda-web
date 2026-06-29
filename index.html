@@ -56,14 +56,21 @@
   }
   </script>
 
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-87SFZWVTQC"></script>
+  <!-- Google tag (gtag.js) — production only (avoids console noise on localhost) -->
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-
-    gtag('config', 'G-87SFZWVTQC');
+    (function () {
+      var host = location.hostname;
+      if (host !== 'diegodeaduriz.art' && host !== 'www.diegodeaduriz.art') return;
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-87SFZWVTQC';
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', 'G-87SFZWVTQC');
+    })();
   </script>
 </head>
 
@@ -100,6 +107,18 @@
     <a href="mailto:contact@diegodeaduriz.com" class="nav-contact">CONTACT</a>
   </div>
 
+  <!-- Latest artwork promo -->
+  <div class="index-new-artwork" id="indexNewArtwork" hidden>
+    <a class="index-new-artwork__link" href="./shop/catalog.html">
+      <img class="index-new-artwork__thumb" alt="" width="72" height="72" loading="eager" decoding="async">
+      <span class="index-new-artwork__copy">
+        <span class="index-new-artwork__label" data-i18n="index.new_artwork">Nueva obra</span>
+        <span class="index-new-artwork__title"></span>
+      </span>
+    </a>
+    <button type="button" class="index-new-artwork__close" id="indexNewArtworkClose" aria-label="Cerrar">&times;</button>
+  </div>
+
   <div id="collage-bg-container">
     <!-- Images will be injected here by collage-bg.js -->
   </div>
@@ -121,25 +140,55 @@
 
   <!-- Note: We are not importing navbar.js here so we can keep the index pristine. -->
   <script src="i18n.js"></script>
+  <script src="shop/config.js"></script>
+  <script src="shop/image-utils.js"></script>
   <script src="collage-bg.js"></script>
+  <script src="index-new-artwork.js"></script>
   <script>
-    // Minimal script to handle shop popup if immersive-gallery isn't imported
-    document.addEventListener('DOMContentLoaded', () => {
-      const welcomeShopModal = document.getElementById('welcomeShopModal');
-      const welcomeClose = document.getElementById('welcomeClose');
+    document.addEventListener('DOMContentLoaded', function () {
+      var WELCOME_DISMISS_KEY = 'dda_index_welcome_shop_dismissed';
+      var welcomeShopModal = document.getElementById('welcomeShopModal');
+      var welcomeClose = document.getElementById('welcomeClose');
 
-      // Show after a delay
-      if (welcomeShopModal) {
+      function setShopModalOpen(isOpen) {
+        document.body.classList.toggle('index-shop-modal-open', isOpen);
+      }
+
+      function isWelcomeDismissed() {
+        try {
+          return sessionStorage.getItem(WELCOME_DISMISS_KEY) === '1';
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function dismissWelcome() {
+        try {
+          sessionStorage.setItem(WELCOME_DISMISS_KEY, '1');
+        } catch (e) {
+          // ignore
+        }
+      }
+
+      function closeWelcome() {
+        if (welcomeShopModal) {
+          welcomeShopModal.style.display = 'none';
+        }
+        dismissWelcome();
+        setShopModalOpen(false);
+      }
+
+      if (welcomeShopModal && !isWelcomeDismissed()) {
         welcomeShopModal.style.display = 'block';
+        setShopModalOpen(true);
+      } else {
+        setShopModalOpen(false);
       }
 
       if (welcomeClose) {
-        welcomeClose.addEventListener('click', () => {
-          if (welcomeShopModal) welcomeShopModal.style.display = 'none';
-        });
+        welcomeClose.addEventListener('click', closeWelcome);
       }
     });
-
   </script>
   <script>
     if ('serviceWorker' in navigator) {
