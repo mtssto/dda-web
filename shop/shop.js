@@ -139,9 +139,31 @@ function cssEscapeSafe(value) {
 
 function resetShopCarouselContainer() {
     var container = document.getElementById('carouselSectionsContainer');
-    if (!container) return;
-    delete container.dataset.rendered;
-    container.innerHTML = '';
+    var featured = document.getElementById('shopHeroFeatured');
+    if (container) {
+        delete container.dataset.rendered;
+        container.innerHTML = '';
+    }
+    if (featured) {
+        delete featured.dataset.rendered;
+        featured.innerHTML = '';
+        delete featured.dataset.skeleton;
+    }
+}
+
+function renderShopCarouselSkeletons() {
+    var featured = document.getElementById('shopHeroFeatured');
+    if (!featured || featured.dataset.skeleton === 'true') return;
+
+    featured.dataset.skeleton = 'true';
+    featured.setAttribute('aria-busy', 'true');
+    featured.innerHTML =
+        '<div class="carousel-skeleton" aria-hidden="true">' +
+            '<div class="carousel-skeleton__label"></div>' +
+            '<div class="carousel-skeleton__track">' +
+                '<div class="carousel-skeleton__card"></div>'.repeat(4) +
+            '</div>' +
+        '</div>';
 }
 
 function updateShopCategoryCounts() {
@@ -174,19 +196,24 @@ document.addEventListener('DOMContentLoaded', function () {
         // Dynamic product count on hero + "See All" button
         const btnSeeAll = document.getElementById('btnSeeAll');
         const heroCount = document.getElementById('heroObraCount');
+        const catalogFloatCount = document.getElementById('catalogFloatCount');
         if (window.products && window.products.length > 0) {
             const totalCount = window.products.length;
             const availableCount = window.products.filter(function (p) { return !p.sold; }).length;
             const lang = localStorage.getItem('preferredLanguage') || 'es';
+            const countLabel = lang === 'en'
+                ? availableCount + ' works available'
+                : availableCount + ' obras disponibles';
             if (btnSeeAll) {
                 btnSeeAll.textContent = lang === 'en'
                     ? `VIEW ALL ${totalCount} WORKS`
                     : `VER LAS ${totalCount} OBRAS DEL CATÁLOGO`;
             }
             if (heroCount) {
-                heroCount.textContent = lang === 'en'
-                    ? `${availableCount} works available`
-                    : `${availableCount} obras disponibles`;
+                heroCount.textContent = countLabel;
+            }
+            if (catalogFloatCount) {
+                catalogFloatCount.textContent = '(' + totalCount + ')';
             }
         }
 
@@ -215,6 +242,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (window.changeLanguage) {
             window.changeLanguage(savedLang);
         }
+    }
+
+    if (!isCatalogPage) {
+        renderShopCarouselSkeletons();
     }
 
     // Load live catalog from API, then render (products.js is fallback only).
@@ -926,6 +957,33 @@ document.addEventListener('DOMContentLoaded', function () {
     };
     window.renderRecentlyViewed();
 
+    // ── Floating CTAs: catalog on scroll; WhatsApp visible on load ──
+    (function initShopFloatingActions() {
+        if (isCatalogPage) return;
+
+        var catalogFloat = document.getElementById('catalogFloat');
+        var whatsappFloat = document.getElementById('whatsappFloat');
+
+        if (whatsappFloat) {
+            whatsappFloat.classList.add('is-ready');
+        }
+
+        function updateFloatState() {
+            var isMobile = window.matchMedia('(max-width: 768px)').matches;
+            var catalogThreshold = isMobile ? 680 : 360;
+            var catalogVisible = window.scrollY > catalogThreshold;
+            if (catalogFloat) {
+                catalogFloat.classList.toggle('visible', catalogVisible);
+            }
+            if (whatsappFloat) {
+                whatsappFloat.classList.toggle('is-shifted', catalogVisible);
+            }
+        }
+
+        window.addEventListener('scroll', updateFloatState, { passive: true });
+        updateFloatState();
+    })();
+
     // ── Dynamic JSON-LD Structured Data ─────────────────
     (function () {
         if (!window.products || !window.products.length) return;
@@ -969,7 +1027,40 @@ function toWebP(src) {
 }
 
 function encodeSrcset(url) {
-    return url.replace(/ /g, '%20');
+    if (typeof DDAImages !== 'undefined' && DDAImages.encodeUrlSpaces) {
+        return DDAImages.encodeUrlSpaces(url);
+    }
+    return String(url || '').replace(/ /g, '%20');
+}
+
+function escapeHtmlAttr(value) {
+    if (typeof DDAImages !== 'undefined' && DDAImages.escapeHtmlAttr) {
+        return DDAImages.escapeHtmlAttr(value);
+    }
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+/** Carousel cards: single optimized Cloudinary URL (no srcset) — avoids responsive parse issues at small sizes. */
+function carouselImageHtml(src, alt, extra) {
+    var attrs = extra || '';
+
+    if (typeof DDAImages !== 'undefined') {
+        var resolved = DDAImages.resolveImageUrl(src, window.location.href);
+        var imgSrc = DDAImages.isCloudinaryUrl(resolved)
+            ? DDAImages.getCardImageUrl(resolved)
+            : resolved;
+
+        if (attrs.indexOf('loading=') === -1) attrs += ' loading="lazy"';
+        if (attrs.indexOf('decoding=') === -1) attrs += ' decoding="async"';
+
+        return '<img src="' + escapeHtmlAttr(encodeSrcset(imgSrc)) + '" alt="' + escapeHtmlAttr(alt) + '"' + attrs + '>';
+    }
+
+    return pictureTag(src, alt, extra);
 }
 
 function pictureTag(src, alt, extra) {
@@ -985,8 +1076,8 @@ function pictureTag(src, alt, extra) {
     if (!/\bfetchpriority=/.test(attrs)) attrs += ' fetchpriority="low"';
 
     return '<picture>' +
-        '<source srcset="' + encodeSrcset(webpSrc) + '" type="image/webp">' +
-        '<img src="' + encodeSrcset(src || '') + '" alt="' + String(alt || '').replace(/"/g, '&quot;') + '"' + attrs + '>' +
+        '<source srcset="' + escapeHtmlAttr(encodeSrcset(webpSrc)) + '" type="image/webp">' +
+        '<img src="' + escapeHtmlAttr(encodeSrcset(src || '')) + '" alt="' + escapeHtmlAttr(alt) + '"' + attrs + '>' +
     '</picture>';
 }
 
@@ -1119,20 +1210,42 @@ function resolveCarouselSectionProducts(section) {
 
 function renderCarouselSections() {
     var container = document.getElementById('carouselSectionsContainer');
-    if (!container || !window.carouselSections || !window.products) return;
+    var featuredSlot = document.getElementById('shopHeroFeatured');
+    if (!container || !window.carouselSections || !window.products || !window.products.length) {
+        if (featuredSlot) {
+            featuredSlot.innerHTML = '';
+            featuredSlot.removeAttribute('aria-busy');
+        }
+        return;
+    }
 
-    // Prevent duplicate rendering if shop.js is initialized more than once.
     if (container.dataset.rendered === 'true') return;
     container.dataset.rendered = 'true';
     container.innerHTML = '';
 
+    if (featuredSlot) {
+        featuredSlot.innerHTML = '';
+        featuredSlot.removeAttribute('aria-busy');
+        delete featuredSlot.dataset.skeleton;
+        featuredSlot.dataset.rendered = 'true';
+    }
+
     var eyeSvg = '<svg viewBox="0 0 24 24" class="icon-eye" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
     var heartSvgCarousel = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
 
-    function renderOneSection(section, sIdx) {
+    function renderOneSection(section, sIdx, parentEl, options) {
+        var opts = options || {};
+        var isHeroFeatured = opts.isHeroFeatured === true;
+        var displayIdx = typeof opts.displayIdx === 'number' ? opts.displayIdx : sIdx;
+        parentEl = parentEl || container;
+
         var sectionEl = document.createElement('section');
         sectionEl.className = 'shop-hero-vertical shop-carousel-section';
-        if (sIdx > 0) sectionEl.style.padding = '20px 0 60px';
+        if (isHeroFeatured) {
+            sectionEl.classList.add('shop-carousel-section--hero');
+        } else if (sIdx > 0) {
+            sectionEl.style.padding = '20px 0 60px';
+        }
 
         var wrapper = document.createElement('div');
         wrapper.className = 'hero-featured';
@@ -1143,14 +1256,19 @@ function renderCarouselSections() {
         label.className = 'featured-label';
         if (section.labelKey) label.setAttribute('data-i18n', section.labelKey);
         label.textContent = section.labelDefault;
+        label.id = 'carousel-label-' + (section.id || sIdx);
         carouselWrapper.appendChild(label);
 
         var miniContainer = document.createElement('div');
         miniContainer.className = 'carousel-container-mini';
+        miniContainer.setAttribute('role', 'region');
+        miniContainer.setAttribute('aria-roledescription', 'carousel');
+        miniContainer.setAttribute('aria-labelledby', label.id);
 
         var prevBtn = document.createElement('button');
         prevBtn.className = 'carousel-btn prev-btn';
-        prevBtn.setAttribute('aria-label', 'Previous');
+        prevBtn.type = 'button';
+        prevBtn.setAttribute('aria-label', 'Anterior — ' + section.labelDefault);
         prevBtn.innerHTML = '&#10094;';
 
         var track = document.createElement('div');
@@ -1184,15 +1302,14 @@ function renderCarouselSections() {
             var carouselIsWished = isShopProductWished(product);
 
             var imageAttrs = ' class="carousel-img"';
-            // Let the first card of the first carousel load a bit sooner; keep everything else lazy/low priority.
-            if (sIdx === 0 && imgIdx === 0) {
+            if (displayIdx === 0 && imgIdx === 0) {
                 imageAttrs += ' loading="eager" fetchpriority="high" decoding="async"';
             }
 
             card.innerHTML =
                 '<div class="product-image">' +
                     '<button class="btn-wishlist' + (carouselIsWished ? ' active' : '') + '" data-product-id="' + escapeAttributeValue(carouselWishlistId) + '" aria-label="Agregar a favoritos">' + heartSvgCarousel + '</button>' +
-                    pictureTag(product.image, carouselAlt, imageAttrs) +
+                    carouselImageHtml(product.image, carouselAlt, imageAttrs) +
                 '</div>' +
                 '<div class="product-info">' +
                     '<h3 class="product-title">' + product.title + '</h3>' +
@@ -1247,7 +1364,8 @@ function renderCarouselSections() {
 
         var nextBtn = document.createElement('button');
         nextBtn.className = 'carousel-btn next-btn';
-        nextBtn.setAttribute('aria-label', 'Next');
+        nextBtn.type = 'button';
+        nextBtn.setAttribute('aria-label', 'Siguiente — ' + section.labelDefault);
         nextBtn.innerHTML = '&#10095;';
 
         miniContainer.appendChild(prevBtn);
@@ -1256,7 +1374,7 @@ function renderCarouselSections() {
         carouselWrapper.appendChild(miniContainer);
         wrapper.appendChild(carouselWrapper);
         sectionEl.appendChild(wrapper);
-        container.appendChild(sectionEl);
+        parentEl.appendChild(sectionEl);
 
         bindMiniCarouselControls(miniContainer);
 
@@ -1264,17 +1382,26 @@ function renderCarouselSections() {
     }
 
     window.carouselSections.forEach(function (section, sIdx) {
-        if (sIdx === 0) {
-            renderOneSection(section, sIdx);
+        var isFeatured = sIdx === 0 && featuredSlot;
+        var parentEl = isFeatured ? featuredSlot : container;
+        var renderOptions = {
+            isHeroFeatured: isFeatured,
+            displayIdx: isFeatured ? 0 : sIdx
+        };
+
+        var renderSection = function () {
+            renderOneSection(section, sIdx, parentEl, renderOptions);
+        };
+
+        if (sIdx <= 1) {
+            renderSection();
             return;
         }
 
-        var renderLater = function () { renderOneSection(section, sIdx); };
-
         if ('requestIdleCallback' in window) {
-            window.requestIdleCallback(renderLater, { timeout: 900 + (sIdx * 250) });
+            window.requestIdleCallback(renderSection, { timeout: 900 + (sIdx * 250) });
         } else {
-            window.setTimeout(renderLater, SHOP_DEFER_SECTION_RENDER_MS * sIdx);
+            window.setTimeout(renderSection, SHOP_DEFER_SECTION_RENDER_MS * sIdx);
         }
     });
 }
