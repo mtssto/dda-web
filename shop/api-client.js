@@ -63,9 +63,11 @@ var DDAApi = (function () {
     }
 
     function mapArtworkToProduct(artwork) {
-        var imageUrls = Array.isArray(artwork.images)
-            ? artwork.images.map(resolveImageUrl).filter(Boolean)
-            : [];
+        var sortedImages = Array.isArray(artwork.images) ? artwork.images.slice() : [];
+        sortedImages.sort(function (a, b) {
+            return (a.sortOrder || 0) - (b.sortOrder || 0);
+        });
+        var imageUrls = sortedImages.map(resolveImageUrl).filter(Boolean);
 
         var primary = getPrimaryImageUrl(artwork);
         var slug = artwork.slug || String(artwork.id || '');
@@ -83,7 +85,8 @@ var DDAApi = (function () {
             image: primary,
             images: imageUrls.length ? imageUrls : (primary ? [primary] : []),
             sold: artwork.sold === true,
-            year: artwork.year || ''
+            year: artwork.year || '',
+            createdAt: artwork.createdAt || artwork.updatedAt || ''
         };
     }
 

@@ -990,6 +990,133 @@ function pictureTag(src, alt, extra) {
     '</picture>';
 }
 
+function normalizeShopCategory(value) {
+    return String(value || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+}
+
+function getImageFilename(value) {
+    if (!value) return '';
+    try {
+        var path = String(value).indexOf('://') !== -1
+            ? new URL(value).pathname
+            : String(value).split('?')[0];
+        return decodeURIComponent(path.split('/').pop() || '').toLowerCase();
+    } catch (e) {
+        return String(value).split('/').pop().split('?')[0].toLowerCase();
+    }
+}
+
+function buildProductLookupMaps(products) {
+    var byImage = {};
+    var byFilename = {};
+    var bySlug = {};
+
+    (products || []).forEach(function (p) {
+        if (p.image) byImage[p.image] = p;
+        if (p.slug) bySlug[p.slug] = p;
+        if (p.id) bySlug[p.id] = p;
+
+        var filenames = [getImageFilename(p.image)];
+        (p.images || []).forEach(function (img) {
+            filenames.push(getImageFilename(img));
+            if (img) byImage[img] = p;
+        });
+
+        filenames.forEach(function (fn) {
+            if (fn) byFilename[fn] = p;
+        });
+    });
+
+    return { byImage: byImage, byFilename: byFilename, bySlug: bySlug };
+}
+
+function findProductByImageRef(ref, lookup) {
+    if (!ref || !lookup) return null;
+    if (lookup.byImage[ref]) return lookup.byImage[ref];
+
+    var fn = getImageFilename(ref);
+    if (fn && lookup.byFilename[fn]) return lookup.byFilename[fn];
+
+    var slugKey = String(ref).replace(/^\/+/, '');
+    if (lookup.bySlug[slugKey]) return lookup.bySlug[slugKey];
+
+    return null;
+}
+
+function sortProductsAvailableFirst(products) {
+    return products.filter(function (p) { return !p.sold; })
+        .concat(products.filter(function (p) { return p.sold; }));
+}
+
+function resolveCarouselSectionProducts(section) {
+    var products = window.products || [];
+    var limit = section.limit || SHOP_CAROUSEL_INITIAL_ITEMS;
+    var lookup = buildProductLookupMaps(products);
+
+    if (section.dynamic === 'newest') {
+        var newest = products.slice().sort(function (a, b) {
+            var ta = Date.parse(a.createdAt || '') || 0;
+            var tb = Date.parse(b.createdAt || '') || 0;
+            if (tb !== ta) return tb - ta;
+            return (parseInt(b.year, 10) || 0) - (parseInt(a.year, 10) || 0);
+        });
+        return sortProductsAvailableFirst(newest).slice(0, limit);
+    }
+
+    if (section.dynamic === 'category' && section.categories && section.categories.length) {
+        var wanted = section.categories.map(normalizeShopCategory);
+        var matched = products.filter(function (p) {
+            var category = normalizeShopCategory(p.category);
+            if (wanted.indexOf(category) !== -1) return true;
+
+            var title = normalizeShopCategory(p.title);
+            return wanted.some(function (cat) {
+                var stem = cat.replace(/s$/, '');
+                return title.indexOf(stem) !== -1;
+            });
+        });
+        return sortProductsAvailableFirst(matched).slice(0, limit);
+    }
+
+    if (section.dynamic === 'featured') {
+        var picked = [];
+        var seenCategories = {};
+        var ranked = sortProductsAvailableFirst(products.slice().sort(function (a, b) {
+            var tb = Date.parse(b.createdAt || '') || parseInt(b.year, 10) || 0;
+            var ta = Date.parse(a.createdAt || '') || parseInt(a.year, 10) || 0;
+            return tb - ta;
+        }));
+
+        ranked.forEach(function (p) {
+            if (picked.length >= limit) return;
+            var cat = normalizeShopCategory(p.category) || 'other';
+            if (!seenCategories[cat]) {
+                seenCategories[cat] = true;
+                picked.push(p);
+            }
+        });
+
+        ranked.forEach(function (p) {
+            if (picked.length >= limit) return;
+            if (picked.indexOf(p) === -1) picked.push(p);
+        });
+
+        return picked;
+    }
+
+    var fromImages = [];
+    (section.images || []).forEach(function (ref) {
+        var product = findProductByImageRef(ref, lookup);
+        if (product && fromImages.indexOf(product) === -1) {
+            fromImages.push(product);
+        }
+    });
+    return fromImages.slice(0, limit);
+}
+
 function renderCarouselSections() {
     var container = document.getElementById('carouselSectionsContainer');
     if (!container || !window.carouselSections || !window.products) return;
@@ -998,25 +1125,6 @@ function renderCarouselSections() {
     if (container.dataset.rendered === 'true') return;
     container.dataset.rendered = 'true';
     container.innerHTML = '';
-
-    var productsByImage = {};
-    window.products.forEach(function (p) {
-        if (p.image) productsByImage[p.image] = p;
-    });
-
-    // Build "Novedades" dynamically: products sorted by year descending
-    window.carouselSections.forEach(function (section) {
-        if (section.id !== 'novedades') return;
-        var sorted = window.products.slice().filter(function (p) {
-            var y = parseInt(p.year, 10);
-            return !isNaN(y);
-        }).sort(function (a, b) {
-            return parseInt(b.year, 10) - parseInt(a.year, 10);
-        });
-        var availableFirst = sorted.filter(function (p) { return !p.sold; })
-            .concat(sorted.filter(function (p) { return p.sold; }));
-        section.images = availableFirst.slice(0, 14).map(function (p) { return p.image; });
-    });
 
     var eyeSvg = '<svg viewBox="0 0 24 24" class="icon-eye" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
     var heartSvgCarousel = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
@@ -1048,10 +1156,9 @@ function renderCarouselSections() {
         var track = document.createElement('div');
         track.className = 'carousel-track';
 
-        var imageList = (section.images || []).slice(0, SHOP_CAROUSEL_INITIAL_ITEMS);
+        var sectionProducts = resolveCarouselSectionProducts(section);
 
-        imageList.forEach(function (imgPath, imgIdx) {
-            var product = productsByImage[imgPath];
+        sectionProducts.forEach(function (product, imgIdx) {
             if (!product) return;
 
             var card = document.createElement('div');
