@@ -122,6 +122,14 @@ document.addEventListener('DOMContentLoaded', () => {
         window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
     };
 
+    window.updatePageTranslations = function () {
+        const lang = localStorage.getItem('preferredLanguage') || 'es';
+        updateElements(commonTranslations[lang]);
+        if (window.pageTranslations && window.pageTranslations[lang]) {
+            updateElements(window.pageTranslations[lang]);
+        }
+    };
+
     function updateElements(t) {
         if (!t) return;
 
@@ -136,6 +144,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const key = el.getAttribute('data-i18n-aria');
             if (t[key]) {
                 el.setAttribute('aria-label', t[key]);
+            }
+        });
+
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            if (t[key]) {
+                el.setAttribute('placeholder', t[key]);
             }
         });
 

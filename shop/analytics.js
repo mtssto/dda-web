@@ -7,6 +7,22 @@
     'use strict';
 
     var GA_ID = 'G-87SFZWVTQC';
+    var host = location.hostname;
+    var isProd = host === 'diegodeaduriz.art' || host === 'www.diegodeaduriz.art';
+
+    function noopGtag() {}
+
+    if (!isProd) {
+        window.trackEvent = function () {};
+        window.trackViewItem = function () {};
+        window.trackViewItemList = function () {};
+        window.trackAddToWishlist = function () {};
+        window.trackGenerateLead = function () {};
+        window.trackSignUp = function () {};
+        window.trackLogin = function () {};
+        if (!window.gtag) window.gtag = noopGtag;
+        return;
+    }
 
     // Auto-load gtag.js if not already present
     if (!document.querySelector('script[src*="googletagmanager.com/gtag"]')) {

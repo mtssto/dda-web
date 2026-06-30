@@ -11,6 +11,7 @@
 
     const artworkByKey = new Map();
     const AVAILABILITY_PREF_KEY = 'dda_catalog_available_only';
+    const PROD_API_BASE = 'https://api.diegodeaduriz.art/api';
 
 
     function getWishlistId(artwork) {
@@ -79,9 +80,11 @@
         initCatalogDropdowns();
         initAvailabilityFilter();
         initCatalogEvents();
+        initMobileCatalogFilters();
         bindCatalogGridEvents();
         setupInfiniteScroll();
         hydrateSearchFromUrl();
+        hydrateCategoryFromUrl();
 
         loadArtworkPage({ reset: true });
     });
@@ -179,6 +182,83 @@
         return `${endpoint}?${params.toString()}`;
     }
 
+    function isLocalApiRequest(url) {
+        return typeof url === 'string' && (url.startsWith('/api/') || url === '/api' || url.startsWith('/api?'));
+    }
+
+    function toProductionApiUrl(localUrl) {
+        if (!isLocalApiRequest(localUrl)) return localUrl;
+        return PROD_API_BASE + localUrl.slice(4);
+    }
+
+    async function fetchCatalogResponse(url, signal) {
+        const requestInit = {
+            method: 'GET',
+            headers: { Accept: 'application/json' },
+            credentials: 'omit',
+            signal
+        };
+
+        let response = await fetch(url, requestInit);
+
+        if (response.ok || !isLocalApiRequest(url)) {
+            return response;
+        }
+
+        if ([401, 404, 502, 503].includes(response.status)) {
+            const fallbackUrl = toProductionApiUrl(url);
+            console.warn('Local API unavailable (' + response.status + '), using production:', fallbackUrl);
+            response = await fetch(fallbackUrl, requestInit);
+        }
+
+        return response;
+    }
+
+    function showCatalogLoadError() {
+        const grid = document.getElementById('productsGrid');
+        const emptyState = document.getElementById('catalogEmptyState');
+        if (!emptyState) return;
+
+        if (grid) grid.innerHTML = '';
+        emptyState.hidden = false;
+
+        const title = emptyState.querySelector('.catalog-empty-state__title');
+        const desc = emptyState.querySelector('.catalog-empty-state__desc');
+        const clearBtn = document.getElementById('catalogClearFilters');
+
+        const lang = localStorage.getItem('preferredLanguage') || 'es';
+        const strings = (window.pageTranslations && window.pageTranslations[lang]) || {};
+
+        if (title) {
+            title.textContent = strings['catalog.error_title'] || 'No se pudo cargar el catálogo';
+            title.removeAttribute('data-i18n');
+        }
+        if (desc) {
+            desc.textContent = strings['catalog.error_desc']
+                || 'Comprobá tu conexión o probá de nuevo en unos segundos.';
+            desc.removeAttribute('data-i18n');
+        }
+        if (clearBtn) {
+            clearBtn.textContent = strings['catalog.error_retry'] || 'Reintentar';
+            clearBtn.removeAttribute('data-i18n');
+        }
+    }
+
+    function resetCatalogEmptyStateCopy() {
+        const emptyState = document.getElementById('catalogEmptyState');
+        if (!emptyState) return;
+
+        const title = emptyState.querySelector('.catalog-empty-state__title');
+        const desc = emptyState.querySelector('.catalog-empty-state__desc');
+        const clearBtn = document.getElementById('catalogClearFilters');
+
+        if (title) title.setAttribute('data-i18n', 'catalog.empty_title');
+        if (desc) desc.setAttribute('data-i18n', 'catalog.empty_desc');
+        if (clearBtn) clearBtn.setAttribute('data-i18n', 'catalog.empty_clear');
+
+        if (window.updatePageTranslations) window.updatePageTranslations();
+    }
+
     function isAvailableOnlyEnabled() {
         const checkbox = document.getElementById('availableOnlyFilter');
         return !!(checkbox && checkbox.checked);
@@ -210,6 +290,7 @@
         checkbox.checked = enabled;
         checkbox.addEventListener('change', () => {
             persistAvailabilityPreference();
+            updateCatalogFiltersBadge();
             loadArtworkPage({ reset: true });
         });
     }
@@ -249,6 +330,8 @@
             artworkByKey.clear();
 
             if (emptyState) emptyState.hidden = true;
+            resetCatalogEmptyStateCopy();
+            renderCatalogSkeletons(grid);
         }
 
         if (isLoading) return;
@@ -257,19 +340,15 @@
         isLoading = true;
         activeRequestController = new AbortController();
 
-        if (loader) loader.hidden = false;
+        if (loader) {
+            loader.hidden = reset && currentPage === 0;
+        }
 
         try {
             const url = buildCatalogUrl();
             console.log('Loading catalog URL:', url);
 
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json'
-                },
-                signal: activeRequestController.signal
-            });
+            const response = await fetchCatalogResponse(url, activeRequestController.signal);
 
             if (!response.ok) {
                 const errorText = await response.text().catch(() => '');
@@ -296,6 +375,10 @@
                 .map((artwork, index) => createArtworkCard(artwork, index))
                 .join('');
 
+            if (currentPage === 0) {
+                grid.innerHTML = '';
+            }
+
             grid.insertAdjacentHTML('beforeend', cardsHtml);
             observeCatalogCardReveals(grid);
 
@@ -317,7 +400,10 @@
         } catch (error) {
             if (error.name !== 'AbortError') {
                 console.error('Catalog load error:', error);
-
+                if (reset) {
+                    hasMore = false;
+                    showCatalogLoadError();
+                }
             }
         } finally {
             isLoading = false;
@@ -326,6 +412,81 @@
                 loader.hidden = !hasMore;
             }
         }
+    }
+
+    function renderCatalogSkeletons(grid, count) {
+        const total = count || 8;
+        let html = '';
+
+        for (let i = 0; i < total; i++) {
+            html += `<article class="product-card catalog-skeleton-card" aria-hidden="true">
+                <div class="product-image loading">
+                    <div class="skeleton-shimmer"></div>
+                </div>
+                <div class="catalog-skeleton-info">
+                    <div class="catalog-skeleton-line catalog-skeleton-line--title"></div>
+                    <div class="catalog-skeleton-line catalog-skeleton-line--price"></div>
+                </div>
+            </article>`;
+        }
+
+        grid.innerHTML = html;
+    }
+
+    function resetFilterDropdown(dropdownId, selectId, value) {
+        const dropdown = document.getElementById(dropdownId);
+        const select = document.getElementById(selectId);
+        if (!dropdown || !select) return;
+
+        select.value = value;
+        const label = dropdown.querySelector('.cd-label');
+        const option = dropdown.querySelector(`.cd-option[data-value="${value}"]`);
+        if (label && option) {
+            label.textContent = option.childNodes[0]?.textContent?.trim() || option.textContent.trim();
+        }
+        dropdown.querySelectorAll('.cd-option').forEach(opt => {
+            opt.classList.toggle('active', opt.dataset.value === value);
+        });
+        dropdown.closest('.sidebar-section')?.classList.toggle('is-active', value !== 'all');
+    }
+
+    function resetCategoryDropdown(value) {
+        resetFilterDropdown('categoryDropdown', 'categoryFilter', value);
+    }
+
+    function clearAllCatalogFilters() {
+        const searchInput = document.getElementById('shopSearchInput');
+        const searchClear = document.getElementById('shopSearchClear');
+        const availableOnly = document.getElementById('availableOnlyFilter');
+        const sortSelect = document.getElementById('sortSelect');
+
+        if (searchInput) searchInput.value = '';
+        searchClear?.classList.remove('visible');
+        resetCategoryDropdown('all');
+        resetFilterDropdown('sizeDropdown', 'sizeFilter', 'all');
+
+        if (sortSelect) {
+            sortSelect.value = 'id,desc';
+        }
+
+        if (availableOnly) {
+            availableOnly.checked = false;
+            try {
+                localStorage.removeItem(AVAILABILITY_PREF_KEY);
+            } catch (e) {
+                // ignore
+            }
+        }
+
+        const url = new URL(window.location.href);
+        url.searchParams.delete('category');
+        url.searchParams.delete('q');
+        url.searchParams.delete('available');
+        window.history.replaceState({}, '', url.pathname + url.search);
+
+        closeMobileCatalogFilters();
+        updateCatalogFiltersBadge();
+        loadArtworkPage({ reset: true });
     }
 
     function createArtworkCard(artwork, indexInPage = 0) {
@@ -347,7 +508,6 @@
         const sold = modalArtwork.sold === true;
         const fullImageUrl = modalArtwork.image;
         const cardImageUrl = getCatalogCardImageUrl(fullImageUrl);
-        const cardSrcset = getCatalogCardSrcset(fullImageUrl);
         const isInitialPriorityImage = currentPage === 0 && indexInPage < 4;
         const imageLoading = isInitialPriorityImage ? 'eager' : 'lazy';
         const imageFetchPriority = isInitialPriorityImage ? 'high' : 'auto';
@@ -361,22 +521,15 @@
 
         const statusBadgeHtml = sold
             ? '<span class="product-status-badge product-status-badge--sold" data-i18n="card.sold">VENDIDO</span>'
-            : '<span class="product-status-badge product-status-badge--available" data-i18n="card.available">DISPONIBLE</span>';
+            : '';
 
         const priceHint = (!price || price === 'Consultar')
             ? '<span class="catalog-price-hint" data-i18n="card.price_hint">Consultá precio y envío</span>'
             : '';
 
-        const soldButtonHtml = `
-            <button
-                type="button"
-                class="btn-grid-action btn-grid-sold"
-                disabled
-                aria-disabled="true"
-            >
-                ✕ <span data-i18n="card.sold">VENDIDO</span>
-            </button>
-        `;
+        const actionsGridClass = sold
+            ? 'product-actions-grid product-actions-grid--solo'
+            : 'product-actions-grid';
 
         const buyButtonHtml = `
             <button
@@ -421,8 +574,6 @@
 
                     <img
                         src="${escapeAttribute(cardImageUrl)}"
-                        ${cardSrcset ? `srcset="${escapeAttribute(cardSrcset)}"` : ''}
-                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 420px"
                         data-full-src="${escapeAttribute(fullImageUrl)}"
                         alt="${escapeAttribute(title)}"
                         loading="${imageLoading}"
@@ -444,7 +595,7 @@
                 </div>
 
                 <div class="product-info">
-                    <div class="product-card-status">${statusBadgeHtml}</div>
+                    ${statusBadgeHtml ? `<div class="product-card-status">${statusBadgeHtml}</div>` : ''}
                     <h3 class="product-title">${escapeHtml(title)}</h3>
 
                     ${yearHtml}
@@ -452,7 +603,7 @@
                     <p class="product-price catalog-card-price${(!price || price === 'Consultar') ? ' catalog-card-price--consult' : ''}">${escapeHtml(price)}</p>
                     ${priceHint}
 
-                    <div class="product-actions-grid">
+                    <div class="${actionsGridClass}">
                         <button
                             type="button"
                             class="btn-grid-action btn-grid-details"
@@ -467,7 +618,7 @@
                             <span data-i18n="card.details">DETALLES</span>
                         </button>
 
-                        ${sold ? soldButtonHtml : buyButtonHtml}
+                        ${sold ? '' : buyButtonHtml}
                     </div>
                 </div>
             </article>
@@ -729,6 +880,63 @@
         return artwork.category.name || '';
     }
 
+    function countActiveCatalogFilters() {
+        let count = 0;
+        const category = document.getElementById('categoryFilter')?.value || 'all';
+        const query = document.getElementById('shopSearchInput')?.value?.trim() || '';
+        const availableOnly = document.getElementById('availableOnlyFilter');
+
+        if (category && category !== 'all') count += 1;
+        if (query) count += 1;
+        if (availableOnly && availableOnly.checked) count += 1;
+
+        return count;
+    }
+
+    function updateCatalogFiltersBadge() {
+        const badge = document.getElementById('catalogFiltersBadge');
+        if (!badge) return;
+
+        const count = countActiveCatalogFilters();
+        if (count > 0) {
+            badge.textContent = String(count);
+            badge.hidden = false;
+            badge.removeAttribute('aria-hidden');
+        } else {
+            badge.hidden = true;
+            badge.setAttribute('aria-hidden', 'true');
+            badge.textContent = '';
+        }
+    }
+
+    function closeMobileCatalogFilters() {
+        const layout = document.getElementById('catalogLayout');
+        const toggle = document.getElementById('catalogFiltersToggle');
+        if (!layout || !toggle) return;
+
+        layout.classList.remove('is-filters-open');
+        toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    function initMobileCatalogFilters() {
+        const toggle = document.getElementById('catalogFiltersToggle');
+        const layout = document.getElementById('catalogLayout');
+        if (!toggle || !layout) return;
+
+        toggle.addEventListener('click', () => {
+            const open = layout.classList.toggle('is-filters-open');
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeMobileCatalogFilters();
+            }
+        });
+
+        updateCatalogFiltersBadge();
+    }
+
     function initCatalogEvents() {
         const searchInput = document.getElementById('shopSearchInput');
         const searchClear = document.getElementById('shopSearchClear');
@@ -736,6 +944,7 @@
         const sortSelect = document.getElementById('sortSelect');
 
         searchInput?.addEventListener('input', debounce(() => {
+            updateCatalogFiltersBadge();
             loadArtworkPage({ reset: true });
         }, 350));
 
@@ -744,6 +953,7 @@
 
             searchInput.value = '';
             searchClear.classList.remove('visible');
+            updateCatalogFiltersBadge();
 
             loadArtworkPage({ reset: true });
         });
@@ -754,11 +964,28 @@
         });
 
         categoryFilter?.addEventListener('change', () => {
+            updateCatalogFiltersBadge();
+            closeMobileCatalogFilters();
             loadArtworkPage({ reset: true });
         });
 
         sortSelect?.addEventListener('change', () => {
             loadArtworkPage({ reset: true });
+        });
+
+        document.getElementById('catalogClearFilters')?.addEventListener('click', () => {
+            const emptyState = document.getElementById('catalogEmptyState');
+            const title = emptyState?.querySelector('.catalog-empty-state__title');
+            const isErrorState = title && !title.hasAttribute('data-i18n');
+
+            if (isErrorState) {
+                resetCatalogEmptyStateCopy();
+                if (emptyState) emptyState.hidden = true;
+                loadArtworkPage({ reset: true });
+                return;
+            }
+
+            clearAllCatalogFilters();
         });
     }
 
@@ -848,6 +1075,34 @@
 
         searchInput.value = query;
         searchClear?.classList.add('visible');
+    }
+
+    function hydrateCategoryFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const category = (params.get('category') || '').trim().toLowerCase();
+        if (!category || category === 'all') return;
+
+        const select = document.getElementById('categoryFilter');
+        const dropdown = document.getElementById('categoryDropdown');
+        if (!select) return;
+
+        const hasOption = Array.from(select.options).some((opt) => opt.value === category);
+        if (!hasOption) return;
+
+        select.value = category;
+
+        if (!dropdown) return;
+
+        const label = dropdown.querySelector('.cd-label');
+        const cdOption = dropdown.querySelector(`.cd-option[data-value="${category}"]`);
+        if (label && cdOption) {
+            const text = cdOption.childNodes[0]?.textContent?.trim() || cdOption.textContent.trim();
+            label.textContent = text;
+            dropdown.querySelectorAll('.cd-option').forEach((opt) => opt.classList.remove('active'));
+            cdOption.classList.add('active');
+        }
+
+        dropdown.closest('.sidebar-section')?.classList.add('is-active');
     }
 
     function initCatalogDropdowns() {

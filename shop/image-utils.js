@@ -143,24 +143,58 @@ var DDAImages = (function () {
         return String(src || '').replace(/\.(png|jpe?g)$/i, '.webp');
     }
 
-    function pictureHtml(src, alt, extraAttrs) {
+    function isBrokenCloudinaryAttr(value) {
+        var raw = String(value || '');
+        return raw.indexOf('%20450w,') !== -1 || raw.indexOf(' 450w,') !== -1;
+    }
+
+    function extractFirstCloudinaryUrl(value) {
+        var match = String(value || '').match(/(https?:\/\/res\.cloudinary\.com\/[^\s,]+)/);
+        return match ? match[1] : '';
+    }
+
+    function repairBrokenImageElement(img) {
+        if (!img || !img.getAttribute) return false;
+
+        var src = img.getAttribute('src') || '';
+        var srcset = img.getAttribute('srcset') || '';
+        if (!isBrokenCloudinaryAttr(src) && !isBrokenCloudinaryAttr(srcset)) {
+            return false;
+        }
+
+        var raw = extractFirstCloudinaryUrl(src) || extractFirstCloudinaryUrl(srcset);
+        if (!raw) return false;
+
+        img.removeAttribute('srcset');
+        img.removeAttribute('sizes');
+        img.src = getTransformedUrl(raw, 700);
+        return true;
+    }
+
+    function repairBrokenImages(root) {
+        var scope = root || document;
+        if (!scope.querySelectorAll) return 0;
+
+        var fixed = 0;
+        scope.querySelectorAll('img').forEach(function (img) {
+            if (repairBrokenImageElement(img)) fixed += 1;
+        });
+        return fixed;
+    }
+
+    /** Single-URL card image — no Cloudinary srcset (avoids malformed responsive requests). */
+    function cardImageHtml(src, alt, extraAttrs) {
         var resolved = resolveImageUrl(src, getStaticBaseUrl() + '/shop/shop.html');
         var attrs = extraAttrs || '';
         var safeAlt = escapeHtmlAttr(alt);
 
         if (isCloudinaryUrl(resolved)) {
-            var optimized = getTransformedUrl(resolved, 700);
-            var srcset = getCardSrcset(resolved);
-            if (srcset && attrs.indexOf('srcset=') === -1) {
-                attrs += ' srcset="' + formatSrcsetAttr(srcset) + '"';
-            }
-            if (attrs.indexOf('sizes=') === -1) {
-                attrs += ' sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 420px"';
-            }
-            resolved = optimized;
+            resolved = getTransformedUrl(resolved, 700);
         } else {
             var webpSrc = toWebPFallback(resolved);
             if (webpSrc !== resolved) {
+                if (attrs.indexOf('loading=') === -1) attrs += ' loading="lazy"';
+                if (attrs.indexOf('decoding=') === -1) attrs += ' decoding="async"';
                 return '<picture>' +
                     '<source srcset="' + escapeHtmlAttr(encodeUrlSpaces(webpSrc)) + '" type="image/webp">' +
                     '<img src="' + escapeHtmlAttr(encodeUrlSpaces(resolved)) + '" alt="' + safeAlt + '"' + attrs + '>' +
@@ -174,6 +208,10 @@ var DDAImages = (function () {
         return '<img src="' + escapeHtmlAttr(encodeUrlSpaces(resolved)) + '" alt="' + safeAlt + '"' + attrs + '>';
     }
 
+    function pictureHtml(src, alt, extraAttrs) {
+        return cardImageHtml(src, alt, extraAttrs);
+    }
+
     return {
         isCloudinaryUrl: isCloudinaryUrl,
         getTransformedUrl: getTransformedUrl,
@@ -183,7 +221,9 @@ var DDAImages = (function () {
         getPdfImageUrl: function (url) { return getTransformedUrl(url, 2000); },
         getThumbImageUrl: function (url) { return getTransformedUrl(url, 120); },
         resolveImageUrl: resolveImageUrl,
+        cardImageHtml: cardImageHtml,
         pictureHtml: pictureHtml,
+        repairBrokenImages: repairBrokenImages,
         encodeSrcset: encodeSrcset,
         encodeUrlSpaces: encodeUrlSpaces,
         formatSrcsetAttr: formatSrcsetAttr,

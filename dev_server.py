@@ -33,12 +33,27 @@ REPO_ROOT = Path(__file__).resolve().parent
 BACKEND_DIR = REPO_ROOT / "dda-backend"
 GALLERY_DIR = REPO_ROOT / "3d-react-gallery"
 
-LOCAL_CONFIG_JS = (
+PROD_API = "https://api.diegodeaduriz.art/api"
+PROD_MEDIA = "https://api.diegodeaduriz.art"
+
+# Default: production API (shop/catalog work without a local backend).
+DEV_CONFIG_JS = (
     "/** Auto-generated for local dev — do not commit overrides here */\n"
     "(function () {\n"
     "    'use strict';\n"
+    f"    window.DDA_API_BASE = '{PROD_API}';\n"
+    f"    window.DDA_MEDIA_BASE = '{PROD_MEDIA}';\n"
+    "})();\n"
+)
+
+# Opt-in via --local-api when Spring Boot is running on :8081.
+LOCAL_API_CONFIG_JS = (
+    "/** Auto-generated for local dev — do not commit overrides here */\n"
+    "(function () {\n"
+    "    'use strict';\n"
+    "    window.DDA_USE_LOCAL_API = true;\n"
     "    window.DDA_API_BASE = '/api';\n"
-    "    // Local dev: dev_server.py proxies /uploads to the backend on :8081\n"
+    f"    window.DDA_MEDIA_BASE = '{PROD_MEDIA}';\n"
     "})();\n"
 )
 
@@ -108,6 +123,7 @@ class DevSiteHandler(SimpleHTTPRequestHandler):
     """Static files from repo root + /api proxy + local shop config."""
 
     backend_base: str = "http://127.0.0.1:8081"
+    local_config_js: str = DEV_CONFIG_JS
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(REPO_ROOT), **kwargs)
@@ -126,7 +142,7 @@ class DevSiteHandler(SimpleHTTPRequestHandler):
             print(f"{Colors.GREEN}[SITE]{Colors.RESET} {req}")
 
     def _send_local_config(self) -> None:
-        data = LOCAL_CONFIG_JS.encode("utf-8")
+        data = self.local_config_js.encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "application/javascript; charset=utf-8")
         self.send_header("Content-Length", str(len(data)))
@@ -307,6 +323,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--backend-port", type=int, default=8081, help="Spring Boot port")
     parser.add_argument("--site-only", action="store_true", help="Only static site + API proxy")
     parser.add_argument("--no-backend", action="store_true", help="Do not start Spring Boot")
+    parser.add_argument("--local-api", action="store_true",
+                        help="Inject /api into shop/config.js (needs backend on --backend-port)")
     parser.add_argument("--with-gallery", action="store_true", help="Also start 3d-react-gallery (Vite)")
     return parser.parse_args()
 
@@ -346,6 +364,7 @@ def main() -> None:
         validate_gallery()
         start_process("GALLERY", gallery_command(), GALLERY_DIR, Colors.GREEN)
 
+    DevSiteHandler.local_config_js = LOCAL_API_CONFIG_JS if args.local_api else DEV_CONFIG_JS
     server = run_site_server(args.host, args.port, args.backend_port)
 
     site_url = f"http://{args.host}:{args.port}"
@@ -353,8 +372,11 @@ def main() -> None:
     print(f"  {Colors.YELLOW}Home:{Colors.RESET}     {site_url}/")
     print(f"  {Colors.YELLOW}Shop:{Colors.RESET}     {site_url}/shop/shop.html")
     print(f"  {Colors.YELLOW}Journal:{Colors.RESET}  {site_url}/journal/index.html")
-    print(f"  {Colors.YELLOW}API:{Colors.RESET}      {site_url}/api  -> 127.0.0.1:{args.backend_port}")
-    print(f"  {Colors.YELLOW}Config:{Colors.RESET}   /shop/config.js uses local API base '/api'")
+    print(f"  {Colors.YELLOW}API:{Colors.RESET}      {site_url}/api  -> 127.0.0.1:{args.backend_port} (proxy; use --local-api for shop JS)")
+    if args.local_api:
+        print(f"  {Colors.YELLOW}Config:{Colors.RESET}   /shop/config.js -> local /api proxy")
+    else:
+        print(f"  {Colors.YELLOW}Config:{Colors.RESET}   /shop/config.js -> {PROD_API}")
     if start_gallery:
         print(f"  {Colors.YELLOW}Gallery:{Colors.RESET}  http://localhost:5173 (Vite — check terminal)")
     print(f"\n{Colors.YELLOW}Press Ctrl+C to stop.{Colors.RESET}\n")

@@ -15,6 +15,10 @@
   <link rel="stylesheet" href="index-custom.css">
   <link rel="canonical" href="https://diegodeaduriz.art">
 
+  <link rel="preconnect" href="https://api.diegodeaduriz.art" crossorigin>
+  <link rel="dns-prefetch" href="https://api.diegodeaduriz.art">
+  <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://diegodeaduriz.art/">
@@ -143,12 +147,13 @@
   <script src="shop/config.js"></script>
   <script src="shop/image-utils.js"></script>
   <script src="collage-bg.js"></script>
-  <script src="index-new-artwork.js"></script>
+  <script src="index-new-artwork.js?v=20260701"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var WELCOME_DISMISS_KEY = 'dda_index_welcome_shop_dismissed';
       var welcomeShopModal = document.getElementById('welcomeShopModal');
       var welcomeClose = document.getElementById('welcomeClose');
+      var welcomeTimer = null;
 
       function setShopModalOpen(isOpen) {
         document.body.classList.toggle('index-shop-modal-open', isOpen);
@@ -170,23 +175,48 @@
         }
       }
 
-      function closeWelcome() {
+      function hideWelcome() {
+        if (welcomeTimer) {
+          clearTimeout(welcomeTimer);
+          welcomeTimer = null;
+        }
         if (welcomeShopModal) {
           welcomeShopModal.style.display = 'none';
         }
-        dismissWelcome();
         setShopModalOpen(false);
       }
 
-      if (welcomeShopModal && !isWelcomeDismissed()) {
+      function showWelcome() {
+        if (!welcomeShopModal || isWelcomeDismissed()) return;
+        if (window.DDAIndexPromo && window.DDAIndexPromo.hasNewArtworkVisible) return;
         welcomeShopModal.style.display = 'block';
         setShopModalOpen(true);
-      } else {
-        setShopModalOpen(false);
       }
+
+      function scheduleWelcome(delayMs) {
+        if (welcomeTimer) clearTimeout(welcomeTimer);
+        welcomeTimer = window.setTimeout(showWelcome, delayMs);
+      }
+
+      function closeWelcome() {
+        hideWelcome();
+        dismissWelcome();
+      }
+
+      document.addEventListener('dda:new-artwork-visible', hideWelcome);
+      document.addEventListener('dda:new-artwork-dismissed', function () {
+        scheduleWelcome(700);
+      });
 
       if (welcomeClose) {
         welcomeClose.addEventListener('click', closeWelcome);
+      }
+
+      // Do not compete with "Nueva obra" — show shop CTA only if no promo card is visible.
+      if (window.DDAIndexPromo && window.DDAIndexPromo.hasNewArtworkVisible) {
+        hideWelcome();
+      } else {
+        scheduleWelcome(2800);
       }
     });
   </script>

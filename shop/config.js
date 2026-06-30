@@ -1,15 +1,21 @@
-/**
- * DDA Frontend Configuration
- * Update DDA_API_BASE when deploying the backend to production.
- * Local dev: leave as '/api' (works with the Python dev_server.py proxy)
- */
-(function () {
-    'use strict';
-
-    // When running locally with dev_server.py, '/api' gets proxied to localhost:8081
-    // Production API — same site family as diegodeaduriz.art (cookie auth via JWT_COOKIE_DOMAIN).
-    window.DDA_API_BASE = 'https://api.diegodeaduriz.art/api';
-    window.DDA_MEDIA_BASE = 'https://api.diegodeaduriz.art';
-    // Optional if the shop HTML is served from another host (e.g. preview on github.io):
-    // window.DDA_STATIC_BASE = 'https://diegodeaduriz.art';
-})();
+/**
+ * DDA Frontend Configuration
+ *
+ * Production: uses api.diegodeaduriz.art
+ * Local static server (python -m http.server): same production API — no backend needed.
+ * Local dev_server.py: injects DDA_USE_LOCAL_API + /api proxy (see dev_server.py).
+ */
+(function () {
+    'use strict';
+
+    var PROD_API = 'https://api.diegodeaduriz.art/api';
+    var PROD_MEDIA = 'https://api.diegodeaduriz.art';
+
+    if (!window.DDA_API_BASE) {
+        window.DDA_API_BASE = PROD_API;
+    }
+    if (!window.DDA_MEDIA_BASE) {
+        window.DDA_MEDIA_BASE = PROD_MEDIA;
+    }
+})();
+
