@@ -2,6 +2,7 @@
     'use strict';
 
     var WA_NUMBER = '5491160139563';
+    var _loadedProduct = null;
 
     var backBtn = document.querySelector('.site-header-back');
 
@@ -83,9 +84,108 @@
 
     function optimizeObraImage(url, size) {
         if (typeof DDAImages === 'undefined') return url;
+        if (size === 'lightbox') return DDAImages.getPdfImageUrl(url);
         if (size === 'detail') return DDAImages.getDetailImageUrl(url);
         if (size === 'thumb') return DDAImages.getThumbImageUrl(url);
         return DDAImages.getCardImageUrl(url);
+    }
+
+    function setObraMainImage(mainImg, imageUrl) {
+        if (!mainImg || !imageUrl) return;
+        mainImg.src = optimizeObraImage(imageUrl, 'detail');
+        mainImg.setAttribute('data-zoom-src', optimizeObraImage(imageUrl, 'lightbox'));
+    }
+
+    function setupObraLightbox() {
+        if (setupObraLightbox._bound) return;
+        setupObraLightbox._bound = true;
+
+        var mainImageContainer = document.getElementById('obraMainImage');
+        var zoomBtn = document.getElementById('obraZoomBtn');
+        var lightbox = document.getElementById('obraLightbox');
+        var lightboxImg = document.getElementById('lightboxImg');
+        var lightboxClose = document.getElementById('lightboxClose');
+
+        function openLightbox() {
+            var mainImg = document.getElementById('obraImg');
+            if (!lightbox || !lightboxImg || !mainImg || !mainImg.src) return;
+
+            lightboxImg.src = mainImg.getAttribute('data-zoom-src') || mainImg.src;
+            lightboxImg.alt = mainImg.alt || '';
+            lightboxImg.dataset.zoomLevel = '0';
+            lightboxImg.style.transform = 'scale(1)';
+            lightboxImg.style.transformOrigin = 'center center';
+            lightboxImg.style.cursor = 'zoom-in';
+            lightbox.classList.add('active');
+            document.body.classList.add('obra-lightbox-open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            if (!lightbox) return;
+            lightbox.classList.remove('active');
+            document.body.classList.remove('obra-lightbox-open');
+            document.body.style.overflow = '';
+            if (lightboxImg) {
+                lightboxImg.dataset.zoomLevel = '0';
+                lightboxImg.style.transform = 'scale(1)';
+                lightboxImg.style.transformOrigin = 'center center';
+            }
+        }
+
+        if (mainImageContainer) {
+            mainImageContainer.addEventListener('click', function (e) {
+                if (e.target.closest('.obra-zoom-btn')) return;
+                openLightbox();
+            });
+        }
+
+        if (zoomBtn) {
+            zoomBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                openLightbox();
+            });
+        }
+
+        if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+
+        if (lightbox) {
+            lightbox.addEventListener('click', function (e) {
+                if (e.target === lightbox) closeLightbox();
+            });
+        }
+
+        if (lightboxImg) {
+            lightboxImg.addEventListener('click', function (e) {
+                e.stopPropagation();
+
+                var currentZoom = parseInt(this.dataset.zoomLevel || '0', 10);
+                currentZoom = (currentZoom + 1) % 3;
+                this.dataset.zoomLevel = String(currentZoom);
+
+                if (currentZoom === 0) {
+                    this.style.transform = 'scale(1)';
+                    this.style.transformOrigin = 'center center';
+                    this.style.cursor = 'zoom-in';
+                } else if (currentZoom === 1) {
+                    var rect = this.getBoundingClientRect();
+                    var xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+                    var yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+                    this.style.transformOrigin = xPercent + '% ' + yPercent + '%';
+                    this.style.transform = 'scale(2)';
+                    this.style.cursor = 'zoom-in';
+                } else {
+                    this.style.transform = 'scale(3)';
+                    this.style.cursor = 'zoom-out';
+                }
+            });
+        }
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && lightbox && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
     }
 
     function getTranslation(key) {
@@ -169,6 +269,7 @@
     }
 
     function renderProduct(product) {
+        _loadedProduct = product;
         var loading = document.getElementById('obraLoading');
         var content = document.getElementById('obraContent');
         if (loading) loading.style.display = 'none';
@@ -207,7 +308,7 @@
         var currentIndex = 0;
         var mainImg = document.getElementById('obraImg');
         if (mainImg) {
-            mainImg.src = optimizeObraImage(images[0], 'detail');
+            setObraMainImage(mainImg, images[0]);
             mainImg.alt = product.title;
             mainImg.removeAttribute('width');
             mainImg.removeAttribute('height');
@@ -235,7 +336,7 @@
                 thumb.appendChild(img);
                 thumb.addEventListener('click', function () {
                     currentIndex = i;
-                    mainImg.src = optimizeObraImage(imgSrc, 'detail');
+                    setObraMainImage(mainImg, imgSrc);
                     thumbContainer.querySelectorAll('.obra-thumb').forEach(function (t) { t.classList.remove('active'); });
                     thumb.classList.add('active');
                 });
@@ -347,40 +448,6 @@
             });
         }
 
-        // Zoom / Lightbox
-        var mainImageContainer = document.getElementById('obraMainImage');
-        var zoomBtn = document.getElementById('obraZoomBtn');
-        var lightbox = document.getElementById('obraLightbox');
-        var lightboxImg = document.getElementById('lightboxImg');
-        var lightboxClose = document.getElementById('lightboxClose');
-
-        function openLightbox() {
-            if (lightbox && lightboxImg && mainImg) {
-                lightboxImg.src = mainImg.src;
-                lightboxImg.alt = mainImg.alt;
-                lightbox.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-        }
-
-        function closeLightbox() {
-            if (lightbox) {
-                lightbox.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        }
-
-        if (mainImageContainer) mainImageContainer.addEventListener('click', openLightbox);
-        if (zoomBtn) zoomBtn.addEventListener('click', function (e) { e.stopPropagation(); openLightbox(); });
-        if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
-        if (lightbox) lightbox.addEventListener('click', function (e) {
-            if (e.target === lightbox) closeLightbox();
-        });
-
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') closeLightbox();
-        });
-
         // Track view: server-side + GA4
         var viewSlug = product.slug || product.id;
         var apiBase = window.DDA_API_BASE || '/api';
@@ -408,6 +475,11 @@
 
         // Related artworks
         renderRelated(product);
+        if (typeof DDAApi !== 'undefined' && DDAApi.loadProducts) {
+            DDAApi.loadProducts().then(function () {
+                renderRelated(product);
+            }).catch(function () {});
+        }
     }
 
     function setMetaRow(rowId, valueId, value) {
@@ -424,18 +496,25 @@
         if (typeof DDACart === 'undefined') return;
         var inCart = DDACart.isInCart(product.id);
         btn.disabled = inCart;
-        var label = inCart ? 'Ya está en el carrito' : 'Agregar al carrito';
-        btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> ' + label;
+        var labelEl = document.getElementById('obraAddCartLabel');
+        var label = inCart
+            ? (getTranslation('obra.in_cart') || 'Ya está en el carrito')
+            : (getTranslation('obra.add_selection') || 'Agregar a mi selección');
+        if (labelEl) {
+            labelEl.textContent = label;
+        } else {
+            btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> ' + label;
+        }
     }
 
     function updateWishlistButton(btn, textEl, id) {
         var inList = isInWishlist(id);
         if (inList) {
             btn.classList.add('active');
-            if (textEl) textEl.textContent = 'En tus favoritos';
+            if (textEl) textEl.textContent = getTranslation('obra.wishlist_active') || 'En tus favoritos';
         } else {
             btn.classList.remove('active');
-            if (textEl) textEl.textContent = 'Agregar a favoritos';
+            if (textEl) textEl.textContent = getTranslation('obra.wishlist_add') || 'Agregar a favoritos';
         }
     }
 
@@ -506,49 +585,79 @@
 
     function renderRelated(product) {
         if (!window.products) return;
+
+        var productKey = String(product.slug || product.id || '');
         var related = window.products.filter(function (p) {
-            return p.id !== product.id && (p.category === product.category || p.technique === product.technique);
-        }).slice(0, 4);
+            var pKey = String(p.slug || p.id || '');
+            if (!pKey || pKey === productKey) return false;
+            return p.category === product.category || p.technique === product.technique;
+        }).slice(0, 8);
 
         if (related.length === 0) {
-            related = window.products.filter(function (p) { return p.id !== product.id; }).slice(0, 4);
+            related = window.products.filter(function (p) {
+                return String(p.slug || p.id || '') !== productKey;
+            }).slice(0, 8);
         }
 
         if (related.length === 0) return;
 
         var section = document.getElementById('obraRelated');
-        var grid = document.getElementById('relatedGrid');
-        if (!section || !grid) return;
+        var track = document.getElementById('relatedGrid');
+        if (!section || !track) return;
 
+        track.innerHTML = '';
         section.style.display = 'block';
 
         related.forEach(function (p) {
+            var slug = p.slug || p.id;
             var card = document.createElement('a');
             card.className = 'related-card';
-            card.href = 'obra.html?id=' + encodeURIComponent(p.id);
+            card.href = 'obra.html?id=' + encodeURIComponent(slug);
 
             var imgDiv = document.createElement('div');
             imgDiv.className = 'related-card-img';
+
+            if (p.sold) {
+                var badge = document.createElement('span');
+                badge.className = 'related-card-badge';
+                badge.textContent = getTranslation('card.sold') || 'VENDIDO';
+                imgDiv.appendChild(badge);
+            }
+
             var img = document.createElement('img');
-            img.src = p.image;
-            img.alt = p.title;
+            var imgSrc = p.image || '';
+            if (typeof DDAImages !== 'undefined' && imgSrc) {
+                var resolved = DDAImages.resolveImageUrl(imgSrc, window.location.href);
+                imgSrc = DDAImages.isCloudinaryUrl(resolved)
+                    ? DDAImages.getCardImageUrl(resolved)
+                    : resolved;
+            }
+            img.src = imgSrc;
+            img.alt = p.title || '';
             img.loading = 'lazy';
+            img.decoding = 'async';
             img.onerror = function () { this.src = '/portfolio/sections/obras/MG_1192.jpg'; };
             imgDiv.appendChild(img);
 
             var titleEl = document.createElement('p');
             titleEl.className = 'related-card-title';
-            titleEl.textContent = p.title;
+            titleEl.textContent = p.title || '';
 
             var priceEl = document.createElement('p');
             priceEl.className = 'related-card-price';
-            priceEl.textContent = p.sold ? 'Vendida' : (p.price || 'Consultar');
+            priceEl.textContent = p.sold
+                ? (getTranslation('card.sold') || 'Vendida')
+                : (p.price || 'Consultar');
 
             card.appendChild(imgDiv);
             card.appendChild(titleEl);
             card.appendChild(priceEl);
-            grid.appendChild(card);
+            track.appendChild(card);
         });
+
+        if (typeof window.updatePageTranslations === 'function') {
+            window.updatePageTranslations();
+        }
     }
 
     // Auth header
@@ -595,6 +704,7 @@
 
     // Init
     function init() {
+        setupObraLightbox();
         renderAuthHeader();
 
         var id = getProductId();
@@ -622,4 +732,16 @@
     } else {
         init();
     }
+
+    window.addEventListener('languageChanged', function () {
+        applyPageTranslations();
+        if (!_loadedProduct) return;
+        var cartBtn = document.getElementById('obraAddCart');
+        var wishBtn = document.getElementById('obraWishlist');
+        var wishText = document.getElementById('wishlistText');
+        if (cartBtn) updateCartButton(cartBtn, _loadedProduct);
+        if (wishBtn && wishText) {
+            updateWishlistButton(wishBtn, wishText, _loadedProduct.id || _loadedProduct.title);
+        }
+    });
 })();

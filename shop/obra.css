@@ -117,28 +117,31 @@
     position: absolute;
     bottom: 16px;
     right: 16px;
+    z-index: 4;
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.92);
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s;
+    opacity: 0.88;
+    transition: opacity 0.3s, transform 0.2s;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .obra-main-image:hover .obra-zoom-btn {
     opacity: 1;
+    transform: scale(1.04);
 }
 
 .obra-sold-badge {
     position: absolute;
     top: 16px;
     left: 16px;
+    z-index: 3;
     background: #c0392b;
     color: #fff;
     padding: 6px 16px;
@@ -426,7 +429,7 @@
 .obra-lightbox {
     position: fixed;
     inset: 0;
-    z-index: 9999;
+    z-index: 10050;
     background: rgba(0, 0, 0, 0.95);
     display: flex;
     align-items: center;
@@ -443,10 +446,17 @@
 }
 
 .obra-lightbox img {
-    max-width: 90vw;
-    max-height: 90vh;
+    max-width: min(96vw, 1400px);
+    max-height: 92vh;
     object-fit: contain;
     border-radius: 4px;
+    cursor: zoom-in;
+    transition: transform 0.3s ease;
+    transform-origin: center center;
+}
+
+.obra-lightbox .lightbox-close {
+    z-index: 10051;
 }
 
 .lightbox-close {
@@ -471,11 +481,135 @@
     opacity: 1;
 }
 
-/* Related artworks */
+/* Related artworks — horizontal carousel */
 .obra-related {
     margin-top: 80px;
     padding-top: 48px;
     border-top: 1px solid #eee;
+}
+
+.obra-related .related-title {
+    display: block;
+    width: fit-content;
+    margin: 0 auto 28px;
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-subtext);
+    position: relative;
+}
+
+.obra-related .related-title::before,
+.obra-related .related-title::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 40px;
+    height: 1px;
+    background: #ddd;
+}
+
+.obra-related .related-title::before {
+    right: 100%;
+    margin-right: 15px;
+}
+
+.obra-related .related-title::after {
+    left: 100%;
+    margin-left: 15px;
+}
+
+.related-track {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 4px 4px 12px;
+    scrollbar-width: none;
+}
+
+.related-track::-webkit-scrollbar {
+    display: none;
+}
+
+.related-card {
+    flex: 0 0 min(200px, 42vw);
+    scroll-snap-align: start;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.25s ease;
+}
+
+.related-card:hover {
+    transform: translateY(-3px);
+}
+
+.related-card-img {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--color-light-bg);
+    margin-bottom: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.related-card-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 1;
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 7px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #ddd;
+    color: #666;
+    border-radius: 2px;
+}
+
+.related-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.35s ease;
+}
+
+.related-card:hover .related-card-img img {
+    transform: scale(1.03);
+}
+
+.related-card-title {
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-style: italic;
+    margin: 0 0 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.related-card-price {
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-subtext);
+    margin: 0;
+}
+
+/* Legacy grid fallback */
+.related-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
 }
 
 .related-title {
@@ -483,53 +617,6 @@
     font-size: 1.5rem;
     font-weight: 500;
     margin: 0 0 32px;
-}
-
-.related-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-}
-
-.related-card {
-    cursor: pointer;
-    text-decoration: none;
-    color: inherit;
-    transition: transform 0.3s;
-}
-
-.related-card:hover {
-    transform: translateY(-4px);
-}
-
-.related-card-img {
-    aspect-ratio: 1;
-    border-radius: 10px;
-    overflow: hidden;
-    background: var(--color-light-bg);
-    margin-bottom: 12px;
-}
-
-.related-card-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.4s;
-}
-
-.related-card:hover .related-card-img img {
-    transform: scale(1.05);
-}
-
-.related-card-title {
-    font-size: 0.9rem;
-    font-weight: 500;
-    margin: 0 0 4px;
-}
-
-.related-card-price {
-    font-size: 0.85rem;
-    color: var(--color-subtext);
 }
 
 /* Not found */
@@ -598,6 +685,15 @@
     .obra-loading {
         grid-template-columns: 1fr;
         gap: 32px;
+    }
+
+    .related-track {
+        gap: 12px;
+        padding-inline: 2px;
+    }
+
+    .related-card {
+        flex-basis: min(160px, 52vw);
     }
 
     .related-grid {

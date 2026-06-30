@@ -76,17 +76,24 @@
             rel="stylesheet">
 
         <link rel="stylesheet" href="shop.css">
-        <link rel="stylesheet" href="catalog.css">
+        <link rel="stylesheet" href="catalog.css?v=20260630">
         <link rel="stylesheet" href="../global-close.css">
 
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-87SFZWVTQC"></script>
+        <!-- Google tag (gtag.js) — production only -->
         <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() { dataLayer.push(arguments); }
-            gtag('js', new Date());
-
-            gtag('config', 'G-87SFZWVTQC');
+            (function () {
+                var host = location.hostname;
+                if (host !== 'diegodeaduriz.art' && host !== 'www.diegodeaduriz.art') return;
+                var s = document.createElement('script');
+                s.async = true;
+                s.src = 'https://www.googletagmanager.com/gtag/js?id=G-87SFZWVTQC';
+                document.head.appendChild(s);
+                window.dataLayer = window.dataLayer || [];
+                function gtag() { dataLayer.push(arguments); }
+                window.gtag = gtag;
+                gtag('js', new Date());
+                gtag('config', 'G-87SFZWVTQC');
+            })();
         </script>
 </head>
 
@@ -116,7 +123,7 @@
 
     <main class="catalog-container">
         <div class="catalog-header-actions" style="display: flex; justify-content: space-between; align-items: center;">
-            <a href="shop.html" class="back-link">← Volver al Shop</a>
+            <a href="shop.html" class="back-link" data-i18n="catalog.back_shop">← Volver al Shop</a>
             <button id="btnDownloadPDF" class="btn-download-catalog" data-i18n="catalog.download">
                 <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"
                     stroke-linecap="round" stroke-linejoin="round"
@@ -143,6 +150,16 @@
                     <button type="button" class="search-clear" id="shopSearchClear" aria-label="Limpiar">×</button>
                 </div>
                 <div class="catalog-toolbar-actions">
+                    <button type="button" class="catalog-filters-toggle" id="catalogFiltersToggle"
+                        aria-expanded="false" aria-controls="catalogSidebar">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                            <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/>
+                            <line x1="10" y1="18" x2="14" y2="18"/>
+                        </svg>
+                        <span data-i18n="catalog.filters_btn">Filtros</span>
+                        <span class="catalog-filters-badge" id="catalogFiltersBadge" hidden aria-hidden="true"></span>
+                    </button>
                     <label class="filter-chip">
                         <input type="checkbox" id="availableOnlyFilter" />
                         <span data-i18n="filter.available_only">Solo disponibles</span>
@@ -154,8 +171,8 @@
 
         <hr class="catalog-divider">
 
-        <div class="catalog-layout">
-            <aside class="catalog-sidebar">
+        <div class="catalog-layout" id="catalogLayout">
+            <aside class="catalog-sidebar" id="catalogSidebar">
                 <div class="sidebar-section">
                     <h3 class="sidebar-heading" data-i18n="filter.categories">CATEGORÍAS</h3>
                     <!-- Hidden select for JS compatibility -->
@@ -188,7 +205,7 @@
                 </div>
 
                 <div class="sidebar-section">
-                    <h3 class="sidebar-heading">TAMAÑO</h3>
+                    <h3 class="sidebar-heading" data-i18n="filter.size">TAMAÑO</h3>
                     <select id="sizeFilter" style="display:none">
                         <option value="all">Todos los tamaños</option>
                         <option value="small">Pequeño — hasta 50 cm</option>
@@ -241,11 +258,14 @@
                 </section>
 
                 <div id="catalogEmptyState" class="catalog-empty-state" hidden>
-                    No se encontraron obras.
+                    <p class="catalog-empty-state__title" data-i18n="catalog.empty_title">No hay obras con esos filtros</p>
+                    <p class="catalog-empty-state__desc" data-i18n="catalog.empty_desc">Probá otra categoría o quitá el filtro de disponibles.</p>
+                    <button type="button" class="catalog-empty-state__btn" id="catalogClearFilters" data-i18n="catalog.empty_clear">Ver todas las obras</button>
                 </div>
 
                 <div id="catalogLoader" class="catalog-loader" hidden>
-                    Cargando más obras...
+                    <span class="catalog-loader__spinner" aria-hidden="true"></span>
+                    <span data-i18n="catalog.loading_more">Cargando más obras…</span>
                 </div>
 
                 <div id="catalogSentinel" class="catalog-sentinel" aria-hidden="true"></div>
@@ -278,11 +298,12 @@
     <!-- Newsletter -->
     <section class="newsletter-section" id="newsletterSection">
         <div class="newsletter-inner">
-            <h2 class="newsletter-title">Mantenete al día</h2>
-            <p class="newsletter-desc">Recibí novedades sobre nuevas obras, exposiciones y ediciones limitadas.</p>
+            <h2 class="newsletter-title" data-i18n="shop.newsletter_title">Mantenete al día</h2>
+            <p class="newsletter-desc" data-i18n="shop.newsletter_desc">Recibí novedades sobre nuevas obras, exposiciones y ediciones limitadas.</p>
             <form class="newsletter-form" id="newsletterForm">
-                <input type="email" id="newsletterEmail" class="newsletter-input" placeholder="Tu email" required>
-                <button type="submit" class="newsletter-btn" id="newsletterBtn">Suscribirme</button>
+                <input type="email" id="newsletterEmail" class="newsletter-input" placeholder="Tu email" required
+                    data-i18n-placeholder="shop.newsletter_placeholder">
+                <button type="submit" class="newsletter-btn" id="newsletterBtn" data-i18n="shop.newsletter_btn">Suscribirme</button>
             </form>
             <p class="newsletter-msg" id="newsletterMsg"></p>
         </div>
@@ -307,16 +328,16 @@
     ═══════════════════════════════════════════ -->
     <div class="inquiry-overlay" id="inquiryOverlay" onclick="closeInquiry(event)">
         <div class="inquiry-modal" role="dialog" aria-modal="true" aria-labelledby="inquiry-title">
-            <button class="inquiry-close" onclick="closeInquiry()" aria-label="Cerrar">×</button>
-            <h2 id="inquiry-title">Solicitar información</h2>
+            <button class="inquiry-close" onclick="closeInquiry()" aria-label="Cerrar" data-i18n-aria="inquiry.close">×</button>
+            <h2 id="inquiry-title" data-i18n="inquiry.title">Solicitar información</h2>
             <p class="inquiry-artwork-name" id="inquiry-artwork-name">—</p>
-            <p>Para adquirir esta obra o consultar disponibilidad, precio y envío, contactá a Diego directamente:</p>
+            <p data-i18n="inquiry.desc">Para adquirir esta obra o consultar disponibilidad, precio y envío, contactá a Diego directamente:</p>
             <div class="inquiry-options">
                 <button class="inquiry-btn cart-add" id="inquiry-add-cart">
                     <span class="btn-icon">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                     </span>
-                    Agregar al carrito
+                    <span data-i18n="inquiry.add_cart">Agregar al carrito</span>
                 </button>
                 <a class="inquiry-btn primary" id="inquiry-whatsapp" href="#" target="_blank" rel="noopener noreferrer"
                     onclick="trackEvent && trackEvent('click', 'Contact', 'WhatsApp Inquiry — ' + document.getElementById('inquiry-artwork-name').textContent)">
@@ -326,12 +347,12 @@
                                 d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                         </svg>
                     </span>
-                    Escribir por WhatsApp
+                    <span data-i18n="inquiry.whatsapp">Escribir por WhatsApp</span>
                 </a>
                 <a class="inquiry-btn" id="inquiry-email" href="#"
                     onclick="trackEvent && trackEvent('click', 'Contact', 'Email Inquiry — ' + document.getElementById('inquiry-artwork-name').textContent)">
                     <span class="btn-icon">✉</span>
-                    Enviar un email
+                    <span data-i18n="inquiry.email">Enviar un email</span>
                 </a>
             </div>
         </div>
@@ -359,7 +380,7 @@
 
     <!-- shop.js injects the detail modal and image lightbox; catalog-api.js renders paginated cards -->
     <script src="shop.js" defer></script>
-    <script src="catalog-api.js" defer></script>
+    <script src="catalog-api.js?v=20260630c" defer></script>
     <script src="newsletter.js" defer></script>
 
     <!-- ═══════════════════════════════════════════

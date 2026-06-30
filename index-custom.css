@@ -318,6 +318,12 @@ body.index-shop-modal-open .index-new-artwork {
     flex-shrink: 0;
     border: 1px solid rgba(0, 0, 0, 0.14);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+    background: #ececec;
+    transition: opacity 0.2s ease;
+}
+
+.index-new-artwork__thumb.is-loading {
+    opacity: 0.35;
 }
 
 .index-new-artwork--no-thumb .index-new-artwork__thumb {

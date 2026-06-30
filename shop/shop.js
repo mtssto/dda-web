@@ -28,6 +28,21 @@ function getShopWishlistId(product) {
     return String(product.slug || product.title || product.id || product.image || '').trim();
 }
 
+function getObraUrl(product) {
+    if (!product) return '';
+    var detailId = product.slug || product.id;
+    return detailId ? 'obra.html?id=' + encodeURIComponent(detailId) : '';
+}
+
+function navigateToObra(product) {
+    var url = getObraUrl(product);
+    if (url) {
+        window.location.href = url;
+        return;
+    }
+    openModal(product);
+}
+
 function readDdaWishlist() {
     try {
         var parsed = JSON.parse(localStorage.getItem('dda_wishlist') || '[]');
@@ -585,7 +600,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const modalClose = document.querySelector('.modal-close');
 
     const lightBoxModal = document.getElementById('lightBoxModal');
-    const lightBoxClose = document.querySelector('.lightbox-close');
+    const lightBoxClose = document.querySelector('#lightBoxModal .lightbox-close');
 
     if (modalClose) {
         modalClose.addEventListener('click', closeModal);
@@ -788,23 +803,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Carousel controls are bound when each section is rendered.
 
-    // Global Event Delegation for LightBox (catches all .product-image img clicks including static carousels)
+    // Global Event Delegation for LightBox (skip shop carousel — those navigate to obra detail)
     document.addEventListener('click', function (e) {
-        if (e.target.tagName === 'IMG' && e.target.closest('.product-image')) {
-            e.preventDefault();
-            e.stopPropagation();
-            const relSrc = e.target.getAttribute('src');
-            openLightBox(relSrc || e.target.src);
-        }
+        if (e.target.tagName !== 'IMG' || !e.target.closest('.product-image')) return;
+        if (document.body.classList.contains('shop-page') && e.target.closest('.carousel-card')) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+        const relSrc = e.target.getAttribute('data-full-src') || e.target.src;
+        openLightBox(relSrc || e.target.src);
     }, true); // Use capture phase to intercept before card's onclick
 
     // ── Back-to-Top Button ──────────────────────────────
     (function () {
         var btn = document.createElement('button');
         btn.className = 'back-to-top';
+        btn.setAttribute('data-i18n-aria', 'shop.back_to_top');
         btn.setAttribute('aria-label', 'Volver arriba');
         btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>';
         document.body.appendChild(btn);
+        if (window.pageTranslations) {
+            var btLang = localStorage.getItem('preferredLanguage') || 'es';
+            var btLabel = window.pageTranslations[btLang] && window.pageTranslations[btLang]['shop.back_to_top'];
+            if (btLabel) btn.setAttribute('aria-label', btLabel);
+        }
         window.addEventListener('scroll', function () {
             btn.classList.toggle('visible', window.scrollY > 400);
         }, { passive: true });
@@ -876,11 +898,45 @@ document.addEventListener('DOMContentLoaded', function () {
         dropdown.className = 'search-dropdown';
         searchBar.appendChild(dropdown);
 
+        var searchActiveIndex = -1;
+
+        function clearSearchHighlight() {
+            searchActiveIndex = -1;
+            dropdown.querySelectorAll('.search-dropdown-item').forEach(function (el) {
+                el.classList.remove('is-highlighted');
+            });
+        }
+
+        function highlightSearchItem(index) {
+            var items = dropdown.querySelectorAll('.search-dropdown-item');
+            if (!items.length) return;
+            searchActiveIndex = Math.max(0, Math.min(index, items.length - 1));
+            items.forEach(function (el, i) {
+                el.classList.toggle('is-highlighted', i === searchActiveIndex);
+            });
+            items[searchActiveIndex].scrollIntoView({ block: 'nearest' });
+        }
+
+        function activateSearchItem(item) {
+            if (!item) return;
+            dropdown.classList.remove('open');
+            input.value = '';
+            clearSearchHighlight();
+            if (item.tagName === 'A' && item.href) {
+                window.location.href = item.href;
+                return;
+            }
+            var pid = item.getAttribute('data-id');
+            var product = window.products.find(function (p) { return p.id === pid; });
+            if (product) navigateToObra(product);
+        }
+
         var normalize = function (str) {
             return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
         };
 
         input.addEventListener('input', function () {
+            clearSearchHighlight();
             var q = normalize(input.value);
             if (!q || q.length < 2) {
                 dropdown.classList.remove('open');
@@ -893,6 +949,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 return words.every(function (w) { return searchable.includes(w); });
             }).slice(0, 5);
 
+            var lang = localStorage.getItem('preferredLanguage') || 'es';
+            var soldTag = (window.pageTranslations && window.pageTranslations[lang])
+                ? window.pageTranslations[lang]['search.sold_tag']
+                : 'Vendido';
+
             if (matches.length === 0) {
                 var emptyMsg = (window.pageTranslations && window.pageTranslations[localStorage.getItem('preferredLanguage') || 'es'])
                     ? window.pageTranslations[localStorage.getItem('preferredLanguage') || 'es']['shop.search_empty']
@@ -903,31 +964,49 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             dropdown.innerHTML = matches.map(function (p) {
                 var thumbSrc = getSearchThumbUrl(p.image);
-                return '<div class="search-dropdown-item" data-id="' + escapeAttributeValue(p.id) + '">' +
+                var obraUrl = getObraUrl(p);
+                var tag = obraUrl ? 'a' : 'div';
+                var hrefAttr = obraUrl ? ' href="' + escapeHtmlAttr(obraUrl) + '"' : '';
+                return '<' + tag + ' class="search-dropdown-item"' + hrefAttr + ' data-id="' + escapeAttributeValue(p.id) + '">' +
                     '<img src="' + escapeHtmlAttr(thumbSrc) + '" alt="" loading="lazy" decoding="async">' +
                     '<div class="search-item-info">' +
                         '<div class="search-item-title">' + escapeHtmlAttr(p.title) + '</div>' +
                         '<div class="search-item-meta">' + escapeHtmlAttr(p.technique || '') +
                             (p.year && p.year !== 'Consultar año' && p.year !== 'a confirmar' ? ' · ' + p.year : '') +
+                            (p.sold ? ' · ' + (soldTag || 'Vendido') : '') +
                         '</div>' +
                     '</div>' +
-                '</div>';
+                '</' + tag + '>';
             }).join('') +
-            '<div class="search-dropdown-footer">Ver catálogo completo →</div>';
+            '<div class="search-dropdown-footer" data-i18n="shop.ver_todo">Ver catálogo completo →</div>';
 
             dropdown.classList.add('open');
+            if (window.updatePageTranslations) window.updatePageTranslations();
+        });
+
+        input.addEventListener('keydown', function (e) {
+            var items = dropdown.querySelectorAll('.search-dropdown-item');
+            if (!dropdown.classList.contains('open') || !items.length) return;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                highlightSearchItem(searchActiveIndex + 1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                highlightSearchItem(searchActiveIndex <= 0 ? 0 : searchActiveIndex - 1);
+            } else if (e.key === 'Enter' && searchActiveIndex >= 0) {
+                e.preventDefault();
+                activateSearchItem(items[searchActiveIndex]);
+            } else if (e.key === 'Escape') {
+                dropdown.classList.remove('open');
+                clearSearchHighlight();
+            }
         });
 
         dropdown.addEventListener('click', function (e) {
             var item = e.target.closest('.search-dropdown-item');
             if (item) {
-                var pid = item.getAttribute('data-id');
-                var product = window.products.find(function (p) { return p.id === pid; });
-                if (product) {
-                    dropdown.classList.remove('open');
-                    input.value = '';
-                    openModal(product);
-                }
+                activateSearchItem(item);
                 return;
             }
             var footer = e.target.closest('.search-dropdown-footer');
@@ -949,7 +1028,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!target) return;
         if (!rv.length) { target.innerHTML = ''; target.className = ''; return; }
         target.className = 'recently-viewed-section recently-viewed-section--top';
-        target.innerHTML = '<h2 class="rv-heading">Vistos recientemente</h2><div class="rv-track"></div>';
+        target.innerHTML =
+            '<h2 class="featured-label rv-heading" data-i18n="shop.recently_viewed">Vistos recientemente</h2>' +
+            '<div class="rv-track"></div>';
         var track = target.querySelector('.rv-track');
         rv.forEach(function (item) {
             var el = document.createElement('a');
@@ -962,11 +1043,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     ? DDAImages.getThumbImageUrl(resolvedRv)
                     : resolvedRv;
             }
+            var titleHtml = escapeHtmlAttr(item.title || '');
+            var yearHtml = item.year && item.year !== 'Consultar año' && item.year !== 'a confirmar'
+                ? '<div class="rv-year">' + escapeHtmlAttr(item.year) + '</div>'
+                : '';
             el.innerHTML =
-                '<div class="rv-img"><img src="' + escapeHtmlAttr(imgSrc) + '" alt="' + escapeHtmlAttr(item.title || '') + '" loading="lazy"></div>' +
-                '<div class="rv-title">' + (item.title || '') + '</div>';
+                '<div class="rv-img"><img src="' + escapeHtmlAttr(imgSrc) + '" alt="' + titleHtml + '" loading="lazy" decoding="async"></div>' +
+                '<div class="rv-title">' + titleHtml + '</div>' +
+                yearHtml;
             track.appendChild(el);
         });
+        if (window.updatePageTranslations) window.updatePageTranslations();
     };
     window.renderRecentlyViewed();
 
@@ -1059,6 +1146,20 @@ function formatShopPriceHtml(price) {
     return '<span class="product-price">' + escapeHtmlAttr(value) + '</span>';
 }
 
+function formatCarouselPriceHtml(price) {
+    var value = String(price || '').trim();
+    var consult = !value || value.toLowerCase() === 'consultar';
+    return '<p class="product-price catalog-card-price' + (consult ? ' catalog-card-price--consult' : '') + '">' +
+        escapeHtmlAttr(consult ? 'Consultar' : value) + '</p>';
+}
+
+function formatCarouselStatusHtml(sold) {
+    if (sold) {
+        return '<span class="product-status-badge product-status-badge--sold" data-i18n="card.sold">VENDIDO</span>';
+    }
+    return '<span class="product-status-badge product-status-badge--available" data-i18n="card.available">DISPONIBLE</span>';
+}
+
 function getSearchThumbUrl(image) {
     if (typeof DDAImages !== 'undefined') {
         var resolved = DDAImages.resolveImageUrl(image, window.location.href);
@@ -1087,6 +1188,7 @@ function updateShopSectionNav() {
     }
 
     sections.forEach(function (sectionEl) {
+        if (sectionEl.getAttribute('data-sticky-nav') === 'false') return;
         var label = sectionEl.querySelector('.featured-label');
         if (!label) return;
         var link = document.createElement('a');
@@ -1095,17 +1197,15 @@ function updateShopSectionNav() {
         link.textContent = label.textContent.trim();
         link.addEventListener('click', function (e) {
             e.preventDefault();
-            sectionEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            scrollToShopSection(sectionEl);
         });
         inner.appendChild(link);
     });
 
-    var catalogLink = document.createElement('a');
-    catalogLink.className = 'shop-section-nav__link shop-section-nav__link--catalog';
-    catalogLink.href = 'catalog.html';
-    catalogLink.setAttribute('data-i18n', 'shop.nav_catalog');
-    catalogLink.textContent = 'Catálogo';
-    inner.appendChild(catalogLink);
+    if (!inner.children.length) {
+        nav.hidden = true;
+        return;
+    }
 
     nav.hidden = false;
 
@@ -1114,6 +1214,21 @@ function updateShopSectionNav() {
     }
 
     initShopSectionNavSpy();
+}
+
+function getShopScrollOffset() {
+    var siteHeader = document.querySelector('.site-header') || document.querySelector('header');
+    var sectionNav = document.getElementById('shopSectionNav');
+    var headerH = siteHeader ? siteHeader.offsetHeight : 72;
+    var navH = (sectionNav && !sectionNav.hidden) ? sectionNav.offsetHeight : 0;
+    return headerH + navH + 12;
+}
+
+function scrollToShopSection(sectionEl) {
+    if (!sectionEl) return;
+    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var top = sectionEl.getBoundingClientRect().top + window.scrollY - getShopScrollOffset();
+    window.scrollTo({ top: Math.max(0, top), behavior: prefersReduced ? 'auto' : 'smooth' });
 }
 
 function initShopSectionNavSpy() {
@@ -1377,6 +1492,9 @@ function renderCarouselSections() {
         var sectionEl = document.createElement('section');
         sectionEl.className = 'shop-hero-vertical shop-carousel-section';
         sectionEl.id = 'shop-section-' + (section.id || String(sIdx));
+        if (section.stickyNav === false) {
+            sectionEl.setAttribute('data-sticky-nav', 'false');
+        }
         if (isHeroFeatured) {
             sectionEl.classList.add('shop-carousel-section--hero');
         } else if (sIdx > 0) {
@@ -1415,18 +1533,24 @@ function renderCarouselSections() {
         sectionProducts.forEach(function (product, imgIdx) {
             if (!product) return;
 
-            var card = document.createElement('div');
-            card.className = 'product-card carousel-card';
+            var card = document.createElement('article');
+            card.className = 'product-card carousel-card product-card--catalog-style';
             card.setAttribute('data-category', product.category || '');
             card.setAttribute('data-dimensions', product.dimensions || '');
             card.setAttribute('data-technique', product.technique || '');
             if (product.sold) card.classList.add('sold');
 
-            var soldBtnHtml;
-            if (product.sold) {
-                soldBtnHtml = '<button class="btn-grid-action btn-grid-sold" disabled aria-disabled="true" style="opacity:0.4;cursor:not-allowed">\u2717 <span data-i18n="card.sold">VENDIDO</span></button>';
+            var soldBtnHtml = '';
+            var actionsGridClass = 'product-actions-grid';
+            if (!product.sold) {
+                soldBtnHtml = '<button type="button" class="btn-grid-action btn-grid-buy">' +
+                    '<span class="btn-icon" aria-hidden="true">' +
+                    '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+                    '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>' +
+                    '<path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>' +
+                    '</span> <span data-i18n="card.buy">COMPRAR</span></button>';
             } else {
-                soldBtnHtml = '<button class="btn-grid-action btn-grid-buy"><span class="btn-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></span> <span data-i18n="card.buy">COMPRAR</span></button>';
+                actionsGridClass += ' product-actions-grid--solo';
             }
 
             var carouselAltParts = [product.title];
@@ -1444,16 +1568,17 @@ function renderCarouselSections() {
 
             card.innerHTML =
                 '<div class="product-image">' +
-                    '<button class="btn-wishlist' + (carouselIsWished ? ' active' : '') + '" data-product-id="' + escapeAttributeValue(carouselWishlistId) + '" aria-label="Agregar a favoritos">' + heartSvgCarousel + '</button>' +
+                    '<button type="button" class="btn-wishlist' + (carouselIsWished ? ' active' : '') + '" data-product-id="' + escapeAttributeValue(carouselWishlistId) + '" aria-label="Agregar a favoritos">' + heartSvgCarousel + '</button>' +
                     carouselImageHtml(product.image, carouselAlt, imageAttrs) +
                 '</div>' +
                 '<div class="product-info">' +
+                    '<div class="product-card-status">' + formatCarouselStatusHtml(product.sold) + '</div>' +
                     '<h3 class="product-title">' + escapeHtmlAttr(product.title) + '</h3>' +
-                    formatShopPriceHtml(product.price) +
-                    '<div class="product-actions-grid">' +
-                        '<button class="btn-grid-action btn-grid-details">' +
+                    formatCarouselPriceHtml(product.price) +
+                    '<div class="' + actionsGridClass + '">' +
+                        '<button type="button" class="btn-grid-action btn-grid-details">' +
                             '<span class="btn-icon" aria-hidden="true">' + eyeSvg + '</span>' +
-                            ' <span data-i18n="card.details">DETALLES</span>' +
+                            '<span data-i18n="card.details">DETALLES</span>' +
                         '</button>' +
                         soldBtnHtml +
                     '</div>' +
@@ -1461,19 +1586,14 @@ function renderCarouselSections() {
 
             card.addEventListener('click', function (e) {
                 if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
-                openModal(product);
+                navigateToObra(product);
             });
 
             var detailsBtn = card.querySelector('.btn-grid-details');
             if (detailsBtn) {
                 detailsBtn.addEventListener('click', function (e) {
                     e.stopPropagation();
-                    var detailId = product.slug || product.id;
-                    if (detailId) {
-                        window.location.href = 'obra.html?id=' + encodeURIComponent(detailId);
-                    } else {
-                        openModal(product);
-                    }
+                    navigateToObra(product);
                 });
             }
 
@@ -1970,12 +2090,21 @@ function closeModal() {
     }
 }
 
+function getLightBoxImageUrl(src) {
+    if (!src) return '';
+    if (typeof DDAImages !== 'undefined') {
+        return DDAImages.getPdfImageUrl(DDAImages.resolveImageUrl(src, window.location.href));
+    }
+    return src;
+}
+
 function openLightBox(imageSrc) {
     const lightBox = document.getElementById('lightBoxModal');
 
     if (lightBox) {
         // Extract src regardless of parameter type
         let src = typeof imageSrc === 'string' ? imageSrc : (imageSrc.src || '');
+        src = getLightBoxImageUrl(src);
 
         // Check if there are multiple images for this product
         window.lightBoxImages = [src];
@@ -2017,7 +2146,7 @@ function openLightBox(imageSrc) {
 function updateLightBoxImage() {
     const lightBoxImg = document.getElementById('lightBoxImage');
     if (lightBoxImg && window.lightBoxImages && window.lightBoxImages.length > 0) {
-        lightBoxImg.src = window.lightBoxImages[window.lightBoxCurrentIndex];
+        lightBoxImg.src = getLightBoxImageUrl(window.lightBoxImages[window.lightBoxCurrentIndex]);
         lightBoxImg.dataset.zoomLevel = '0';
         lightBoxImg.style.transform = 'scale(1)';
         lightBoxImg.style.transformOrigin = 'center center';

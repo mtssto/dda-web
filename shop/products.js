@@ -1008,7 +1008,8 @@ window.carouselSections = [
         labelDefault: "Gatos",
         dynamic: "category",
         categories: ["gatos"],
-        limit: 10
+        limit: 10,
+        stickyNav: false
     },
     {
         id: "autorretratos",
@@ -1016,7 +1017,8 @@ window.carouselSections = [
         labelDefault: "Autorretratos",
         dynamic: "category",
         categories: ["autorretratos", "autorretrato"],
-        limit: 8
+        limit: 8,
+        stickyNav: false
     },
     {
         id: "paisajes",
@@ -1024,6 +1026,7 @@ window.carouselSections = [
         labelDefault: "Paisajes",
         dynamic: "category",
         categories: ["paisajes", "paisaje"],
-        limit: 10
+        limit: 10,
+        stickyNav: false
     }
 ];
