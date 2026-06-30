@@ -1153,11 +1153,8 @@ function formatCarouselPriceHtml(price) {
         escapeHtmlAttr(consult ? 'Consultar' : value) + '</p>';
 }
 
-function formatCarouselStatusHtml(sold) {
-    if (sold) {
-        return '<span class="product-status-badge product-status-badge--sold" data-i18n="card.sold">VENDIDO</span>';
-    }
-    return '<span class="product-status-badge product-status-badge--available" data-i18n="card.available">DISPONIBLE</span>';
+function formatCarouselStatusHtml() {
+    return '<span class="product-status-badge product-status-badge--sold" data-i18n="card.sold">VENDIDO</span>';
 }
 
 function getSearchThumbUrl(image) {
@@ -1571,8 +1568,8 @@ function renderCarouselSections() {
                     '<button type="button" class="btn-wishlist' + (carouselIsWished ? ' active' : '') + '" data-product-id="' + escapeAttributeValue(carouselWishlistId) + '" aria-label="Agregar a favoritos">' + heartSvgCarousel + '</button>' +
                     carouselImageHtml(product.image, carouselAlt, imageAttrs) +
                 '</div>' +
-                '<div class="product-info">' +
-                    '<div class="product-card-status">' + formatCarouselStatusHtml(product.sold) + '</div>' +
+                    '<div class="product-info">' +
+                    (product.sold ? '<div class="product-card-status">' + formatCarouselStatusHtml() + '</div>' : '') +
                     '<h3 class="product-title">' + escapeHtmlAttr(product.title) + '</h3>' +
                     formatCarouselPriceHtml(product.price) +
                     '<div class="' + actionsGridClass + '">' +

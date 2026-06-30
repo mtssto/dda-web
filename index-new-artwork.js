@@ -88,8 +88,23 @@
     // Start network request as early as possible — do not wait for DOMContentLoaded.
     var newestArtworkPromise = fetchNewestArtwork();
 
+    window.DDAIndexPromo = {
+        hasNewArtworkVisible: false
+    };
+
+    function notifyNewArtworkVisible() {
+        window.DDAIndexPromo.hasNewArtworkVisible = true;
+        window.dispatchEvent(new CustomEvent('dda:new-artwork-visible'));
+    }
+
+    function notifyNewArtworkDismissed() {
+        window.DDAIndexPromo.hasNewArtworkVisible = false;
+        window.dispatchEvent(new CustomEvent('dda:new-artwork-dismissed'));
+    }
+
     function closeNewArtwork(card, slug) {
         dismiss(slug || card.dataset.artworkSlug || '');
+        notifyNewArtworkDismissed();
         card.classList.add('is-closing');
         window.setTimeout(function () {
             card.hidden = true;
@@ -147,6 +162,7 @@
         card.dataset.artworkSlug = slug;
         card.classList.remove('index-new-artwork--no-thumb');
         card.hidden = false;
+        notifyNewArtworkVisible();
 
         if (!thumb || !imageSrc) {
             card.classList.add('index-new-artwork--no-thumb');

@@ -475,10 +475,35 @@
 
         // Related artworks
         renderRelated(product);
+
+        function refreshRelatedFromLiveData() {
+            fetchRelatedFromApi(product).then(function (apiRelated) {
+                if (!apiRelated.length) return;
+                var merged = apiRelated.slice();
+                var seen = {};
+                merged.forEach(function (p) {
+                    seen[String(p.slug || p.id || '')] = true;
+                });
+                (window.products || []).forEach(function (p) {
+                    var key = String(p.slug || p.id || '');
+                    if (!key || seen[key]) return;
+                    seen[key] = true;
+                    merged.push(p);
+                });
+                window.products = merged;
+                renderRelated(product);
+            });
+        }
+
         if (typeof DDAApi !== 'undefined' && DDAApi.loadProducts) {
             DDAApi.loadProducts().then(function () {
                 renderRelated(product);
-            }).catch(function () {});
+                refreshRelatedFromLiveData();
+            }).catch(function () {
+                refreshRelatedFromLiveData();
+            });
+        } else {
+            refreshRelatedFromLiveData();
         }
     }
 
@@ -583,21 +608,80 @@
         }
     }
 
-    function renderRelated(product) {
-        if (!window.products) return;
+    function mapApiArtworkToRelated(artwork) {
+        var images = Array.isArray(artwork.images) ? artwork.images.slice() : [];
+        images.sort(function (a, b) {
+            return (a.sortOrder || 0) - (b.sortOrder || 0);
+        });
+        var primary = images.find(function (img) {
+            return img && (img.isPrimary === true || img.primary === true);
+        }) || images[0];
+        var imagePath = primary
+            ? (primary.filePath || primary.url || primary.imageUrl || '')
+            : (artwork.imageUrl || artwork.image || '');
+        if (imagePath && typeof DDAImages !== 'undefined') {
+            imagePath = DDAImages.resolveImageUrl(imagePath, window.location.href);
+        }
+        return {
+            id: artwork.slug || String(artwork.id || ''),
+            slug: artwork.slug || String(artwork.id || ''),
+            title: artwork.title || '',
+            image: imagePath,
+            price: artwork.price || 'Consultar',
+            category: (artwork.category && artwork.category.name)
+                ? String(artwork.category.name).toLowerCase()
+                : String(artwork.category || '').toLowerCase(),
+            technique: artwork.technique || '',
+            sold: artwork.sold === true
+        };
+    }
 
+    function fetchRelatedFromApi(product) {
+        var category = String(product.category || '').trim();
+        if (!category) return Promise.resolve([]);
+
+        var apiBase = window.DDA_API_BASE || 'https://api.diegodeaduriz.art/api';
+        var url = apiBase.replace(/\/$/, '') + '/artworks/category/' + encodeURIComponent(category)
+            + '?page=0&size=12&available=true';
+
+        return fetch(url, {
+            headers: { Accept: 'application/json' },
+            credentials: 'omit'
+        })
+            .then(function (res) {
+                if (!res.ok) throw new Error('related');
+                return res.json();
+            })
+            .then(function (data) {
+                return (data.content || []).map(mapApiArtworkToRelated);
+            })
+            .catch(function () {
+                return [];
+            });
+    }
+
+    function pickRelatedProducts(product, pool) {
+        var source = Array.isArray(pool) ? pool : [];
         var productKey = String(product.slug || product.id || '');
-        var related = window.products.filter(function (p) {
+
+        var related = source.filter(function (p) {
             var pKey = String(p.slug || p.id || '');
             if (!pKey || pKey === productKey) return false;
             return p.category === product.category || p.technique === product.technique;
         }).slice(0, 8);
 
         if (related.length === 0) {
-            related = window.products.filter(function (p) {
+            related = source.filter(function (p) {
                 return String(p.slug || p.id || '') !== productKey;
             }).slice(0, 8);
         }
+
+        return related;
+    }
+
+    function renderRelated(product) {
+        var pool = window.products || [];
+        var related = pickRelatedProducts(product, pool);
 
         if (related.length === 0) return;
 
@@ -643,15 +727,15 @@
             titleEl.className = 'related-card-title';
             titleEl.textContent = p.title || '';
 
-            var priceEl = document.createElement('p');
-            priceEl.className = 'related-card-price';
-            priceEl.textContent = p.sold
-                ? (getTranslation('card.sold') || 'Vendida')
-                : (p.price || 'Consultar');
-
             card.appendChild(imgDiv);
             card.appendChild(titleEl);
-            card.appendChild(priceEl);
+
+            if (!p.sold) {
+                var priceEl = document.createElement('p');
+                priceEl.className = 'related-card-price';
+                priceEl.textContent = p.price || 'Consultar';
+                card.appendChild(priceEl);
+            }
             track.appendChild(card);
         });
 

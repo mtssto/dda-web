@@ -521,22 +521,15 @@
 
         const statusBadgeHtml = sold
             ? '<span class="product-status-badge product-status-badge--sold" data-i18n="card.sold">VENDIDO</span>'
-            : '<span class="product-status-badge product-status-badge--available" data-i18n="card.available">DISPONIBLE</span>';
+            : '';
 
         const priceHint = (!price || price === 'Consultar')
             ? '<span class="catalog-price-hint" data-i18n="card.price_hint">Consultá precio y envío</span>'
             : '';
 
-        const soldButtonHtml = `
-            <button
-                type="button"
-                class="btn-grid-action btn-grid-sold"
-                disabled
-                aria-disabled="true"
-            >
-                ✕ <span data-i18n="card.sold">VENDIDO</span>
-            </button>
-        `;
+        const actionsGridClass = sold
+            ? 'product-actions-grid product-actions-grid--solo'
+            : 'product-actions-grid';
 
         const buyButtonHtml = `
             <button
@@ -602,7 +595,7 @@
                 </div>
 
                 <div class="product-info">
-                    <div class="product-card-status">${statusBadgeHtml}</div>
+                    ${statusBadgeHtml ? `<div class="product-card-status">${statusBadgeHtml}</div>` : ''}
                     <h3 class="product-title">${escapeHtml(title)}</h3>
 
                     ${yearHtml}
@@ -610,7 +603,7 @@
                     <p class="product-price catalog-card-price${(!price || price === 'Consultar') ? ' catalog-card-price--consult' : ''}">${escapeHtml(price)}</p>
                     ${priceHint}
 
-                    <div class="product-actions-grid">
+                    <div class="${actionsGridClass}">
                         <button
                             type="button"
                             class="btn-grid-action btn-grid-details"
@@ -625,7 +618,7 @@
                             <span data-i18n="card.details">DETALLES</span>
                         </button>
 
-                        ${sold ? soldButtonHtml : buyButtonHtml}
+                        ${sold ? '' : buyButtonHtml}
                     </div>
                 </div>
             </article>
