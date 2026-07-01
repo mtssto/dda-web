@@ -1070,7 +1070,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function updateFloatState() {
             var isMobile = window.matchMedia('(max-width: 768px)').matches;
-            var catalogThreshold = isMobile ? 680 : 360;
+            var catalogThreshold = isMobile ? 280 : 360;
             var catalogVisible = window.scrollY > catalogThreshold;
             if (catalogFloat) {
                 catalogFloat.classList.toggle('visible', catalogVisible);
