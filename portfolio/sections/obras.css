@@ -824,18 +824,86 @@ body.obras-modal-open .obras-top {
   }
 }
 
+/* ── Mobile / tablet nav: single row, scrollable categories ─ */
 @media (max-width: 900px) {
   .obras-top {
-    padding: 18px 16px 12px;
+    padding: 0;
+    border-bottom: 1px solid #ececea;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
   }
 
   .obras-top__inner {
-    flex-direction: column;
-    gap: 12px;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0;
+    position: relative;
+    min-height: 50px;
+  }
+
+  .obras-top__lang {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    padding: 0 14px 0 24px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #fff 32%);
+    padding-top: 0;
+  }
+
+  .obras-top__lang .lang-btn,
+  .obras-top__lang .lang-sep {
+    font-size: 0.82rem;
   }
 
   .obras-top__links {
-    gap: 4px 16px;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
+    gap: 0;
+    width: 100%;
+    min-width: 0;
+    padding: 14px 72px 14px 16px;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: 16px;
+    mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+    -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+  }
+
+  .obras-top__links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .obras-top__home {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    font-size: 0.84rem;
+    margin-right: 0;
+    padding-right: 14px;
+    border-right: 1px solid #e8e8e8;
+  }
+
+  .cat-pill {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    font-size: 0.84rem;
+    margin-left: 16px;
+  }
+
+  .obras-top__home + .cat-pill {
+    margin-left: 14px;
+  }
+
+  section[id],
+  .masonry-item[data-section-anchor] {
+    scroll-margin-top: 56px;
   }
 
   .section-title {
@@ -852,35 +920,7 @@ body.obras-modal-open .obras-top {
   }
 }
 
-/* ── Mobile 600px ────────────────────────────────── */
-@media (max-width: 600px) {
-  .obras-top {
-    padding: 16px 14px 10px;
-  }
-
-  .obras-top__links {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 2px;
-  }
-
-  .obras-top__links::-webkit-scrollbar {
-    display: none;
-  }
-
-  .obras-top__home,
-  .cat-pill {
-    font-size: 0.88rem;
-  }
-
-  .section-title {
-    margin-top: 20px;
-    padding-left: 14px;
-    padding-right: 14px;
-  }
-
+@media (max-width: 768px) {
   .masonry-grid {
     column-count: 2 !important;
   }
@@ -899,7 +939,6 @@ body.obras-modal-open .obras-top {
     border-width: 8px 0 8px 13px;
   }
 
-  /* Overlay: smaller text */
   .overlay-title {
     font-size: 0.95rem;
     margin-bottom: 6px;
@@ -914,7 +953,6 @@ body.obras-modal-open .obras-top {
     padding: 12px;
   }
 
-  /* ── Mobile modal: full screen stacked ─────────── */
   .image-modal {
     align-items: flex-start;
     padding: 0;
@@ -932,7 +970,6 @@ body.obras-modal-open .obras-top {
     overflow: hidden;
   }
 
-  /* × button: top right, floating */
   .modal-close {
     position: fixed;
     top: 10px;
@@ -951,7 +988,6 @@ body.obras-modal-open .obras-top {
     line-height: 1;
   }
 
-  /* Image: top 45% of screen */
   .modal-image-wrapper {
     flex: 0 0 45vh;
     height: 45vh;
@@ -967,14 +1003,12 @@ body.obras-modal-open .obras-top {
     object-fit: contain;
   }
 
-  /* Info: content-sized, not stretched */
   .modal-info-wrapper {
     flex: 0 0 auto;
     padding: 16px 20px 0;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    /* shrink to content height */
     max-height: 50vh;
     min-height: 0;
   }
