@@ -775,6 +775,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  function getObrasNavOffset() {
+    const header = document.getElementById('catNav');
+    return header ? header.offsetHeight + 8 : 72;
+  }
+
+  function scrollToObrasSection(target) {
+    if (!target) return;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const top = target.getBoundingClientRect().top + window.scrollY - getObrasNavOffset();
+    window.scrollTo({ top: Math.max(0, top), behavior: prefersReduced ? 'auto' : 'smooth' });
+  }
+
   function setupCategoryNavObserver() {
     const catPills = document.querySelectorAll('.cat-pill');
     if (!catPills.length || !('IntersectionObserver' in window)) return;
@@ -783,6 +795,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const anchors = sectionIds.map((id) => document.getElementById(id)).filter(Boolean);
     if (!anchors.length) return;
 
+    const navOffset = getObrasNavOffset();
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
@@ -794,7 +807,7 @@ document.addEventListener('DOMContentLoaded', () => {
           pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }
       });
-    }, { rootMargin: '-72px 0px -55% 0px', threshold: 0 });
+    }, { rootMargin: '-' + navOffset + 'px 0px -55% 0px', threshold: 0 });
 
     anchors.forEach((el) => observer.observe(el));
   }
@@ -804,7 +817,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       const id = pill.dataset.section;
       const target = document.getElementById(id);
-      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      scrollToObrasSection(target);
     });
   });
 
