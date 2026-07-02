@@ -35,12 +35,30 @@ function getObraUrl(product) {
 }
 
 function navigateToObra(product) {
+    trackShopRecentlyViewed(product);
     var url = getObraUrl(product);
     if (url) {
         window.location.href = url;
         return;
     }
     openModal(product);
+}
+
+function trackShopRecentlyViewed(product) {
+    if (!product || (!product.id && !product.title)) return;
+    var rvKey = 'dda_recently_viewed';
+    var rv = JSON.parse(localStorage.getItem(rvKey) || '[]');
+    var rvId = getShopWishlistId(product);
+    rv = rv.filter(function (item) { return String(item.id) !== rvId; });
+    rv.unshift({
+        id: rvId,
+        title: product.title,
+        image: product.image || '',
+        year: product.year || ''
+    });
+    if (rv.length > 8) rv = rv.slice(0, 8);
+    localStorage.setItem(rvKey, JSON.stringify(rv));
+    if (typeof window.renderRecentlyViewed === 'function') window.renderRecentlyViewed();
 }
 
 function readDdaWishlist() {
@@ -1056,6 +1074,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (window.updatePageTranslations) window.updatePageTranslations();
     };
     window.renderRecentlyViewed();
+    window.addEventListener('pageshow', function () {
+        if (typeof window.renderRecentlyViewed === 'function') window.renderRecentlyViewed();
+    });
 
     // ── Floating CTAs: catalog on scroll; WhatsApp visible on load ──
     (function initShopFloatingActions() {
@@ -1070,7 +1091,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function updateFloatState() {
             var isMobile = window.matchMedia('(max-width: 768px)').matches;
-            var catalogThreshold = isMobile ? 280 : 360;
+            if (isMobile) {
+                if (catalogFloat) catalogFloat.classList.remove('visible');
+                if (whatsappFloat) whatsappFloat.classList.remove('is-shifted');
+                return;
+            }
+            var catalogThreshold = 360;
             var catalogVisible = window.scrollY > catalogThreshold;
             if (catalogFloat) {
                 catalogFloat.classList.toggle('visible', catalogVisible);
@@ -1922,14 +1948,7 @@ function openModal(productOrElement) {
 
     // Track recently viewed and refresh the carousel
     if (product.id || product.title) {
-        var rvKey = 'dda_recently_viewed';
-        var rv = JSON.parse(localStorage.getItem(rvKey) || '[]');
-        var rvId = getShopWishlistId(product);
-        rv = rv.filter(function (item) { return String(item.id) !== rvId; });
-        rv.unshift({ id: rvId, title: product.title, image: product.image, year: product.year || '' });
-        if (rv.length > 8) rv = rv.slice(0, 8);
-        localStorage.setItem(rvKey, JSON.stringify(rv));
-        if (typeof window.renderRecentlyViewed === 'function') window.renderRecentlyViewed();
+        trackShopRecentlyViewed(product);
     }
 
     const modalImg = document.getElementById('modalImage');

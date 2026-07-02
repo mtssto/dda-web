@@ -997,16 +997,16 @@ footer p {
     }
 
     #recentlyViewedContainer {
+        order: 4;
+    }
+
+    #shopHeroFeatured {
         order: 5;
+        padding-top: 0;
     }
 
     #carouselSectionsContainer {
         order: 6;
-    }
-
-    #shopHeroFeatured {
-        order: 4;
-        padding-top: 0;
     }
 
     #shopHeroFeatured .shop-carousel-section--hero {
@@ -1036,6 +1036,12 @@ footer p {
     .hero-catalog-btn {
         padding: 14px 20px;
         font-size: 0.72rem;
+    }
+
+    /* Hero already has catalog CTA — hide redundant bottom prompts on mobile */
+    .shop-end-cta,
+    .catalog-float {
+        display: none !important;
     }
 }
 
