@@ -1043,6 +1043,27 @@ footer p {
     .catalog-float {
         display: none !important;
     }
+
+    #recentlyViewedContainer.recently-viewed-section--top {
+        padding: 16px 0 24px;
+        scroll-margin-top: 160px;
+    }
+
+    .rv-section-title {
+        display: block;
+        width: 100%;
+        margin: 0 0 16px;
+        padding: 0 20px;
+        font-size: 0.82rem;
+        letter-spacing: 0.18em;
+        color: #888;
+        line-height: 1.4;
+    }
+
+    .rv-section-title::before,
+    .rv-section-title::after {
+        display: none;
+    }
 }
 
 .hero-header {
@@ -3233,6 +3254,40 @@ body.shop-page .carousel-container-mini .carousel-card {
     padding: 8px 24px 32px;
     border-bottom: 1px solid #eee;
     margin-bottom: 8px;
+}
+
+.rv-section-title {
+    display: block;
+    text-align: center;
+    width: 100%;
+    margin: 0 0 20px;
+    padding: 0 16px;
+    box-sizing: border-box;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #999;
+    position: relative;
+}
+
+.rv-section-title::before,
+.rv-section-title::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 40px;
+    height: 1px;
+    background: #ddd;
+}
+
+.rv-section-title::before {
+    right: calc(50% + 5.8rem);
+}
+
+.rv-section-title::after {
+    left: calc(50% + 5.8rem);
 }
 
 .recently-viewed-section--top .rv-heading {
