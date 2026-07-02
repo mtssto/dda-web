@@ -1047,7 +1047,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!rv.length) { target.innerHTML = ''; target.className = ''; return; }
         target.className = 'recently-viewed-section recently-viewed-section--top';
         target.innerHTML =
-            '<h2 class="featured-label rv-heading" data-i18n="shop.recently_viewed">Vistos recientemente</h2>' +
+            '<h2 class="rv-section-title" data-i18n="shop.recently_viewed">Vistos recientemente</h2>' +
             '<div class="rv-track"></div>';
         var track = target.querySelector('.rv-track');
         rv.forEach(function (item) {
