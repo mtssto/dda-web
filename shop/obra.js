@@ -29,13 +29,24 @@
 
     function fetchFromApi(slug) {
         var apiBase = window.DDA_API_BASE || '/api';
-        return fetch(apiBase + '/artworks/' + encodeURIComponent(slug), {
-            headers: { 'Accept': 'application/json' }
-        })
-        .then(function (res) {
-            if (!res.ok) throw new Error('Not found');
-            return res.json();
-        })
+
+        function loadArtwork() {
+            return fetch(apiBase + '/artworks/' + encodeURIComponent(slug), {
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(function (res) {
+                if (!res.ok) throw new Error('Not found');
+                return res.json();
+            });
+        }
+
+        var request = window.__ddaObraPrefetch
+            ? window.__ddaObraPrefetch.catch(function () { return loadArtwork(); })
+            : loadArtwork();
+
+        window.__ddaObraPrefetch = null;
+
+        return request
         .then(function (artwork) {
             var images = Array.isArray(artwork.images) ? artwork.images.slice() : [];
             images.sort(function (a, b) {
@@ -92,8 +103,19 @@
 
     function setObraMainImage(mainImg, imageUrl) {
         if (!mainImg || !imageUrl) return;
-        mainImg.src = optimizeObraImage(imageUrl, 'detail');
+        var detailUrl = optimizeObraImage(imageUrl, 'detail');
+        mainImg.src = detailUrl;
         mainImg.setAttribute('data-zoom-src', optimizeObraImage(imageUrl, 'lightbox'));
+
+        var preload = document.getElementById('obraImagePreload');
+        if (!preload) {
+            preload = document.createElement('link');
+            preload.id = 'obraImagePreload';
+            preload.rel = 'preload';
+            preload.as = 'image';
+            document.head.appendChild(preload);
+        }
+        preload.href = detailUrl;
     }
 
     function setupObraLightbox() {

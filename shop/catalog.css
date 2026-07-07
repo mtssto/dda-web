@@ -305,6 +305,30 @@
 
 .catalog-page .catalog-skeleton-card {
     pointer-events: none;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+}
+
+.catalog-page .catalog-skeleton-card .product-image.loading {
+    aspect-ratio: 4 / 5;
+    min-height: 140px;
+    position: relative;
+    background: #f3f3f0;
+}
+
+.catalog-page .catalog-skeleton-card .skeleton-shimmer {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(90deg, #ececea 25%, #f7f7f5 50%, #ececea 75%);
+    background-size: 200% 100%;
+    animation: catalog-skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes catalog-skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 
 .catalog-page .catalog-skeleton-info {

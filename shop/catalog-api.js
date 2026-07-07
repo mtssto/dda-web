@@ -311,6 +311,18 @@
         }
     }
 
+    function canUseCatalogPrefetch() {
+        if (!window.__ddaCatalogPrefetch) return false;
+
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('q') || params.get('category') || params.get('available') === '1') {
+            return false;
+        }
+
+        const sortValue = document.getElementById('sortSelect')?.value || 'id,desc';
+        return sortValue === 'id,desc';
+    }
+
     async function loadArtworkPage({ reset = false } = {}) {
         const grid = document.getElementById('productsGrid');
         const loader = document.getElementById('catalogLoader');
@@ -341,27 +353,40 @@
         activeRequestController = new AbortController();
 
         if (loader) {
-            loader.hidden = reset && currentPage === 0;
+            loader.hidden = false;
+            const label = loader.querySelector('span[data-i18n]');
+            if (label) {
+                label.setAttribute('data-i18n', (reset && currentPage === 0) ? 'catalog.loading' : 'catalog.loading_more');
+                if (window.updatePageTranslations) window.updatePageTranslations();
+            }
         }
 
         try {
             const url = buildCatalogUrl();
             console.log('Loading catalog URL:', url);
 
-            const response = await fetchCatalogResponse(url, activeRequestController.signal);
+            let page;
+            if (reset && currentPage === 0 && canUseCatalogPrefetch()) {
+                const prefetched = window.__ddaCatalogPrefetch;
+                window.__ddaCatalogPrefetch = null;
+                page = await prefetched;
+            } else {
+                const response = await fetchCatalogResponse(url, activeRequestController.signal);
 
-            if (!response.ok) {
-                const errorText = await response.text().catch(() => '');
-                console.error('Catalog API failed:', {
-                    status: response.status,
-                    url,
-                    body: errorText
-                });
+                if (!response.ok) {
+                    const errorText = await response.text().catch(() => '');
+                    console.error('Catalog API failed:', {
+                        status: response.status,
+                        url,
+                        body: errorText
+                    });
 
-                throw new Error(`Could not load artworks. Status: ${response.status}`);
+                    throw new Error(`Could not load artworks. Status: ${response.status}`);
+                }
+
+                page = await response.json();
             }
 
-            const page = await response.json();
             const artworks = Array.isArray(page.content) ? page.content : [];
 
             if (reset && artworks.length === 0) {
@@ -410,6 +435,13 @@
 
             if (loader) {
                 loader.hidden = !hasMore;
+                if (hasMore) {
+                    const label = loader.querySelector('span[data-i18n]');
+                    if (label) {
+                        label.setAttribute('data-i18n', 'catalog.loading_more');
+                        if (window.updatePageTranslations) window.updatePageTranslations();
+                    }
+                }
             }
         }
     }
@@ -419,7 +451,7 @@
         let html = '';
 
         for (let i = 0; i < total; i++) {
-            html += `<article class="product-card catalog-skeleton-card" aria-hidden="true">
+            html += `<article class="product-card catalog-skeleton-card is-visible" aria-hidden="true">
                 <div class="product-image loading">
                     <div class="skeleton-shimmer"></div>
                 </div>
@@ -786,9 +818,9 @@
 
     function getCatalogCardImageUrl(url) {
         if (typeof DDAImages !== 'undefined') {
-            return DDAImages.getCardImageUrl(url);
+            return DDAImages.getCatalogThumbUrl(url);
         }
-        return getCloudinaryTransformedUrl(url, 700);
+        return getCloudinaryTransformedUrl(url, 400);
     }
 
     function getCatalogCardSrcset(url) {
