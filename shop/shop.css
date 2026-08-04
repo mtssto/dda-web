@@ -944,6 +944,12 @@ footer p {
     background: #fff;
 }
 
+.shop-section-nav__link--catalog {
+    color: var(--color-text);
+    border-color: var(--color-text);
+    font-weight: 600;
+}
+
 @media (max-width: 720px) {
     .shop-section-nav {
         top: 104px;
@@ -2541,18 +2547,22 @@ body.shop-page .carousel-container-mini .product-card:not(.product-card--catalog
     .whatsapp-float {
         bottom: max(16px, env(safe-area-inset-bottom, 0px));
         right: 16px;
-        padding: 12px 14px;
-        font-size: 0;
-        gap: 0;
+        padding: 10px 14px 10px 12px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        gap: 8px;
+        max-width: calc(100vw - 72px);
     }
 
     .whatsapp-float svg {
-        width: 22px;
-        height: 22px;
+        width: 20px;
+        height: 20px;
     }
 
     .whatsapp-float span {
-        display: none;
+        display: inline;
+        white-space: nowrap;
     }
 
     .catalog-float.visible ~ .whatsapp-float.is-ready {
@@ -2561,6 +2571,16 @@ body.shop-page .carousel-container-mini .product-card:not(.product-card--catalog
         pointer-events: auto;
         transform: translateY(0);
         animation: none;
+    }
+
+    /* Keep product CTAs clear of the float stack */
+    body.shop-page .shop-container {
+        padding-bottom: 96px;
+    }
+
+    body.shop-page .shop-end-cta,
+    body.shop-page .newsletter-section {
+        padding-bottom: 88px;
     }
 }
 
