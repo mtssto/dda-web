@@ -1091,12 +1091,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function updateFloatState() {
             var isMobile = window.matchMedia('(max-width: 768px)').matches;
-            if (isMobile) {
-                if (catalogFloat) catalogFloat.classList.remove('visible');
-                if (whatsappFloat) whatsappFloat.classList.remove('is-shifted');
-                return;
-            }
-            var catalogThreshold = 360;
+            // Mobile: show early so "Ver catálogo" is available while browsing sections
+            var catalogThreshold = isMobile ? 120 : 360;
             var catalogVisible = window.scrollY > catalogThreshold;
             if (catalogFloat) {
                 catalogFloat.classList.toggle('visible', catalogVisible);
@@ -1209,6 +1205,18 @@ function updateShopSectionNav() {
         nav.hidden = true;
         return;
     }
+
+    var catalogLink = document.createElement('a');
+    catalogLink.className = 'shop-section-nav__link shop-section-nav__link--catalog';
+    catalogLink.href = 'catalog.html';
+    catalogLink.setAttribute('data-i18n', 'shop.nav_catalog');
+    catalogLink.textContent = 'Catálogo';
+    catalogLink.addEventListener('click', function () {
+        if (typeof trackEvent === 'function') {
+            trackEvent('click', 'Navigation', 'Section Nav — Catálogo');
+        }
+    });
+    inner.appendChild(catalogLink);
 
     sections.forEach(function (sectionEl) {
         if (sectionEl.getAttribute('data-sticky-nav') === 'false') return;
