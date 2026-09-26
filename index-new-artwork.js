@@ -9,7 +9,7 @@
         if (window.DDA_API_BASE) {
             return String(window.DDA_API_BASE).replace(/\/$/, '');
         }
-        return 'https://api.diegodeaduriz.art/api';
+        return 'https://api.diegodeaduriz.com/api';
     }
 
     function isDismissed(slug) {

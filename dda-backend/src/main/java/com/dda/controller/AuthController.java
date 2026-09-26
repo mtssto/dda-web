@@ -38,7 +38,7 @@ public class AuthController {
     private final AppleTokenVerifier appleTokenVerifier;
     private final OAuthAuthService oauthAuthService;
 
-    @Value("${app.static.base-url:https://diegodeaduriz.art}")
+    @Value("${app.static.base-url:https://diegodeaduriz.com}")
     private String staticBaseUrl;
 
     @Value("${app.oauth.google.client-id:}")
@@ -129,7 +129,7 @@ public class AuthController {
 
     private AuthResponse toPublicResponse(AuthResponse authResponse) {
         // Token in JSON is a fallback when the httpOnly cookie cannot be sent cross-site
-        // (diegodeaduriz.art → *.railway.app). Frontend keeps it in sessionStorage only.
+        // (diegodeaduriz.com → *.railway.app). Frontend keeps it in sessionStorage only.
         return AuthResponse.builder()
                 .username(authResponse.getUsername())
                 .role(authResponse.getRole())

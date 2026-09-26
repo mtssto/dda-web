@@ -11,7 +11,7 @@
 
     const artworkByKey = new Map();
     const AVAILABILITY_PREF_KEY = 'dda_catalog_available_only';
-    const PROD_API_BASE = 'https://api.diegodeaduriz.art/api';
+    const PROD_API_BASE = 'https://api.diegodeaduriz.com/api';
 
 
     function getWishlistId(artwork) {

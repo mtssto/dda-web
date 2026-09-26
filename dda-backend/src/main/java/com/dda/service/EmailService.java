@@ -27,10 +27,10 @@ public class EmailService {
     @Value("${dda.mail.from:DDA <onboarding@resend.dev>}")
     private String fromEmail;
 
-    @Value("${dda.mail.comment-notify-to:admin@diegodeaduriz.art}")
+    @Value("${dda.mail.comment-notify-to:admin@diegodeaduriz.com}")
     private String commentNotifyTo;
 
-    @Value("${app.static.base-url:https://diegodeaduriz.art}")
+    @Value("${app.static.base-url:https://diegodeaduriz.com}")
     private String staticBaseUrl;
 
     private final HttpClient httpClient = HttpClient.newBuilder()
@@ -169,7 +169,7 @@ public class EmailService {
             "</td></tr>" +
             "<tr><td style=\"padding:32px 40px;border-top:1px solid #eee;text-align:center;\">" +
             "<p style=\"margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:14px;color:#111;\">&mdash; DDA</p>" +
-            "<p style=\"margin:0;font-size:11px;color:#999;\">diegodeaduriz.art</p>" +
+            "<p style=\"margin:0;font-size:11px;color:#999;\">diegodeaduriz.com</p>" +
             "</td></tr>" +
             "</table></td></tr></table></body></html>";
     }
@@ -192,12 +192,12 @@ public class EmailService {
             "<p style=\"margin:0 0 32px;font-size:15px;line-height:1.7;color:#444;\">Explor&aacute; obras &uacute;nicas y hac&eacute; tuya la galer&iacute;a.</p>" +
             "<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin:0 auto;\">" +
             "<tr><td style=\"background:#111;border-radius:4px;\">" +
-            "<a href=\"https://diegodeaduriz.art/shop/shop.html\" target=\"_blank\" style=\"display:inline-block;padding:14px 32px;font-size:13px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#fff;text-decoration:none;\">Explorar la tienda</a>" +
+            "<a href=\"https://diegodeaduriz.com/shop/shop.html\" target=\"_blank\" style=\"display:inline-block;padding:14px 32px;font-size:13px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#fff;text-decoration:none;\">Explorar la tienda</a>" +
             "</td></tr></table>" +
             "</td></tr>" +
             "<tr><td style=\"padding:32px 40px;border-top:1px solid #eee;text-align:center;\">" +
             "<p style=\"margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:14px;color:#111;\">&mdash; DDA</p>" +
-            "<p style=\"margin:0;font-size:11px;color:#999;\">diegodeaduriz.art</p>" +
+            "<p style=\"margin:0;font-size:11px;color:#999;\">diegodeaduriz.com</p>" +
             "</td></tr>" +
             "</table></td></tr></table></body></html>";
     }
@@ -225,7 +225,7 @@ public class EmailService {
             "<p style=\"margin:28px 0 0;\"><a href=\"" + escapeHtml(obraUrl) + "\" style=\"display:inline-block;padding:12px 24px;background:#111;color:#fff;text-decoration:none;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;border-radius:4px;\">Ver obra</a></p>" +
             "</td></tr>" +
             "<tr><td style=\"padding:24px 40px;border-top:1px solid #eee;text-align:center;\">" +
-            "<p style=\"margin:0;font-size:11px;color:#999;\">diegodeaduriz.art</p>" +
+            "<p style=\"margin:0;font-size:11px;color:#999;\">diegodeaduriz.com</p>" +
             "</td></tr></table></td></tr></table></body></html>";
     }
 

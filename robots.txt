@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://diegodeaduriz.art/sitemap.xml
+Sitemap: https://diegodeaduriz.com/sitemap.xml

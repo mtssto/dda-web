@@ -1109,7 +1109,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // ── Dynamic JSON-LD Structured Data ─────────────────
     (function () {
         if (!window.products || !window.products.length) return;
-        var baseUrl = 'https://diegodeaduriz.art';
+        var baseUrl = 'https://diegodeaduriz.com';
         var artworks = window.products.map(function (p) {
             var item = {
                 '@type': 'VisualArtwork',

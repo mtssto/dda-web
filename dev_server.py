@@ -33,8 +33,8 @@ REPO_ROOT = Path(__file__).resolve().parent
 BACKEND_DIR = REPO_ROOT / "dda-backend"
 GALLERY_DIR = REPO_ROOT / "3d-react-gallery"
 
-PROD_API = "https://api.diegodeaduriz.art/api"
-PROD_MEDIA = "https://api.diegodeaduriz.art"
+PROD_API = "https://api.diegodeaduriz.com/api"
+PROD_MEDIA = "https://api.diegodeaduriz.com"
 
 # Default: production API (shop/catalog work without a local backend).
 DEV_CONFIG_JS = (
