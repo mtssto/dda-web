@@ -127,12 +127,12 @@ public class NewsletterController {
             "<div style=\"font-size:15px;line-height:1.7;color:#444;\">" + bodyHtml + "</div>" +
             "<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin:32px auto 0;\">" +
             "<tr><td style=\"background:#111;border-radius:4px;\">" +
-            "<a href=\"https://diegodeaduriz.art/shop/shop.html\" target=\"_blank\" style=\"display:inline-block;padding:14px 32px;font-size:13px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#fff;text-decoration:none;\">Visitar la tienda</a>" +
+            "<a href=\"https://diegodeaduriz.com/shop/shop.html\" target=\"_blank\" style=\"display:inline-block;padding:14px 32px;font-size:13px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#fff;text-decoration:none;\">Visitar la tienda</a>" +
             "</td></tr></table>" +
             "</td></tr>" +
             "<tr><td style=\"padding:32px 40px;border-top:1px solid #eee;text-align:center;\">" +
             "<p style=\"margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:14px;color:#111;\">&mdash; DDA</p>" +
-            "<p style=\"margin:0;font-size:11px;color:#999;\">diegodeaduriz.art</p>" +
+            "<p style=\"margin:0;font-size:11px;color:#999;\">diegodeaduriz.com</p>" +
             "</td></tr>" +
             "</table></td></tr></table></body></html>";
     }

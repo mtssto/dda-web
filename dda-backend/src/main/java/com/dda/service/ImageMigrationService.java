@@ -27,7 +27,7 @@ public class ImageMigrationService {
     private final Cloudinary cloudinary;
     private final ArtworkImageRepository artworkImageRepository;
 
-    @Value("${app.static.base-url:https://diegodeaduriz.art}")
+    @Value("${app.static.base-url:https://diegodeaduriz.com}")
     private String staticBaseUrl;
 
     private final HttpClient httpClient = HttpClient.newBuilder()

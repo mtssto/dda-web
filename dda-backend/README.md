@@ -47,7 +47,7 @@ On Railway (or any `prod` deploy), set these **only when** you need to create or
 DDA_ADMIN_SEED_ENABLED=true
 DDA_ADMIN_USERNAME=admin
 DDA_ADMIN_PASSWORD=your_secure_password
-DDA_ADMIN_EMAIL=you@diegodeaduriz.art
+DDA_ADMIN_EMAIL=you@diegodeaduriz.com
 ```
 
 Seeding runs only if no `ADMIN` user exists yet, or to promote the configured username to `ADMIN`. Remove `DDA_ADMIN_SEED_ENABLED` after the first successful deploy.
@@ -106,7 +106,7 @@ curl -X POST http://localhost:8081/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "username": "admin",
-    "email": "admin@diegodeaduriz.art",
+    "email": "admin@diegodeaduriz.com",
     "password": "your_password"
   }'
 ```

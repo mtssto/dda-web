@@ -280,10 +280,10 @@
         var breadcrumbTitle = document.getElementById('breadcrumbTitle');
         if (breadcrumbTitle) breadcrumbTitle.textContent = product.title;
 
-        var fullUrl = 'https://diegodeaduriz.art/shop/obra.html?id=' + encodeURIComponent(product.id);
+        var fullUrl = 'https://diegodeaduriz.com/shop/obra.html?id=' + encodeURIComponent(product.id);
         var fullImg = optimizeObraImage(product.image, 'detail');
         if (fullImg && fullImg.indexOf('http') !== 0) {
-            fullImg = 'https://diegodeaduriz.art' + (fullImg.indexOf('/') === 0 ? '' : '/') + fullImg;
+            fullImg = 'https://diegodeaduriz.com' + (fullImg.indexOf('/') === 0 ? '' : '/') + fullImg;
         }
 
         // Update OG meta
@@ -640,7 +640,7 @@
         var category = String(product.category || '').trim();
         if (!category) return Promise.resolve([]);
 
-        var apiBase = window.DDA_API_BASE || 'https://api.diegodeaduriz.art/api';
+        var apiBase = window.DDA_API_BASE || 'https://api.diegodeaduriz.com/api';
         var url = apiBase.replace(/\/$/, '') + '/artworks/category/' + encodeURIComponent(category)
             + '?page=0&size=12&available=true';
 

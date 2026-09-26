@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Update OG / Twitter meta dynamically
         var fullUrl = window.location.href;
-        var coverImg = post.coverImage || 'https://diegodeaduriz.art/dda.jpeg';
+        var coverImg = post.coverImage || 'https://diegodeaduriz.com/dda.jpeg';
         var ogTitle = post.title + ' — Diego De Aduriz';
         var ogDesc = post.excerpt || 'Entrada del cuaderno del artista Diego De Aduriz.';
 

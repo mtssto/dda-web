@@ -1,7 +1,7 @@
-Your site runs on GitHub Pages, but email DNS lives wherever you bought/manage diegodeaduriz.art — usually your domain registrar (Namecheap, GoDaddy, Cloudflare, etc.), not GitHub or Railway.
+Your site runs on GitHub Pages, but email DNS lives wherever you bought/manage diegodeaduriz.com — usually your domain registrar (Namecheap, GoDaddy, Cloudflare, etc.), not GitHub or Railway.
 
 Step 1 — Find where your DNS is managed
-Go to https://lookup.icann.org and search diegodeaduriz.art
+Go to https://lookup.icann.org and search diegodeaduriz.com
 Look at Registrar — that’s who you log into
 Or think: where did I pay for this domain? That’s the place
 Common places: Namecheap, GoDaddy, Cloudflare, Hostinger, Google Domains / Squarespace.
@@ -9,7 +9,7 @@ Common places: Namecheap, GoDaddy, Cloudflare, Hostinger, Google Domains / Squar
 Step 2 — Add the domain in Resend
 Log in at resend.com/domains
 Click Add domain
-Enter: diegodeaduriz.art
+Enter: diegodeaduriz.com
 Resend shows exact DNS records — copy them from there (each account gets specific values)
 You’ll typically see 3 records like this (yours may differ slightly):
 
@@ -32,7 +32,7 @@ How to fill each field (most registrars)
 MX record
 
 Type: MX
-Name / Host: send (some panels want send.diegodeaduriz.art, others just send)
+Name / Host: send (some panels want send.diegodeaduriz.com, others just send)
 Value / Points to: what Resend shows
 Priority: 10
 TXT — SPF
@@ -63,8 +63,8 @@ If(volume 2)
 Step 5 — Update Railway
 Once verified, in dda-backend → Variables:
 
-DDA_MAIL_FROM=Diego De Aduriz <noreply@diegodeaduriz.art>
-DDA_COMMENT_NOTIFY_EMAIL=admin@diegodeaduriz.art
+DDA_MAIL_FROM=Diego De Aduriz <noreply@diegodeaduriz.com>
+DDA_COMMENT_NOTIFY_EMAIL=admin@diegodeaduriz.com
 (noreply@ can be any address on your domain — you don’t need a real inbox for it.)
 
 Redeploy the backend.

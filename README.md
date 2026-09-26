@@ -2,7 +2,7 @@
 
 Full-stack website for the Argentine visual artist **Diego De Aduriz**. A static frontend hosted on GitHub Pages connects to a Spring Boot REST API deployed on Railway, powering an art shop, editorial journal, newsletter, and portfolio.
 
-**Live site:** [diegodeaduriz.art](https://diegodeaduriz.art)
+**Live site:** [diegodeaduriz.com](https://diegodeaduriz.com)
 
 ---
 
@@ -11,7 +11,7 @@ Full-stack website for the Argentine visual artist **Diego De Aduriz**. A static
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │                     GitHub Pages (static)                        │
-│  diegodeaduriz.art / whitewidow.github.io                       │
+│  diegodeaduriz.com / whitewidow.github.io                       │
 │                                                                  │
 │  index.html ─ landing page with collage background               │
 │  shop/      ─ art catalog, cart, checkout, admin panel           │
@@ -267,7 +267,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=prod  # prod profile (MySQL)
 |----------|-------------|---------|
 | `PORT` | Server port | `8081` |
 | `UPLOAD_DIR` | Local upload directory | `uploads` |
-| `STATIC_BASE_URL` | Base URL for static assets | `https://diegodeaduriz.art` |
+| `STATIC_BASE_URL` | Base URL for static assets | `https://diegodeaduriz.com` |
 | `PUBLIC_BASE_URL` | Public backend URL | `https://dda-web-production.up.railway.app` |
 | `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | — |
 | `CLOUDINARY_API_KEY` | Cloudinary API key | — |
@@ -275,11 +275,11 @@ mvn spring-boot:run -Dspring-boot.run.profiles=prod  # prod profile (MySQL)
 | `DDA_MAIL_ENABLED` | Enable email via Resend | `false` |
 | `RESEND_API_KEY` | Resend API key for newsletters | — |
 | `DDA_MAIL_FROM` | Newsletter sender address | `DDA <onboarding@resend.dev>` |
-| `DDA_COMMENT_NOTIFY_EMAIL` | Email for comment notifications | `admin@diegodeaduriz.art` |
+| `DDA_COMMENT_NOTIFY_EMAIL` | Email for comment notifications | `admin@diegodeaduriz.com` |
 | `DDA_ADMIN_SEED_ENABLED` | Auto-create admin on startup | `false` (auto `true` in dev) |
 | `DDA_ADMIN_USERNAME` | Seed admin username | `admin` |
 | `DDA_ADMIN_PASSWORD` | Seed admin password | — |
-| `DDA_ADMIN_EMAIL` | Seed admin email | `admin@diegodeaduriz.art` |
+| `DDA_ADMIN_EMAIL` | Seed admin email | `admin@diegodeaduriz.com` |
 | `DDA_FLYWAY_REPAIR` | Run Flyway repair on startup | `false` |
 
 ---
@@ -290,7 +290,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=prod  # prod profile (MySQL)
 
 The frontend is deployed automatically by pushing to the `main` branch. GitHub Pages serves the static files from the repository root.
 
-**Custom domain:** `diegodeaduriz.art` (configured via CNAME or GitHub Pages settings)
+**Custom domain:** `diegodeaduriz.com` (configured via CNAME or GitHub Pages settings)
 
 To update the frontend:
 
@@ -359,7 +359,7 @@ Set these env vars **only once** when initializing a fresh database:
 DDA_ADMIN_SEED_ENABLED=true
 DDA_ADMIN_USERNAME=admin
 DDA_ADMIN_PASSWORD=your_secure_password
-DDA_ADMIN_EMAIL=you@diegodeaduriz.art
+DDA_ADMIN_EMAIL=you@diegodeaduriz.com
 ```
 
 Remove `DDA_ADMIN_SEED_ENABLED` after the first successful deploy.
@@ -387,8 +387,8 @@ Managed by Flyway migrations in `dda-backend/src/main/resources/db/migration/`:
 
 The backend allows requests from:
 
-- `https://diegodeaduriz.art`
-- `https://www.diegodeaduriz.art`
+- `https://diegodeaduriz.com`
+- `https://www.diegodeaduriz.com`
 - `https://dda-web-production.up.railway.app`
 - `https://whitewidow.github.io`
 - `http://localhost:*` (dev)

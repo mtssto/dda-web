@@ -1,5 +1,5 @@
 # GitHub Pages (Jekyll) — only publish the public site, not the whole monorepo.
-# Without this, dda-backend/, docs, and dev files are served at diegodeaduriz.art/*
+# Without this, dda-backend/, docs, and dev files are served at diegodeaduriz.com/*
 title: Diego De Aduriz
 exclude:
   - dda-backend

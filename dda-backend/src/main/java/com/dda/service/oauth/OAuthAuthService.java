@@ -74,7 +74,7 @@ public class OAuthAuthService {
         String email = info.getEmail();
         if (email == null || email.isBlank()) {
             email = provider.name().toLowerCase() + "_" + info.getSubject().substring(0, Math.min(12, info.getSubject().length()))
-                    + "@users.diegodeaduriz.art";
+                    + "@users.diegodeaduriz.com";
             int suffix = 1;
             String baseEmail = email;
             while (userRepository.existsByEmail(email)) {

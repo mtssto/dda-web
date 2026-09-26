@@ -19,7 +19,7 @@ public class NewsletterService {
     private final NewsletterRepository newsletterRepository;
     private final EmailService emailService;
 
-    @Value("${app.static.base-url:https://diegodeaduriz.art}")
+    @Value("${app.static.base-url:https://diegodeaduriz.com}")
     private String baseUrl;
 
     public void subscribe(String email, String source) {

@@ -5,7 +5,7 @@
 ```
 ┌─────────────────────────┐         ┌──────────────────────────────────┐
 │   GitHub Pages          │         │   Railway                        │
-│   diegodeaduriz.art     │ ──API──▶│   dda-web-production.up.railway  │
+│   diegodeaduriz.com     │ ──API──▶│   dda-web-production.up.railway  │
 │                         │         │                                  │
 │   Static frontend       │         │   Spring Boot backend            │
 │   (HTML/CSS/JS)         │         │   + MySQL database               │
@@ -22,7 +22,7 @@
 
 | Service | URL |
 |---------|-----|
-| Frontend (production) | https://diegodeaduriz.art |
+| Frontend (production) | https://diegodeaduriz.com |
 | Backend API (production) | https://dda-web-production.up.railway.app/api |
 | Railway Dashboard | https://railway.app/dashboard |
 | GitHub Repo | https://github.com/mtssto/dda-web |
@@ -140,7 +140,7 @@ python dev_server.py
 1. Make changes on a branch
 2. Create PR → merge to `master`
 3. GitHub Pages auto-deploys (takes ~1 minute)
-4. Verify at https://diegodeaduriz.art
+4. Verify at https://diegodeaduriz.com
 
 ### Backend Changes (Java/Spring Boot)
 
@@ -178,17 +178,66 @@ To add a new migration:
 
 ---
 
+## Domain migration: `.art` → `.com`
+
+The codebase now targets **`diegodeaduriz.com`** (the `.art` domain expired). Code alone is not enough — finish these infra steps:
+
+### 1. DNS at the registrar for `diegodeaduriz.com`
+
+| Type | Host | Value | Purpose |
+|------|------|-------|---------|
+| `A` or `ALIAS` | `@` | GitHub Pages IPs / alias | Apex site |
+| `CNAME` | `www` | your GitHub Pages host (e.g. `mtssto.github.io`) | www |
+| `CNAME` | `api` | value Railway shows for custom domain | Backend API |
+
+Use the current GitHub Pages custom-domain docs for apex `A`/`AAAA` records.
+
+### 2. GitHub Pages
+
+1. Repo **Settings → Pages → Custom domain** → `diegodeaduriz.com`
+2. Enable **Enforce HTTPS** after DNS propagates
+3. Repo root `CNAME` must contain `diegodeaduriz.com` (included in this change)
+
+### 3. Railway (backend)
+
+1. **Networking → Custom Domain** → add `api.diegodeaduriz.com`
+2. Update variables:
+
+| Variable | Suggested value |
+|----------|-----------------|
+| `STATIC_BASE_URL` | `https://diegodeaduriz.com` |
+| `PUBLIC_BASE_URL` | `https://api.diegodeaduriz.com` |
+| `JWT_COOKIE_DOMAIN` | `.diegodeaduriz.com` |
+| `JWT_COOKIE_SAME_SITE` | `Lax` (same-site with `api.` subdomain) |
+| `JWT_COOKIE_SECURE` | `true` |
+| `DDA_ADMIN_EMAIL` / notify / mail-from | use `@diegodeaduriz.com` addresses |
+
+Redeploy after changing env vars.
+
+### 4. OAuth / email (if used)
+
+- **Google / Apple**: add authorized origins and redirect URIs for `https://diegodeaduriz.com` (and `www` if used)
+- **Resend / mail DNS**: SPF/DKIM/DMARC for `diegodeaduriz.com` (see `configuration-email.txt`)
+
+### 5. Verify
+
+- Open `https://diegodeaduriz.com` and `https://www.diegodeaduriz.com`
+- Login / cart / admin against `https://api.diegodeaduriz.com/api`
+- Confirm cookies are set on `.diegodeaduriz.com` (not blocked as third-party)
+
+---
+
 ## Custom Domain for API (Optional)
 
-If you want `api.diegodeaduriz.art` instead of the Railway URL:
+If you want `api.diegodeaduriz.com` instead of the Railway URL:
 
-1. In Railway → dda-web service → **Settings** → **Networking** → **Custom Domain** → add `api.diegodeaduriz.art`
+1. In Railway → dda-web service → **Settings** → **Networking** → **Custom Domain** → add `api.diegodeaduriz.com`
 2. Add a DNS CNAME record at your domain registrar:
    - **Name**: `api`
    - **Value**: the Railway domain Railway tells you to point to
 3. Update `shop/config.js`:
    ```javascript
-   window.DDA_API_BASE = 'https://api.diegodeaduriz.art/api';
+   window.DDA_API_BASE = 'https://api.diegodeaduriz.com/api';
    ```
 4. Commit and push to master
 
@@ -202,7 +251,7 @@ If you want `api.diegodeaduriz.art` instead of the Railway URL:
 - Check that Root Directory is `dda-backend`
 
 ### CORS errors in browser console
-- The backend allows origins: `diegodeaduriz.art`, `www.diegodeaduriz.art`, `localhost:8080`, `localhost:3000`
+- The backend allows origins: `diegodeaduriz.com`, `www.diegodeaduriz.com`, `localhost:8080`, `localhost:3000`
 - If you use a custom API domain, no CORS changes needed
 
 ### Database connection errors
