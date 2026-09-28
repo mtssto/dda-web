@@ -4,7 +4,7 @@
 
   <!-- Homepage -->
   <url>
-    <loc>https://diegodeaduriz.art/</loc>
+    <loc>https://diegodeaduriz.com/</loc>
     <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
@@ -12,7 +12,7 @@
 
   <!-- Shop -->
   <url>
-    <loc>https://diegodeaduriz.art/shop/shop.html</loc>
+    <loc>https://diegodeaduriz.com/shop/shop.html</loc>
     <lastmod>2026-05-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -20,7 +20,7 @@
 
   <!-- Catalog -->
   <url>
-    <loc>https://diegodeaduriz.art/shop/catalog.html</loc>
+    <loc>https://diegodeaduriz.com/shop/catalog.html</loc>
     <lastmod>2026-05-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -28,7 +28,7 @@
 
   <!-- Artworks / Portfolio -->
   <url>
-    <loc>https://diegodeaduriz.art/portfolio/sections/obras.html</loc>
+    <loc>https://diegodeaduriz.com/portfolio/sections/obras.html</loc>
     <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -36,7 +36,7 @@
 
   <!-- Bio -->
   <url>
-    <loc>https://diegodeaduriz.art/bio/bio.html</loc>
+    <loc>https://diegodeaduriz.com/bio/bio.html</loc>
     <lastmod>2026-05-26</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.8</priority>
@@ -44,7 +44,7 @@
 
   <!-- Muestras / Exhibitions -->
   <url>
-    <loc>https://diegodeaduriz.art/muestras/muestras.html</loc>
+    <loc>https://diegodeaduriz.com/muestras/muestras.html</loc>
     <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -52,7 +52,7 @@
 
   <!-- Prensa / Press -->
   <url>
-    <loc>https://diegodeaduriz.art/prensa/prensa.html</loc>
+    <loc>https://diegodeaduriz.com/prensa/prensa.html</loc>
     <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -60,7 +60,7 @@
 
   <!-- Blog / Journal -->
   <url>
-    <loc>https://diegodeaduriz.art/journal/index.html</loc>
+    <loc>https://diegodeaduriz.com/journal/index.html</loc>
     <lastmod>2026-05-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -68,7 +68,7 @@
 
   <!-- Proyectos -->
   <url>
-    <loc>https://diegodeaduriz.art/proyectos/proyectos.html</loc>
+    <loc>https://diegodeaduriz.com/proyectos/proyectos.html</loc>
     <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -76,7 +76,7 @@
 
   <!-- Publicaciones / Texts -->
   <url>
-    <loc>https://diegodeaduriz.art/textos/textos.html</loc>
+    <loc>https://diegodeaduriz.com/textos/textos.html</loc>
     <lastmod>2026-05-26</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
@@ -84,7 +84,7 @@
 
   <!-- Puzzle Game -->
   <url>
-    <loc>https://diegodeaduriz.art/puzzle/puzzle.html</loc>
+    <loc>https://diegodeaduriz.com/puzzle/puzzle.html</loc>
     <lastmod>2026-05-26</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
@@ -92,7 +92,7 @@
 
   <!-- Collage Tool -->
   <url>
-    <loc>https://diegodeaduriz.art/collage/collage.html</loc>
+    <loc>https://diegodeaduriz.com/collage/collage.html</loc>
     <lastmod>2026-05-26</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
@@ -100,7 +100,7 @@
 
   <!-- The DDA Game (commented out for now)
   <url>
-    <loc>https://diegodeaduriz.art/game/index.html</loc>
+    <loc>https://diegodeaduriz.com/game/index.html</loc>
     <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

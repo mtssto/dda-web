@@ -8,7 +8,7 @@
 
     var GA_ID = 'G-87SFZWVTQC';
     var host = location.hostname;
-    var isProd = host === 'diegodeaduriz.art' || host === 'www.diegodeaduriz.art';
+    var isProd = host === 'diegodeaduriz.com' || host === 'www.diegodeaduriz.com';
 
     function noopGtag() {}
 

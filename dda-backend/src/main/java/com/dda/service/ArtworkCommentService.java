@@ -25,7 +25,7 @@ public class ArtworkCommentService {
     private final UserRepository userRepository;
     private final EmailService emailService;
 
-    @Value("${app.static.base-url:https://diegodeaduriz.art}")
+    @Value("${app.static.base-url:https://diegodeaduriz.com}")
     private String staticBaseUrl;
 
     @Transactional(readOnly = true)

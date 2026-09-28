@@ -16,7 +16,7 @@ public class AdminSeedProperties {
 
     private String username = "admin";
 
-    private String email = "admin@diegodeaduriz.art";
+    private String email = "admin@diegodeaduriz.com";
 
     /** Plain text; encoded before save. Leave empty to skip seeding. */
     private String password = "";
