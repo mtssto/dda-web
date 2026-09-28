@@ -152,7 +152,7 @@
 
         const category = document.getElementById('categoryFilter')?.value || 'all';
         const query = document.getElementById('shopSearchInput')?.value?.trim() || '';
-        const sortValue = document.getElementById('sortSelect')?.value || 'id,desc';
+        const sortValue = document.getElementById('sortSelect')?.value || 'year,desc';
 
         let endpoint;
 
@@ -296,7 +296,7 @@
     }
 
     function appendStableSort(params, sortValue) {
-        const value = sortValue || 'id,desc';
+        const value = sortValue || 'year,desc';
         const [field, direction = 'asc'] = value.split(',');
 
         params.delete('sort');
@@ -466,7 +466,7 @@
         resetFilterDropdown('sizeDropdown', 'sizeFilter', 'all');
 
         if (sortSelect) {
-            sortSelect.value = 'id,desc';
+            sortSelect.value = 'year,desc';
         }
 
         if (availableOnly) {
