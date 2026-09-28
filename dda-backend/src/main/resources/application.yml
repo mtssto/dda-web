@@ -29,6 +29,7 @@ spring:
 
 server:
   port: ${PORT:8081}
+  forward-headers-strategy: native
 
 app:
   jwt:
@@ -36,7 +37,7 @@ app:
     expiration-ms: 86400000
     cookie-name: dda_auth
     cookie-secure: ${JWT_COOKIE_SECURE:true}
-    cookie-same-site: ${JWT_COOKIE_SAME_SITE:None}
+    cookie-same-site: ${JWT_COOKIE_SAME_SITE:Lax}
     # Optional: .diegodeaduriz.com when API uses api.diegodeaduriz.com (same-site cookies with the shop)
     cookie-domain: ${JWT_COOKIE_DOMAIN:}
   upload:
@@ -56,6 +57,7 @@ app:
     email: ${DDA_ADMIN_EMAIL:admin@diegodeaduriz.com}
     password: ${DDA_ADMIN_PASSWORD:}
     promote-existing: true
+    bootstrap-secret: ${DDA_ADMIN_BOOTSTRAP_SECRET:}
 
 dda:
   # One-time recovery on Railway: set DDA_FLYWAY_REPAIR=true, deploy once, then remove it.
@@ -118,13 +120,17 @@ spring:
 
   flyway:
     locations: classpath:db/migration,classpath:db/migration-mysql
-
   jpa:
     hibernate:
       ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+
+app:
+  jwt:
+    cookie-secure: true
+    cookie-same-site: Lax
 
 cloudinary:
   cloud-name: ${CLOUDINARY_CLOUD_NAME:}

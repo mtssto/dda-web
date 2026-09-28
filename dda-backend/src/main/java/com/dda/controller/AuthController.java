@@ -5,11 +5,19 @@ import com.dda.dto.LoginRequest;
 import com.dda.dto.OAuthConfigResponse;
 import com.dda.dto.OAuthLoginRequest;
 import com.dda.dto.RegisterRequest;
+import com.dda.dto.PasswordResetRequest;
+import com.dda.dto.PasswordResetConfirmRequest;
 import com.dda.dto.UserProfileResponse;
 import com.dda.entity.AuthProvider;
 import com.dda.security.AuthCookieService;
 import com.dda.security.CustomUserDetails;
 import com.dda.service.AuthService;
+import com.dda.service.CustomerAccountService;
+import com.dda.service.AdminBootstrapService;
+import com.dda.service.EmailService;
+import com.dda.security.AttemptLimiter;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.AuthenticationException;
 import com.dda.service.oauth.AppleTokenVerifier;
 import com.dda.service.oauth.GoogleTokenVerifier;
 import com.dda.service.oauth.OAuthAuthService;
@@ -37,6 +45,10 @@ public class AuthController {
     private final GoogleTokenVerifier googleTokenVerifier;
     private final AppleTokenVerifier appleTokenVerifier;
     private final OAuthAuthService oauthAuthService;
+    private final CustomerAccountService customerAccountService;
+    private final AdminBootstrapService adminBootstrapService;
+    private final AttemptLimiter attemptLimiter;
+    private final EmailService emailService;
 
     @Value("${app.static.base-url:https://diegodeaduriz.com}")
     private String staticBaseUrl;
@@ -46,6 +58,69 @@ public class AuthController {
 
     @Value("${app.oauth.apple.client-id:}")
     private String appleClientId;
+
+    @PostMapping("/customer/login")
+    public ResponseEntity<?> customerLogin(@Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest,
+                                           HttpServletResponse response) {
+        String username = request.getUsername() == null ? "" : request.getUsername().trim().toLowerCase();
+        String ip = httpRequest.getRemoteAddr();
+        if (attemptLimiter.isLoginBlocked(username, ip)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(Map.of("message", "Demasiados intentos. Esperá 15 minutos e intentá de nuevo."));
+        }
+        try {
+            AuthResponse authResponse = authService.customerLogin(request);
+            attemptLimiter.loginSucceeded(username, ip);
+            authCookieService.setAuthCookie(response, authResponse.getToken());
+            return ResponseEntity.ok(toPublicResponse(authResponse));
+        } catch (DisabledException e) {
+            attemptLimiter.loginFailed(username, ip);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", e.getMessage(), "pendingVerification", true));
+        } catch (AuthenticationException | IllegalArgumentException e) {
+            attemptLimiter.loginFailed(username, ip);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Usuario o contraseña incorrectos"));
+        }
+    }
+
+    @PostMapping("/password-reset/request")
+    public ResponseEntity<Map<String, String>> requestPasswordReset(@Valid @RequestBody PasswordResetRequest request,
+                                                                     HttpServletRequest httpRequest) {
+        String email = request.getEmail().trim().toLowerCase();
+        String ip = httpRequest.getRemoteAddr();
+        if (attemptLimiter.isResetBlocked(email, ip)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(Map.of("message", "Demasiadas solicitudes. Intentá de nuevo más tarde."));
+        }
+        attemptLimiter.resetRequested(email, ip);
+        if (!emailService.isConfiguredForTransactionalEmail()) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                    .body(Map.of("message", "La recuperación por email no está disponible por el momento. Probá más tarde."));
+        }
+        customerAccountService.requestPasswordReset(email);
+        return ResponseEntity.accepted().body(Map.of("message", "Si existe una cuenta local con ese email, recibirás instrucciones para recuperar el acceso."));
+    }
+
+    @PostMapping("/password-reset/confirm")
+    public ResponseEntity<Map<String, String>> confirmPasswordReset(@Valid @RequestBody PasswordResetConfirmRequest request) {
+        customerAccountService.confirmPasswordReset(request);
+        return ResponseEntity.ok(Map.of("message", "Contraseña actualizada. Ya podés iniciar sesión."));
+    }
+
+    @PostMapping("/bootstrap-admin")
+    public ResponseEntity<Map<String, String>> bootstrapAdmin(@Valid @RequestBody RegisterRequest request,
+            @RequestHeader(value = "X-Admin-Bootstrap-Code", required = false) String code,
+            HttpServletRequest httpRequest) {
+        String ip = httpRequest.getRemoteAddr();
+        if (attemptLimiter.isBootstrapBlocked(ip)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(Map.of("message", "Demasiados intentos. Esperá 15 minutos e intentá de nuevo."));
+        }
+        try {
+            adminBootstrapService.createFirstAdmin(request, code);
+            attemptLimiter.bootstrapSucceeded(ip);
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Administrador inicial creado. Iniciá sesión desde el acceso administrativo."));
+        } catch (RuntimeException e) {
+            attemptLimiter.bootstrapFailed(ip);
+            throw e;
+        }
+    }
 
     @GetMapping("/oauth-config")
     public ResponseEntity<OAuthConfigResponse> oauthConfig() {
