@@ -7,6 +7,7 @@
     <link rel="apple-touch-icon" href="../apple-touch-icon.png">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
     <title>Diego De Aduriz | Mi Cuenta</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -83,6 +84,25 @@
                         </svg>
                     </span>
                 </button>
+            </form>
+
+            <p id="forgotPasswordPrompt" style="text-align:right;margin:-6px 0 18px;font-size:13px"><a href="#" id="showForgotPassword">¿Olvidaste tu contraseña?</a></p>
+            <form id="forgotPasswordForm" class="login-form" hidden novalidate>
+                <p>Ingresá tu email y, si hay una cuenta local asociada, te enviaremos un enlace para recuperar el acceso.</p>
+                <div class="form-group"><label for="resetEmail">Email</label><input type="email" id="resetEmail" autocomplete="email" required placeholder="tu@email.com"></div>
+                <div id="forgotPasswordMessage" class="login-success" role="status" hidden></div>
+                <div id="forgotPasswordError" class="login-error" role="alert" hidden></div>
+                <button type="submit" class="login-btn" id="requestResetBtn">Enviar instrucciones</button>
+                <p><a href="#" id="backToLogin">Volver a iniciar sesión</a></p>
+            </form>
+
+            <form id="passwordResetForm" class="login-form" hidden novalidate>
+                <h2>Elegí una nueva contraseña</h2>
+                <div class="form-group"><label for="newPassword">Nueva contraseña</label><input type="password" id="newPassword" autocomplete="new-password" required minlength="8"></div>
+                <div class="form-group"><label for="newPasswordConfirm">Confirmar contraseña</label><input type="password" id="newPasswordConfirm" autocomplete="new-password" required minlength="8"></div>
+                <div id="confirmResetError" class="login-error" role="alert" hidden></div>
+                <div id="confirmResetMessage" class="login-success" role="status" hidden></div>
+                <button type="submit" class="login-btn">Actualizar contraseña</button>
             </form>
 
             <!-- Register Form -->
@@ -218,6 +238,67 @@
             var loginForm = document.getElementById('loginForm');
             var registerForm = document.getElementById('registerForm');
             var closeBtn = document.getElementById('loginCloseBtn');
+            var forgotPasswordForm = document.getElementById('forgotPasswordForm');
+            var passwordResetForm = document.getElementById('passwordResetForm');
+            var forgotPasswordPrompt = document.getElementById('forgotPasswordPrompt');
+
+            function safeReturnUrl(raw) {
+                if (!raw || raw.indexOf('\\') !== -1 || raw.indexOf('//') === 0) return null;
+                try {
+                    var target = new URL(raw, window.location.origin);
+                    if (target.origin !== window.location.origin || /(?:^|\/)user-login\.html$/i.test(target.pathname)) return null;
+                    return target.pathname + target.search + target.hash;
+                } catch (e) { return null; }
+            }
+
+            function goToReturnOrAccount() {
+                var target = safeReturnUrl(new URLSearchParams(window.location.search).get('return'));
+                window.location.href = target || 'mi-cuenta.html';
+            }
+
+            document.getElementById('showForgotPassword').addEventListener('click', function (event) {
+                event.preventDefault(); loginForm.hidden = true; forgotPasswordPrompt.hidden = true; forgotPasswordForm.hidden = false;
+                var value = document.getElementById('loginUsername').value.trim();
+                if (value.indexOf('@') !== -1) document.getElementById('resetEmail').value = value;
+            });
+            document.getElementById('backToLogin').addEventListener('click', function (event) {
+                event.preventDefault(); forgotPasswordForm.hidden = true; loginForm.hidden = false; forgotPasswordPrompt.hidden = false;
+            });
+
+            var resetToken = new URLSearchParams(window.location.search).get('reset_token');
+            if (resetToken) {
+                window.history.replaceState(null, '', window.location.pathname);
+                document.querySelector('.auth-tabs').hidden = true;
+                document.getElementById('oauthSection').hidden = true;
+                loginForm.hidden = true; registerForm.hidden = true; forgotPasswordPrompt.hidden = true;
+                passwordResetForm.hidden = false;
+            }
+
+            forgotPasswordForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                var message = document.getElementById('forgotPasswordMessage');
+                var error = document.getElementById('forgotPasswordError');
+                message.hidden = true; error.hidden = true;
+                DDAAuth.requestPasswordReset(document.getElementById('resetEmail').value.trim()).then(function (data) {
+                    message.textContent = data.message; message.hidden = false;
+                }).catch(function (err) { error.textContent = err.message; error.hidden = false; });
+            });
+
+            passwordResetForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                var error = document.getElementById('confirmResetError');
+                var message = document.getElementById('confirmResetMessage');
+                error.hidden = true; message.hidden = true;
+                var password = document.getElementById('newPassword').value;
+                if (password !== document.getElementById('newPasswordConfirm').value) {
+                    error.textContent = 'Las contraseñas no coinciden.'; error.hidden = false; return;
+                }
+                DDAAuth.confirmPasswordReset(resetToken, password).then(function (data) {
+                    message.textContent = data.message; message.hidden = false;
+                    passwordResetForm.querySelector('button[type="submit"]').disabled = true;
+                    setTimeout(function () { window.location.href = 'user-login.html'; }, 1800);
+                }).catch(function (err) { error.textContent = err.message; error.hidden = false; });
+            });
             var submitting = false;
 
             // ── Close button ─────────────────────────────
@@ -414,20 +495,19 @@
                 btnLoader.hidden = false;
                 btn.disabled = true;
 
-                DDAAuth.login(username, password)
+                DDAAuth.customerLogin(username, password)
                     .then(function () {
-                        var params = new URLSearchParams(window.location.search);
-                        var returnTo = params.get('return');
-                        if (returnTo && returnTo.indexOf('user-login') === -1) {
-                            window.location.href = returnTo;
-                        } else {
-                            window.location.href = 'mi-cuenta.html';
-                        }
+                        goToReturnOrAccount();
                     })
                     .catch(function (err) {
                         if (err.pendingVerification) {
-                            errorText.innerHTML = (err.message || 'Tu email aún no ha sido verificado.')
-                                + '<br><a href="#" id="loginResendLink" style="color:#c0392b;font-size:13px;">Reenviar email de verificación</a>';
+                            errorText.textContent = err.message || 'Tu email aún no ha sido verificado.';
+                            var breakNode = document.createElement('br');
+                            var resendAnchor = document.createElement('a');
+                            resendAnchor.href = '#'; resendAnchor.id = 'loginResendLink';
+                            resendAnchor.style.cssText = 'color:#c0392b;font-size:13px;';
+                            resendAnchor.textContent = 'Reenviar email de verificación';
+                            errorText.appendChild(breakNode); errorText.appendChild(resendAnchor);
                             errorBox.hidden = false;
                             var link = document.getElementById('loginResendLink');
                             if (link) {
@@ -538,13 +618,8 @@
                             return;
                         }
                         successBox.hidden = false;
-                        var returnTo = new URLSearchParams(window.location.search).get('return');
                         setTimeout(function () {
-                            if (returnTo && returnTo.indexOf('user-login') === -1) {
-                                window.location.href = returnTo;
-                            } else {
-                                window.location.href = 'mi-cuenta.html';
-                            }
+                            goToReturnOrAccount();
                         }, 1000);
                     })
                     .catch(function (err) {

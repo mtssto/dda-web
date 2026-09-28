@@ -36,10 +36,27 @@ public class AuthService {
     @Value("${dda.mail.enabled:false}")
     private boolean mailEnabled;
 
+    /** The existing /login route is retained exclusively for administrator sign-in. */
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("Usuario o contraseña incorrectos"));
 
+        if (user.getRole() != User.Role.ADMIN) {
+            throw new IllegalArgumentException("Usuario o contraseña incorrectos");
+        }
+        return authenticate(request, user);
+    }
+
+    public AuthResponse customerLogin(LoginRequest request) {
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario o contraseña incorrectos"));
+        if (user.getRole() != User.Role.USER) {
+            throw new IllegalArgumentException("Usuario o contraseña incorrectos");
+        }
+        return authenticate(request, user);
+    }
+
+    private AuthResponse authenticate(LoginRequest request, User user) {
         if (mailEnabled && !Boolean.TRUE.equals(user.getEmailVerified())) {
             throw new DisabledException("Tu email aún no ha sido verificado. Revisá tu bandeja de entrada.");
         }
@@ -65,8 +82,6 @@ public class AuthService {
             throw new IllegalArgumentException("El email ya está registrado");
         }
 
-        boolean isFirstUser = userRepository.count() == 0;
-
         // When email is disabled (dev mode), auto-verify and return JWT immediately
         if (!mailEnabled) {
             User user = User.builder()
@@ -74,7 +89,7 @@ public class AuthService {
                     .email(request.getEmail())
                     .password(passwordEncoder.encode(request.getPassword()))
                     .authProvider(AuthProvider.LOCAL)
-                    .role(isFirstUser ? User.Role.ADMIN : User.Role.USER)
+                    .role(User.Role.USER)
                     .emailVerified(true)
                     .build();
 
@@ -98,7 +113,7 @@ public class AuthService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .authProvider(AuthProvider.LOCAL)
-                .role(isFirstUser ? User.Role.ADMIN : User.Role.USER)
+                .role(User.Role.USER)
                 .emailVerified(false)
                 .verificationToken(verificationToken)
                 .verificationTokenExpiry(LocalDateTime.now().plusHours(24))

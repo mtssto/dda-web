@@ -23,11 +23,16 @@ var DDAOAuthLogin = (function () {
     function redirectAfterLogin() {
         var params = new URLSearchParams(window.location.search);
         var returnTo = params.get('return');
-        if (returnTo && returnTo.indexOf('user-login') === -1) {
-            window.location.href = returnTo;
-        } else {
-            window.location.href = 'mi-cuenta.html';
+        var safeReturn = null;
+        if (returnTo && returnTo.indexOf('\\') === -1 && returnTo.indexOf('//') !== 0) {
+            try {
+                var target = new URL(returnTo, window.location.origin);
+                if (target.origin === window.location.origin && !/(?:^|\/)user-login\.html$/i.test(target.pathname)) {
+                    safeReturn = target.pathname + target.search + target.hash;
+                }
+            } catch (e) { /* fall back to the account page */ }
         }
+        window.location.href = safeReturn || 'mi-cuenta.html';
     }
 
     function handleOAuthSuccess(data, provider) {

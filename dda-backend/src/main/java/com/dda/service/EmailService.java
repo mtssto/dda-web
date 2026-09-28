@@ -27,11 +27,17 @@ public class EmailService {
     @Value("${dda.mail.from:DDA <onboarding@resend.dev>}")
     private String fromEmail;
 
-    @Value("${dda.mail.comment-notify-to:admin@diegodeaduriz.art}")
+    @Value("${dda.mail.comment-notify-to:admin@diegodeaduriz.com}")
     private String commentNotifyTo;
 
-    @Value("${app.static.base-url:https://diegodeaduriz.art}")
+    @Value("${app.static.base-url:https://diegodeaduriz.com}")
     private String staticBaseUrl;
+
+    public boolean isConfiguredForTransactionalEmail() {
+        return mailEnabled && resendApiKey != null && !resendApiKey.isBlank()
+                && fromEmail != null && !fromEmail.isBlank() && fromEmail.contains("@")
+                && !fromEmail.toLowerCase().contains("onboarding@resend.dev");
+    }
 
     private final HttpClient httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
@@ -40,7 +46,7 @@ public class EmailService {
     @Async
     public void sendVerificationEmail(String toEmail, String username, String verifyUrl) {
         if (!mailEnabled) {
-            log.info("Email disabled — skipping verification email to {} (verify URL: {})", toEmail, verifyUrl);
+            log.info("Email disabled — skipping verification email to {}", toEmail);
             return;
         }
         if (resendApiKey == null || resendApiKey.isBlank()) {
@@ -50,6 +56,19 @@ public class EmailService {
 
         String htmlContent = buildVerificationHtml(username, verifyUrl);
         sendViaResend(toEmail, "Verificá tu email — Diego De Aduriz", htmlContent);
+    }
+
+    @Async
+    public void sendPasswordResetEmail(String toEmail, String username, String resetUrl) {
+        if (!mailEnabled) {
+            log.warn("Email disabled — skipping password reset email to {}", toEmail);
+            return;
+        }
+        if (resendApiKey == null || resendApiKey.isBlank()) {
+            log.warn("Resend API key not configured — skipping password reset email to {}", toEmail);
+            return;
+        }
+        sendViaResend(toEmail, "Recuperá tu contraseña — Diego De Aduriz", buildPasswordResetHtml(username, resetUrl));
     }
 
     @Async
@@ -169,9 +188,19 @@ public class EmailService {
             "</td></tr>" +
             "<tr><td style=\"padding:32px 40px;border-top:1px solid #eee;text-align:center;\">" +
             "<p style=\"margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:14px;color:#111;\">&mdash; DDA</p>" +
-            "<p style=\"margin:0;font-size:11px;color:#999;\">diegodeaduriz.art</p>" +
+            "<p style=\"margin:0;font-size:11px;color:#999;\">diegodeaduriz.com</p>" +
             "</td></tr>" +
             "</table></td></tr></table></body></html>";
+    }
+
+    private String buildPasswordResetHtml(String username, String resetUrl) {
+        return "<!DOCTYPE html><html lang=\"es\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"></head>" +
+            "<body style=\"margin:0;padding:32px;background:#f5f5f5;font-family:Arial,sans-serif;color:#222\"><table role=\"presentation\" style=\"max-width:520px;margin:auto;background:#fff;padding:36px;border-radius:6px\"><tr><td>" +
+            "<h1 style=\"font:italic 28px Georgia,serif;text-align:center\">Diego De Aduriz</h1><h2 style=\"font:22px Georgia,serif\">Hola, " + escapeHtml(username) + ".</h2>" +
+            "<p style=\"line-height:1.7\">Recibimos una solicitud para cambiar la contraseña de tu cuenta. El enlace es válido durante 30 minutos y se puede usar una sola vez.</p>" +
+            "<p style=\"text-align:center;margin:32px 0\"><a href=\"" + escapeHtml(resetUrl) + "\" style=\"display:inline-block;padding:14px 26px;background:#111;color:#fff;text-decoration:none;border-radius:4px\">Crear nueva contraseña</a></p>" +
+            "<p style=\"font-size:13px;color:#666\">Si no solicitaste este cambio, podés ignorar este email.</p><hr style=\"border:0;border-top:1px solid #eee\"><p style=\"text-align:center;font-size:12px;color:#999\">diegodeaduriz.com</p>" +
+            "</td></tr></table></body></html>";
     }
 
     private String buildWelcomeHtml(String username) {
@@ -192,12 +221,12 @@ public class EmailService {
             "<p style=\"margin:0 0 32px;font-size:15px;line-height:1.7;color:#444;\">Explor&aacute; obras &uacute;nicas y hac&eacute; tuya la galer&iacute;a.</p>" +
             "<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin:0 auto;\">" +
             "<tr><td style=\"background:#111;border-radius:4px;\">" +
-            "<a href=\"https://diegodeaduriz.art/shop/shop.html\" target=\"_blank\" style=\"display:inline-block;padding:14px 32px;font-size:13px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#fff;text-decoration:none;\">Explorar la tienda</a>" +
+            "<a href=\"https://diegodeaduriz.com/shop/shop.html\" target=\"_blank\" style=\"display:inline-block;padding:14px 32px;font-size:13px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#fff;text-decoration:none;\">Explorar la tienda</a>" +
             "</td></tr></table>" +
             "</td></tr>" +
             "<tr><td style=\"padding:32px 40px;border-top:1px solid #eee;text-align:center;\">" +
             "<p style=\"margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:14px;color:#111;\">&mdash; DDA</p>" +
-            "<p style=\"margin:0;font-size:11px;color:#999;\">diegodeaduriz.art</p>" +
+            "<p style=\"margin:0;font-size:11px;color:#999;\">diegodeaduriz.com</p>" +
             "</td></tr>" +
             "</table></td></tr></table></body></html>";
     }
@@ -225,7 +254,7 @@ public class EmailService {
             "<p style=\"margin:28px 0 0;\"><a href=\"" + escapeHtml(obraUrl) + "\" style=\"display:inline-block;padding:12px 24px;background:#111;color:#fff;text-decoration:none;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;border-radius:4px;\">Ver obra</a></p>" +
             "</td></tr>" +
             "<tr><td style=\"padding:24px 40px;border-top:1px solid #eee;text-align:center;\">" +
-            "<p style=\"margin:0;font-size:11px;color:#999;\">diegodeaduriz.art</p>" +
+            "<p style=\"margin:0;font-size:11px;color:#999;\">diegodeaduriz.com</p>" +
             "</td></tr></table></td></tr></table></body></html>";
     }
 

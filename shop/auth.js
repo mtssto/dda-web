@@ -197,6 +197,48 @@ var DDAAuth = (function () {
         });
     }
 
+    function customerLogin(username, password) {
+        return fetch(API_BASE + '/auth/customer/login', {
+            method: 'POST', credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: username, password: password })
+        }).then(function (res) {
+            return res.json().then(function (data) {
+                if (!res.ok) {
+                    var err = new Error(data.message || 'Usuario o contraseña incorrectos');
+                    if (data.pendingVerification) err.pendingVerification = true;
+                    throw err;
+                }
+                return data;
+            });
+        }).then(function (data) {
+            saveUser(data);
+            if (typeof trackLogin === 'function') trackLogin('email');
+            return data;
+        });
+    }
+
+    function requestPasswordReset(email) {
+        return fetch(API_BASE + '/auth/password-reset/request', {
+            method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email })
+        }).then(parseJsonResponse);
+    }
+
+    function confirmPasswordReset(token, password) {
+        return fetch(API_BASE + '/auth/password-reset/confirm', {
+            method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: token, password: password })
+        }).then(parseJsonResponse);
+    }
+
+    function parseJsonResponse(res) {
+        return res.json().then(function (data) {
+            if (!res.ok) throw new Error(parseAuthError(data, 'No se pudo completar la solicitud'));
+            return data;
+        });
+    }
+
     function register(username, email, password, newsletterOptIn) {
         return fetch(API_BASE + '/auth/register', {
             method: 'POST',
@@ -308,6 +350,9 @@ var DDAAuth = (function () {
     return {
         init: init,
         login: login,
+        customerLogin: customerLogin,
+        requestPasswordReset: requestPasswordReset,
+        confirmPasswordReset: confirmPasswordReset,
         register: register,
         resendVerification: resendVerification,
         logout: logout,
