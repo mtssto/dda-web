@@ -2204,6 +2204,26 @@ function closeLightBox() {
     const PDF_MARGIN = 12;
     const PDF_META_RESERVE = 58;
     const PDF_COL_GAP = 8;
+    let catalogPdfObjectUrl = '';
+
+    function offerPdfDownload(doc, button) {
+        const fallbackId = 'btnDownloadPDF';
+        const previousLink = document.getElementById(fallbackId);
+        if (previousLink && previousLink !== button) previousLink.remove();
+        if (catalogPdfObjectUrl) URL.revokeObjectURL(catalogPdfObjectUrl);
+
+        catalogPdfObjectUrl = URL.createObjectURL(doc.output('blob'));
+        const downloadLink = document.createElement('a');
+        downloadLink.id = fallbackId;
+        downloadLink.className = 'btn-download-catalog';
+        downloadLink.href = catalogPdfObjectUrl;
+        downloadLink.download = 'Catalogo_DiegoDeAduriz.pdf';
+        downloadLink.textContent = (localStorage.getItem('preferredLanguage') || 'es') === 'en'
+            ? 'Download PDF now'
+            : 'Descargar PDF ahora';
+        button.replaceWith(downloadLink);
+        downloadLink.click();
+    }
 
     function resolvePdfImageUrl(url) {
         if (!url) return '';
@@ -2440,6 +2460,7 @@ function closeLightBox() {
                     const title = productData.title || 'Obra sin título';
                     const price = productData.price || 'Consultar';
                     const imageUrls = getArtworkImageUrls(productData);
+                    btnDownloadPDF.textContent = `Generando PDF (${i + 1}/${artworks.length})...`;
 
                     doc.addPage();
                     addWatermark(doc);
@@ -2462,7 +2483,7 @@ function closeLightBox() {
                     addArtworkMeta(doc, title, price, productData, yPos);
                 }
 
-                doc.save('Catalogo_DiegoDeAduriz.pdf');
+                offerPdfDownload(doc, btnDownloadPDF);
             } catch (error) {
                 console.error('PDF Generation Error:', error);
                 alert('Hubo un error al generar el PDF. Por favor, intenta de nuevo.');
