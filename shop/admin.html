@@ -121,6 +121,7 @@
                 </select>
             </div>
             <div class="toolbar-right">
+                <button class="btn-secondary" id="openCatalogPdfBtn" type="button">Crear catálogo PDF</button>
                 <button class="btn-primary" id="addArtworkBtn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -270,6 +271,37 @@
 
     </main>
 
+    <!-- Catalog PDF selection -->
+    <div class="modal-overlay" id="catalogPdfModal" hidden>
+        <section class="modal-content modal-content--wide catalog-pdf-modal" role="dialog" aria-modal="true" aria-labelledby="catalogPdfTitle">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title" id="catalogPdfTitle">Crear catálogo PDF</h2>
+                    <p class="catalog-pdf-intro">Elegí las obras que querés incluir. Las vendidas y las digitales quedan fuera del catálogo.</p>
+                </div>
+                <button class="modal-close" id="catalogPdfClose" type="button" aria-label="Cerrar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="18" x2="6" y2="6"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="catalog-pdf-controls">
+                <input type="search" id="catalogPdfSearch" placeholder="Buscar por título o categoría" aria-label="Buscar obras para el catálogo">
+                <button class="btn-secondary" id="catalogPdfSelectVisible" type="button">Seleccionar visibles</button>
+                <button class="btn-secondary" id="catalogPdfClearVisible" type="button">Quitar visibles</button>
+                <span id="catalogPdfCount" aria-live="polite">Cargando obras…</span>
+            </div>
+            <div class="catalog-pdf-list" id="catalogPdfList" aria-live="polite"></div>
+            <div class="catalog-pdf-footer">
+                <p class="catalog-pdf-status" id="catalogPdfStatus" role="status"></p>
+                <div class="modal-actions">
+                    <button class="btn-secondary" id="catalogPdfCancel" type="button">Cancelar</button>
+                    <button class="btn-primary" id="catalogPdfGenerate" type="button" disabled>Descargar PDF</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
     <!-- Artwork Modal (Create / Edit) -->
     <div class="modal-overlay" id="artworkModal" hidden>
         <div class="modal-content modal-content--wide">
@@ -386,9 +418,12 @@
     </div>
 
     <script src="config.js"></script>
+    <script src="image-utils.js"></script>
     <script src="auth.js"></script>
     <script src="admin-app.js"></script>
     <script src="admin-journal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+    <script src="admin-catalog-pdf.js" defer></script>
 </body>
 
 </html>
