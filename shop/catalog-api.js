@@ -704,7 +704,7 @@
                 const fullSrc = clickedImage?.dataset?.fullSrc || artwork.image;
 
                 if (typeof openLightBox === 'function') {
-                    openLightBox(fullSrc);
+                    openLightBox(fullSrc, artwork.images);
                 }
 
                 return;
@@ -741,12 +741,26 @@
 
     function normalizeArtworkForModal(artwork) {
         const imageUrl = getPrimaryImageUrl(artwork);
-
-        const images = Array.isArray(artwork.images)
-            ? artwork.images
-                .map(image => normalizeImageUrl(image))
-                .filter(Boolean)
-            : [];
+        const slug = String(artwork.slug || artwork.id || '');
+        const staticArtwork = (window.products || []).find(product =>
+            String(product.slug || product.id || '') === slug
+        );
+        const imageEntries = [
+            ...(Array.isArray(artwork.images) ? artwork.images : []),
+            ...(staticArtwork && Array.isArray(staticArtwork.images) ? staticArtwork.images : [])
+        ];
+        const seenImages = new Set();
+        const images = imageEntries.map(image => {
+            const raw = image && typeof image === 'object'
+                ? (image.fileName || image.filePath || image.url || image.imageUrl || '')
+                : image;
+            let identity = String(raw || '').split(/[?#]/)[0].split('/').pop();
+            try { identity = decodeURIComponent(identity); } catch (error) { /* keep encoded filename */ }
+            identity = identity.toLowerCase();
+            if (identity && seenImages.has(identity)) return '';
+            if (identity) seenImages.add(identity);
+            return normalizeImageUrl(image);
+        }).filter(Boolean);
 
         return {
             id: artwork.id,
