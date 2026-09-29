@@ -2360,6 +2360,61 @@ function closeLightBox() {
         return artworks.filter((artwork) => artwork && artwork.sold !== true && !isDigitalArtwork(artwork));
     }
 
+    const PDF_ARTWORK_CATEGORIES = [
+        'Paisajes',
+        'Autorretratos',
+        'Otros dibujos en papel',
+        'Pintura sobre madera',
+        'Otras pinturas',
+        'Gatos',
+        'Pitufos'
+    ];
+
+    function normalizePdfCategoryText(value) {
+        return String(value || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase();
+    }
+
+    function getPdfArtworkCategory(artwork) {
+        const title = normalizePdfCategoryText(artwork.title);
+        const slug = normalizePdfCategoryText(artwork.slug || artwork.id);
+        const category = normalizePdfCategoryText(artwork.category && (artwork.category.name || artwork.category));
+        const technique = normalizePdfCategoryText(artwork.technique);
+        const theme = `${title} ${slug} ${category}`;
+
+        // The named subjects take precedence over the artwork's physical medium.
+        if (/\b(pitufo|pitufos|smurf)\b/.test(theme)) return 'Pitufos';
+        if (/\b(gato|gatos|felino|felinos)\b/.test(theme)) return 'Gatos';
+        if (/autorretrato/.test(theme)) return 'Autorretratos';
+        if (/paisaje/.test(theme)) return 'Paisajes';
+        if (/papel/.test(technique) || /dibujo|ilustracion/.test(category)) return 'Otros dibujos en papel';
+        if (/madera|wood|puerta/.test(technique)) return 'Pintura sobre madera';
+        return 'Otras pinturas';
+    }
+
+    function groupPdfArtworksByCategory(artworks) {
+        const groups = new Map(PDF_ARTWORK_CATEGORIES.map((category) => [category, []]));
+        artworks.forEach((artwork) => groups.get(getPdfArtworkCategory(artwork)).push(artwork));
+        return groups;
+    }
+
+    function addPdfCategoryDivider(doc, category, artworkCount) {
+        const pageW = doc.internal.pageSize.getWidth();
+        const pageH = doc.internal.pageSize.getHeight();
+        addWatermark(doc);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(24);
+        doc.setTextColor(0);
+        doc.text(category, pageW / 2, pageH / 2 - 4, { align: 'center' });
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(11);
+        doc.setTextColor(100);
+        doc.text(`${artworkCount} ${artworkCount === 1 ? 'obra' : 'obras'}`, pageW / 2, pageH / 2 + 7, { align: 'center' });
+        doc.setTextColor(0);
+    }
+
     function addWatermark(doc) {
         const pageW = doc.internal.pageSize.getWidth();
         const pageH = doc.internal.pageSize.getHeight();
@@ -2480,32 +2535,43 @@ function closeLightBox() {
                     return;
                 }
 
-                for (let i = 0; i < artworks.length; i++) {
-                    const productData = artworks[i];
-                    const title = productData.title || 'Obra sin título';
-                    const price = productData.price || 'Consultar';
-                    const imageUrls = getArtworkImageUrls(productData);
-                    btnDownloadPDF.textContent = `Generando PDF (${i + 1}/${artworks.length})...`;
+                const groupedArtworks = groupPdfArtworksByCategory(artworks);
+                let artworkIndex = 0;
+
+                for (const category of PDF_ARTWORK_CATEGORIES) {
+                    const categoryArtworks = groupedArtworks.get(category);
+                    if (!categoryArtworks.length) continue;
 
                     doc.addPage();
-                    addWatermark(doc);
+                    addPdfCategoryDivider(doc, category, categoryArtworks.length);
 
-                    let yPos = PDF_MARGIN;
+                    for (const productData of categoryArtworks) {
+                        artworkIndex += 1;
+                        const title = productData.title || 'Obra sin título';
+                        const price = productData.price || 'Consultar';
+                        const imageUrls = getArtworkImageUrls(productData);
+                        btnDownloadPDF.textContent = `Generando PDF (${artworkIndex}/${artworks.length})...`;
 
-                    if (imageUrls.length > 0) {
-                        try {
-                            yPos = await addArtworkImages(doc, imageUrls, yPos, pageW, pageH);
-                        } catch (err) {
-                            console.warn('Could not add image to PDF', err);
-                            doc.setDrawColor(200);
-                            doc.rect(PDF_MARGIN, yPos, pageW - PDF_MARGIN * 2, 40);
-                            doc.setFontSize(10);
-                            doc.text('Sin imagen', pageW / 2, yPos + 22, { align: 'center' });
-                            yPos += 48;
+                        doc.addPage();
+                        addWatermark(doc);
+
+                        let yPos = PDF_MARGIN;
+
+                        if (imageUrls.length > 0) {
+                            try {
+                                yPos = await addArtworkImages(doc, imageUrls, yPos, pageW, pageH);
+                            } catch (err) {
+                                console.warn('Could not add image to PDF', err);
+                                doc.setDrawColor(200);
+                                doc.rect(PDF_MARGIN, yPos, pageW - PDF_MARGIN * 2, 40);
+                                doc.setFontSize(10);
+                                doc.text('Sin imagen', pageW / 2, yPos + 22, { align: 'center' });
+                                yPos += 48;
+                            }
                         }
-                    }
 
-                    addArtworkMeta(doc, title, price, productData, yPos);
+                        addArtworkMeta(doc, title, price, productData, yPos);
+                    }
                 }
 
                 offerPdfDownload(doc, btnDownloadPDF);
