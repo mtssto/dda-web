@@ -2122,24 +2122,42 @@ function getLightBoxImageUrl(src) {
     return src;
 }
 
-function openLightBox(imageSrc) {
+function openLightBox(imageSrc, artworkImages) {
     const lightBox = document.getElementById('lightBoxModal');
 
     if (lightBox) {
         // Extract src regardless of parameter type
         let src = typeof imageSrc === 'string' ? imageSrc : (imageSrc.src || '');
         src = getLightBoxImageUrl(src);
+        const getFilename = function (url) {
+            return String(url || '').split(/[?#]/)[0].split('/').pop().toLowerCase();
+        };
+        const clickedFilename = getFilename(src);
 
         // Check if there are multiple images for this product
-        window.lightBoxImages = [src];
+        window.lightBoxImages = Array.isArray(artworkImages) && artworkImages.length
+            ? artworkImages.slice()
+            : [src];
         window.lightBoxCurrentIndex = 0;
 
-        if (window.products) {
-            const product = window.products.find(p => p.image === src || (p.images && p.images.includes(src)));
+        if (Array.isArray(artworkImages) && artworkImages.length) {
+            const imageIndex = window.lightBoxImages.findIndex(function (url) {
+                return getFilename(url) === clickedFilename;
+            });
+            if (imageIndex >= 0) window.lightBoxCurrentIndex = imageIndex;
+        } else if (window.products) {
+            const product = window.products.find(function (item) {
+                const images = [item.image].concat(Array.isArray(item.images) ? item.images : []);
+                return images.some(function (url) {
+                    return getFilename(url) === clickedFilename;
+                });
+            });
             if (product && product.images && product.images.length > 1) {
                 window.lightBoxImages = product.images;
-                window.lightBoxCurrentIndex = product.images.indexOf(src);
-                if (window.lightBoxCurrentIndex === -1) window.lightBoxCurrentIndex = 0;
+                const imageIndex = product.images.findIndex(function (url) {
+                    return getFilename(url) === clickedFilename;
+                });
+                if (imageIndex >= 0) window.lightBoxCurrentIndex = imageIndex;
             }
         }
 
@@ -2291,6 +2309,14 @@ function closeLightBox() {
             return resolvePdfImageUrl(raw);
         };
 
+        const getFilename = (entry, url) => {
+            const explicitFilename = entry && typeof entry === 'object' ? entry.fileName : '';
+            const raw = explicitFilename || (typeof entry === 'string' ? entry : (entry && (entry.filePath || entry.url || entry.imageUrl))) || url;
+            let filename = String(raw || '').split(/[?#]/)[0].split('/').pop();
+            try { filename = decodeURIComponent(filename); } catch (error) { /* keep encoded filename */ }
+            return filename.toLowerCase();
+        };
+
         const slug = String(artwork && (artwork.slug || artwork.id) || '');
         const staticArtwork = (window.products || []).find((product) =>
             String(product.slug || product.id || '') === slug
@@ -2299,16 +2325,15 @@ function closeLightBox() {
             ...(artwork && Array.isArray(artwork.images) ? artwork.images : []),
             ...(staticArtwork && Array.isArray(staticArtwork.images) ? staticArtwork.images : [])
         ];
-        const urls = imageEntries.map(toUrl).filter(Boolean);
-        if (urls.length) {
-            const seen = new Set();
-            return urls.filter((url) => {
-                const filename = url.split(/[?#]/)[0].split('/').pop().toLowerCase();
-                if (seen.has(filename)) return false;
-                seen.add(filename);
-                return true;
-            });
-        }
+        const seenImages = new Set();
+        const urls = imageEntries.map((entry) => {
+            const url = toUrl(entry);
+            const filename = getFilename(entry, url);
+            if (!url || (filename && seenImages.has(filename))) return '';
+            if (filename) seenImages.add(filename);
+            return url;
+        }).filter(Boolean);
+        if (urls.length) return urls;
 
         const fallback = artwork?.image || '';
         return fallback ? [resolvePdfImageUrl(fallback)] : [];

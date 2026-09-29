@@ -62,15 +62,35 @@ var DDAApi = (function () {
         return resolveImageUrl(artwork.imageUrl || artwork.image || '') || FALLBACK_IMAGE;
     }
 
+    function getImageIdentity(image) {
+        var raw = image && typeof image === 'object'
+            ? (image.fileName || image.filePath || image.url || image.imageUrl || '')
+            : image;
+        var filename = String(raw || '').split(/[?#]/)[0].split('/').pop();
+        try { filename = decodeURIComponent(filename); } catch (error) { /* keep the encoded filename */ }
+        return filename.toLowerCase();
+    }
+
     function mapArtworkToProduct(artwork) {
         var sortedImages = Array.isArray(artwork.images) ? artwork.images.slice() : [];
         sortedImages.sort(function (a, b) {
             return (a.sortOrder || 0) - (b.sortOrder || 0);
         });
-        var imageUrls = sortedImages.map(resolveImageUrl).filter(Boolean);
-
         var primary = getPrimaryImageUrl(artwork);
         var slug = artwork.slug || String(artwork.id || '');
+        var staticArtwork = (window.products || []).find(function (product) {
+            return String(product.slug || product.id || '') === String(slug);
+        });
+        var imageEntries = sortedImages.concat(
+            staticArtwork && Array.isArray(staticArtwork.images) ? staticArtwork.images : []
+        );
+        var seenImages = new Set();
+        var imageUrls = imageEntries.map(function (image) {
+            var identity = getImageIdentity(image);
+            if (identity && seenImages.has(identity)) return '';
+            if (identity) seenImages.add(identity);
+            return resolveImageUrl(image);
+        }).filter(Boolean);
 
         return {
             id: slug,
