@@ -69,6 +69,10 @@
                     </div>
                 </div>
 
+                <p id="forgotPasswordPrompt" class="forgot-password-prompt">
+                    <a href="#" id="showForgotPassword">¿Olvidaste tu contraseña?</a>
+                </p>
+
                 <div id="loginError" class="login-error" role="alert" hidden>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
@@ -86,7 +90,6 @@
                 </button>
             </form>
 
-            <p id="forgotPasswordPrompt" style="text-align:right;margin:-6px 0 18px;font-size:13px"><a href="#" id="showForgotPassword">¿Olvidaste tu contraseña?</a></p>
             <form id="forgotPasswordForm" class="login-form" hidden novalidate>
                 <p>Ingresá tu email y, si hay una cuenta local asociada, te enviaremos un enlace para recuperar el acceso.</p>
                 <div class="form-group"><label for="resetEmail">Email</label><input type="email" id="resetEmail" autocomplete="email" required placeholder="tu@email.com"></div>

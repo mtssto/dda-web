@@ -156,6 +156,27 @@ body {
     background: #eee;
 }
 
+.forgot-password-prompt {
+    display: flex;
+    justify-content: flex-end;
+    margin: -10px 0 18px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.forgot-password-prompt a {
+    color: var(--color-subtext);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.forgot-password-prompt a:hover,
+.forgot-password-prompt a:focus-visible {
+    color: var(--color-text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
 /* ── OAuth (Google / Apple) ───────────── */
 .oauth-section {
     margin-bottom: 24px;
