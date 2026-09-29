@@ -597,6 +597,36 @@ body {
     transition: var(--transition);
 }
 
+/* ── Admin catalog PDF selection ───────────── */
+.catalog-pdf-modal { max-height: calc(100vh - 40px); display: flex; flex-direction: column; }
+.catalog-pdf-intro { margin-top: 6px; color: var(--color-subtext); font-size: 13px; line-height: 1.5; }
+.catalog-pdf-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 8px 0 14px; }
+.catalog-pdf-controls input { flex: 1 1 240px; min-width: 180px; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: 8px; font: 14px var(--font-body); }
+.catalog-pdf-controls .btn-secondary { padding: 9px 12px; font-size: 12px; }
+#catalogPdfCount { margin-left: auto; color: var(--color-subtext); font-size: 12px; }
+.catalog-pdf-list { overflow: auto; min-height: 160px; max-height: min(52vh, 540px); border: 1px solid var(--color-border); border-radius: 8px; }
+.catalog-pdf-row { display: grid; grid-template-columns: 20px 54px minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 9px 12px; border-bottom: 1px solid var(--color-border); cursor: pointer; }
+.catalog-pdf-row:last-child { border-bottom: 0; }
+.catalog-pdf-row:hover { background: var(--color-light-bg); }
+.catalog-pdf-row input { width: 16px; height: 16px; accent-color: var(--color-accent); }
+.catalog-pdf-row img { width: 54px; height: 54px; object-fit: cover; border-radius: 5px; background: var(--color-light-bg); }
+.catalog-pdf-row__title { display: block; font-size: 13px; font-weight: 500; line-height: 1.4; }
+.catalog-pdf-row__category { display: block; margin-top: 3px; color: var(--color-subtext); font-size: 11px; }
+.catalog-pdf-row__year { color: var(--color-subtext); font-size: 12px; white-space: nowrap; }
+.catalog-pdf-empty { padding: 30px 16px; text-align: center; color: var(--color-subtext); font-size: 13px; }
+.catalog-pdf-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
+.catalog-pdf-status { color: var(--color-subtext); font-size: 12px; }
+.catalog-pdf-footer .modal-actions { margin: 0; }
+@media (max-width: 600px) {
+    .catalog-pdf-controls { align-items: stretch; }
+    .catalog-pdf-controls .btn-secondary { flex: 1; justify-content: center; }
+    #catalogPdfCount { width: 100%; margin-left: 0; }
+    .catalog-pdf-row { grid-template-columns: 20px 44px minmax(0, 1fr); gap: 9px; padding: 8px; }
+    .catalog-pdf-row img { width: 44px; height: 44px; }
+    .catalog-pdf-row__year { display: none; }
+    .catalog-pdf-footer { align-items: stretch; flex-direction: column; }
+}
+
 .btn-secondary:hover { background: var(--color-light-bg); }
 
 .btn-danger {
