@@ -495,7 +495,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="modal-info-wrapper">
                     <div class="modal-info-scroll">
                         <h2 id="modalTitle" class="modal-title"></h2>
-                        <p id="modalDescription" class="modal-description" style="font-size: 0.9rem; color: #444; line-height: 1.7; margin: 10px 0 16px; font-style: italic;"></p>
+                        <p id="modalDescription" class="modal-description" style="display: none !important; font-size: 0.9rem; color: #444; line-height: 1.7; margin: 10px 0 16px; font-style: italic;"></p>
                         <p id="modalTechnique" class="modal-technique"></p>
                         <p id="modalDimensions" class="modal-dimensions"></p>
                         <p id="modalYear" class="modal-year" style="color: #666; font-size: 0.9rem; margin-top: 5px;"></p>
@@ -2264,36 +2264,55 @@ function closeLightBox() {
         return { w: imgW * scale, h: imgH * scale };
     }
 
-    function getArtworkDataFromCard(card) {
-        const key = card.dataset.artworkKey;
-        if (key && window.DDACatalog && typeof window.DDACatalog.getArtworkByKey === 'function') {
-            const artwork = window.DDACatalog.getArtworkByKey(key);
-            if (artwork) return artwork;
-        }
-
-        const imgEl = card.querySelector('img');
-        const imgSrc = imgEl ? imgEl.src : '';
-        const fullSrc = imgEl?.dataset?.fullSrc || imgSrc;
-        return (window.products || []).find((p) => {
-            const pop = String(p.image || '').split('/').pop();
-            return pop && (imgSrc.includes(pop) || fullSrc.includes(pop));
-        }) || null;
-    }
-
-    function getArtworkImageUrls(artwork, imgEl) {
+    function getArtworkImageUrls(artwork) {
         const toUrl = (entry) => {
             if (!entry) return '';
             const raw = typeof entry === 'string' ? entry : (entry.filePath || entry.url || entry.imageUrl || '');
             return resolvePdfImageUrl(raw);
         };
 
-        if (artwork && Array.isArray(artwork.images) && artwork.images.length > 0) {
-            const urls = artwork.images.map(toUrl).filter(Boolean);
-            if (urls.length) return urls;
+        const slug = String(artwork && (artwork.slug || artwork.id) || '');
+        const staticArtwork = (window.products || []).find((product) =>
+            String(product.slug || product.id || '') === slug
+        );
+        const imageEntries = [
+            ...(artwork && Array.isArray(artwork.images) ? artwork.images : []),
+            ...(staticArtwork && Array.isArray(staticArtwork.images) ? staticArtwork.images : [])
+        ];
+        const urls = imageEntries.map(toUrl).filter(Boolean);
+        if (urls.length) {
+            const seen = new Set();
+            return urls.filter((url) => {
+                const filename = url.split(/[?#]/)[0].split('/').pop().toLowerCase();
+                if (seen.has(filename)) return false;
+                seen.add(filename);
+                return true;
+            });
         }
 
-        const fallback = imgEl?.dataset?.fullSrc || imgEl?.src || artwork?.image || '';
+        const fallback = artwork?.image || '';
         return fallback ? [resolvePdfImageUrl(fallback)] : [];
+    }
+
+    function isDigitalArtwork(artwork) {
+        const category = String(artwork.category && (artwork.category.name || artwork.category) || '').toLowerCase();
+        const technique = String(artwork.technique || '').toLowerCase();
+        const id = String(artwork.slug || artwork.id || '').toLowerCase();
+        return category === 'digital' || technique.includes('arte digital') || id.startsWith('digital-artwork-');
+    }
+
+    async function getAvailablePhysicalArtworks() {
+        let artworks = [];
+        if (typeof DDAApi !== 'undefined' && typeof DDAApi.fetchAllArtworks === 'function') {
+            try {
+                artworks = await DDAApi.fetchAllArtworks();
+            } catch (error) {
+                console.warn('Could not fetch the full catalog for the PDF; using the static catalog.', error);
+            }
+        }
+        if (!artworks.length) artworks = window.products || [];
+
+        return artworks.filter((artwork) => artwork && artwork.sold !== true && !isDigitalArtwork(artwork));
     }
 
     function addWatermark(doc) {
@@ -2346,10 +2365,8 @@ function closeLightBox() {
         return yPos + fit.h + 8;
     }
 
-    function addArtworkMeta(doc, title, price, productData, yPos, pageW) {
+    function addArtworkMeta(doc, title, price, productData, yPos) {
         const margin = PDF_MARGIN;
-        const textW = pageW - margin * 2;
-
         doc.setFontSize(15);
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(0);
@@ -2372,16 +2389,6 @@ function closeLightBox() {
             if (productData.year && productData.year !== 'Consultar año') {
                 doc.text(String(productData.year), margin, yPos);
                 yPos += 5;
-            }
-            if (productData.description) {
-                yPos += 2;
-                doc.setFontSize(9);
-                doc.setTextColor(70);
-                doc.setFont('helvetica', 'italic');
-                const plainDesc = String(productData.description).replace(/<[^>]*>/g, '');
-                const descLines = doc.splitTextToSize(plainDesc, textW);
-                doc.text(descLines, margin, yPos);
-                yPos += descLines.length * 4.5 + 3;
             }
         }
 
@@ -2421,25 +2428,18 @@ function closeLightBox() {
                 doc.setTextColor(0);
                 addWatermark(doc);
 
-                const visibleCards = Array.from(document.querySelectorAll('.product-card')).filter((card) => {
-                    if (card.style.display === 'none') return false;
-                    if (card.classList.contains('hidden')) return false;
-                    return card.offsetParent !== null || card.classList.contains('is-visible');
-                });
+                const artworks = await getAvailablePhysicalArtworks();
 
-                if (visibleCards.length === 0) {
-                    alert('No hay productos visibles para incluir en el catálogo.');
+                if (artworks.length === 0) {
+                    alert('No hay obras disponibles para incluir en el catálogo.');
                     return;
                 }
 
-                for (let i = 0; i < visibleCards.length; i++) {
-                    const card = visibleCards[i];
-                    const imgEl = card.querySelector('img');
-                    const title = card.querySelector('.product-title')?.innerText || 'Obra sin título';
-                    const priceEl = card.querySelector('.product-price');
-                    const price = priceEl ? priceEl.innerText : 'Consultar';
-                    const productData = getArtworkDataFromCard(card);
-                    const imageUrls = getArtworkImageUrls(productData, imgEl);
+                for (let i = 0; i < artworks.length; i++) {
+                    const productData = artworks[i];
+                    const title = productData.title || 'Obra sin título';
+                    const price = productData.price || 'Consultar';
+                    const imageUrls = getArtworkImageUrls(productData);
 
                     doc.addPage();
                     addWatermark(doc);
@@ -2459,7 +2459,7 @@ function closeLightBox() {
                         }
                     }
 
-                    addArtworkMeta(doc, title, price, productData, yPos, pageW);
+                    addArtworkMeta(doc, title, price, productData, yPos);
                 }
 
                 doc.save('Catalogo_DiegoDeAduriz.pdf');

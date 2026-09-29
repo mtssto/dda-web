@@ -742,7 +742,7 @@ window.products = [
     {
         "id": "dibu-1",
         "title": "Diábolo",
-        "description": "Ilustración original en <strong>técnica mixta sobre papel</strong>. Pequeño formato coleccionable, firmado por el artista. Ideal para iniciar una colección accesible.",
+        "description": "Técnica mixta sobre papel. Medidas: consultar.",
         "price": "12 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -754,7 +754,7 @@ window.products = [
     {
         "id": "dibu-2",
         "title": "Ilustración #2",
-        "description": "Ilustración original en <strong>técnica mixta sobre papel</strong>. <strong>Pieza única</strong>, firmada. Una forma accesible de tener una obra original de Diego De Aduriz.",
+        "description": "Técnica mixta sobre papel. Medidas: consultar.",
         "price": "22 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -766,7 +766,7 @@ window.products = [
     {
         "id": "dibu-3",
         "title": "Ilustración #3",
-        "description": "Ilustración original en <strong>técnica mixta sobre papel</strong>. <strong>Pieza única</strong> y firmada — arte original a precio de entrada.",
+        "description": "Técnica mixta sobre papel. Medidas: consultar.",
         "price": "8 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -778,7 +778,7 @@ window.products = [
     {
         "id": "dibu-4",
         "title": "Ilustración #4",
-        "description": "Ilustración original en <strong>técnica mixta sobre papel</strong>. <strong>Pieza única</strong>, firmada por el artista.",
+        "description": "Técnica mixta sobre papel. Medidas: consultar.",
         "price": "15 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -790,7 +790,7 @@ window.products = [
     {
         "id": "dibu-5",
         "title": "Ilustración #5",
-        "description": "Ilustración original en <strong>técnica mixta sobre papel</strong>. <strong>Pieza única</strong>, firmada por el artista.",
+        "description": "Técnica mixta sobre papel. Medidas: consultar.",
         "price": "19 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -802,7 +802,7 @@ window.products = [
     {
         "id": "dibu-6",
         "title": "Ilustración #6",
-        "description": "Ilustración original en <strong>técnica mixta sobre papel</strong>. <strong>Pieza única</strong>, firmada por el artista.",
+        "description": "Técnica mixta sobre papel. Medidas: consultar.",
         "price": "6 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -814,7 +814,7 @@ window.products = [
     {
         "id": "dibu-7",
         "title": "Ilustración #7",
-        "description": "Ilustración original en <strong>técnica mixta sobre papel</strong>. <strong>Pieza única</strong>, firmada por el artista.",
+        "description": "Técnica mixta sobre papel. Medidas: consultar.",
         "price": "24 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -826,7 +826,7 @@ window.products = [
     {
         "id": "dibu-8",
         "title": "Ilustración #8",
-        "description": "Ilustración original en <strong>técnica mixta sobre papel</strong>. <strong>Pieza única</strong>, firmada por el artista.",
+        "description": "Técnica mixta sobre papel. Medidas: consultar.",
         "price": "11 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -838,7 +838,7 @@ window.products = [
     {
         "id": "dibu-9",
         "title": "Ilustración #9",
-        "description": "Ilustración original en <strong>técnica mixta sobre papel</strong>. <strong>Pieza única</strong>, firmada por el artista.",
+        "description": "Técnica mixta sobre papel. Medidas: consultar.",
         "price": "20 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -850,7 +850,7 @@ window.products = [
     {
         "id": "dibu-11",
         "title": "Diábolo 1",
-        "description": "Ilustración original en <strong>técnica mixta sobre papel</strong>. <strong>Pieza única</strong>, firmada por el artista.",
+        "description": "Técnica mixta sobre papel. Medidas: consultar.",
         "price": "9 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -862,7 +862,7 @@ window.products = [
     {
         "id": "dibu-12",
         "title": "Paisaje fenomenal",
-        "description": "Un paisaje que merece su nombre. Ilustración original en <strong>técnica mixta sobre papel</strong> — pequeño formato, gran universo.",
+        "description": "Técnica mixta sobre papel. Medidas: consultar.",
         "price": "25 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -874,7 +874,7 @@ window.products = [
     {
         "id": "dibu-14",
         "title": "Diábolo 4",
-        "description": "Ilustración original en <strong>técnica mixta sobre papel</strong>. <strong>Pieza única</strong>, firmada por el artista.",
+        "description": "Técnica mixta sobre papel. Medidas: consultar.",
         "price": "7 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -886,7 +886,7 @@ window.products = [
     {
         "id": "dibu-15",
         "title": "Diábolo 5",
-        "description": "Ilustración original en <strong>técnica mixta sobre papel</strong>. <strong>Pieza única</strong>, firmada por el artista.",
+        "description": "Técnica mixta sobre papel. Medidas: consultar.",
         "price": "18 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -898,7 +898,7 @@ window.products = [
     {
         "id": "dibu-16",
         "title": "Diábolo 6",
-        "description": "Ilustración original en <strong>técnica mixta sobre papel</strong>. <strong>Pieza única</strong>, firmada por el artista.",
+        "description": "Técnica mixta sobre papel. Medidas: consultar.",
         "price": "23 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -910,7 +910,7 @@ window.products = [
     {
         "id": "dibu-19",
         "title": "Diábolo 9",
-        "description": "Ilustración original en <strong>técnica mixta sobre papel</strong>. <strong>Pieza única</strong>, firmada por el artista.",
+        "description": "Técnica mixta sobre papel. Medidas: consultar.",
         "price": "16 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
@@ -922,7 +922,7 @@ window.products = [
     {
         "id": "dibu-20",
         "title": "Ilustración #20",
-        "description": "Ilustración original en <strong>técnica mixta sobre papel</strong>. <strong>Pieza única</strong>, firmada por el artista.",
+        "description": "Técnica mixta sobre papel. Medidas: consultar.",
         "price": "13 USD",
         "dimensions": "Consultar medidas",
         "technique": "Técnica mixta sobre papel",
