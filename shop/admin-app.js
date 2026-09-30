@@ -445,9 +445,8 @@
                 formData.append('primary', String(!!item.isPrimary));
                 formData.append('sortOrder', String(index));
 
-                return fetch(getApiBaseUrl() + '/artworks/' + artworkId + '/images', {
+                return DDAAuth.apiFetch('/artworks/' + artworkId + '/images', {
                     method: 'POST',
-                    credentials: 'include',
                     body: formData
                 }).then(function (res) {
                     if (!res.ok) {
