@@ -552,6 +552,38 @@ document.addEventListener('DOMContentLoaded', function () {
             box-sizing: border-box !important;
             display: block !important;
         }
+        .modal-image-wrapper {
+            touch-action: pan-y !important;
+            user-select: none !important;
+            -webkit-user-select: none !important;
+        }
+        .modal-image {
+            transition: opacity 140ms ease;
+            -webkit-user-drag: none;
+        }
+        .modal-image-wrapper.is-loading .modal-image,
+        .modal-image-wrapper.has-image-error .modal-image {
+            opacity: 0 !important;
+        }
+        .modal-image-wrapper.is-loading::after {
+            content: '';
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            border: 2px solid rgba(32, 31, 30, 0.18);
+            border-top-color: #201f1e;
+            border-radius: 50%;
+            animation: modal-image-spin 700ms linear infinite;
+        }
+        .modal-image-wrapper.has-image-error::after {
+            content: 'No se pudo cargar la imagen';
+            position: absolute;
+            color: #706c66;
+            font: 13px/1.4 Arial, sans-serif;
+        }
+        @keyframes modal-image-spin {
+            to { transform: rotate(360deg); }
+        }
         /* ── Mobile stacked layout ──────────────────── */
         @media (max-width: 768px) {
             .modal-container {
@@ -692,22 +724,14 @@ document.addEventListener('DOMContentLoaded', function () {
     if (modalPrev) {
         modalPrev.addEventListener('click', function (e) {
             e.stopPropagation();
-            if (window.modalImages && window.modalImages.length > 1) {
-                window.modalCurrentIndex = (window.modalCurrentIndex - 1 + window.modalImages.length) % window.modalImages.length;
-                const modalImg = document.getElementById('modalImage');
-                if (modalImg) modalImg.src = window.modalImages[window.modalCurrentIndex];
-            }
+            showModalImage(window.modalCurrentIndex - 1);
         });
     }
 
     if (modalNext) {
         modalNext.addEventListener('click', function (e) {
             e.stopPropagation();
-            if (window.modalImages && window.modalImages.length > 1) {
-                window.modalCurrentIndex = (window.modalCurrentIndex + 1) % window.modalImages.length;
-                const modalImg = document.getElementById('modalImage');
-                if (modalImg) modalImg.src = window.modalImages[window.modalCurrentIndex];
-            }
+            showModalImage(window.modalCurrentIndex + 1);
         });
     }
 
@@ -742,29 +766,38 @@ document.addEventListener('DOMContentLoaded', function () {
     // ── Swipe Gestures for Modals ────────────────────────
     function addSwipeGesture(element, onSwipeLeft, onSwipeRight) {
         if (!element) return;
-        var startX = 0, startY = 0, distX = 0;
-        element.addEventListener('touchstart', function (e) {
-            var t = e.changedTouches[0];
-            startX = t.pageX;
-            startY = t.pageY;
-            distX = 0;
+        var startX = 0;
+        var startY = 0;
+        var activePointerId = null;
+
+        element.addEventListener('pointerdown', function (event) {
+            if (event.pointerType === 'mouse' && event.button !== 0) return;
+            if (event.target.closest && event.target.closest('button')) return;
+            startX = event.clientX;
+            startY = event.clientY;
+            activePointerId = event.pointerId;
         }, { passive: true });
-        element.addEventListener('touchmove', function (e) {
-            distX = e.changedTouches[0].pageX - startX;
+
+        document.addEventListener('pointerup', function (event) {
+            if (activePointerId === null || event.pointerId !== activePointerId) return;
+            var distX = event.clientX - startX;
+            var distY = event.clientY - startY;
+            activePointerId = null;
+            if (Math.abs(distX) < 55 || Math.abs(distX) < Math.abs(distY) * 1.2) return;
+            if (distX < 0) onSwipeLeft();
+            else onSwipeRight();
         }, { passive: true });
-        element.addEventListener('touchend', function () {
-            if (Math.abs(distX) > 50) {
-                if (distX < 0) onSwipeLeft();
-                else onSwipeRight();
-            }
+
+        document.addEventListener('pointercancel', function (event) {
+            if (event.pointerId === activePointerId) activePointerId = null;
         }, { passive: true });
     }
 
     // Swipe on info modal image
     var modalImageWrapper = document.querySelector('.modal-image-wrapper');
     addSwipeGesture(modalImageWrapper,
-        function () { var btn = document.getElementById('modalNext'); if (btn) btn.click(); },
-        function () { var btn = document.getElementById('modalPrev'); if (btn) btn.click(); }
+        function () { showModalImage(window.modalCurrentIndex + 1); },
+        function () { showModalImage(window.modalCurrentIndex - 1); }
     );
 
     // Swipe on lightbox
@@ -1897,6 +1930,65 @@ function renderGrid(items) {
     if (window.updatePageTranslations) window.updatePageTranslations();
 }
 
+var modalImageLoadToken = 0;
+
+function getModalImageIdentity(imageUrl) {
+    var identity = String(imageUrl || '').split(/[?#]/)[0].split('/').pop();
+    try { identity = decodeURIComponent(identity); } catch (error) { /* keep encoded name */ }
+    return identity.toLowerCase();
+}
+
+function normalizeModalImageUrl(image) {
+    if (!image) return '';
+    var raw = typeof image === 'string'
+        ? image
+        : (image.filePath || image.url || image.imageUrl || image.fileName || '');
+    if (!raw) return '';
+
+    if (typeof DDAImages !== 'undefined' && typeof DDAImages.resolveImageUrl === 'function') {
+        raw = DDAImages.resolveImageUrl(raw, window.location.href);
+        if (typeof DDAImages.getDetailImageUrl === 'function') {
+            return DDAImages.getDetailImageUrl(raw);
+        }
+    }
+    return raw;
+}
+
+function showModalImage(index) {
+    var images = Array.isArray(window.modalImages) ? window.modalImages : [];
+    var modalImg = document.getElementById('modalImage');
+    var wrapper = document.querySelector('.modal-image-wrapper');
+    if (!modalImg || !wrapper) return;
+
+    var token = ++modalImageLoadToken;
+    if (!images.length) {
+        modalImg.removeAttribute('src');
+        modalImg.setAttribute('aria-busy', 'false');
+        wrapper.classList.remove('is-loading', 'has-image-error');
+        return;
+    }
+
+    window.modalCurrentIndex = ((index % images.length) + images.length) % images.length;
+    var imageUrl = images[window.modalCurrentIndex];
+    wrapper.classList.add('is-loading');
+    wrapper.classList.remove('has-image-error');
+    modalImg.setAttribute('aria-busy', 'true');
+    // Clear the previous artwork immediately so it cannot linger while the next one loads.
+    modalImg.removeAttribute('src');
+    modalImg.onload = function () {
+        if (token !== modalImageLoadToken) return;
+        wrapper.classList.remove('is-loading', 'has-image-error');
+        modalImg.setAttribute('aria-busy', 'false');
+    };
+    modalImg.onerror = function () {
+        if (token !== modalImageLoadToken) return;
+        wrapper.classList.remove('is-loading');
+        wrapper.classList.add('has-image-error');
+        modalImg.setAttribute('aria-busy', 'false');
+    };
+    modalImg.src = imageUrl;
+}
+
 function openModal(productOrElement) {
     const modal = document.getElementById('imageModal');
     if (!modal) return;
@@ -1967,8 +2059,25 @@ function openModal(productOrElement) {
     const modalYear = document.getElementById('modalYear');
     const modalBuyBtn = document.getElementById('modalBuyBtn');
 
-    // Image Carousel Logic for Info Modal
-    window.modalImages = product.images;
+    // Normalize the complete gallery before opening; prefer the primary artwork image.
+    const primaryModalImage = normalizeModalImageUrl(product.image);
+    const modalImageList = (Array.isArray(product.images) ? product.images : [])
+        .map(normalizeModalImageUrl)
+        .filter(Boolean);
+    if (primaryModalImage) {
+        const primaryIdentity = getModalImageIdentity(primaryModalImage);
+        const primaryIndex = modalImageList.findIndex(function (url) {
+            return url === primaryModalImage || getModalImageIdentity(url) === primaryIdentity;
+        });
+        if (primaryIndex > 0) {
+            modalImageList.splice(0, 0, modalImageList.splice(primaryIndex, 1)[0]);
+        } else if (primaryIndex === 0) {
+            modalImageList[0] = primaryModalImage;
+        } else if (primaryIndex < 0) {
+            modalImageList.unshift(primaryModalImage);
+        }
+    }
+    window.modalImages = modalImageList;
     window.modalCurrentIndex = 0;
 
     const prevBtn = document.getElementById('modalPrev');
@@ -1983,10 +2092,8 @@ function openModal(productOrElement) {
         }
     }
 
-    if (modalImg) {
-        modalImg.src = window.modalImages ? window.modalImages[window.modalCurrentIndex] : product.image;
-        modalImg.alt = product.title;
-    }
+    if (modalImg) modalImg.alt = product.title || 'Obra';
+    showModalImage(0);
     if (modalTitle) modalTitle.textContent = product.title;
 
     const modalDescription = document.getElementById('modalDescription');
