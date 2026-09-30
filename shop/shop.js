@@ -2219,8 +2219,6 @@ function closeLightBox() {
 
 // PDF Generation Logic
 (function () {
-    const PDF_MARGIN = 12;
-    const PDF_META_RESERVE = 58;
     const PDF_COL_GAP = 8;
     let catalogPdfObjectUrl = '';
 
@@ -2400,102 +2398,39 @@ function closeLightBox() {
         return groups;
     }
 
-    function addPdfCategoryDivider(doc, category, artworkCount) {
-        const pageW = doc.internal.pageSize.getWidth();
-        const pageH = doc.internal.pageSize.getHeight();
-        addWatermark(doc);
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(24);
-        doc.setTextColor(0);
-        doc.text(category, pageW / 2, pageH / 2 - 4, { align: 'center' });
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(11);
-        doc.setTextColor(100);
-        doc.text(`${artworkCount} ${artworkCount === 1 ? 'obra' : 'obras'}`, pageW / 2, pageH / 2 + 7, { align: 'center' });
-        doc.setTextColor(0);
-    }
-
-    function addWatermark(doc) {
-        const pageW = doc.internal.pageSize.getWidth();
-        const pageH = doc.internal.pageSize.getHeight();
-        doc.saveGraphicsState();
-        doc.setGState(new doc.GState({ opacity: 0.06 }));
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(72);
-        doc.setTextColor(0);
-        doc.text('dda', pageW / 2, pageH / 2, { align: 'center', angle: 45 });
-        doc.restoreGraphicsState();
-    }
-
-    async function addArtworkImages(doc, imageUrls, yPos, pageW, pageH) {
-        const contentW = pageW - PDF_MARGIN * 2;
-        const maxImgH = pageH - PDF_MARGIN * 2 - PDF_META_RESERVE;
-
+    async function addArtworkImages(doc, imageUrls, area) {
+        const layout = window.DDACatalogPdfDesign;
+        if (!imageUrls.length) {
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.setTextColor(130);
+            doc.text('Sin imagen disponible', area.x + area.width / 2, area.y + area.height / 2, { align: 'center' });
+            return;
+        }
         if (imageUrls.length >= 2) {
-            const colW = (contentW - PDF_COL_GAP) / 2;
+            const colW = (area.width - PDF_COL_GAP) / 2;
             const frontBase64 = await fetchBase64(imageUrls[0]);
             const backBase64 = await fetchBase64(imageUrls[1]);
             const frontDims = await getImgDims(frontBase64);
             const backDims = await getImgDims(backBase64);
-            const frontFit = fitInBox(frontDims.w, frontDims.h, colW, maxImgH);
-            const backFit = fitInBox(backDims.w, backDims.h, colW, maxImgH);
-            const rowH = Math.max(frontFit.h, backFit.h);
-
-            const frontX = PDF_MARGIN + (colW - frontFit.w) / 2;
-            const frontY = yPos + (rowH - frontFit.h) / 2;
+            const frontFit = fitInBox(frontDims.w, frontDims.h, colW - 8, area.height - 8);
+            const backFit = fitInBox(backDims.w, backDims.h, colW - 8, area.height - 8);
+            const frontX = area.x + (colW - frontFit.w) / 2;
+            const frontY = area.y + (area.height - frontFit.h) / 2;
             doc.addImage(frontBase64, imageFormatFromDataUrl(frontBase64), frontX, frontY, frontFit.w, frontFit.h);
-
-            const backX = PDF_MARGIN + colW + PDF_COL_GAP + (colW - backFit.w) / 2;
-            const backY = yPos + (rowH - backFit.h) / 2;
+            const backX = area.x + colW + PDF_COL_GAP + (colW - backFit.w) / 2;
+            const backY = area.y + (area.height - backFit.h) / 2;
             doc.addImage(backBase64, imageFormatFromDataUrl(backBase64), backX, backY, backFit.w, backFit.h);
-
-            doc.setFontSize(7);
-            doc.setTextColor(180);
-            doc.text('FRENTE', PDF_MARGIN + colW / 2, yPos + rowH + 4, { align: 'center' });
-            doc.text('REVERSO', PDF_MARGIN + colW + PDF_COL_GAP + colW / 2, yPos + rowH + 4, { align: 'center' });
-
-            return yPos + rowH + 10;
+            layout.addImageLabel(doc, 'FRENTE', area.x + colW / 2, area.y + area.height + 4);
+            layout.addImageLabel(doc, 'REVERSO', area.x + colW + PDF_COL_GAP + colW / 2, area.y + area.height + 4);
+            return;
         }
-
         const frontBase64 = await fetchBase64(imageUrls[0]);
         const frontDims = await getImgDims(frontBase64);
-        const fit = fitInBox(frontDims.w, frontDims.h, contentW, maxImgH);
-        const xOffset = PDF_MARGIN + (contentW - fit.w) / 2;
-        doc.addImage(frontBase64, imageFormatFromDataUrl(frontBase64), xOffset, yPos, fit.w, fit.h);
-        return yPos + fit.h + 8;
-    }
-
-    function addArtworkMeta(doc, title, price, productData, yPos) {
-        const margin = PDF_MARGIN;
-        doc.setFontSize(15);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(0);
-        doc.text(title, margin, yPos);
-        yPos += 8;
-
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'normal');
-        doc.setTextColor(90);
-
-        if (productData) {
-            if (productData.technique) {
-                doc.text(`Técnica: ${productData.technique}`, margin, yPos);
-                yPos += 5;
-            }
-            if (productData.dimensions) {
-                doc.text(`Dimensiones: ${productData.dimensions}`, margin, yPos);
-                yPos += 5;
-            }
-            if (productData.year && productData.year !== 'Consultar año') {
-                doc.text(String(productData.year), margin, yPos);
-                yPos += 5;
-            }
-        }
-
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(0);
-        doc.text(`Precio: ${price}`, margin, yPos + 2);
+        const fit = fitInBox(frontDims.w, frontDims.h, area.width - 10, area.height - 10);
+        const xOffset = area.x + (area.width - fit.w) / 2;
+        const yOffset = area.y + (area.height - fit.h) / 2;
+        doc.addImage(frontBase64, imageFormatFromDataUrl(frontBase64), xOffset, yOffset, fit.w, fit.h);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -2513,20 +2448,6 @@ function closeLightBox() {
             try {
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
-                const pageW = doc.internal.pageSize.getWidth();
-                const pageH = doc.internal.pageSize.getHeight();
-
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(22);
-                doc.text('Catálogo - Diego De Aduriz', PDF_MARGIN, 20);
-
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(12);
-                doc.setTextColor(100);
-                const date = new Date().toLocaleDateString('es-AR');
-                doc.text(`Generado el ${date}`, PDF_MARGIN, 28);
-                doc.setTextColor(0);
-                addWatermark(doc);
 
                 const artworks = await getAvailablePhysicalArtworks();
 
@@ -2536,41 +2457,52 @@ function closeLightBox() {
                 }
 
                 const groupedArtworks = groupPdfArtworksByCategory(artworks);
+                const sections = PDF_ARTWORK_CATEGORIES.map((name) => ({
+                    name,
+                    artworks: groupedArtworks.get(name),
+                    count: groupedArtworks.get(name).length
+                })).filter((section) => section.count > 0);
+                const totalPages = 2 + sections.reduce((total, section) => total + section.count + 1, 0);
+                let nextPage = 3;
+                sections.forEach((section) => {
+                    section.page = nextPage;
+                    nextPage += section.count + 1;
+                });
+                const layout = window.DDACatalogPdfDesign;
+                layout.addCover(doc, {
+                    artworkCount: artworks.length,
+                    categoryCount: sections.length,
+                    date: new Date().toLocaleDateString('es-AR'),
+                    subtitle: 'Obras disponibles'
+                });
+                doc.addPage();
+                layout.addContents(doc, sections, totalPages);
+
                 let artworkIndex = 0;
-
-                for (const category of PDF_ARTWORK_CATEGORIES) {
-                    const categoryArtworks = groupedArtworks.get(category);
-                    if (!categoryArtworks.length) continue;
-
+                let currentPage = 2;
+                for (const section of sections) {
+                    currentPage += 1;
                     doc.addPage();
-                    addPdfCategoryDivider(doc, category, categoryArtworks.length);
+                    layout.addSectionDivider(doc, section, sections.indexOf(section) + 1, currentPage, totalPages);
 
-                    for (const productData of categoryArtworks) {
+                    for (const productData of section.artworks) {
                         artworkIndex += 1;
-                        const title = productData.title || 'Obra sin título';
-                        const price = productData.price || 'Consultar';
                         const imageUrls = getArtworkImageUrls(productData);
                         btnDownloadPDF.textContent = `Generando PDF (${artworkIndex}/${artworks.length})...`;
 
+                        currentPage += 1;
                         doc.addPage();
-                        addWatermark(doc);
-
-                        let yPos = PDF_MARGIN;
-
-                        if (imageUrls.length > 0) {
-                            try {
-                                yPos = await addArtworkImages(doc, imageUrls, yPos, pageW, pageH);
-                            } catch (err) {
-                                console.warn('Could not add image to PDF', err);
-                                doc.setDrawColor(200);
-                                doc.rect(PDF_MARGIN, yPos, pageW - PDF_MARGIN * 2, 40);
-                                doc.setFontSize(10);
-                                doc.text('Sin imagen', pageW / 2, yPos + 22, { align: 'center' });
-                                yPos += 48;
-                            }
+                        const area = layout.beginArtworkPage(doc, section.name, currentPage, totalPages);
+                        try {
+                            await addArtworkImages(doc, imageUrls, area);
+                        } catch (err) {
+                            console.warn('Could not add image to PDF', err);
+                            doc.setFont('helvetica', 'normal');
+                            doc.setFontSize(9);
+                            doc.setTextColor(130);
+                            doc.text('Imagen temporalmente no disponible', area.x + area.width / 2, area.y + area.height / 2, { align: 'center' });
                         }
-
-                        addArtworkMeta(doc, title, price, productData, yPos);
+                        layout.addArtworkDetails(doc, productData, section.name, currentPage, totalPages);
                     }
                 }
 

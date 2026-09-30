@@ -53,33 +53,6 @@
         return 'Otras pinturas';
     }
 
-    function addWatermark(doc) {
-        var pageW = doc.internal.pageSize.getWidth();
-        var pageH = doc.internal.pageSize.getHeight();
-        doc.saveGraphicsState();
-        doc.setGState(new doc.GState({ opacity: 0.06 }));
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(72);
-        doc.setTextColor(0);
-        doc.text('dda', pageW / 2, pageH / 2, { align: 'center', angle: 45 });
-        doc.restoreGraphicsState();
-    }
-
-    function addCategoryDivider(doc, category, artworkCount) {
-        var pageW = doc.internal.pageSize.getWidth();
-        var pageH = doc.internal.pageSize.getHeight();
-        addWatermark(doc);
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(24);
-        doc.setTextColor(0);
-        doc.text(category, pageW / 2, pageH / 2 - 4, { align: 'center' });
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(11);
-        doc.setTextColor(100);
-        doc.text(artworkCount + (artworkCount === 1 ? ' obra' : ' obras'), pageW / 2, pageH / 2 + 7, { align: 'center' });
-        doc.setTextColor(0);
-    }
-
     function getImages(artwork) {
         var images = Array.isArray(artwork.images) ? artwork.images.slice() : [];
         images.sort(function (a, b) {
@@ -226,51 +199,29 @@
         });
     }
 
-    async function addArtworkPage(doc, artwork) {
-        var pageW = doc.internal.pageSize.getWidth();
-        var pageH = doc.internal.pageSize.getHeight();
-        var margin = 12;
-        addWatermark(doc);
+    async function addArtworkPage(doc, artwork, category, pageNumber, totalPages) {
+        var layout = window.DDACatalogPdfDesign;
+        var area = layout.beginArtworkPage(doc, category, pageNumber, totalPages);
         var images = getImages(artwork).slice(0, 2);
-        var imageTop = 18;
-        var imageMaxH = pageH - 110;
         if (images.length === 2) {
             var gap = 8;
-            var colW = (pageW - margin * 2 - gap) / 2;
+            var colW = (area.width - gap) / 2;
             var first = await dataUrl(images[0]);
             var second = await dataUrl(images[1]);
-            await addFittedImage(doc, images[0], first, margin, imageTop, colW, imageMaxH);
-            await addFittedImage(doc, images[1], second, margin + colW + gap, imageTop, colW, imageMaxH);
-            doc.setFontSize(8);
-            doc.setTextColor(140);
-            doc.text('FRENTE', margin + colW / 2, imageTop + imageMaxH + 5, { align: 'center' });
-            doc.text('REVERSO', margin + colW + gap + colW / 2, imageTop + imageMaxH + 5, { align: 'center' });
+            await addFittedImage(doc, images[0], first, area.x + 4, area.y + 4, colW - 8, area.height - 8);
+            await addFittedImage(doc, images[1], second, area.x + colW + gap + 4, area.y + 4, colW - 8, area.height - 8);
+            layout.addImageLabel(doc, 'FRENTE', area.x + colW / 2, area.y + area.height + 4);
+            layout.addImageLabel(doc, 'REVERSO', area.x + colW + gap + colW / 2, area.y + area.height + 4);
         } else if (images.length === 1) {
             var single = await dataUrl(images[0]);
-            await addFittedImage(doc, images[0], single, margin, imageTop, pageW - margin * 2, imageMaxH);
+            await addFittedImage(doc, images[0], single, area.x + 5, area.y + 5, area.width - 10, area.height - 10);
         } else {
-            doc.setDrawColor(215);
-            doc.rect(margin, imageTop, pageW - margin * 2, imageMaxH);
+            layout.addImageFrame(doc, area.x, area.y, area.width, area.height);
             doc.setFontSize(11);
             doc.setTextColor(130);
-            doc.text('Sin imagen', pageW / 2, imageTop + imageMaxH / 2, { align: 'center' });
+            doc.text('Sin imagen disponible', area.x + area.width / 2, area.y + area.height / 2, { align: 'center' });
         }
-
-        var metaY = pageH - 65;
-        doc.setTextColor(0);
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(15);
-        var titleLines = doc.splitTextToSize(artwork.title || 'Obra sin título', pageW - margin * 2);
-        doc.text(titleLines, margin, metaY);
-        metaY += titleLines.length * 7 + 2;
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(10);
-        doc.setTextColor(75);
-        [artwork.technique && 'Técnica: ' + artwork.technique,
-            artwork.dimensions && 'Dimensiones: ' + artwork.dimensions,
-            artwork.year && artwork.year !== 'Consultar año' && String(artwork.year),
-            artwork.price && 'Precio: ' + artwork.price]
-            .filter(Boolean).forEach(function (line) { doc.text(doc.splitTextToSize(line, pageW - margin * 2), margin, metaY); metaY += 5; });
+        layout.addArtworkDetails(doc, artwork, category, pageNumber, totalPages);
     }
 
     async function generatePdf() {
@@ -280,37 +231,46 @@
         status.textContent = 'Preparando PDF…';
         try {
             var doc = new window.jspdf.jsPDF();
-            var margin = 12;
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(22);
-            doc.text('Catálogo - Diego De Aduriz', margin, 22);
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(11);
-            doc.setTextColor(110);
-            doc.text('Generado el ' + new Date().toLocaleDateString('es-AR'), margin, 30);
-            doc.text(chosen.length + ' obras', margin, 37);
-            doc.setTextColor(0);
-
             var grouped = new Map(PDF_ARTWORK_CATEGORIES.map(function (category) { return [category, []]; }));
             chosen.forEach(function (artwork) { grouped.get(pdfCategory(artwork)).push(artwork); });
+            var sections = PDF_ARTWORK_CATEGORIES.map(function (category) {
+                return { name: category, artworks: grouped.get(category), count: grouped.get(category).length };
+            }).filter(function (section) { return section.count > 0; });
+            var totalPages = 2 + sections.reduce(function (total, section) { return total + 1 + section.count; }, 0);
+            var nextPage = 3;
+            sections.forEach(function (section) {
+                section.page = nextPage;
+                nextPage += section.count + 1;
+            });
+            var layout = window.DDACatalogPdfDesign;
+            layout.addCover(doc, {
+                artworkCount: chosen.length,
+                categoryCount: sections.length,
+                date: new Date().toLocaleDateString('es-AR'),
+                subtitle: 'Obras seleccionadas'
+            });
+            doc.addPage();
+            layout.addContents(doc, sections, totalPages);
+
             var artworkIndex = 0;
-            for (var categoryIndex = 0; categoryIndex < PDF_ARTWORK_CATEGORIES.length; categoryIndex += 1) {
-                var category = PDF_ARTWORK_CATEGORIES[categoryIndex];
-                var categoryArtworks = grouped.get(category);
-                if (!categoryArtworks.length) continue;
+            var currentPage = 2;
+            for (var categoryIndex = 0; categoryIndex < sections.length; categoryIndex += 1) {
+                var section = sections[categoryIndex];
+                currentPage += 1;
                 doc.addPage();
-                addCategoryDivider(doc, category, categoryArtworks.length);
-                for (var artworkIndexInCategory = 0; artworkIndexInCategory < categoryArtworks.length; artworkIndexInCategory += 1) {
+                layout.addSectionDivider(doc, section, categoryIndex + 1, currentPage, totalPages);
+                for (var artworkIndexInCategory = 0; artworkIndexInCategory < section.artworks.length; artworkIndexInCategory += 1) {
                     artworkIndex += 1;
+                    currentPage += 1;
                     doc.addPage();
                     try {
-                        await addArtworkPage(doc, categoryArtworks[artworkIndexInCategory]);
+                        await addArtworkPage(doc, section.artworks[artworkIndexInCategory], section.name, currentPage, totalPages);
                     } catch (imageError) {
                         console.warn('No se pudo incluir alguna imagen en el PDF', imageError);
-                        doc.setFontSize(12);
-                        doc.text(categoryArtworks[artworkIndexInCategory].title || 'Obra sin título', margin, 30);
-                        doc.setFontSize(10);
-                        doc.text('No se pudo cargar una imagen de esta obra.', margin, 40);
+                        var artwork = section.artworks[artworkIndexInCategory];
+                        layout.beginArtworkPage(doc, section.name, currentPage, totalPages);
+                        layout.addArtworkDetails(doc, artwork, section.name, currentPage, totalPages);
+                        status.textContent = 'No se pudo cargar una imagen de: ' + (artwork.title || 'Obra sin título');
                     }
                     status.textContent = 'Armando PDF… ' + artworkIndex + ' de ' + chosen.length;
                 }
