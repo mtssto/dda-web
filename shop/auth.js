@@ -308,10 +308,17 @@ var DDAAuth = (function () {
     function apiFetch(path, options) {
         options = options || {};
         options.credentials = 'include';
-        options.headers = Object.assign(authHeaders(), options.headers || {});
+        var headers = Object.assign(authHeaders(), options.headers || {});
+        var isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+        if (isFormData) {
+            Object.keys(headers).forEach(function (name) {
+                if (name.toLowerCase() === 'content-type') delete headers[name];
+            });
+        }
+        options.headers = headers;
 
         return fetch(API_BASE + path, options).then(function (res) {
-            if (res.status === 401 || res.status === 403) {
+            if (res.status === 401) {
                 clearAuth();
                 window.location.href = loginRedirectUrl('session');
                 throw new Error('Sesión expirada');
