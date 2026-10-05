@@ -7,15 +7,39 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalBuyBtn = document.getElementById('modalBuyBtn');
   const modalClose = document.querySelector('.modal-close');
 
-  // Load artworks from API (fallback to products.js)
-  let obrasDataset = [];
+  // Render the local catalog immediately, then refresh it from the API in the background.
+  let obrasDataset = (window.products && Array.isArray(window.products))
+    ? window.products.map(normalizeProduct)
+    : [];
+  let categoryNavObserver = null;
+
+  if (obrasDataset.length) renderObrasDataset(obrasDataset);
+  initObrasVideos();
+
   loadObrasDataset().then((items) => {
+    if (!items.length || datasetsMatch(obrasDataset, items)) return;
+    obrasDataset = items;
+    renderObrasDataset(obrasDataset);
+  });
+
+  function renderObrasDataset(items) {
     obrasDataset = items;
     renderPortfolio(obrasDataset);
     initModalTriggers(obrasDataset);
     setupCategoryNavObserver();
-    initObrasVideos();
-  });
+  }
+
+  function datasetsMatch(first, second) {
+    if (first.length !== second.length) return false;
+    return first.every((item, index) => {
+      const other = second[index];
+      if (!other) return false;
+      return [
+        'id', 'title', 'image', 'category', 'dimensions', 'technique', 'year', 'sold'
+      ].every((key) => item[key] === other[key]) &&
+        JSON.stringify(item.images || []) === JSON.stringify(other.images || []);
+    });
+  }
 
   // Share buttons in modal
   const shareWrap = document.getElementById('obrasShare');
@@ -93,6 +117,14 @@ document.addEventListener('DOMContentLoaded', () => {
     return path;
   }
 
+  function resolveCardImagePath(path) {
+    const resolved = resolveImagePath(path);
+    if (resolved && typeof DDAImages !== 'undefined' && typeof DDAImages.getCardImageUrl === 'function') {
+      return DDAImages.getCardImageUrl(resolved);
+    }
+    return resolved;
+  }
+
   async function loadObrasDataset() {
     const API = window.DDA_API_BASE || '/api';
     try {
@@ -102,14 +134,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!res.ok) throw new Error('api');
       const data = await res.json();
       const content = data.content || data;
-      if (Array.isArray(content) && content.length) {
+      if (Array.isArray(content)) {
         return content.map(normalizeProduct);
       }
     } catch (e) {
-      // fallback
-    }
-    if (window.products && Array.isArray(window.products)) {
-      return window.products.map(normalizeProduct);
+      // Keep showing the local catalog already rendered above.
     }
     return [];
   }
@@ -144,12 +173,24 @@ document.addEventListener('DOMContentLoaded', () => {
       if (navPill) navPill.hidden = false;
 
       items.forEach((product, indexInSection) => {
-        const imagePath = resolveImagePath(product.image || '');
+        const imagePath = resolveCardImagePath(product.image || '');
         if (!imagePath) return;
+
+        const legacyProduct = Array.isArray(window.products)
+          ? window.products.find((candidate) =>
+              String(candidate.slug || candidate.id || '') === String(product.slug || product.id || '')
+            ) || window.products.find((candidate) =>
+              String(candidate.title || '').trim().toLowerCase() === String(product.title || '').trim().toLowerCase()
+            )
+          : null;
+        const fallbackImagePath = legacyProduct && legacyProduct.image
+          ? resolveImagePath(legacyProduct.image)
+          : '';
 
         const item = document.createElement('div');
         item.className = 'masonry-item grid-modal-trigger reveal-item';
         item.style.setProperty('--reveal-delay', Math.min(revealIndex * 50, 400) + 'ms');
+        const prioritizeImage = revealIndex < 4;
         revealIndex += 1;
 
         if (indexInSection === 0) {
@@ -166,6 +207,9 @@ document.addEventListener('DOMContentLoaded', () => {
         item.dataset.title = product.title;
         item.dataset.slug = product.slug || product.id || '';
         item.dataset.waLink = 'https://wa.me/5491160139563?text=Hola,%20quisiera%20consultar%20por%20la%20obra:%20' + encodeURIComponent(product.title);
+        if (fallbackImagePath && fallbackImagePath !== imagePath) {
+          item.dataset.fallbackImage = fallbackImagePath;
+        }
 
         if (product.images && product.images.length > 1) {
           item.dataset.images = JSON.stringify(product.images);
@@ -183,7 +227,8 @@ document.addEventListener('DOMContentLoaded', () => {
         item.innerHTML =
           '<div class="artwork-card">' +
             '<div class="artwork-media artwork-media--pending">' +
-              '<img alt="' + safeTitle + '" data-src="' + imagePath + '" decoding="async" />' +
+              '<img alt="' + safeTitle + '" data-src="' + imagePath + '" decoding="async"' +
+                (prioritizeImage ? ' fetchpriority="high"' : ' loading="lazy"') + ' />' +
               soldBadge +
             '</div>' +
             '<div class="masonry-overlay">' +
@@ -215,8 +260,24 @@ document.addEventListener('DOMContentLoaded', () => {
       img.closest('.masonry-item')?.classList.add('is-loaded');
     };
 
+    const onError = () => {
+      const item = img.closest('.masonry-item');
+      const fallback = item?.dataset.fallbackImage || '';
+      if (fallback && !img.dataset.fallbackTried && fallback !== src) {
+        img.dataset.fallbackTried = '1';
+        img.addEventListener('load', onDone, { once: true });
+        img.addEventListener('error', onError, { once: true });
+        img.src = fallback;
+        return;
+      }
+
+      if (media) media.classList.remove('artwork-media--pending');
+      if (item) item.classList.add('image-unavailable');
+      img.hidden = true;
+    };
+
     img.addEventListener('load', onDone, { once: true });
-    img.addEventListener('error', onDone, { once: true });
+    img.addEventListener('error', onError, { once: true });
     img.src = src;
     if (img.complete && img.naturalWidth > 0) onDone();
   }
@@ -244,7 +305,13 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }, { root: null, rootMargin: '120px 0px 80px', threshold: 0.01 });
 
-    items.forEach((el) => io.observe(el));
+    items.forEach((el, index) => {
+      if (index < 4) {
+        revealItem(el);
+        return;
+      }
+      io.observe(el);
+    });
   }
 
   function setupSectionReveal() {
@@ -788,6 +855,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function setupCategoryNavObserver() {
+    if (categoryNavObserver) {
+      categoryNavObserver.disconnect();
+      categoryNavObserver = null;
+    }
     const catPills = document.querySelectorAll('.cat-pill');
     if (!catPills.length || !('IntersectionObserver' in window)) return;
 
@@ -796,7 +867,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!anchors.length) return;
 
     const navOffset = getObrasNavOffset();
-    const observer = new IntersectionObserver((entries) => {
+    categoryNavObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
         catPills.forEach((p) => p.classList.remove('active'));
@@ -809,7 +880,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }, { rootMargin: '-' + navOffset + 'px 0px -55% 0px', threshold: 0 });
 
-    anchors.forEach((el) => observer.observe(el));
+    anchors.forEach((el) => categoryNavObserver.observe(el));
   }
 
   document.querySelectorAll('.cat-pill').forEach((pill) => {

@@ -193,6 +193,14 @@ section[id] {
   background: #f0f0f0;
 }
 
+/* Reserve space until the lazy image arrives so the observer only loads nearby cards. */
+.artwork-media--pending::before {
+  content: '';
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+}
+
 @keyframes obras-shimmer {
   0% { background-position: 100% 0; }
   100% { background-position: -100% 0; }
