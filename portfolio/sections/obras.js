@@ -43,20 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
     return raw;
   }
 
-  // Render the local catalog immediately, then refresh it from the API in the background.
-  let obrasDataset = (window.products && Array.isArray(window.products))
-    ? window.products.map(normalizeProduct)
-    : [];
+  // The app is bootstrapped at the end, after all constants and helpers initialize.
+  let obrasDataset = [];
   let categoryNavObserver = null;
-
-  if (obrasDataset.length) renderObrasDataset(obrasDataset);
-  initObrasVideos();
-
-  loadObrasDataset().then((items) => {
-    if (!items.length || datasetsMatch(obrasDataset, items)) return;
-    obrasDataset = items;
-    renderObrasDataset(obrasDataset);
-  });
 
   function renderObrasDataset(items) {
     obrasDataset = items;
@@ -921,6 +910,19 @@ document.addEventListener('DOMContentLoaded', () => {
       scrollToObrasSection(target);
       document.querySelectorAll('.cat-pill').forEach((p) => p.classList.toggle('active', p === pill));
     });
+  });
+
+  // Render the local catalog immediately, then refresh it from the API in the background.
+  obrasDataset = (window.products && Array.isArray(window.products))
+    ? window.products.map(normalizeProduct)
+    : [];
+  if (obrasDataset.length) renderObrasDataset(obrasDataset);
+  initObrasVideos();
+
+  loadObrasDataset().then((items) => {
+    if (!items.length || datasetsMatch(obrasDataset, items)) return;
+    obrasDataset = items;
+    renderObrasDataset(obrasDataset);
   });
 
 });
