@@ -140,32 +140,28 @@
 
         var rowY = 89;
         sections.forEach(function (section, index) {
-            doc.setFillColor(C.panel[0], C.panel[1], C.panel[2]);
-            doc.roundedRect(MARGIN, rowY - 8, page.width - MARGIN * 2, 16, 2, 2, 'F');
             doc.setFillColor(C.accent[0], C.accent[1], C.accent[2]);
-            doc.circle(MARGIN + 7, rowY, 4.1, 'F');
+            doc.circle(MARGIN + 3, rowY - 1, 2.8, 'F');
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(6.5);
+            doc.setFontSize(5.3);
             setText(doc, [255, 255, 255]);
-            doc.text(String(index + 1).padStart(2, '0'), MARGIN + 7, rowY + 2.1, { align: 'center' });
+            doc.text(String(index + 1).padStart(2, '0'), MARGIN + 3, rowY + 0.8, { align: 'center' });
             doc.setFont('times', 'bold');
-            doc.setFontSize(12.5);
+            doc.setFontSize(11.5);
             setText(doc, C.ink);
-            var nameLines = doc.splitTextToSize(section.name, page.width - MARGIN * 2 - 65);
-            doc.text(nameLines[0], MARGIN + 15, rowY + 1.5);
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(7.5);
-            setText(doc, C.muted);
-            doc.text(section.count + (section.count === 1 ? ' obra' : ' obras'), page.width - MARGIN - 22, rowY + 1.2, { align: 'right' });
-            doc.setFillColor(255, 255, 255);
+            var nameX = MARGIN + 9;
+            doc.text(section.name, nameX, rowY + 0.8);
+            var leaderStart = nameX + doc.getTextWidth(section.name) + 4;
+            var pageX = page.width - MARGIN;
             doc.setDrawColor(C.line[0], C.line[1], C.line[2]);
-            doc.roundedRect(page.width - MARGIN - 15, rowY - 5.5, 13, 11, 2, 2, 'FD');
+            doc.setLineWidth(0.2);
+            if (leaderStart < pageX - 12) doc.line(leaderStart, rowY - 0.7, pageX - 12, rowY - 0.7);
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(7.5);
+            doc.setFontSize(8);
             setText(doc, C.accent);
-            doc.text(String(section.page).padStart(2, '0'), page.width - MARGIN - 8.5, rowY + 1.3, { align: 'center' });
+            doc.text(String(section.page).padStart(2, '0'), pageX, rowY + 0.8, { align: 'right' });
             setText(doc, C.ink);
-            rowY += 20;
+            rowY += 14;
         });
         addFooter(doc, 2, totalPages);
     }
