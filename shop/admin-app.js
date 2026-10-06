@@ -160,11 +160,14 @@
             deleteBtn.disabled = true;
             deleteBtn.textContent = '…';
 
-            fetch(getApiBaseUrl() + '/images/' + imageId, {
+            DDAAuth.apiFetch('/images/' + imageId, {
                 method: 'DELETE',
-                credentials: 'include'
             }).then(function (res) {
-                if (!res.ok) throw new Error('No se pudo eliminar');
+                if (!res.ok) {
+                    return res.text().then(function (message) {
+                        throw new Error(message || ('No se pudo eliminar la imagen (HTTP ' + res.status + ')'));
+                    });
+                }
                 state.imageItems = state.imageItems.filter(function (item) {
                     return String(item.id) !== String(imageId);
                 });
