@@ -7,6 +7,42 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalBuyBtn = document.getElementById('modalBuyBtn');
   const modalClose = document.querySelector('.modal-close');
 
+  // Keep the category map initialized before the local catalog is normalized below.
+  const PORTFOLIO_CATEGORY_ALIASES = {
+    paisaje: 'paisajes',
+    simbolico: 'pasteles',
+    texto: 'ilustraciones',
+    obras: 'pasteles',
+    retrato: 'autorretratos',
+    abstracto: 'digital',
+    figurativo: 'pasteles',
+    paisajes: 'paisajes',
+    pasteles: 'pasteles',
+    gatos: 'gatos',
+    pitufos: 'pitufos',
+    digital: 'digital',
+    ilustraciones: 'ilustraciones',
+    autorretratos: 'autorretratos',
+    autorretrato: 'autorretratos',
+    acuarela: 'acuarela',
+    'pintura sobre madera': 'pintura-sobre-madera',
+    'pintura sobre tela': 'pintura-sobre-tela',
+    'dibujo sobre papel': 'dibujo-sobre-papel',
+    'bastidores 20 x 20': 'bastidores-20x20',
+    'bastidores 20 × 20': 'bastidores-20x20',
+    'pintura-sobre-madera': 'pintura-sobre-madera',
+    'pintura-sobre-tela': 'pintura-sobre-tela',
+    'dibujo-sobre-papel': 'dibujo-sobre-papel',
+    'bastidores-20x20': 'bastidores-20x20'
+  };
+
+  function resolvePortfolioCategory(category) {
+    const raw = String(category || '').trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    if (!raw) return 'pasteles';
+    if (PORTFOLIO_CATEGORY_ALIASES[raw]) return PORTFOLIO_CATEGORY_ALIASES[raw];
+    return raw;
+  }
+
   // Render the local catalog immediately, then refresh it from the API in the background.
   let obrasDataset = (window.products && Array.isArray(window.products))
     ? window.products.map(normalizeProduct)
@@ -49,42 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const shareCopy = document.getElementById('obrasShareCopy');
   let currentShareUrl = '';
   let currentShareTitle = '';
-
-  // Shop-only categories map to the nearest portfolio section.
-  const PORTFOLIO_CATEGORY_ALIASES = {
-    paisaje: 'paisajes',
-    simbolico: 'pasteles',
-    texto: 'ilustraciones',
-    obras: 'pasteles',
-    retrato: 'Autorretratos',
-    abstracto: 'digital',
-    figurativo: 'pasteles',
-    paisajes: 'paisajes',
-    pasteles: 'pasteles',
-    gatos: 'gatos',
-    pitufos: 'pitufos',
-    digital: 'digital',
-    ilustraciones: 'ilustraciones',
-    autorretratos: 'autorretratos',
-    autorretrato: 'autorretratos',
-    acuarela: 'acuarela',
-    'pintura sobre madera': 'pintura-sobre-madera',
-    'pintura sobre tela': 'pintura-sobre-tela',
-    'dibujo sobre papel': 'dibujo-sobre-papel',
-    'bastidores 20 x 20': 'bastidores-20x20',
-    'bastidores 20 × 20': 'bastidores-20x20',
-    'pintura-sobre-madera': 'pintura-sobre-madera',
-    'pintura-sobre-tela': 'pintura-sobre-tela',
-    'dibujo-sobre-papel': 'dibujo-sobre-papel',
-    'bastidores-20x20': 'bastidores-20x20'
-  };
-
-  function resolvePortfolioCategory(category) {
-    const raw = String(category || '').trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-    if (!raw) return 'pasteles';
-    if (PORTFOLIO_CATEGORY_ALIASES[raw]) return PORTFOLIO_CATEGORY_ALIASES[raw];
-    return raw;
-  }
 
   function normalizeProduct(p) {
     const images = (p.images || []).map((img) => {
