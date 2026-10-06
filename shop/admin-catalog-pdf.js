@@ -12,8 +12,8 @@
         'Gatos',
         'Pitufos'
     ];
-    var state = { artworks: [], selected: new Set(), loading: false };
-    var modal, list, count, search, generate, status;
+    var state = { artworks: [], selected: new Set(), categoryOrder: PDF_ARTWORK_CATEGORIES.slice(), loading: false };
+    var modal, list, count, search, generate, status, categoryOrderList;
 
     function escapeHtml(value) {
         return String(value == null ? '' : value).replace(/[&<>"']/g, function (char) {
@@ -88,6 +88,54 @@
     function updateCount() {
         count.textContent = state.selected.size + ' de ' + state.artworks.length + ' obras seleccionadas';
         generate.disabled = state.loading || state.selected.size === 0;
+        renderCategoryOrder();
+    }
+
+    function renderCategoryOrder() {
+        if (!categoryOrderList) return;
+
+        var categoryCounts = new Map(PDF_ARTWORK_CATEGORIES.map(function (category) { return [category, 0]; }));
+        state.artworks.forEach(function (artwork) {
+            if (!state.selected.has(String(artwork.id))) return;
+            var category = pdfCategory(artwork);
+            categoryCounts.set(category, (categoryCounts.get(category) || 0) + 1);
+        });
+
+        var visibleCategories = state.categoryOrder.filter(function (category) {
+            return (categoryCounts.get(category) || 0) > 0;
+        });
+        if (!visibleCategories.length) {
+            categoryOrderList.innerHTML = '<li class="catalog-pdf-category-order__empty">Seleccioná obras para ordenar sus categorías.</li>';
+            return;
+        }
+
+        categoryOrderList.innerHTML = visibleCategories.map(function (category, index) {
+            var count = categoryCounts.get(category);
+            return '<li class="catalog-pdf-category-order__item">' +
+                '<span class="catalog-pdf-category-order__name">' + escapeHtml(category) +
+                '<small>' + count + (count === 1 ? ' obra' : ' obras') + '</small></span>' +
+                '<span class="catalog-pdf-category-order__actions">' +
+                '<button type="button" data-category-move="-1" data-category="' + escapeHtml(category) + '" aria-label="Subir ' + escapeHtml(category) + '" ' + (index === 0 ? 'disabled' : '') + '>↑</button>' +
+                '<button type="button" data-category-move="1" data-category="' + escapeHtml(category) + '" aria-label="Bajar ' + escapeHtml(category) + '" ' + (index === visibleCategories.length - 1 ? 'disabled' : '') + '>↓</button>' +
+                '</span></li>';
+        }).join('');
+    }
+
+    function moveCategory(category, delta) {
+        var visibleCategories = state.categoryOrder.filter(function (candidate) {
+            return state.artworks.some(function (artwork) {
+                return state.selected.has(String(artwork.id)) && pdfCategory(artwork) === candidate;
+            });
+        });
+        var visibleIndex = visibleCategories.indexOf(category);
+        var nextVisibleIndex = visibleIndex + delta;
+        if (visibleIndex < 0 || nextVisibleIndex < 0 || nextVisibleIndex >= visibleCategories.length) return;
+
+        var currentIndex = state.categoryOrder.indexOf(category);
+        var nextIndex = state.categoryOrder.indexOf(visibleCategories[nextVisibleIndex]);
+        state.categoryOrder[currentIndex] = visibleCategories[nextVisibleIndex];
+        state.categoryOrder[nextIndex] = category;
+        renderCategoryOrder();
     }
 
     function renderList() {
@@ -233,7 +281,7 @@
             var doc = new window.jspdf.jsPDF();
             var grouped = new Map(PDF_ARTWORK_CATEGORIES.map(function (category) { return [category, []]; }));
             chosen.forEach(function (artwork) { grouped.get(pdfCategory(artwork)).push(artwork); });
-            var sections = PDF_ARTWORK_CATEGORIES.map(function (category) {
+            var sections = state.categoryOrder.map(function (category) {
                 return { name: category, artworks: grouped.get(category), count: grouped.get(category).length };
             }).filter(function (section) { return section.count > 0; });
             var totalPages = 2 + sections.reduce(function (total, section) { return total + 1 + section.count; }, 0);
@@ -293,6 +341,7 @@
         search = document.getElementById('catalogPdfSearch');
         generate = document.getElementById('catalogPdfGenerate');
         status = document.getElementById('catalogPdfStatus');
+        categoryOrderList = document.getElementById('catalogPdfCategoryOrder');
 
         function closeModal() { modal.hidden = true; document.body.classList.remove('modal-open'); }
         document.getElementById('openCatalogPdfBtn').addEventListener('click', function () {
@@ -307,6 +356,11 @@
         document.getElementById('catalogPdfCancel').addEventListener('click', closeModal);
         modal.addEventListener('click', function (event) { if (event.target === modal) closeModal(); });
         search.addEventListener('input', renderList);
+        categoryOrderList.addEventListener('click', function (event) {
+            var button = event.target.closest('button[data-category-move]');
+            if (!button || button.disabled) return;
+            moveCategory(button.dataset.category, Number(button.dataset.categoryMove));
+        });
         list.addEventListener('change', function (event) {
             var input = event.target.closest('input[data-artwork-id]');
             if (!input) return;
