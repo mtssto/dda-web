@@ -93,6 +93,7 @@
 
     function renderCategoryOrder() {
         if (!categoryOrderList) return;
+        var previousScrollTop = categoryOrderList.scrollTop;
 
         var categoryCounts = new Map(PDF_ARTWORK_CATEGORIES.map(function (category) { return [category, 0]; }));
         state.artworks.forEach(function (artwork) {
@@ -112,13 +113,16 @@
         categoryOrderList.innerHTML = visibleCategories.map(function (category, index) {
             var count = categoryCounts.get(category);
             return '<li class="catalog-pdf-category-order__item">' +
-                '<span class="catalog-pdf-category-order__name">' + escapeHtml(category) +
+                '<span class="catalog-pdf-category-order__name">' +
+                '<span class="catalog-pdf-category-order__position">' + (index + 1) + '.</span>' +
+                '<span class="catalog-pdf-category-order__label">' + escapeHtml(category) + '</span>' +
                 '<small>' + count + (count === 1 ? ' obra' : ' obras') + '</small></span>' +
                 '<span class="catalog-pdf-category-order__actions">' +
-                '<button type="button" data-category-move="-1" data-category="' + escapeHtml(category) + '" aria-label="Subir ' + escapeHtml(category) + '" ' + (index === 0 ? 'disabled' : '') + '>↑</button>' +
-                '<button type="button" data-category-move="1" data-category="' + escapeHtml(category) + '" aria-label="Bajar ' + escapeHtml(category) + '" ' + (index === visibleCategories.length - 1 ? 'disabled' : '') + '>↓</button>' +
+                '<button type="button" data-category-move="-1" data-category="' + escapeHtml(category) + '" aria-label="Subir sección ' + escapeHtml(category) + '" ' + (index === 0 ? 'disabled' : '') + '>Subir</button>' +
+                '<button type="button" data-category-move="1" data-category="' + escapeHtml(category) + '" aria-label="Bajar sección ' + escapeHtml(category) + '" ' + (index === visibleCategories.length - 1 ? 'disabled' : '') + '>Bajar</button>' +
                 '</span></li>';
         }).join('');
+        categoryOrderList.scrollTop = previousScrollTop;
     }
 
     function moveCategory(category, delta) {
@@ -359,7 +363,16 @@
         categoryOrderList.addEventListener('click', function (event) {
             var button = event.target.closest('button[data-category-move]');
             if (!button || button.disabled) return;
-            moveCategory(button.dataset.category, Number(button.dataset.categoryMove));
+            var category = button.dataset.category;
+            var direction = button.dataset.categoryMove;
+            moveCategory(category, Number(direction));
+            var categoryButtons = Array.prototype.filter.call(categoryOrderList.querySelectorAll('button[data-category]'), function (candidate) {
+                return candidate.dataset.category === category;
+            });
+            var focusTarget = categoryButtons.find(function (candidate) {
+                return candidate.dataset.categoryMove === direction && !candidate.disabled;
+            }) || categoryButtons.find(function (candidate) { return !candidate.disabled; });
+            if (focusTarget) focusTarget.focus();
         });
         list.addEventListener('change', function (event) {
             var input = event.target.closest('input[data-artwork-id]');
