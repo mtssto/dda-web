@@ -388,6 +388,50 @@
     .catalog-page .filter-dropdown {
         width: 100%;
     }
+
+    /* On phones, show categories as easy-to-tap choices instead of a narrow
+       popover that can be awkward to browse and can cover nearby filters. */
+    .catalog-page #categoryDropdown .cd-trigger {
+        display: none;
+    }
+
+    .catalog-page #categoryDropdown .cd-list,
+    .catalog-page #categoryDropdown.custom-dropdown.open .cd-list {
+        position: static;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        width: 100%;
+        padding: 0;
+        border: 0;
+        box-shadow: none;
+        background: transparent;
+    }
+
+    .catalog-page #categoryDropdown .cd-option {
+        min-width: 0;
+        min-height: 42px;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 10px 12px;
+        border: 1px solid #e2e2df;
+        border-radius: 6px;
+        background: #fff;
+        font-size: 0.82rem;
+        line-height: 1.25;
+        letter-spacing: 0.01em;
+        overflow-wrap: anywhere;
+    }
+
+    .catalog-page #categoryDropdown .cd-option.active {
+        border-color: #222;
+        background: #222;
+        color: #fff;
+    }
+
+    .catalog-page #categoryDropdown .cd-option.active::before {
+        display: none;
+    }
 }
 
 @media (max-width: 600px) {
