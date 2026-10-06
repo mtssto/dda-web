@@ -62,17 +62,27 @@ document.addEventListener('DOMContentLoaded', () => {
     paisajes: 'paisajes',
     pasteles: 'pasteles',
     gatos: 'gatos',
+    pitufos: 'pitufos',
     digital: 'digital',
     ilustraciones: 'ilustraciones',
-    autorretratos: 'Autorretratos'
+    autorretratos: 'autorretratos',
+    autorretrato: 'autorretratos',
+    acuarela: 'acuarela',
+    'pintura sobre madera': 'pintura-sobre-madera',
+    'pintura sobre tela': 'pintura-sobre-tela',
+    'dibujo sobre papel': 'dibujo-sobre-papel',
+    'bastidores 20 x 20': 'bastidores-20x20',
+    'bastidores 20 × 20': 'bastidores-20x20',
+    'pintura-sobre-madera': 'pintura-sobre-madera',
+    'pintura-sobre-tela': 'pintura-sobre-tela',
+    'dibujo-sobre-papel': 'dibujo-sobre-papel',
+    'bastidores-20x20': 'bastidores-20x20'
   };
 
   function resolvePortfolioCategory(category) {
-    const raw = String(category || '').trim();
+    const raw = String(category || '').trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
     if (!raw) return 'pasteles';
     if (PORTFOLIO_CATEGORY_ALIASES[raw]) return PORTFOLIO_CATEGORY_ALIASES[raw];
-    const lower = raw.toLowerCase();
-    if (PORTFOLIO_CATEGORY_ALIASES[lower]) return PORTFOLIO_CATEGORY_ALIASES[lower];
     return raw;
   }
 
@@ -144,7 +154,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const PORTFOLIO_SECTION_ORDER = [
-    'pasteles', 'gatos', 'paisajes', 'Autorretratos', 'digital', 'ilustraciones'
+    'acuarela', 'pintura-sobre-madera', 'pintura-sobre-tela', 'dibujo-sobre-papel',
+    'pitufos', 'gatos', 'bastidores-20x20',
+    'pasteles', 'paisajes', 'autorretratos', 'digital', 'ilustraciones'
   ];
 
   function renderPortfolio(dataset) {
@@ -162,6 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     let revealIndex = 0;
+    let firstVisibleSection = '';
 
     PORTFOLIO_SECTION_ORDER.forEach((sectionKey) => {
       const items = byCategory[sectionKey] || [];
@@ -170,6 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navPill) navPill.hidden = true;
         return;
       }
+      if (!firstVisibleSection) firstVisibleSection = sectionKey;
       if (navPill) navPill.hidden = false;
 
       items.forEach((product, indexInSection) => {
@@ -244,7 +258,22 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
+    updateObrasNavGroups();
+    const activePill = document.querySelector('.cat-pill.active:not([hidden])');
+    if (!activePill || !activePill.dataset.section || !document.getElementById(activePill.dataset.section)) {
+      document.querySelectorAll('.cat-pill').forEach((pill) => pill.classList.remove('active'));
+      if (firstVisibleSection) {
+        document.querySelector('.cat-pill[data-section="' + firstVisibleSection + '"]')?.classList.add('active');
+      }
+    }
     setupRevealOnScroll();
+  }
+
+  function updateObrasNavGroups() {
+    document.querySelectorAll('.obras-nav-group').forEach((group) => {
+      const links = group.querySelectorAll('.cat-pill');
+      group.hidden = links.length > 0 && Array.from(links).every((link) => link.hidden);
+    });
   }
 
   function loadLazyImage(img) {
@@ -369,6 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (section) section.hidden = true;
       const pill = document.querySelector('.cat-pill[data-section="videos"]');
       if (pill) pill.hidden = true;
+      updateObrasNavGroups();
       return;
     }
 
@@ -862,7 +892,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const catPills = document.querySelectorAll('.cat-pill');
     if (!catPills.length || !('IntersectionObserver' in window)) return;
 
-    const sectionIds = ['pasteles', 'gatos', 'paisajes', 'Autorretratos', 'digital', 'ilustraciones', 'videos'];
+    const sectionIds = PORTFOLIO_SECTION_ORDER.concat('videos');
     const anchors = sectionIds.map((id) => document.getElementById(id)).filter(Boolean);
     if (!anchors.length) return;
 
@@ -889,6 +919,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const id = pill.dataset.section;
       const target = document.getElementById(id);
       scrollToObrasSection(target);
+      document.querySelectorAll('.cat-pill').forEach((p) => p.classList.toggle('active', p === pill));
     });
   });
 
